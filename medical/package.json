@@ -1,0 +1,38 @@
+{
+  "name": "medical-module",
+  "version": "1.0.0",
+  "description": "Medical data processing module with agent-based pipeline architecture",
+  "main": "medical-workflows.js",
+  "scripts": {
+    "test": "jest",
+    "test:smoke": "node test-agents-smoke.js",
+    "test:unit": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:all": "npm run test:unit && npm run test:smoke"
+  },
+  "keywords": [
+    "medical",
+    "agent",
+    "pipeline",
+    "swarm",
+    "orchestrator"
+  ],
+  "author": "Sean & Claude",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "ajv": "^8.12.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "agents/**/*.js",
+      "medical-workflows.js",
+      "!**/*.test.js"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.test.js"
+    ]
+  }
+}

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical Module Test Harness</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      padding: 30px;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 2em;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 0.9em;
+    }
+    .warning {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      color: #856404;
+    }
+    .warning strong { display: block; margin-bottom: 5px; }
+    .input-section {
+      margin-bottom: 30px;
+    }
+    .input-section label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #555;
+    }
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      resize: vertical;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+    .output-section {
+      margin-top: 30px;
+    }
+    .output-box {
+      background: #f8f9fa;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      padding: 20px;
+      min-height: 200px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+    .status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+    .status.idle { background: #e9ecef; color: #495057; }
+    .status.running { background: #fff3cd; color: #856404; }
+    .status.complete { background: #d4edda; color: #155724; }
+    .status.error { background: #f8d7da; color: #721c24; }
+    .pipeline-viz {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+      overflow-x: auto;
+      padding: 10px 0;
+    }
+    .pipeline-step {
+      flex: 1;
+      min-width: 150px;
+      padding: 15px;
+      background: #f8f9fa;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .pipeline-step.active {
+      background: #fff3cd;
+      border-color: #ffc107;
+      transform: scale(1.05);
+    }
+    .pipeline-step.complete {
+      background: #d4edda;
+      border-color: #28a745;
+    }
+    .pipeline-step-title {
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #333;
+    }
+    .pipeline-step-role {
+      font-size: 11px;
+      color: #666;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏥 Medical Module Test Harness</h1>
+    <p class="subtitle">Swarm Architecture - Map/Reduce Pipeline</p>
+
+    <div class="warning">
+      <strong>⚠️ STRUCTURAL TESTING ONLY</strong>
+      This harness tests pipeline orchestration, agent coordination, and data flow.
+      It does NOT perform medical analysis or generate clinical advice.
+    </div>
+
+    <div class="input-section">
+      <label for="input">Raw Input Data (JSON):</label>
+      <textarea id="input" placeholder='{"raw": "test input data", "format": "text"}'></textarea>
+    </div>
+
+    <div class="controls">
+      <button class="btn-primary" onclick="runPipeline()">▶️ Run Pipeline</button>
+      <button class="btn-secondary" onclick="clearOutput()">🗑️ Clear</button>
+      <button class="btn-secondary" onclick="loadExample()">📝 Load Example</button>
+    </div>
+
+    <div class="output-section">
+      <h2>Pipeline Status <span id="status" class="status idle">IDLE</span></h2>
+
+      <div class="pipeline-viz" id="pipelineViz">
+        <div class="pipeline-step" data-role="INGESTION">
+          <div class="pipeline-step-title">Ingestion</div>
+          <div class="pipeline-step-role">normalize</div>
+        </div>
+        <div class="pipeline-step" data-role="TRIAGE">
+          <div class="pipeline-step-title">Triage</div>
+          <div class="pipeline-step-role">classify</div>
+        </div>
+        <div class="pipeline-step" data-role="SUMMARIZATION">
+          <div class="pipeline-step-title">Summarization</div>
+          <div class="pipeline-step-role">extract</div>
+        </div>
+        <div class="pipeline-step" data-role="RISK">
+          <div class="pipeline-step-title">Risk</div>
+          <div class="pipeline-step-role">score</div>
+        </div>
+        <div class="pipeline-step" data-role="OUTPUT">
+          <div class="pipeline-step-title">Output</div>
+          <div class="pipeline-step-role">format</div>
+        </div>
+      </div>
+
+      <h3>Output:</h3>
+      <div class="output-box" id="output">Waiting for pipeline execution...</div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Import orchestrator
+    import { createMedicalOrchestrator } from '../medical-workflows.js';
+
+    let orchestrator;
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        orchestrator = createMedicalOrchestrator();
+        console.log('Medical orchestrator initialized');
+        updateStatus('idle', 'Orchestrator ready');
+      } catch (error) {
+        console.error('Failed to initialize orchestrator:', error);
+        updateStatus('error', 'Initialization failed');
+      }
+    });
+
+    // Run pipeline
+    window.runPipeline = async function() {
+      const inputText = document.getElementById('input').value.trim();
+
+      if (!inputText) {
+        alert('Please enter input data');
+        return;
+      }
+
+      try {
+        const inputData = JSON.parse(inputText);
+        updateStatus('running', 'Processing...');
+        resetPipeline();
+
+        // Execute pipeline
+        const result = await orchestrator.executePipeline(inputData);
+
+        // Display results
+        document.getElementById('output').textContent = JSON.stringify(result, null, 2);
+        updateStatus('complete', `Complete (${result.processingTime}ms)`);
+        markAllComplete();
+
+      } catch (error) {
+        console.error('Pipeline error:', error);
+        document.getElementById('output').textContent = `ERROR: ${error.message}\n\n${error.stack}`;
+        updateStatus('error', 'Pipeline failed');
+      }
+    };
+
+    // Clear output
+    window.clearOutput = function() {
+      document.getElementById('output').textContent = 'Waiting for pipeline execution...';
+      updateStatus('idle', 'Ready');
+      resetPipeline();
+    };
+
+    // Load example input
+    window.loadExample = function() {
+      const example = {
+        raw: "Example input data for testing",
+        format: "text",
+        metadata: {
+          source: "test-harness",
+          timestamp: new Date().toISOString()
+        }
+      };
+      document.getElementById('input').value = JSON.stringify(example, null, 2);
+    };
+
+    // Update status display
+    function updateStatus(type, message) {
+      const statusEl = document.getElementById('status');
+      statusEl.className = `status ${type}`;
+      statusEl.textContent = message.toUpperCase();
+    }
+
+    // Reset pipeline visualization
+    function resetPipeline() {
+      document.querySelectorAll('.pipeline-step').forEach(step => {
+        step.classList.remove('active', 'complete');
+      });
+    }
+
+    // Mark all steps complete
+    function markAllComplete() {
+      document.querySelectorAll('.pipeline-step').forEach(step => {
+        step.classList.add('complete');
+      });
+    }
+  </script>
+</body>
+</html>
