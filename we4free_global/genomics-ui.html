@@ -263,7 +263,10 @@
     <div class="card">
       <h2>Active Genomics Agents</h2>
       <div class="agent-status" id="agent-status">
-        <div class="agent-badge">Variant Caller: idle</div>
+        <div class="agent-badge">Variant Caller #1: idle</div>
+        <div class="agent-badge">Variant Caller #2: idle</div>
+        <div class="agent-badge">Variant Caller #3: idle</div>
+        <div class="agent-badge">Variant Caller #4: idle</div>
         <div class="agent-badge">Phenotype Extractor: idle</div>
         <div class="agent-badge">Variant Prioritizer: idle</div>
         <div class="agent-badge">Federated Learner: idle</div>
@@ -322,9 +325,12 @@
       swarmCoordinator = new SwarmCoordinator(registry, taskQueue);
       computeEngine = new DistributedCompute(swarmCoordinator, taskQueue);
 
-      // Create genomics agents
+      // Create genomics agents (multiple variant-callers for GWAS horizontal scaling)
       const agentRoles = [
         GenomicsAgentRole.VARIANT_CALLER,
+        GenomicsAgentRole.VARIANT_CALLER,  // GWAS map worker 2
+        GenomicsAgentRole.VARIANT_CALLER,  // GWAS map worker 3
+        GenomicsAgentRole.VARIANT_CALLER,  // GWAS map worker 4
         GenomicsAgentRole.PHENOTYPE_EXTRACTOR,
         GenomicsAgentRole.VARIANT_PRIORITIZER,
         GenomicsAgentRole.FEDERATED_LEARNER,
@@ -367,7 +373,7 @@
                 log(`🔄 ${agent.role} processing: ${task.type}`);
 
                 // Update UI
-                updateAgentStatus(agent.role, 'active');
+                updateAgentStatus(agent, 'active');
 
                 // Process task
                 const result = await agent.processTask(task);
@@ -376,7 +382,7 @@
                 taskQueue.completeTask(task.id, result);
 
                 // Update UI
-                updateAgentStatus(agent.role, 'idle');
+                updateAgentStatus(agent, 'idle');
               } else {
                 // Agent can't handle this task - release it back to queue
                 taskQueue.releaseTask(task.id);
@@ -390,7 +396,7 @@
     function canAgentHandleTask(agent, task) {
       // Map agent roles to task types they can handle
       const roleTaskMap = {
-        [GenomicsAgentRole.VARIANT_CALLER]: [GenomicsTaskType.VARIANT_CALLING],
+        [GenomicsAgentRole.VARIANT_CALLER]: [GenomicsTaskType.VARIANT_CALLING, GenomicsTaskType.MAP_TASK, GenomicsTaskType.REDUCE_TASK],
         [GenomicsAgentRole.PHENOTYPE_EXTRACTOR]: [GenomicsTaskType.PHENOTYPE_EXTRACTION],
         [GenomicsAgentRole.VARIANT_PRIORITIZER]: [GenomicsTaskType.VARIANT_PRIORITIZATION],
         [GenomicsAgentRole.FEDERATED_LEARNER]: [GenomicsTaskType.MODEL_TRAINING, GenomicsTaskType.FEDERATED_AGGREGATION],
@@ -401,15 +407,18 @@
       return allowedTasks.includes(task.type);
     }
 
-    function updateAgentStatus(role, status) {
+    function updateAgentStatus(agent, status) {
+      // Find agent index in genomicsAgents array
+      const agentIndex = genomicsAgents.indexOf(agent);
+      if (agentIndex === -1) return;
+
+      // Update the corresponding badge
       const badges = document.querySelectorAll('.agent-badge');
-      badges.forEach(badge => {
-        if (badge.textContent.toLowerCase().includes(role.toLowerCase())) {
-          badge.className = status === 'active' ? 'agent-badge active' : 'agent-badge';
-          const parts = badge.textContent.split(':');
-          badge.textContent = `${parts[0]}: ${status}`;
-        }
-      });
+      if (badges[agentIndex]) {
+        badges[agentIndex].className = status === 'active' ? 'agent-badge active' : 'agent-badge';
+        const parts = badges[agentIndex].textContent.split(':');
+        badges[agentIndex].textContent = `${parts[0]}: ${status}`;
+      }
     }
 
     // ========================================================================

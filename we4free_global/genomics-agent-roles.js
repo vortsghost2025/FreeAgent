@@ -62,7 +62,11 @@ const GenomicsTaskType = {
   // Pipeline Operations
   QUALITY_CONTROL: 'quality-control',
   READ_ALIGNMENT: 'read-alignment',
-  EXPRESSION_QUANTIFICATION: 'expression-quantification'
+  EXPRESSION_QUANTIFICATION: 'expression-quantification',
+
+  // Distributed Compute
+  MAP_TASK: 'map',
+  REDUCE_TASK: 'reduce'
 };
 
 // ============================================================================
@@ -77,7 +81,8 @@ const GenomicsAgentRole = {
   GP_CORRELATOR: 'gp-correlator',
   INTERPRETABILITY: 'interpretability',
   QC_SPECIALIST: 'qc-specialist',
-  FEDERATED_LEARNER: 'federated-learner'
+  FEDERATED_LEARNER: 'federated-learner',
+  GWAS_MAP_WORKER: 'gwas-map-worker'
 };
 
 // ============================================================================
@@ -141,6 +146,12 @@ class GenomicsAgent {
           break;
         case GenomicsTaskType.XAI_EXPLANATION:
           result = await this.generateExplanation(task.data);
+          break;
+        case GenomicsTaskType.MAP_TASK:
+          result = await this.executeMapTask(task.data);
+          break;
+        case GenomicsTaskType.REDUCE_TASK:
+          result = await this.executeReduceTask(task.data);
           break;
         default:
           throw new Error(`Unsupported task type: ${task.type}`);
@@ -567,6 +578,68 @@ class InterpretabilityAgent extends GenomicsAgent {
 }
 
 // ============================================================================
+// GWAS MAP WORKER AGENT
+// ============================================================================
+
+/**
+ * GWAS Map Worker Agent
+ *
+ * Specialized agent for distributed GWAS map/reduce computations.
+ * Handles parallelized genotype-phenotype association testing across genomic regions.
+ */
+class GWASMapAgent extends GenomicsAgent {
+  constructor(agentId, registry = null, taskQueue = null) {
+    super(agentId, GenomicsAgentRole.GWAS_MAP_WORKER, registry, taskQueue);
+  }
+
+  /**
+   * Execute map task from distributed compute engine
+   * Applies map function to chunk of genomic data
+   */
+  async executeMapTask(data) {
+    const { chunk, mapFn } = data;
+
+    console.log(`📊 GWAS map: processing ${chunk.length} samples`);
+
+    // Deserialize and execute the map function
+    const mapFunction = eval(`(${mapFn})`);
+
+    // Apply map function to each item in chunk
+    const results = chunk.map(item => mapFunction(item));
+
+    // Simulate processing time (variant calling + association testing)
+    await this.simulateProcessing(50 * chunk.length);
+
+    return results;
+  }
+
+  /**
+   * Execute reduce task from distributed compute engine
+   * Aggregates association statistics across all map results
+   */
+  async executeReduceTask(data) {
+    const { results, reduceFn } = data;
+
+    console.log(`🔄 GWAS reduce: aggregating ${results.length} chunks`);
+
+    // Deserialize and execute the reduce function
+    const reduceFunction = eval(`(${reduceFn})`);
+
+    // Apply reduce function to aggregated results
+    const finalResult = reduceFunction(results);
+
+    // Simulate processing time (multiple testing correction, result filtering)
+    await this.simulateProcessing(200);
+
+    return finalResult;
+  }
+
+  async simulateProcessing(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+}
+
+// ============================================================================
 // GENOMICS AGENT FACTORY
 // ============================================================================
 
@@ -583,6 +656,8 @@ class GenomicsAgentFactory {
         return new FederatedLearningAgent(agentId, registry, taskQueue);
       case GenomicsAgentRole.INTERPRETABILITY:
         return new InterpretabilityAgent(agentId, registry, taskQueue);
+      case GenomicsAgentRole.GWAS_MAP_WORKER:
+        return new GWASMapAgent(agentId, registry, taskQueue);
       default:
         throw new Error(`Unknown genomics agent role: ${role}`);
     }
@@ -603,6 +678,7 @@ if (typeof module !== 'undefined' && module.exports) {
     VariantPrioritizationAgent,
     FederatedLearningAgent,
     InterpretabilityAgent,
+    GWASMapAgent,
     GenomicsAgentFactory
   };
 }
@@ -616,6 +692,7 @@ if (typeof window !== 'undefined') {
   window.VariantPrioritizationAgent = VariantPrioritizationAgent;
   window.FederatedLearningAgent = FederatedLearningAgent;
   window.InterpretabilityAgent = InterpretabilityAgent;
+  window.GWASMapAgent = GWASMapAgent;
   window.GenomicsAgentFactory = GenomicsAgentFactory;
 }
 
