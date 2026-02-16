@@ -263,14 +263,15 @@
     <div class="card">
       <h2>Active Genomics Agents</h2>
       <div class="agent-status" id="agent-status">
-        <div class="agent-badge">Variant Caller #1: idle</div>
-        <div class="agent-badge">Variant Caller #2: idle</div>
-        <div class="agent-badge">Variant Caller #3: idle</div>
-        <div class="agent-badge">Variant Caller #4: idle</div>
+        <div class="agent-badge">Variant Caller: idle</div>
         <div class="agent-badge">Phenotype Extractor: idle</div>
         <div class="agent-badge">Variant Prioritizer: idle</div>
         <div class="agent-badge">Federated Learner: idle</div>
         <div class="agent-badge">Interpretability: idle</div>
+        <div class="agent-badge">GWAS Worker #1: idle</div>
+        <div class="agent-badge">GWAS Worker #2: idle</div>
+        <div class="agent-badge">GWAS Worker #3: idle</div>
+        <div class="agent-badge">GWAS Worker #4: idle</div>
       </div>
     </div>
 
@@ -325,16 +326,17 @@
       swarmCoordinator = new SwarmCoordinator(registry, taskQueue);
       computeEngine = new DistributedCompute(swarmCoordinator, taskQueue);
 
-      // Create genomics agents (multiple variant-callers for GWAS horizontal scaling)
+      // Create genomics agents (specialized roles + GWAS horizontal scaling)
       const agentRoles = [
         GenomicsAgentRole.VARIANT_CALLER,
-        GenomicsAgentRole.VARIANT_CALLER,  // GWAS map worker 2
-        GenomicsAgentRole.VARIANT_CALLER,  // GWAS map worker 3
-        GenomicsAgentRole.VARIANT_CALLER,  // GWAS map worker 4
         GenomicsAgentRole.PHENOTYPE_EXTRACTOR,
         GenomicsAgentRole.VARIANT_PRIORITIZER,
         GenomicsAgentRole.FEDERATED_LEARNER,
-        GenomicsAgentRole.INTERPRETABILITY
+        GenomicsAgentRole.INTERPRETABILITY,
+        GenomicsAgentRole.GWAS_MAP_WORKER,  // GWAS map worker 1
+        GenomicsAgentRole.GWAS_MAP_WORKER,  // GWAS map worker 2
+        GenomicsAgentRole.GWAS_MAP_WORKER,  // GWAS map worker 3
+        GenomicsAgentRole.GWAS_MAP_WORKER   // GWAS map worker 4
       ];
 
       agentRoles.forEach((role, idx) => {
@@ -376,10 +378,10 @@
                 updateAgentStatus(agent, 'active');
 
                 // Process task
-                const result = await agent.processTask(task);
+                const processResult = await agent.processTask(task);
 
-                // Complete task
-                taskQueue.completeTask(task.id, result);
+                // Complete task (unwrap the result from the agent response)
+                taskQueue.completeTask(task.id, processResult.result);
 
                 // Update UI
                 updateAgentStatus(agent, 'idle');
@@ -396,11 +398,12 @@
     function canAgentHandleTask(agent, task) {
       // Map agent roles to task types they can handle
       const roleTaskMap = {
-        [GenomicsAgentRole.VARIANT_CALLER]: [GenomicsTaskType.VARIANT_CALLING, GenomicsTaskType.MAP_TASK, GenomicsTaskType.REDUCE_TASK],
+        [GenomicsAgentRole.VARIANT_CALLER]: [GenomicsTaskType.VARIANT_CALLING],
         [GenomicsAgentRole.PHENOTYPE_EXTRACTOR]: [GenomicsTaskType.PHENOTYPE_EXTRACTION],
         [GenomicsAgentRole.VARIANT_PRIORITIZER]: [GenomicsTaskType.VARIANT_PRIORITIZATION],
         [GenomicsAgentRole.FEDERATED_LEARNER]: [GenomicsTaskType.MODEL_TRAINING, GenomicsTaskType.FEDERATED_AGGREGATION],
-        [GenomicsAgentRole.INTERPRETABILITY]: [GenomicsTaskType.XAI_EXPLANATION]
+        [GenomicsAgentRole.INTERPRETABILITY]: [GenomicsTaskType.XAI_EXPLANATION],
+        [GenomicsAgentRole.GWAS_MAP_WORKER]: [GenomicsTaskType.MAP_TASK, GenomicsTaskType.REDUCE_TASK]
       };
 
       const allowedTasks = roleTaskMap[agent.role] || [];

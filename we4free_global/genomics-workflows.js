@@ -309,20 +309,47 @@ class GenomicsWorkflowOrchestrator {
         throw new Error('Compute engine not available for GWAS workflow');
       }
 
-      // Map function: Variant calling per sample
+      // Map function: Variant calling per sample (self-contained, no 'this' refs)
       const mapFn = (sample) => {
-        // Call variants for this sample
+        // Generate mock variants for this sample
+        const variantCount = Math.floor(Math.random() * 10) + 5;
+        const variants = [];
+        for (let i = 0; i < variantCount; i++) {
+          variants.push({
+            chr: `chr${Math.floor(Math.random() * 22) + 1}`,
+            pos: Math.floor(Math.random() * 1000000),
+            genotype: Math.random() > 0.5 ? '1/1' : '0/1'
+          });
+        }
+
         return {
           sampleId: sample.id,
-          variants: this.callVariantsForSample(sample),
+          variants: variants,
           phenotypeValue: sample.phenotype
         };
       };
 
-      // Reduce function: Association testing
+      // Reduce function: Association testing (self-contained, no 'this' refs)
       const reduceFn = (sampleResults) => {
-        // Perform association test across all samples
-        return this.performAssociationTest(sampleResults, phenotype);
+        // Generate mock GWAS association results
+        const loci = [];
+        for (let i = 0; i < 10; i++) {
+          const pValue = Math.random() * 1e-5;
+          loci.push({
+            chr: `chr${Math.floor(Math.random() * 22) + 1}`,
+            pos: Math.floor(Math.random() * 1000000),
+            pValue,
+            beta: Math.random() - 0.5,
+            significant: pValue < 5e-8
+          });
+        }
+
+        loci.sort((a, b) => a.pValue - b.pValue);
+
+        return {
+          significantLoci: loci.filter(l => l.significant),
+          topHits: loci.slice(0, 5)
+        };
       };
 
       // Execute map/reduce
@@ -340,6 +367,8 @@ class GenomicsWorkflowOrchestrator {
         jobConfig
       );
 
+      console.log(`📊 GWAS workflow received result:`, gwasResult);
+
       // Finalize workflow
       const workflow = this.workflows.get(workflowId);
       workflow.status = 'completed';
@@ -350,8 +379,8 @@ class GenomicsWorkflowOrchestrator {
         workflowId,
         phenotype,
         sampleCount: cohortData.length,
-        significantLoci: gwasResult.significantLoci,
-        topHits: gwasResult.topHits,
+        significantLoci: gwasResult.result?.significantLoci || gwasResult.significantLoci,
+        topHits: gwasResult.result?.topHits || gwasResult.topHits,
         duration: workflow.duration
       };
 

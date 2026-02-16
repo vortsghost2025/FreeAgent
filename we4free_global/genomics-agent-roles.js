@@ -218,6 +218,20 @@ class GenomicsAgent {
   }
 
   /**
+   * Execute map task (override in specialized agents like GWASMapAgent)
+   */
+  async executeMapTask(data) {
+    throw new Error(`${this.role} does not support map tasks. Use GWAS_MAP_WORKER role.`);
+  }
+
+  /**
+   * Execute reduce task (override in specialized agents like GWASMapAgent)
+   */
+  async executeReduceTask(data) {
+    throw new Error(`${this.role} does not support reduce tasks. Use GWAS_MAP_WORKER role.`);
+  }
+
+  /**
    * Get agent metrics
    */
   getMetrics() {
@@ -621,12 +635,15 @@ class GWASMapAgent extends GenomicsAgent {
     const { results, reduceFn } = data;
 
     console.log(`🔄 GWAS reduce: aggregating ${results.length} chunks`);
+    console.log(`📊 GWAS reduce: input results =`, results);
 
     // Deserialize and execute the reduce function
     const reduceFunction = eval(`(${reduceFn})`);
 
     // Apply reduce function to aggregated results
     const finalResult = reduceFunction(results);
+
+    console.log(`✅ GWAS reduce: output =`, finalResult);
 
     // Simulate processing time (multiple testing correction, result filtering)
     await this.simulateProcessing(200);
