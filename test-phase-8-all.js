@@ -6,11 +6,10 @@
 import { spawnSync } from 'child_process';
 
 const suites = [
-  'test-phase-8-1-policy.js',
-  'test-phase-8-2-rollout.js',
-  'test-phase-8-3-containment.js',
-  'test-phase-8-4-evidence.js',
-  'test-phase-8-5-governance.js',
+  'test-phase-8-1-awareness.js',
+  'test-phase-8-2-architecture.js',
+  'test-phase-8-3-meta-learning.js',
+  'test-phase-8-4-validation.js',
   'test-phase-8-completion.js'
 ];
 
