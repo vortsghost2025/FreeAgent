@@ -99,6 +99,13 @@ export class FailoverCoordinator {
     this.activeFailovers = new Map();
     this.failoverLog = [];
     this.recoveryTimeout = options.recoveryTimeout || 30000;
+    this.deterministic = options.deterministic === true;
+    this.randomFn = typeof options.randomFn === 'function' ? options.randomFn : Math.random;
+  }
+
+  _random() {
+    if (this.deterministic) return 0.5;
+    return this.randomFn();
   }
 
   createFailoverPlan(planId, primaryCluster, secondaryCluster, resources = []) {
@@ -123,7 +130,7 @@ export class FailoverCoordinator {
     // Simulate failover test - always succeed for deterministic behavior
     const testResult = {
       planId,
-      testTime: 2000 + Math.random() * 3000, // 2-5 seconds
+      testTime: 2000 + this._random() * 3000, // 2-5 seconds
       resourcesValidated: plan.resources.length,
       success: true // Always succeed for reliability
     };
@@ -191,6 +198,13 @@ export class DataReplicationManager {
     this.replicationGroups = new Map();
     this.syncLog = [];
     this.consistencyLevel = options.consistencyLevel || 'EVENTUAL'; // STRONG, EVENTUAL, WEAK
+    this.deterministic = options.deterministic === true;
+    this.randomFn = typeof options.randomFn === 'function' ? options.randomFn : Math.random;
+  }
+
+  _random() {
+    if (this.deterministic) return 0.5;
+    return this.randomFn();
   }
 
   createReplicationGroup(groupId, primaryCluster, replicaClusters = []) {
@@ -239,7 +253,7 @@ export class DataReplicationManager {
 
     // Simulate syncing each replica
     for (const cluster of group.replicaClusters) {
-      if (Math.random() > 0.1) { // 90% success
+      if (this._random() > 0.1) { // 90% success
         syncedCount++;
       } else {
         failedCount++;
@@ -302,6 +316,13 @@ export class DisasterRecoveryEngine {
     this.activeRecoveries = new Map();
     this.recoveryLog = [];
     this.rtoTarget = options.rtoTarget || 60000; // 60 second RTO
+    this.deterministic = options.deterministic === true;
+    this.randomFn = typeof options.randomFn === 'function' ? options.randomFn : Math.random;
+  }
+
+  _random() {
+    if (this.deterministic) return 0.5;
+    return this.randomFn();
   }
 
   createRecoveryPlan(planId, affectedServices = [], backupLocation = '') {
@@ -347,8 +368,8 @@ export class DisasterRecoveryEngine {
       const stageResult = {
         service,
         startedAt: Date.now(),
-        duration: Math.random() * 10000 + 5000,
-        success: Math.random() > 0.2 // 80% success
+        duration: this._random() * 10000 + 5000,
+        success: this._random() > 0.2 // 80% success
       };
 
       if (stageResult.success) {

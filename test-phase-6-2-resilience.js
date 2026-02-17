@@ -53,7 +53,7 @@ const summary = monitor.getHealthySummary();
 assert(summary.healthy === 1 && summary.degraded === 1 && summary.failing === 1, 'Health monitor: Get summary');
 
 // Test 6: Create failover plan
-const failover = new FailoverCoordinator();
+const failover = new FailoverCoordinator({ deterministic: true });
 failover.createFailoverPlan('plan-1', 'cluster-1', 'cluster-2', ['svc-1', 'svc-2', 'svc-3']);
 assert(failover.failoverPlans.has('plan-1'), 'Failover coordinator: Create plan');
 
@@ -78,7 +78,7 @@ const history = failover.getFailoverHistory();
 assert(history.length === 1, 'Failover coordinator: Failover history');
 
 // Test 12: Create replication group
-const replication = new DataReplicationManager({ consistencyLevel: 'STRONG' });
+const replication = new DataReplicationManager({ consistencyLevel: 'STRONG', deterministic: true });
 replication.createReplicationGroup('group-1', 'cluster-1', ['cluster-2', 'cluster-3']);
 assert(replication.replicationGroups.has('group-1'), 'Data replication: Create group');
 
@@ -99,7 +99,7 @@ const repStats = replication.getReplicationStats();
 assert(repStats.totalGroups === 1, 'Data replication: Replication stats');
 
 // Test 17: Create recovery plan
-const recovery = new DisasterRecoveryEngine();
+const recovery = new DisasterRecoveryEngine({ deterministic: true });
 recovery.createRecoveryPlan('recovery-1', ['AUTH', 'DATA', 'QUEUE'], 'backup-zone-1');
 assert(recovery.recoveryPlans.has('recovery-1'), 'Disaster recovery: Create plan');
 
@@ -116,7 +116,7 @@ const recStats = recovery.getRecoveryStats();
 assert(recStats.totalRecoveries === 1, 'Disaster recovery: Recovery stats');
 
 // Test 21: Engine register cluster
-const engine = new CrossClusterResilienceEngine();
+const engine = new CrossClusterResilienceEngine({ deterministic: true });
 engine.registerCluster('engine-cluster-1');
 engine.registerCluster('engine-cluster-2');
 assert(engine.monitor.clusterHealth.size === 2, 'Resilience engine: Register clusters');
