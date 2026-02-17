@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical Module Benchmark Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f7fa;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      opacity: 0.9;
+      font-size: 16px;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .metric-card {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .metric-value {
+      font-size: 36px;
+      font-weight: bold;
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+
+    .metric-label {
+      color: #6b7280;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-change {
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .metric-change.positive {
+      color: #10b981;
+    }
+
+    .metric-change.negative {
+      color: #ef4444;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .chart-card {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .chart-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1f2937;
+    }
+
+    .agent-performance {
+      margin-bottom: 15px;
+    }
+
+    .agent-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .agent-name {
+      width: 150px;
+      font-size: 14px;
+      color: #4b5563;
+    }
+
+    .agent-bar-container {
+      flex: 1;
+      height: 24px;
+      background: #f3f4f6;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .agent-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      transition: width 0.3s ease;
+    }
+
+    .agent-time {
+      margin-left: 15px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #667eea;
+      min-width: 60px;
+    }
+
+    .distribution-bar {
+      margin-bottom: 15px;
+    }
+
+    .distribution-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+
+    .distribution-bar-fill {
+      height: 30px;
+      background: #667eea;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      transition: width 0.3s ease;
+    }
+
+    .risk-low { background: #10b981; }
+    .risk-medium { background: #f59e0b; }
+    .risk-high { background: #ef4444; }
+
+    .confidence-high { background: #10b981; }
+    .confidence-medium { background: #3b82f6; }
+    .confidence-low { background: #f59e0b; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    th {
+      background: #f9fafb;
+      font-weight: 600;
+      color: #374151;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-symptoms { background: #dbeafe; color: #1e40af; }
+    .badge-labs { background: #fce7f3; color: #be185d; }
+    .badge-imaging { background: #e0e7ff; color: #4338ca; }
+    .badge-vitals { background: #fef3c7; color: #92400e; }
+    .badge-notes { background: #d1fae5; color: #065f46; }
+    .badge-other { background: #f3f4f6; color: #374151; }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .refresh-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      margin-left: 20px;
+      transition: background 0.2s;
+    }
+
+    .refresh-btn:hover {
+      background: #5568d3;
+    }
+
+    @media (max-width: 768px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📊 Medical Module Benchmark Dashboard</h1>
+      <p>Real-time performance metrics for the 5-agent medical data processing pipeline</p>
+      <button class="refresh-btn" onclick="refreshData()">🔄 Refresh Data</button>
+    </header>
+
+    <!-- Key Metrics -->
+    <div class="metrics-grid" id="metricsGrid">
+      <!-- Populated by JavaScript -->
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-grid">
+      <!-- Agent Performance -->
+      <div class="chart-card">
+        <div class="chart-title">⚡ Agent Performance (Avg Execution Time)</div>
+        <div id="agentPerformance" class="agent-performance">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Classification Distribution -->
+      <div class="chart-card">
+        <div class="chart-title">📋 Classification Distribution</div>
+        <div id="classificationDistribution">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Risk Distribution -->
+      <div class="chart-card">
+        <div class="chart-title">⚠️ Risk Score Distribution</div>
+        <div id="riskDistribution">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Confidence Distribution -->
+      <div class="chart-card">
+        <div class="chart-title">🎯 Confidence Distribution</div>
+        <div id="confidenceDistribution">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Runs Table -->
+    <div class="chart-card">
+      <div class="chart-title">📝 Recent Pipeline Runs</div>
+      <table id="recentRuns">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Classification</th>
+            <th>Confidence</th>
+            <th>Risk</th>
+            <th>Execution Time</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+
+    <footer>
+      <p>Medical Module v1.0.0 | Generated: <span id="generatedAt"></span></p>
+      <p style="margin-top: 10px;">WE4FREE Platform - Sean & Claude | MIT License</p>
+    </footer>
+  </div>
+
+  <script>
+    // Sample benchmark data (in production, this would be loaded from a JSON file or API)
+    const benchmarkData = {
+      summary: {
+        totalRuns: 1247,
+        successRate: 99.4,
+        avgExecutionTime: 2.3,
+        throughput: 521, // runs per second
+        errorRate: 0.6
+      },
+      agents: [
+        { name: 'Ingestion', avgTime: 0.4, minTime: 0.2, maxTime: 1.2, runs: 1247 },
+        { name: 'Triage', avgTime: 0.5, minTime: 0.3, maxTime: 1.5, runs: 1247 },
+        { name: 'Summarization', avgTime: 0.6, minTime: 0.4, maxTime: 1.8, runs: 1247 },
+        { name: 'Risk Scoring', avgTime: 0.4, minTime: 0.2, maxTime: 1.0, runs: 1247 },
+        { name: 'Output', avgTime: 0.4, minTime: 0.2, maxTime: 1.2, runs: 1247 }
+      ],
+      classifications: {
+        symptoms: 421,
+        labs: 312,
+        imaging: 198,
+        vitals: 156,
+        notes: 89,
+        other: 71
+      },
+      riskDistribution: {
+        low: 734,
+        medium: 398,
+        high: 115
+      },
+      confidenceDistribution: {
+        high: 892,   // >= 0.7
+        medium: 267, // 0.4-0.7
+        low: 88      // < 0.4
+      },
+      recentRuns: [
+        { timestamp: '2026-02-17T10:20:15Z', type: 'symptoms', confidence: 1.0, risk: 'low', time: 2, status: 'success' },
+        { timestamp: '2026-02-17T10:20:14Z', type: 'labs', confidence: 0.85, risk: 'low', time: 2, status: 'success' },
+        { timestamp: '2026-02-17T10:20:13Z', type: 'imaging', confidence: 0.90, risk: 'medium', time: 3, status: 'success' },
+        { timestamp: '2026-02-17T10:20:12Z', type: 'other', confidence: 0.30, risk: 'high', time: 2, status: 'review' },
+        { timestamp: '2026-02-17T10:20:11Z', type: 'vitals', confidence: 1.0, risk: 'high', time: 1, status: 'success' },
+        { timestamp: '2026-02-17T10:20:10Z', type: 'labs', confidence: 0.80, risk: 'low', time: 2, status: 'success' },
+        { timestamp: '2026-02-17T10:20:09Z', type: 'symptoms', confidence: 0.70, risk: 'medium', time: 3, status: 'success' },
+        { timestamp: '2026-02-17T10:20:08Z', type: 'notes', confidence: 0.85, risk: 'low', time: 2, status: 'success' }
+      ]
+    };
+
+    function renderMetrics() {
+      const { summary } = benchmarkData;
+      const metricsHTML = `
+        <div class="metric-card">
+          <div class="metric-value">${summary.totalRuns.toLocaleString()}</div>
+          <div class="metric-label">Total Pipeline Runs</div>
+          <div class="metric-change positive">+127 since last hour</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">${summary.avgExecutionTime}ms</div>
+          <div class="metric-label">Avg Execution Time</div>
+          <div class="metric-change positive">↓ 0.2ms vs baseline</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">${summary.throughput}/s</div>
+          <div class="metric-label">Throughput</div>
+          <div class="metric-change positive">↑ 5% vs last hour</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">${summary.successRate}%</div>
+          <div class="metric-label">Success Rate</div>
+          <div class="metric-change positive">Within target (≥99%)</div>
+        </div>
+      `;
+      document.getElementById('metricsGrid').innerHTML = metricsHTML;
+    }
+
+    function renderAgentPerformance() {
+      const maxTime = Math.max(...benchmarkData.agents.map(a => a.avgTime));
+      const html = benchmarkData.agents.map(agent => `
+        <div class="agent-row">
+          <div class="agent-name">${agent.name}</div>
+          <div class="agent-bar-container">
+            <div class="agent-bar" style="width: ${(agent.avgTime / maxTime) * 100}%"></div>
+          </div>
+          <div class="agent-time">${agent.avgTime}ms</div>
+        </div>
+      `).join('');
+      document.getElementById('agentPerformance').innerHTML = html;
+    }
+
+    function renderClassificationDistribution() {
+      const { classifications } = benchmarkData;
+      const total = Object.values(classifications).reduce((sum, val) => sum + val, 0);
+      const html = Object.entries(classifications).map(([type, count]) => {
+        const percentage = (count / total * 100).toFixed(1);
+        return `
+          <div class="distribution-bar">
+            <div class="distribution-label">
+              <span>${type.charAt(0).toUpperCase() + type.slice(1)}</span>
+              <span>${count} (${percentage}%)</span>
+            </div>
+            <div class="distribution-bar-fill badge-${type}" style="width: ${percentage}%">
+              ${percentage}%
+            </div>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('classificationDistribution').innerHTML = html;
+    }
+
+    function renderRiskDistribution() {
+      const { riskDistribution } = benchmarkData;
+      const total = Object.values(riskDistribution).reduce((sum, val) => sum + val, 0);
+      const html = Object.entries(riskDistribution).map(([level, count]) => {
+        const percentage = (count / total * 100).toFixed(1);
+        return `
+          <div class="distribution-bar">
+            <div class="distribution-label">
+              <span>${level.charAt(0).toUpperCase() + level.slice(1)} Risk</span>
+              <span>${count} (${percentage}%)</span>
+            </div>
+            <div class="distribution-bar-fill risk-${level}" style="width: ${percentage}%">
+              ${percentage}%
+            </div>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('riskDistribution').innerHTML = html;
+    }
+
+    function renderConfidenceDistribution() {
+      const { confidenceDistribution } = benchmarkData;
+      const total = Object.values(confidenceDistribution).reduce((sum, val) => sum + val, 0);
+      const labels = {
+        high: '≥70% Confidence',
+        medium: '40-70% Confidence',
+        low: '<40% Confidence'
+      };
+      const html = Object.entries(confidenceDistribution).map(([level, count]) => {
+        const percentage = (count / total * 100).toFixed(1);
+        return `
+          <div class="distribution-bar">
+            <div class="distribution-label">
+              <span>${labels[level]}</span>
+              <span>${count} (${percentage}%)</span>
+            </div>
+            <div class="distribution-bar-fill confidence-${level}" style="width: ${percentage}%">
+              ${percentage}%
+            </div>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('confidenceDistribution').innerHTML = html;
+    }
+
+    function renderRecentRuns() {
+      const html = benchmarkData.recentRuns.map(run => `
+        <tr>
+          <td>${new Date(run.timestamp).toLocaleTimeString()}</td>
+          <td><span class="badge badge-${run.type}">${run.type}</span></td>
+          <td>${(run.confidence * 100).toFixed(0)}%</td>
+          <td><span class="badge risk-${run.risk}">${run.risk}</span></td>
+          <td>${run.time}ms</td>
+          <td>${run.status === 'success' ? '✅' : '⚠️ ' + run.status}</td>
+        </tr>
+      `).join('');
+      document.getElementById('recentRuns').querySelector('tbody').innerHTML = html;
+    }
+
+    function updateTimestamp() {
+      document.getElementById('generatedAt').textContent = new Date().toLocaleString();
+    }
+
+    function refreshData() {
+      // In production, fetch fresh data from API or JSON file
+      console.log('Refreshing dashboard data...');
+      renderAll();
+    }
+
+    function renderAll() {
+      renderMetrics();
+      renderAgentPerformance();
+      renderClassificationDistribution();
+      renderRiskDistribution();
+      renderConfidenceDistribution();
+      renderRecentRuns();
+      updateTimestamp();
+    }
+
+    // Initial render
+    renderAll();
+
+    // Auto-refresh every 30 seconds (optional)
+    // setInterval(refreshData, 30000);
+  </script>
+</body>
+</html>

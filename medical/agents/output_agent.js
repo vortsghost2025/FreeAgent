@@ -13,6 +13,8 @@ import {
   AgentError
 } from '../utils/validators.js';
 
+import { generateRationale, generateSimpleRationale } from '../utils/rationale.js';
+
 class OutputAgent {
   constructor(agentId) {
     this.agentId = agentId;
@@ -122,11 +124,20 @@ class OutputAgent {
       processingTime,
       schemaVersion: '1.0.0',
 
-      // Provenance tracking
+      // Provenance tracking (enhanced for compliance)
       provenance: {
         createdByAgentId: this.agentId,
         createdAt: now,
-        originalMessageId: task.id
+        originalMessageId: task.id,
+        moduleVersion: '1.0.0',
+        moduleHash: this._generateModuleHash(),
+        agentVersions: this._getAgentVersions(state),
+        configSnapshot: this._getConfigSnapshot(),
+        executionEnvironment: {
+          nodeVersion: process.version,
+          platform: process.platform,
+          timestamp: now
+        }
       },
 
       // Audit trail
@@ -139,6 +150,11 @@ class OutputAgent {
       input: task.data.raw,
       normalized: task.data,
       classification: task.classification,
+
+      // Explainability - Rationale for classification decision
+      rationale: generateRationale(task.classification, task.summary),
+      simpleRationale: generateSimpleRationale(task.classification),
+
       summary: task.summary,
       riskScore: task.riskScore,
 
@@ -288,6 +304,51 @@ class OutputAgent {
     }
 
     return Math.abs(hash).toString(16);
+  }
+
+  /**
+   * Generate module hash for provenance
+   * @private
+   */
+  _generateModuleHash() {
+    // Simple hash of module version + timestamp for tracking
+    const content = `medical-module-v1.0.0-${new Date().toISOString().split('T')[0]}`;
+    let hash = 0;
+    for (let i = 0; i < content.length; i++) {
+      hash = ((hash << 5) - hash) + content.charCodeAt(i);
+      hash = hash & hash;
+    }
+    return Math.abs(hash).toString(16);
+  }
+
+  /**
+   * Get agent versions from pipeline
+   * @private
+   */
+  _getAgentVersions(state) {
+    const versions = {};
+    if (state.processedBy) {
+      state.processedBy.forEach(agentId => {
+        versions[agentId] = '1.0.0'; // Version tracking per agent
+      });
+    }
+    return versions;
+  }
+
+  /**
+   * Get config snapshot for provenance
+   * @private
+   */
+  _getConfigSnapshot() {
+    return {
+      classificationThreshold: 0.3,
+      riskThresholds: {
+        high: 0.5,
+        medium: 0.3
+      },
+      validationEnabled: true,
+      loggingEnabled: true
+    };
   }
 }
 

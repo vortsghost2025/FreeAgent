@@ -1,0 +1,10 @@
+{
+  "raw": {
+    "reportedItems": ["severe chest pain", "shortness of breath", "diaphoresis"],
+    "severity": "severe",
+    "onset": "sudden",
+    "duration": "2 hours"
+  },
+  "source": "cli-test",
+  "timestamp": "2026-02-17T12:00:00Z"
+}

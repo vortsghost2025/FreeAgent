@@ -1,0 +1,147 @@
+{
+  "generatedAt": "2026-02-17T10:21:58.307Z",
+  "summary": {
+    "totalRuns": 20,
+    "successRate": 100,
+    "avgExecutionTime": 0.55,
+    "throughput": 1818,
+    "errorRate": 0
+  },
+  "agents": [
+    {
+      "name": "Ingestion",
+      "avgTime": 0.09,
+      "minTime": 0,
+      "maxTime": 0.48,
+      "runs": 20
+    },
+    {
+      "name": "Triage",
+      "avgTime": 0.12,
+      "minTime": 0,
+      "maxTime": 0.66,
+      "runs": 20
+    },
+    {
+      "name": "Summarization",
+      "avgTime": 0.13,
+      "minTime": 0,
+      "maxTime": 0.72,
+      "runs": 20
+    },
+    {
+      "name": "Risk Scoring",
+      "avgTime": 0.1,
+      "minTime": 0,
+      "maxTime": 0.54,
+      "runs": 20
+    },
+    {
+      "name": "Output",
+      "avgTime": 0.11,
+      "minTime": 0,
+      "maxTime": 0.6,
+      "runs": 20
+    }
+  ],
+  "classifications": {
+    "symptoms": 5,
+    "labs": 5,
+    "imaging": 4,
+    "vitals": 3,
+    "notes": 2,
+    "other": 1
+  },
+  "riskDistribution": {
+    "low": 11,
+    "high": 8,
+    "medium": 1
+  },
+  "confidenceDistribution": {
+    "high": 16,
+    "medium": 3,
+    "low": 1
+  },
+  "recentRuns": [
+    {
+      "timestamp": "2026-02-17T10:21:58.304Z",
+      "type": "imaging",
+      "confidence": 0.95,
+      "risk": "high",
+      "executionTime": 1,
+      "status": "success"
+    },
+    {
+      "timestamp": "2026-02-17T10:21:58.304Z",
+      "type": "imaging",
+      "confidence": 1,
+      "risk": "high",
+      "executionTime": 0,
+      "status": "success"
+    },
+    {
+      "timestamp": "2026-02-17T10:21:58.304Z",
+      "type": "imaging",
+      "confidence": 1,
+      "risk": "high",
+      "executionTime": 0,
+      "status": "success"
+    },
+    {
+      "timestamp": "2026-02-17T10:21:58.305Z",
+      "type": "imaging",
+      "confidence": 0.95,
+      "risk": "high",
+      "executionTime": 1,
+      "status": "success"
+    },
+    {
+      "timestamp": "2026-02-17T10:21:58.305Z",
+      "type": "vitals",
+      "confidence": 0.6,
+      "risk": "low",
+      "executionTime": 0,
+      "status": "success"
+    },
+    {
+      "timestamp": "2026-02-17T10:21:58.305Z",
+      "type": "vitals",
+      "confidence": 0.6,
+      "risk": "low",
+      "executionTime": 0,
+      "status": "success"
+    },
+    {
+      "timestamp": "2026-02-17T10:21:58.306Z",
+      "type": "vitals",
+      "confidence": 0.5,
+      "risk": "low",
+      "executionTime": 1,
+      "status": "success"
+    },
+    {
+      "timestamp": "2026-02-17T10:21:58.306Z",
+      "type": "notes",
+      "confidence": 1,
+      "risk": "high",
+      "executionTime": 0,
+      "status": "success"
+    },
+    {
+      "timestamp": "2026-02-17T10:21:58.306Z",
+      "type": "notes",
+      "confidence": 0.95,
+      "risk": "high",
+      "executionTime": 0,
+      "status": "success"
+    },
+    {
+      "timestamp": "2026-02-17T10:21:58.307Z",
+      "type": "other",
+      "confidence": 0,
+      "risk": "medium",
+      "executionTime": 1,
+      "status": "success"
+    }
+  ]
+}
