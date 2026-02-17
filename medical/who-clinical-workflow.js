@@ -9,6 +9,8 @@ import WHODataFetcher from './who/who-data-fetcher.js';
 import { normalizeWHOCase } from './normalizers/who-normalizer.js';
 import { mapWHOToInternal } from './mapping/who-mapper.js';
 import { evaluateRules, loadStandards } from './rules/ruleEngine.js';
+import { DifferentialDiagnosisEngine } from './clinical-intelligence/differential-diagnosis-engine.js';
+import { ClinicalRedFlagDetector } from './clinical-intelligence/red-flag-detector.js';
 
 /**
  * Clinical Workflow Orchestrator
@@ -18,6 +20,8 @@ export class WHOClinicalWorkflow {
     this.dataFetcher = new WHODataFetcher({ mockMode: options.mockMode !== false });
     this.standardsVersion = options.standardsVersion || '2024';
     this.standards = null;
+    this.differentialEngine = null;
+    this.redFlagDetector = null;
     this.debug = options.debug || false;
   }
 
@@ -27,7 +31,11 @@ export class WHOClinicalWorkflow {
   async initialize() {
     if (this.debug) console.log('[Workflow] Initializing...');
     this.standards = loadStandards(this.standardsVersion);
+    this.differentialEngine = new DifferentialDiagnosisEngine(this.standards, { debug: this.debug });
+    this.redFlagDetector = new ClinicalRedFlagDetector({ debug: this.debug });
     if (this.debug) console.log(`[Workflow] Loaded standards: ${this.standards.metadata.name} v${this.standards.metadata.version}`);
+    if (this.debug) console.log(`[Workflow] Differential diagnosis engine initialized`);
+    if (this.debug) console.log(`[Workflow] Red-flag detector initialized`);
   }
 
   /**
@@ -73,6 +81,17 @@ export class WHOClinicalWorkflow {
     if (this.debug) console.log('[Workflow] Step 6: Checking critical protocols...');
     const protocols = this.identifyProtocols(evaluation);
 
+    // Step 7: Generate differential diagnosis
+    if (this.debug) console.log('[Workflow] Step 7: Generating differential diagnosis...');
+    const differential = this.differentialEngine.generateDifferential(normalizedData, {
+      maxDifferentials: 5,
+      minScore: 15
+    });
+
+    // Step 8: Detect critical red flags
+    if (this.debug) console.log('[Workflow] Step 8: Detecting critical red flags...');
+    const redFlags = this.redFlagDetector.detectRedFlags(normalizedData);
+
     const processingTime = Date.now() - startTime;
 
     return {
@@ -90,6 +109,8 @@ export class WHOClinicalWorkflow {
       },
       recommendations,
       protocols,
+      differential,
+      redFlags,
       processingTime,
       timestamp: new Date().toISOString(),
       standardsVersion: this.standardsVersion
@@ -388,6 +409,46 @@ export class WHOClinicalWorkflow {
         lines.push(`${i + 1}. ${protocol.name} (${protocol.urgency})`);
         lines.push(`   ${protocol.reason}`);
       });
+    }
+
+    if (result.redFlags && result.redFlags.length > 0) {
+      lines.push(`\n🚨 --- CRITICAL RED FLAGS (${result.redFlags.length}) ---`);
+      const critical = result.redFlags.filter(f => f.severity === 'critical');
+      const urgent = result.redFlags.filter(f => f.severity === 'urgent');
+
+      if (critical.length > 0) {
+        critical.slice(0, 3).forEach((flag, i) => {
+          lines.push(`${i + 1}. ${flag.flag} ${flag.abcCategory ? `[${flag.abcCategory}]` : ''}`);
+          lines.push(`   ${flag.value}`);
+          lines.push(`   ACTION: ${flag.action}`);
+        });
+      }
+
+      if (urgent.length > 0 && critical.length < 3) {
+        urgent.slice(0, 2).forEach((flag, i) => {
+          lines.push(`${critical.length + i + 1}. ${flag.flag}`);
+          lines.push(`   ${flag.value}`);
+        });
+      }
+    }
+
+    if (result.differential && result.differential.differentials && result.differential.differentials.length > 0) {
+      lines.push(`\n--- DIFFERENTIAL DIAGNOSIS ---`);
+      result.differential.differentials.forEach((dx, i) => {
+        lines.push(`${i + 1}. ${dx.diagnosis}`);
+        lines.push(`   Likelihood: ${dx.likelihood.toUpperCase()} (Score: ${dx.score.toFixed(1)}, Confidence: ${dx.confidence.toFixed(0)}%)`);
+        if (dx.supporting && dx.supporting.length > 0) {
+          const supportingText = dx.supporting.slice(0, 2).map(s => s.text).join(', ');
+          lines.push(`   Supporting: ${supportingText}`);
+        }
+      });
+
+      if (result.differential.cantMiss && result.differential.cantMiss.length > 0) {
+        lines.push(`\n   ⚠️  CAN'T MISS:`);
+        result.differential.cantMiss.forEach(dx => {
+          lines.push(`   • ${dx.diagnosis}: ${dx.reason}`);
+        });
+      }
     }
 
     lines.push(`\n--- METADATA ---`);
