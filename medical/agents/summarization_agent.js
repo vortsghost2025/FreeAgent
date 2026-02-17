@@ -5,6 +5,14 @@
  * STRUCTURAL ONLY - No clinical interpretation or medical reasoning
  */
 
+import {
+  validateTask,
+  validateState,
+  validateSummary,
+  ValidationError,
+  AgentError
+} from '../utils/validators.js';
+
 class SummarizationAgent {
   constructor(agentId) {
     this.agentId = agentId;
@@ -18,28 +26,52 @@ class SummarizationAgent {
    * @returns {Object} - {task, state} with summary
    */
   async run(task, state) {
-    console.log(`[${this.agentId}] Generating structured summary...`);
+    try {
+      // Validate inputs
+      validateTask(task, this.agentId);
+      validateState(state, this.agentId);
 
-    // TODO: USER FILLS THIS - Summarization logic based on input type
-    // Example summaries:
-    // - Extract key-value pairs
-    // - Identify structured fields
-    // - Create normalized representation
-    // NO CLINICAL INTERPRETATION
-
-    const summary = this._generateSummary(task.data, task.classification);
-
-    return {
-      task: {
-        ...task,
-        summary
-      },
-      state: {
-        ...state,
-        summarizationComplete: true,
-        processedBy: [...(state.processedBy || []), this.agentId]
+      if (!task.classification) {
+        throw new ValidationError(
+          'Task missing required classification from previous stage',
+          'task.classification',
+          task
+        );
       }
-    };
+
+      console.log(`[${this.agentId}] Generating structured summary...`);
+
+      const summary = this._generateSummary(task.data, task.classification);
+
+      // Validate output
+      validateSummary(summary, this.agentId);
+
+      return {
+        task: {
+          ...task,
+          summary
+        },
+        state: {
+          ...state,
+          summarizationComplete: true,
+          processedBy: [...(state.processedBy || []), this.agentId]
+        }
+      };
+    } catch (error) {
+      console.error(`[${this.agentId}] Error during summarization:`, error.message);
+
+      // Re-throw validation errors
+      if (error instanceof ValidationError) {
+        throw error;
+      }
+
+      // Wrap other errors
+      throw new AgentError(
+        `Summarization failed: ${error.message}`,
+        this.agentId,
+        'summarization'
+      );
+    }
   }
 
   /**

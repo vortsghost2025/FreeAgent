@@ -6,6 +6,14 @@
  * All scoring rules are PLACEHOLDERS for user to define
  */
 
+import {
+  validateTask,
+  validateState,
+  validateRiskScore,
+  ValidationError,
+  AgentError
+} from '../utils/validators.js';
+
 class RiskAgent {
   constructor(agentId) {
     this.agentId = agentId;
@@ -19,22 +27,61 @@ class RiskAgent {
    * @returns {Object} - {task, state} with risk scores
    */
   async run(task, state) {
-    console.log(`[${this.agentId}] Applying structural risk scoring...`);
+    try {
+      // Validate inputs
+      validateTask(task, this.agentId);
+      validateState(state, this.agentId);
 
-    // Apply structural risk scoring (no clinical judgment)
-    const riskScore = this._calculateRiskScore(task.summary, task.classification, task);
-
-    return {
-      task: {
-        ...task,
-        riskScore
-      },
-      state: {
-        ...state,
-        riskScoringComplete: true,
-        processedBy: [...(state.processedBy || []), this.agentId]
+      if (!task.summary) {
+        throw new ValidationError(
+          'Task missing required summary from previous stage',
+          'task.summary',
+          task
+        );
       }
-    };
+
+      if (!task.classification) {
+        throw new ValidationError(
+          'Task missing required classification from previous stage',
+          'task.classification',
+          task
+        );
+      }
+
+      console.log(`[${this.agentId}] Applying structural risk scoring...`);
+
+      // Apply structural risk scoring (no clinical judgment)
+      const riskScore = this._calculateRiskScore(task.summary, task.classification, task);
+
+      // Validate output
+      validateRiskScore(riskScore, this.agentId);
+
+      return {
+        task: {
+          ...task,
+          riskScore
+        },
+        state: {
+          ...state,
+          riskScoringComplete: true,
+          processedBy: [...(state.processedBy || []), this.agentId]
+        }
+      };
+    } catch (error) {
+      console.error(`[${this.agentId}] Error during risk scoring:`, error.message);
+
+      // Re-throw validation errors
+      if (error instanceof ValidationError) {
+        throw error;
+      }
+
+      // Wrap other errors
+      throw new AgentError(
+        `Risk scoring failed: ${error.message}`,
+        this.agentId,
+        'risk_scoring'
+      );
+    }
   }
 
   /**
@@ -70,8 +117,17 @@ class RiskAgent {
     // Normalize to 0-1 range
     const score = Math.min(totalScore, 1.0);
 
+    // Determine severity level based on score
+    let severity = 'low';
+    if (score >= 0.5) {
+      severity = 'high';
+    } else if (score >= 0.3) {
+      severity = 'medium';
+    }
+
     return {
       score: Math.round(score * 100) / 100,
+      severity,
       factors,
       flags,
       scoringMethod: 'rule-based',

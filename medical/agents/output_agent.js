@@ -5,6 +5,14 @@
  * STRUCTURAL ONLY - No medical conclusions or recommendations
  */
 
+import {
+  validateTask,
+  validateState,
+  validateFinalOutput,
+  ValidationError,
+  AgentError
+} from '../utils/validators.js';
+
 class OutputAgent {
   constructor(agentId) {
     this.agentId = agentId;
@@ -18,27 +26,48 @@ class OutputAgent {
    * @returns {Object} - {task, state} with formatted output
    */
   async run(task, state) {
-    console.log(`[${this.agentId}] Formatting final output...`);
+    try {
+      // Validate inputs
+      validateTask(task, this.agentId);
+      validateState(state, this.agentId);
 
-    // Validate invariants
-    this._validateInvariants(task, state);
+      console.log(`[${this.agentId}] Formatting final output...`);
 
-    // TODO: USER FILLS THIS - Output formatting logic
-    // Format the final result structure
+      // Validate invariants
+      this._validateInvariants(task, state);
 
-    const formattedOutput = this._formatOutput(task, state);
+      // Format the final result structure
+      const formattedOutput = this._formatOutput(task, state);
 
-    return {
-      task: {
-        ...task,
-        output: formattedOutput
-      },
-      state: {
-        ...state,
-        outputComplete: true,
-        processedBy: [...(state.processedBy || []), this.agentId]
+      // Validate output
+      validateFinalOutput(formattedOutput, this.agentId);
+
+      return {
+        task: {
+          ...task,
+          output: formattedOutput
+        },
+        state: {
+          ...state,
+          outputComplete: true,
+          processedBy: [...(state.processedBy || []), this.agentId]
+        }
+      };
+    } catch (error) {
+      console.error(`[${this.agentId}] Error during output formatting:`, error.message);
+
+      // Re-throw validation errors
+      if (error instanceof ValidationError) {
+        throw error;
       }
-    };
+
+      // Wrap other errors
+      throw new AgentError(
+        `Output formatting failed: ${error.message}`,
+        this.agentId,
+        'output'
+      );
+    }
   }
 
   /**

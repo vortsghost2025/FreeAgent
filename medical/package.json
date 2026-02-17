@@ -1,13 +1,14 @@
 {
   "name": "medical-module",
   "version": "1.0.0",
+  "type": "module",
   "description": "Medical data processing module with agent-based pipeline architecture",
   "main": "medical-workflows.js",
   "scripts": {
-    "test": "jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:smoke": "node test-agents-smoke.js",
-    "test:unit": "jest --coverage",
-    "test:watch": "jest --watch",
+    "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
     "test:all": "npm run test:unit && npm run test:smoke"
   },
   "keywords": [
@@ -25,6 +26,7 @@
   },
   "jest": {
     "testEnvironment": "node",
+    "transform": {},
     "coverageDirectory": "coverage",
     "collectCoverageFrom": [
       "agents/**/*.js",

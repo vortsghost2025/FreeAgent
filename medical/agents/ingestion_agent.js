@@ -5,6 +5,14 @@
  * STRUCTURAL ONLY - No medical reasoning
  */
 
+import {
+  validateTask,
+  validateState,
+  validateIngestionInput,
+  ValidationError,
+  AgentError
+} from '../utils/validators.js';
+
 class IngestionAgent {
   constructor(agentId) {
     this.agentId = agentId;
@@ -18,44 +26,65 @@ class IngestionAgent {
    * @returns {Object} - {task, state} with normalized data
    */
   async run(task, state) {
-    console.log(`[${this.agentId}] Ingesting raw input...`);
+    try {
+      // Validate inputs
+      validateTask(task, this.agentId);
+      validateState(state, this.agentId);
+      validateIngestionInput(task.data, this.agentId);
 
-    const inputData = task.data;
+      console.log(`[${this.agentId}] Ingesting raw input...`);
 
-    // Extract the actual raw data (unwrap if needed)
-    const rawData = inputData.raw || inputData;
+      const inputData = task.data;
 
-    // Determine content type
-    const contentType = this._detectContentType(inputData);
+      // Extract the actual raw data (unwrap if needed)
+      const rawData = inputData.raw || inputData;
 
-    // Extract main content
-    const content = this._extractContent(inputData, contentType);
+      // Determine content type
+      const contentType = this._detectContentType(inputData);
 
-    // Analyze structure
-    const structure = this._analyzeStructure(rawData, content);
+      // Extract main content
+      const content = this._extractContent(inputData, contentType);
 
-    // Build normalized data according to NormalizedDataSchema
-    const normalizedData = {
-      raw: rawData, // Store ONLY the inner raw data, not the wrapper
-      content: content,
-      contentType: contentType,
-      timestamp: inputData.timestamp || new Date().toISOString(),
-      format: 'normalized',
-      source: inputData.source || 'unknown',
-      structure: structure
-    };
+      // Analyze structure
+      const structure = this._analyzeStructure(rawData, content);
 
-    return {
-      task: {
-        ...task,
-        data: normalizedData
-      },
-      state: {
-        ...state,
-        ingestionComplete: true,
-        processedBy: [...(state.processedBy || []), this.agentId]
+      // Build normalized data according to NormalizedDataSchema
+      const normalizedData = {
+        raw: rawData, // Store ONLY the inner raw data, not the wrapper
+        content: content,
+        contentType: contentType,
+        timestamp: inputData.timestamp || new Date().toISOString(),
+        format: 'normalized',
+        source: inputData.source || 'unknown',
+        structure: structure
+      };
+
+      return {
+        task: {
+          ...task,
+          data: normalizedData
+        },
+        state: {
+          ...state,
+          ingestionComplete: true,
+          processedBy: [...(state.processedBy || []), this.agentId]
+        }
+      };
+    } catch (error) {
+      console.error(`[${this.agentId}] Error during ingestion:`, error.message);
+
+      // Re-throw validation errors
+      if (error instanceof ValidationError) {
+        throw error;
       }
-    };
+
+      // Wrap other errors
+      throw new AgentError(
+        `Ingestion failed: ${error.message}`,
+        this.agentId,
+        'ingestion'
+      );
+    }
   }
 
   /**
