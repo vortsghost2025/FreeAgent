@@ -14,11 +14,11 @@ Here’s the lay of the land:
 • 	tests/ – the place where we prove we didn’t break everything (again)
 Getting Started
 1. 	Install the usual suspects: Node, npm, TypeScript, ESLint, Prettier
-2. 	Once things exist, run  and pray
+2. 	Once things exist, run `npm test` and pray
 3. 	Keep commits small enough that future you doesn’t swear at past you
 4. 	When importing from swarm projects, leave a breadcrumb trail so we know where the bodies came from
 Contribution Notes
-• 	Anything sensitive, cursed, or experimental goes in  (gitignored for everyone’s safety)
+• 	Anything sensitive, cursed, or experimental goes in `workspace_private/` (gitignored for everyone’s safety)
 • 	Every module you fold in gets a short “why this exists” note — no mystery meat allowed
 • 	Keep things modular, readable, and non‑chaotic — we’re building for WHO, not speedrunning spaghetti code
 
