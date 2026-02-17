@@ -220,6 +220,39 @@ Next targets for validation:
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Guide for collaborators *(coming soon)*
 - **[CLAUDE.md](CLAUDE.md)** - AI agent instructions for this codebase
 
+### Meta-Cognitive Stack (Phases 5-8)
+
+The repository includes a safety-bounded autonomous intelligence stack:
+
+- `Phase 5` Adaptive Intelligence Core
+- `Phase 6` Federated Knowledge, Resilience, Learning, Orchestration
+- `Phase 7` Autonomous Federated Evolution
+- `Phase 8` Meta-Cognitive Evolution & Self-Architecture
+
+Phase 8 modules:
+- `medical/intelligence/meta-cognitive-awareness.js`
+- `medical/intelligence/autonomous-architectural-evolution.js`
+- `medical/intelligence/meta-learning-optimizer.js`
+- `medical/intelligence/introspective-validation.js`
+- `medical/intelligence/self-architecture-orchestrator.js`
+
+Run Phase 8:
+
+```bash
+node test-phase-8-all.js
+```
+
+Core regression sweep:
+
+```bash
+node test-phase-6-1-knowledge.js
+node test-phase-6-2-resilience.js
+node test-phase-6-3-learning.js
+node test-phase-6-4-orchestration.js
+node test-phase-7-all.js
+node test-phase-8-all.js
+```
+
 ---
 
 ## 🤝 Collaboration

@@ -122,3 +122,33 @@ Supporting flows:
 - Clear boundaries between components.
 - Human‑controlled execution.
 - Transparent logs and reasoning.
+
+---
+
+## 7. Meta-Cognitive Layer (Phase 8)
+
+Phase 8 adds self-architecture capabilities on top of existing safety gates:
+
+- **Meta-Cognitive Awareness**
+: `medical/intelligence/meta-cognitive-awareness.js`
+- **Autonomous Architectural Evolution**
+: `medical/intelligence/autonomous-architectural-evolution.js`
+- **Meta-Learning Optimization**
+: `medical/intelligence/meta-learning-optimizer.js`
+- **Introspective Validation & Meta-Governance**
+: `medical/intelligence/introspective-validation.js`
+- **Self-Architecture Orchestrator**
+: `medical/intelligence/self-architecture-orchestrator.js`
+
+Core guarantees in this layer:
+
+- Constitutional compliance remains mandatory for all self-changes.
+- Architectural changes must be reversible and auditable.
+- Performance impact is bounded and tracked.
+- Rollback MTTR and architectural improvement metrics are enforced in completion criteria.
+
+Primary validation command:
+
+```bash
+node test-phase-8-all.js
+```
