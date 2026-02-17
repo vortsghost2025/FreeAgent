@@ -119,6 +119,6 @@ class IngestionAgent {
 }
 
 // Export factory function
-module.exports = {
-  createIngestionAgent: (agentId) => new IngestionAgent(agentId)
-};
+export function createIngestionAgent(agentId) {
+  return new IngestionAgent(agentId);
+}

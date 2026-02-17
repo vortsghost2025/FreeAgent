@@ -6,7 +6,7 @@
  * Enforces invariants and agent ordering
  */
 
-const { AGENT_ROLES, createAgent } = require('./medical-agent-roles.js');
+import { AGENT_ROLES, createAgent } from './medical-agent-roles.js';
 
 class MedicalWorkflowOrchestrator {
   constructor() {
@@ -199,7 +199,7 @@ function createMedicalOrchestrator() {
 }
 
 // Export orchestrator
-module.exports = {
+export {
   createMedicalOrchestrator,
   MedicalWorkflowOrchestrator
 };

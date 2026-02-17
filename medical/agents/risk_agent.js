@@ -272,6 +272,6 @@ class RiskAgent {
 }
 
 // Export factory function
-module.exports = {
-  createRiskAgent: (agentId) => new RiskAgent(agentId)
-};
+export function createRiskAgent(agentId) {
+  return new RiskAgent(agentId);
+}

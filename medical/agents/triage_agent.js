@@ -140,6 +140,6 @@ class TriageAgent {
 }
 
 // Export factory function
-module.exports = {
-  createTriageAgent: (agentId) => new TriageAgent(agentId)
-};
+export function createTriageAgent(agentId) {
+  return new TriageAgent(agentId);
+}

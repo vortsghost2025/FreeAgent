@@ -77,6 +77,38 @@ Tasks MUST have `status: 'pending'` when created or agents won't claim them.
 }
 ```
 
+## IIS Configuration Guardrail (SYSTEM-LEVEL POLICY)
+
+**The agent is strictly prohibited from modifying any IIS configuration files, including but not limited to:**
+- Any `web.config` under `C:\inetpub\wwwroot\`
+- Any `web.config` under any IIS site root or application folder
+- Any folder-level IIS configuration files
+- Any XML configuration related to IIS default documents, directory browsing, handlers, or modules
+
+**The agent must NOT attempt to fix IIS errors (including 403.14) by editing configuration files.**
+
+### Allowed Behavior:
+- The agent may diagnose IIS errors
+- The agent may explain the correct fix
+- The agent may instruct the user to apply changes in IIS Manager
+- The agent may suggest using `appcmd` or PowerShell IIS cmdlets ONLY when the user explicitly requests IIS configuration changes
+
+### Forbidden Behavior:
+- Creating, editing, or deleting any `web.config` file under IIS paths
+- Adding `<defaultDocument>` or `<directoryBrowse>` sections to any file
+- Attempting to "fix" IIS by modifying file-based configuration
+- Making assumptions about IIS site structure or default documents
+- Touching `C:\inetpub\wwwroot\` or any subfolder unless explicitly instructed by the user
+
+### Required Response When User Reports an IIS Error:
+1. Diagnose the cause
+2. Explain the correct fix
+3. Instruct the user to apply the fix in IIS Manager
+4. Do NOT modify any IIS config files
+
+### IIS Root Protection Rule:
+The agent must treat the IIS site root (`C:\inetpub\wwwroot`) as a protected system area. The agent may not create, modify, or delete any files in this directory unless the user explicitly instructs it.
+
 ## Common Issues & Solutions
 
 ### Issue: "Map/reduce task timeout"

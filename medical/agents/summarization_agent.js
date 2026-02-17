@@ -235,6 +235,6 @@ class SummarizationAgent {
 }
 
 // Export factory function
-module.exports = {
-  createSummarizationAgent: (agentId) => new SummarizationAgent(agentId)
-};
+export function createSummarizationAgent(agentId) {
+  return new SummarizationAgent(agentId);
+}

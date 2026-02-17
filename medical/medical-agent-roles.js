@@ -5,11 +5,11 @@
  * STRUCTURAL ONLY - No medical domain logic
  */
 
-const { createIngestionAgent } = require('./agents/ingestion_agent.js');
-const { createTriageAgent } = require('./agents/triage_agent.js');
-const { createSummarizationAgent } = require('./agents/summarization_agent.js');
-const { createRiskAgent } = require('./agents/risk_agent.js');
-const { createOutputAgent } = require('./agents/output_agent.js');
+import { createIngestionAgent } from './agents/ingestion_agent.js';
+import { createTriageAgent } from './agents/triage_agent.js';
+import { createSummarizationAgent } from './agents/summarization_agent.js';
+import { createRiskAgent } from './agents/risk_agent.js';
+import { createOutputAgent } from './agents/output_agent.js';
 
 // Agent role definitions
 const AGENT_ROLES = {
@@ -93,7 +93,7 @@ function canAgentHandleTask(role, taskType) {
 }
 
 // Export role system
-module.exports = {
+export {
   AGENT_ROLES,
   AGENT_CAPABILITIES,
   createAgent,

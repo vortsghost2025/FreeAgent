@@ -263,6 +263,6 @@ class OutputAgent {
 }
 
 // Export factory function
-module.exports = {
-  createOutputAgent: (agentId) => new OutputAgent(agentId)
-};
+export function createOutputAgent(agentId) {
+  return new OutputAgent(agentId);
+}
