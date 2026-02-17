@@ -124,10 +124,17 @@ export class ArchitecturalChangeLedger {
   setRolledBack(changeId, reason = 'MANUAL_ROLLBACK') {
     const change = this.getChange(changeId);
     if (!change) return { success: false, error: 'CHANGE_NOT_FOUND' };
+    const rolledBackAt = Date.now();
+    const rollbackStartedAt = this._resolveRollbackStart(change);
+    const rollbackDurationSeconds = rollbackStartedAt == null
+      ? null
+      : Number(((rolledBackAt - rollbackStartedAt) / 1000).toFixed(4));
     change.status = 'ROLLED_BACK';
     change.rollback = {
       reason,
-      rolledBackAt: Date.now()
+      rollbackStartedAt,
+      rolledBackAt,
+      rollbackDurationSeconds
     };
     this._log('CHANGE_ROLLED_BACK', changeId, { reason });
     return { success: true, change };
@@ -140,6 +147,15 @@ export class ArchitecturalChangeLedger {
     const implemented = all.filter((c) => c.status === 'IMPLEMENTED').length;
     const rolledBack = all.filter((c) => c.status === 'ROLLED_BACK').length;
     const pendingHuman = all.filter((c) => c.status === 'PENDING_HUMAN_REVIEW').length;
+    const improvementImplementedPct = all
+      .filter((c) => c.status === 'IMPLEMENTED')
+      .reduce((sum, c) => sum + Number(c.expectedImprovementPct || 0), 0);
+    const rollbackDurations = all
+      .filter((c) => c.status === 'ROLLED_BACK' && c.rollback && Number.isFinite(c.rollback.rollbackDurationSeconds))
+      .map((c) => Number(c.rollback.rollbackDurationSeconds));
+    const meanRollbackSeconds = rollbackDurations.length > 0
+      ? Number((rollbackDurations.reduce((sum, value) => sum + value, 0) / rollbackDurations.length).toFixed(4))
+      : null;
 
     return {
       total: all.length,
@@ -152,8 +168,21 @@ export class ArchitecturalChangeLedger {
       constitutionalComplianceRate: Number((validated > 0 ? compliantValidated / validated : 1).toFixed(4)),
       reversibleCoverage: Number((all.length > 0
         ? all.filter((c) => c.reversible === true && typeof c.rollbackPlan === 'string' && c.rollbackPlan.length > 0).length / all.length
-        : 1).toFixed(4))
+        : 1).toFixed(4)),
+      architecturalImprovementPct: Number(improvementImplementedPct.toFixed(4)),
+      meanRollbackSeconds
     };
+  }
+
+  _resolveRollbackStart(change) {
+    if (!change) return null;
+    if (change.failureDetectedAt != null) return change.failureDetectedAt;
+    if (change.rollbackRequestedAt != null) return change.rollbackRequestedAt;
+    if (change.implementation && change.implementation.implementedAt != null) {
+      return change.implementation.implementedAt;
+    }
+    if (change.createdAt != null) return change.createdAt;
+    return null;
   }
 
   _log(type, changeId, payload = {}) {
@@ -200,6 +229,7 @@ export class AutonomousArchitecturalEvolutionEngine {
           0,
           1000
         ),
+        expectedImprovementPct: this._boundedNumber(proposal.expectedImprovementPct, 0, 0, 1000),
         safetyRiskScore: this._boundedNumber(proposal.safetyRiskScore, proposal.riskScore || 0, 0, 1),
         auditRef: proposal.auditRef || `audit:${changeId}`,
         createdAt: Date.now(),
@@ -273,10 +303,27 @@ export class AutonomousArchitecturalEvolutionEngine {
     return { success: true, status: 'IMPLEMENTED', changeId };
   }
 
-  rollbackChange(changeId, reason = 'MANUAL_ROLLBACK') {
+  rollbackChange(changeId, reason = 'MANUAL_ROLLBACK', metadata = {}) {
+    const change = this.ledger.getChange(changeId);
+    if (!change) return { success: false, error: 'CHANGE_NOT_FOUND' };
+    if (metadata.failureDetectedAt != null) {
+      change.failureDetectedAt = metadata.failureDetectedAt;
+    }
+    if (metadata.rollbackRequestedAt != null) {
+      change.rollbackRequestedAt = metadata.rollbackRequestedAt;
+    }
+
     const result = this.ledger.setRolledBack(changeId, reason);
     if (!result.success) return result;
-    return { success: true, status: 'ROLLED_BACK', changeId, reason };
+    return {
+      success: true,
+      status: 'ROLLED_BACK',
+      changeId,
+      reason,
+      rollbackDurationSeconds: result.change && result.change.rollback
+        ? result.change.rollback.rollbackDurationSeconds
+        : null
+    };
   }
 
   getEvolutionReport() {

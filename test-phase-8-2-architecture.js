@@ -107,6 +107,11 @@ assert(rolledBack.success && rolledBack.status === 'ROLLED_BACK', 'Evolution eng
 const report = engine.getEvolutionReport();
 assert(report.stats.total === 2 && report.stats.implemented >= 1, 'Evolution engine: report change lifecycle stats');
 
+// Test 10: Rollback MTTR tracked and bounded
+assert(
+  report.stats.meanRollbackSeconds != null && report.stats.meanRollbackSeconds <= 30,
+  'Evolution engine: track rollback mean time within policy window'
+);
+
 console.log(`\nTests: ${testsPassed}/${testsPassed + testsFailed} passed`);
 process.exit(testsFailed > 0 ? 1 : 0);
-

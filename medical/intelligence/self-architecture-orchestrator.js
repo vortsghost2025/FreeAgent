@@ -125,10 +125,12 @@ export class SelfArchitectureOrchestrator {
     const criteria = {
       selfModelAccuracy: (awarenessStatus.lastConsistency || 0) >= 0.99,
       architecturalChangeSuccessRate: (evolutionStats.changeSuccessRate || 0) >= 0.95,
+      architecturalImprovementDemonstrated: (evolutionStats.architecturalImprovementPct || 0) >= 15,
       constitutionalCompliance: (evolutionStats.constitutionalComplianceRate || 0) >= 1,
       metaLearningEffectiveness: (metaLearningStatus.improvementPer100Cycles || 0) >= 0.1,
       performancePreservation: maxPerformanceImpact <= 10,
       reversibility: (evolutionStats.reversibleCoverage || 0) >= 1,
+      rollbackMTTR: (evolutionStats.meanRollbackSeconds == null) || evolutionStats.meanRollbackSeconds <= 30,
       auditability: validationStatus.auditIntegrity === true,
       stability: stabilityScore <= 0.2
     };
@@ -140,8 +142,10 @@ export class SelfArchitectureOrchestrator {
         lastConsistency: awarenessStatus.lastConsistency || 0,
         changeSuccessRate: evolutionStats.changeSuccessRate || 0,
         constitutionalComplianceRate: evolutionStats.constitutionalComplianceRate || 0,
+        architecturalImprovementPct: evolutionStats.architecturalImprovementPct || 0,
         improvementPer100Cycles: metaLearningStatus.improvementPer100Cycles || 0,
         maxPerformanceImpact,
+        meanRollbackSeconds: evolutionStats.meanRollbackSeconds,
         stabilityScore
       }
     };

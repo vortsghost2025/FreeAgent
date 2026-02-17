@@ -118,10 +118,12 @@ assert(cycle2.introspective.governance.decision !== 'REJECT_AND_ESCALATE', 'Orch
 const completion = orchestrator.getCompletionCriteriaStatus();
 assert(completion.criteria.selfModelAccuracy, 'Completion: self-model accuracy target met');
 assert(completion.criteria.architecturalChangeSuccessRate, 'Completion: architectural change success rate target met');
+assert(completion.criteria.architecturalImprovementDemonstrated, 'Completion: architectural improvement target met');
 assert(completion.criteria.constitutionalCompliance, 'Completion: constitutional compliance target met');
 assert(completion.criteria.metaLearningEffectiveness, 'Completion: meta-learning effectiveness target met');
 assert(completion.criteria.performancePreservation, 'Completion: performance preservation target met');
 assert(completion.criteria.reversibility, 'Completion: reversibility target met');
+assert(completion.criteria.rollbackMTTR, 'Completion: rollback MTTR target met');
 assert(completion.criteria.auditability, 'Completion: auditability target met');
 assert(completion.criteria.stability, 'Completion: stability target met');
 assert(completion.complete, 'Completion: Phase 8 complete');

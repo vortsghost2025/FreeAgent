@@ -123,7 +123,8 @@ export class ArchitecturalReasoner {
         'architecture-model',
         'Synchronize internal model with observed architecture state',
         0.14,
-        2.5
+        2.5,
+        6
       ));
     }
 
@@ -133,7 +134,8 @@ export class ArchitecturalReasoner {
         'governance-pipeline',
         'Reduce decision oscillation with stricter convergence windows',
         0.28,
-        4.0
+        4.0,
+        5
       ));
     }
 
@@ -143,7 +145,8 @@ export class ArchitecturalReasoner {
         'validation-engine',
         'Parallelize validation flow to remove architectural backlog',
         0.22,
-        3.6
+        3.6,
+        6
       ));
     }
 
@@ -153,7 +156,8 @@ export class ArchitecturalReasoner {
         'audit-ledger',
         'Close traceability gaps and enforce complete audit linkage',
         0.12,
-        1.4
+        1.4,
+        4
       ));
     }
 
@@ -163,7 +167,8 @@ export class ArchitecturalReasoner {
         'meta-learning',
         'Retune learning controls to recover optimization efficiency',
         0.2,
-        2.8
+        2.8,
+        5
       ));
     }
 
@@ -173,7 +178,8 @@ export class ArchitecturalReasoner {
         'system-foundation',
         'Perform low-risk architecture hygiene and documentation cleanup',
         0.08,
-        0.9
+        0.9,
+        1.5
       ));
     }
 
@@ -186,7 +192,7 @@ export class ArchitecturalReasoner {
     return Number((base * loadFactor).toFixed(3));
   }
 
-  _proposal(type, target, summary, riskScore, impactPct) {
+  _proposal(type, target, summary, riskScore, impactPct, expectedImprovementPct) {
     this.sequence += 1;
     return {
       proposalId: `self-arch-proposal-${Date.now()}-${this.sequence}`,
@@ -196,6 +202,7 @@ export class ArchitecturalReasoner {
       riskScore: Number(Math.max(0, Math.min(1, riskScore)).toFixed(3)),
       reversible: true,
       estimatedPerformanceImpactPct: Number(Math.max(0, impactPct).toFixed(3)),
+      expectedImprovementPct: Number(Math.max(0, expectedImprovementPct || 0).toFixed(3)),
       createdAt: Date.now()
     };
   }
@@ -315,4 +322,3 @@ export default {
   ArchitecturalReasoner,
   MetaCognitiveAwarenessEngine
 };
-
