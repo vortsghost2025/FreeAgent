@@ -2,5 +2,21 @@
     "chat.agent.maxRequests": 250,
     "github.copilot.chat.claudeAgent.allowDangerouslySkipPermissions": true,
     "search.experimental.closedNotebookRichContentResults": true,
-    "rainbow_csv.enable_context_menu_head": true
+    "rainbow_csv.enable_context_menu_head": true,
+    "claudeCodeChat.permissions.yoloMode": false,
+    "claudeCode.disableLoginPrompt": false,
+    "claudeCode.allowDangerouslySkipPermissions": true,
+    "files.autoSave": "afterDelay",
+    "editor.defaultFormatter": "warm3snow.vscode-ollama",
+    "editor.mouseWheelZoom": true,
+    "editor.formatOnPaste": true,
+    "editor.aiStats.enabled": true,
+    "editor.autoIndentOnPaste": true,
+    "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+    "editor.codeActions.triggerOnFocusChange": true,
+    "Lingma.aI Chat.webToolsInAsk/AgentMode": "Auto-execute",
+    "Lingma.aI Chat.mcpToolsInAgentMode": true,
+    "Lingma.DisplayLanguage": "English",
+    "Lingma.PreferredLanguage for AI Chat": "English",
+    "Lingma.PreferredLanguage forCommitMessage": "English"
 }
