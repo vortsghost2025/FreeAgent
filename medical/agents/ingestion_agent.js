@@ -20,25 +20,28 @@ class IngestionAgent {
   async run(task, state) {
     console.log(`[${this.agentId}] Ingesting raw input...`);
 
-    const rawData = task.data;
+    const inputData = task.data;
+
+    // Extract the actual raw data (unwrap if needed)
+    const rawData = inputData.raw || inputData;
 
     // Determine content type
-    const contentType = this._detectContentType(rawData);
+    const contentType = this._detectContentType(inputData);
 
     // Extract main content
-    const content = this._extractContent(rawData, contentType);
+    const content = this._extractContent(inputData, contentType);
 
     // Analyze structure
     const structure = this._analyzeStructure(rawData, content);
 
     // Build normalized data according to NormalizedDataSchema
     const normalizedData = {
-      raw: rawData, // Preserve original
+      raw: rawData, // Store ONLY the inner raw data, not the wrapper
       content: content,
       contentType: contentType,
-      timestamp: rawData.timestamp || new Date().toISOString(),
+      timestamp: inputData.timestamp || new Date().toISOString(),
       format: 'normalized',
-      source: rawData.source || 'unknown',
+      source: inputData.source || 'unknown',
       structure: structure
     };
 
@@ -87,14 +90,50 @@ class IngestionAgent {
    */
   _extractContent(data, contentType) {
     if (contentType === 'text') {
-      return typeof data === 'string' ? data : (data.raw || JSON.stringify(data));
+      const textContent = typeof data === 'string' ? data : (data.raw || JSON.stringify(data));
+      return typeof textContent === 'string' ? textContent : String(textContent);
     }
 
     if (contentType === 'structured') {
-      return data.raw || data.content || JSON.stringify(data);
+      // For structured data, create human-readable "key: value" pairs
+      const rawContent = data.raw || data.content || data;
+
+      if (typeof rawContent === 'string') {
+        return rawContent;
+      }
+
+      // Handle empty objects
+      if (typeof rawContent === 'object' && Object.keys(rawContent).length === 0) {
+        return '';
+      }
+
+      // Build human-readable normalized content string
+      const normalizedContent = Object.entries(rawContent)
+        .map(([key, value]) => {
+          if (Array.isArray(value)) {
+            // Handle arrays - extract values from objects within arrays
+            const arrayContent = value.map(item => {
+              if (typeof item === 'object' && item !== null) {
+                // Extract all values from the object
+                return Object.values(item).filter(v => v !== null && v !== undefined).join(' ');
+              }
+              return String(item);
+            }).join(', ');
+            return `${key}: ${arrayContent}`;
+          }
+          if (typeof value === "object" && value !== null) {
+            // For nested objects, extract all values
+            const objectValues = Object.values(value).filter(v => v !== null && v !== undefined).join(' ');
+            return `${key}: ${objectValues}`;
+          }
+          return `${key}: ${value}`;
+        })
+        .join(" | ");
+
+      return normalizedContent || '';
     }
 
-    return String(data);
+    return String(data || '');
   }
 
   /**

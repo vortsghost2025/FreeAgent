@@ -49,7 +49,9 @@ class TriageAgent {
    * @private
    */
   _classifyInput(data) {
-    const content = (data.content || '').toLowerCase();
+    // Ensure content is always a string
+    const rawContent = data.content ?? '';
+    const content = typeof rawContent === 'string' ? rawContent.toLowerCase() : String(rawContent).toLowerCase();
     const structure = data.structure || {};
 
     // Classification patterns (keyword-based, structural)
@@ -63,8 +65,8 @@ class TriageAgent {
         structuralHints: ['studyType', 'bodyRegion', 'impression']
       },
       vitals: {
-        keywords: ['bp', 'blood pressure', 'heart rate', 'temperature', 'pulse', 'oxygen', 'spo2', 'vital'],
-        structuralHints: ['measurements', 'vitals', 'heartRate', 'bloodPressure']
+        keywords: ['bp', 'blood pressure', 'heart rate', 'hr', 'temperature', 'temp', 'pulse', 'oxygen', 'spo2', 'vital', 'bpm', 'rr', 'respiratory rate', 'mmhg', 'cvp'],
+        structuralHints: ['measurements', 'vitals', 'heartRate', 'bloodPressure', 'measurementSource', 'trendSummary']
       },
       symptoms: {
         keywords: ['pain', 'ache', 'fever', 'cough', 'nausea', 'symptom', 'complaint', 'reports', 'experiencing'],
