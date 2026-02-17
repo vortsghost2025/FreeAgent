@@ -1,0 +1,30 @@
+<!-- Minimal Web Dashboard (static, extend as needed) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Orchestration Dashboard</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; }
+    h1 { color: #2a5d9f; }
+    pre { background: #f4f4f4; padding: 1em; }
+  </style>
+</head>
+<body>
+  <h1>Orchestration Engine Dashboard</h1>
+  <div id="metrics"></div>
+  <div id="state"></div>
+  <script>
+    async function fetchMetrics() {
+      // Placeholder: Replace with real API call
+      document.getElementById('metrics').innerHTML = '<h2>Metrics</h2><pre>Not implemented</pre>';
+    }
+    async function fetchState() {
+      // Placeholder: Replace with real API call
+      document.getElementById('state').innerHTML = '<h2>State</h2><pre>Not implemented</pre>';
+    }
+    fetchMetrics();
+    fetchState();
+  </script>
+</body>
+</html>
