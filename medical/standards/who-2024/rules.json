@@ -2,47 +2,239 @@
   "version": "2024",
   "effectiveDate": "2024-01-01",
   "updatedFrom": "2023",
-  "changes": ["Added oxygen saturation thresholds", "Updated troponin critical threshold"],
+  "changes": ["Added oxygen saturation thresholds", "Updated troponin critical threshold", "Added comprehensive disease coverage", "Expanded lab panel to 25+ tests", "Added drug interaction rules"],
   "rules": {
     "symptomSeverity": {
       "critical": {
-        "keywords": ["severe chest pain", "difficulty breathing", "unconscious", "seizure", "respiratory distress"],
+        "keywords": [
+          "severe chest pain", "difficulty breathing", "unconscious", "seizure",
+          "respiratory distress", "hemoptysis", "altered mental status", "anaphylaxis",
+          "severe bleeding", "stroke symptoms", "heart attack", "cardiac arrest",
+          "severe trauma", "severe burns", "poisoning", "overdose"
+        ],
         "scoreMultiplier": 1.0
       },
       "severe": {
-        "keywords": ["high fever", "persistent vomiting", "severe headache", "confusion"],
+        "keywords": [
+          "high fever", "persistent vomiting", "severe headache", "confusion",
+          "severe abdominal pain", "severe diarrhea", "severe dehydration",
+          "chest tightness", "palpitations", "syncope", "severe dizziness",
+          "vision loss", "paralysis", "severe weakness", "uncontrolled pain"
+        ],
         "scoreMultiplier": 0.8
       },
       "moderate": {
-        "keywords": ["fever", "cough", "headache", "fatigue", "body aches"],
+        "keywords": [
+          "fever", "cough", "headache", "fatigue", "body aches",
+          "nausea", "vomiting", "diarrhea", "abdominal pain", "sore throat",
+          "runny nose", "congestion", "muscle pain", "joint pain", "rash",
+          "night sweats", "chills", "loss of appetite", "weight loss"
+        ],
         "scoreMultiplier": 0.5
       },
       "mild": {
-        "keywords": ["minor pain", "mild discomfort", "mild cough"],
+        "keywords": [
+          "minor pain", "mild discomfort", "mild cough", "sniffles",
+          "mild fatigue", "mild headache", "mild itch", "mild rash"
+        ],
         "scoreMultiplier": 0.2
       }
     },
     "labThresholds": {
       "troponin": {
-        "critical": { "value": 10.0, "unit": "ng/mL" },
+        "critical": { "value": 10.0, "unit": "ng/mL", "action": "immediate-cardiology-consult" },
         "abnormal": { "value": 0.04, "unit": "ng/mL" }
       },
       "wbc": {
-        "high": { "value": 11.0, "unit": "K/uL" },
-        "low": { "value": 4.5, "unit": "K/uL" }
+        "high": { "value": 11.0, "unit": "K/uL", "indication": "infection or inflammation" },
+        "low": { "value": 4.5, "unit": "K/uL", "indication": "immunosuppression" },
+        "critical_high": { "value": 30.0, "unit": "K/uL", "action": "rule-out-leukemia" },
+        "critical_low": { "value": 2.0, "unit": "K/uL", "action": "infection-risk-precautions" }
       },
       "oxygenSaturation": {
-        "critical": { "value": 90, "unit": "%" },
-        "concerning": { "value": 94, "unit": "%" }
+        "critical": { "value": 90, "unit": "%", "action": "supplemental-oxygen" },
+        "concerning": { "value": 94, "unit": "%", "monitor": true }
+      },
+      "glucose": {
+        "hypoglycemia": { "value": 70, "unit": "mg/dL", "action": "immediate-glucose-replacement" },
+        "hyperglycemia": { "value": 200, "unit": "mg/dL" },
+        "critical_high": { "value": 400, "unit": "mg/dL", "action": "rule-out-dka" }
+      },
+      "creatinine": {
+        "elevated": { "value": 1.3, "unit": "mg/dL", "indication": "kidney-dysfunction" },
+        "critical": { "value": 3.0, "unit": "mg/dL", "action": "nephrology-consult" }
+      },
+      "bilirubin": {
+        "elevated": { "value": 1.2, "unit": "mg/dL", "indication": "liver-dysfunction" },
+        "critical": { "value": 12.0, "unit": "mg/dL", "action": "hepatology-consult" }
+      },
+      "alt": {
+        "elevated": { "value": 55, "unit": "U/L", "indication": "hepatocellular-injury" },
+        "critical": { "value": 300, "unit": "U/L", "action": "rule-out-acute-hepatitis" }
+      },
+      "ast": {
+        "elevated": { "value": 40, "unit": "U/L" },
+        "critical": { "value": 300, "unit": "U/L" }
+      },
+      "hemoglobin": {
+        "low": { "value": 12.0, "unit": "g/dL", "indication": "anemia" },
+        "critical_low": { "value": 7.0, "unit": "g/dL", "action": "consider-transfusion" },
+        "high": { "value": 17.5, "unit": "g/dL", "indication": "polycythemia" }
+      },
+      "hematocrit": {
+        "low": { "value": 36.0, "unit": "%" },
+        "critical_low": { "value": 21.0, "unit": "%", "action": "immediate-transfusion" }
+      },
+      "platelets": {
+        "low": { "value": 150, "unit": "K/uL", "indication": "thrombocytopenia" },
+        "critical_low": { "value": 50, "unit": "K/uL", "action": "bleeding-precautions" },
+        "high": { "value": 450, "unit": "K/uL", "indication": "thrombocytosis" }
+      },
+      "inr": {
+        "elevated": { "value": 1.5, "indication": "coagulopathy" },
+        "critical": { "value": 3.5, "action": "bleeding-risk-high" }
+      },
+      "d-dimer": {
+        "elevated": { "value": 500, "unit": "ng/mL", "indication": "consider-thrombosis" }
+      },
+      "crp": {
+        "elevated": { "value": 10, "unit": "mg/L", "indication": "inflammation" },
+        "high": { "value": 100, "unit": "mg/L", "indication": "severe-inflammation" }
+      },
+      "procalcitonin": {
+        "elevated": { "value": 0.5, "unit": "ng/mL", "indication": "bacterial-infection-likely" },
+        "high": { "value": 2.0, "unit": "ng/mL", "indication": "severe-sepsis-risk" }
+      },
+      "lactate": {
+        "elevated": { "value": 2.0, "unit": "mmol/L", "indication": "tissue-hypoxia" },
+        "critical": { "value": 4.0, "unit": "mmol/L", "action": "sepsis-protocol" }
+      },
+      "bnp": {
+        "elevated": { "value": 100, "unit": "pg/mL", "indication": "heart-failure" },
+        "high": { "value": 400, "unit": "pg/mL", "indication": "acute-heart-failure" }
+      },
+      "tsh": {
+        "low": { "value": 0.4, "unit": "mIU/L", "indication": "hyperthyroidism" },
+        "high": { "value": 4.5, "unit": "mIU/L", "indication": "hypothyroidism" }
+      },
+      "sodium": {
+        "low": { "value": 135, "unit": "mEq/L", "indication": "hyponatremia" },
+        "critical_low": { "value": 125, "unit": "mEq/L", "action": "neuro-monitoring" },
+        "high": { "value": 145, "unit": "mEq/L", "indication": "hypernatremia" }
+      },
+      "potassium": {
+        "low": { "value": 3.5, "unit": "mEq/L", "indication": "hypokalemia" },
+        "critical_low": { "value": 2.5, "unit": "mEq/L", "action": "cardiac-monitoring" },
+        "high": { "value": 5.0, "unit": "mEq/L", "indication": "hyperkalemia" },
+        "critical_high": { "value": 6.5, "unit": "mEq/L", "action": "immediate-treatment" }
+      },
+      "calcium": {
+        "low": { "value": 8.5, "unit": "mg/dL", "indication": "hypocalcemia" },
+        "high": { "value": 10.5, "unit": "mg/dL", "indication": "hypercalcemia" },
+        "critical_high": { "value": 12.0, "unit": "mg/dL", "action": "hypercalcemic-crisis" }
+      },
+      "magnesium": {
+        "low": { "value": 1.7, "unit": "mg/dL", "indication": "hypomagnesemia" }
+      },
+      "ammonia": {
+        "elevated": { "value": 50, "unit": "μmol/L", "indication": "hepatic-encephalopathy-risk" },
+        "critical": { "value": 200, "unit": "μmol/L", "action": "lactulose-treatment" }
+      },
+      "lipase": {
+        "elevated": { "value": 60, "unit": "U/L", "indication": "pancreatitis" },
+        "critical": { "value": 300, "unit": "U/L", "action": "acute-pancreatitis-protocol" }
       }
     },
     "vitalThresholds": {
       "heartRate": {
-        "tachycardia": { "value": 100, "unit": "bpm" },
-        "bradycardia": { "value": 60, "unit": "bpm" }
+        "tachycardia": { "value": 100, "unit": "bpm", "severe": 130 },
+        "bradycardia": { "value": 60, "unit": "bpm", "severe": 40 }
       },
       "bloodPressure": {
-        "hypertensiveCrisis": { "systolic": 180, "diastolic": 120 }
+        "hypertensiveCrisis": { "systolic": 180, "diastolic": 120, "action": "immediate-treatment" },
+        "hypertension": { "systolic": 140, "diastolic": 90 },
+        "hypotension": { "systolic": 90, "diastolic": 60, "action": "fluid-resuscitation" },
+        "shock": { "systolic": 70, "action": "vasopressor-support" }
+      },
+      "respiratoryRate": {
+        "tachypnea": { "value": 20, "unit": "breaths/min", "severe": 30 },
+        "bradypnea": { "value": 12, "unit": "breaths/min", "critical": 8 }
+      },
+      "temperature": {
+        "fever": { "value": 38.0, "unit": "C" },
+        "highFever": { "value": 39.5, "unit": "C" },
+        "hyperpyrexia": { "value": 41.0, "unit": "C", "action": "immediate-cooling" },
+        "hypothermia": { "value": 35.0, "unit": "C", "action": "warming-protocol" }
+      }
+    },
+    "diseasePatterns": {
+      "acuteCoronarySyndrome": {
+        "requiredSymptoms": ["chest pain"],
+        "supportingSymptoms": ["shortness of breath", "diaphoresis", "nausea"],
+        "requiredLabs": ["troponin"],
+        "riskScore": 0.85,
+        "urgency": "critical",
+        "protocol": "stemi-protocol"
+      },
+      "sepsis": {
+        "requiredSymptoms": ["fever"],
+        "supportingSymptoms": ["confusion", "weakness", "rapid heartbeat"],
+        "requiredLabs": ["lactate", "wbc"],
+        "riskScore": 0.9,
+        "urgency": "critical",
+        "protocol": "sepsis-bundle"
+      },
+      "stroke": {
+        "requiredSymptoms": ["altered mental status", "weakness", "speech difficulty"],
+        "timeWindow": 4.5,
+        "unit": "hours",
+        "riskScore": 0.95,
+        "urgency": "critical",
+        "protocol": "stroke-alert"
+      },
+      "diabeticKetoacidosis": {
+        "requiredSymptoms": ["nausea", "vomiting", "abdominal pain"],
+        "requiredLabs": ["glucose"],
+        "riskScore": 0.8,
+        "urgency": "critical",
+        "protocol": "dka-protocol"
+      },
+      "pulmonaryEmbolism": {
+        "requiredSymptoms": ["chest pain", "shortness of breath"],
+        "supportingLabs": ["d-dimer"],
+        "riskScore": 0.75,
+        "urgency": "high",
+        "protocol": "pe-protocol"
+      },
+      "acutePancreatitis": {
+        "requiredSymptoms": ["severe abdominal pain"],
+        "requiredLabs": ["lipase"],
+        "riskScore": 0.7,
+        "urgency": "high"
+      },
+      "acuteHeartFailure": {
+        "requiredSymptoms": ["shortness of breath", "edema"],
+        "supportingLabs": ["bnp", "troponin"],
+        "riskScore": 0.75,
+        "urgency": "high"
+      },
+      "acuteKidneyInjury": {
+        "requiredLabs": ["creatinine"],
+        "supportingSymptoms": ["decreased urine output", "confusion"],
+        "riskScore": 0.65,
+        "urgency": "high"
+      },
+      "acuteLiverFailure": {
+        "requiredLabs": ["bilirubin", "alt", "inr"],
+        "supportingSymptoms": ["confusion", "jaundice"],
+        "riskScore": 0.85,
+        "urgency": "critical"
+      },
+      "meningitis": {
+        "requiredSymptoms": ["fever", "severe headache", "neck stiffness"],
+        "riskScore": 0.9,
+        "urgency": "critical",
+        "protocol": "meningitis-protocol"
       }
     },
     "riskFactors": {
@@ -51,12 +243,41 @@
         "weight": 0.3
       },
       "comorbidities": {
-        "highRisk": ["diabetes", "hypertension", "immunocompromised", "chronic respiratory disease"],
+        "highRisk": ["diabetes", "hypertension", "immunocompromised", "chronic respiratory disease", "heart disease", "chronic kidney disease", "liver disease", "cancer"],
         "weight": 0.4
       },
       "age": {
         "highRisk": { "above": 65 },
+        "pediatric": { "below": 5 },
         "weight": 0.2
+      },
+      "pregnancy": {
+        "weight": 0.3,
+        "specialConsiderations": true
+      },
+      "medications": {
+        "anticoagulants": { "weight": 0.2, "bleedingRisk": true },
+        "immunosuppressants": { "weight": 0.3, "infectionRisk": true },
+        "chemotherapy": { "weight": 0.4, "toxicityRisk": true }
+      }
+    },
+    "drugInteractions": {
+      "warfarin": {
+        "contraindicated": ["aspirin", "nsaids"],
+        "requires_monitoring": ["antibiotics", "antifungals"],
+        "inr_target": { "min": 2.0, "max": 3.0 }
+      },
+      "metformin": {
+        "contraindicated_if": { "creatinine": { "above": 1.5 } },
+        "hold_before": ["contrast_imaging"]
+      },
+      "statins": {
+        "monitoring": ["alt", "ast", "creatine_kinase"],
+        "contraindicated": ["pregnancy"]
+      },
+      "ace_inhibitors": {
+        "monitoring": ["potassium", "creatinine"],
+        "contraindicated": ["pregnancy"]
       }
     }
   }
