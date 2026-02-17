@@ -1,0 +1,21 @@
+{
+  "name": "WHO Clinical Triage Guidelines",
+  "version": "2025",
+  "source": "WHO",
+  "retrieved": "2025-01-05",
+  "hash": "sha256:ghi789012jkl",
+  "description": "WHO 2025 triage rules with AI risk score integration and multilingual support.",
+  "status": "preview",
+  "changes": [
+    "Added AI risk score integration",
+    "Multi-language symptom support (Spanish, French, Chinese, Arabic)",
+    "Updated comorbidity weights based on recent studies",
+    "Added social risk factors (healthcare worker, group living)",
+    "Introduced D-dimer lab threshold"
+  ],
+  "compatibility": {
+    "supersedes": "2024",
+    "compatibleWith": ["2024"],
+    "requiresFeatures": ["multilingual-support", "ai-risk-scoring"]
+  }
+}

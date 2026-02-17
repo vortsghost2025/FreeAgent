@@ -1,0 +1,42 @@
+{
+  "risk": {
+    "low": {
+      "maxScore": 0.25,
+      "description": "Low risk - routine monitoring"
+    },
+    "medium": {
+      "minScore": 0.25,
+      "maxScore": 0.65,
+      "description": "Medium risk - enhanced monitoring"
+    },
+    "high": {
+      "minScore": 0.65,
+      "description": "High risk - urgent intervention"
+    },
+    "critical": {
+      "minScore": 0.85,
+      "description": "Critical risk - immediate emergency response"
+    }
+  },
+  "confidence": {
+    "low": {
+      "maxScore": 0.5,
+      "action": "require-human-review"
+    },
+    "medium": {
+      "minScore": 0.5,
+      "maxScore": 0.75,
+      "action": "flag-for-review"
+    },
+    "high": {
+      "minScore": 0.75,
+      "action": "auto-proceed-with-monitoring"
+    }
+  },
+  "aiRiskModifiers": {
+    "enabled": true,
+    "confidenceThreshold": 0.7,
+    "escalateIfLowConfidence": true,
+    "maxAdjustment": 0.15
+  }
+}

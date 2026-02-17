@@ -1,0 +1,12 @@
+{
+  "name": "WHO Clinical Triage Guidelines",
+  "version": "2023",
+  "source": "WHO",
+  "retrieved": "2023-01-15",
+  "hash": "sha256:abc123456def",
+  "description": "WHO 2023 baseline triage and risk assessment rules.",
+  "status": "archived",
+  "compatibility": {
+    "supersededBy": "2024"
+  }
+}

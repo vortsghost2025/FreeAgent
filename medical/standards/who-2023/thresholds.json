@@ -1,0 +1,14 @@
+{
+  "risk": {
+    "low": {
+      "maxScore": 0.3
+    },
+    "medium": {
+      "minScore": 0.3,
+      "maxScore": 0.7
+    },
+    "high": {
+      "minScore": 0.7
+    }
+  }
+}

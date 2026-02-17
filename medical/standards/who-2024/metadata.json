@@ -1,0 +1,17 @@
+{
+  "name": "WHO Clinical Triage Guidelines",
+  "version": "2024",
+  "source": "WHO",
+  "retrieved": "2024-01-10",
+  "hash": "sha256:def456789abc",
+  "description": "WHO 2024 triage and risk assessment rules with updated troponin thresholds and oxygen saturation monitoring.",
+  "changes": [
+    "Added oxygen saturation thresholds",
+    "Updated troponin critical threshold from 5 to 10 ng/mL",
+    "Added vital sign thresholds for heart rate and blood pressure"
+  ],
+  "compatibility": {
+    "supersedes": "2023",
+    "compatibleWith": ["2023"]
+  }
+}

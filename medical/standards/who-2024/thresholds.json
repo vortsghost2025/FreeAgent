@@ -1,0 +1,32 @@
+{
+  "risk": {
+    "low": {
+      "maxScore": 0.3,
+      "description": "Low risk - routine monitoring"
+    },
+    "medium": {
+      "minScore": 0.3,
+      "maxScore": 0.7,
+      "description": "Medium risk - increased monitoring recommended"
+    },
+    "high": {
+      "minScore": 0.7,
+      "description": "High risk - immediate intervention required"
+    }
+  },
+  "confidence": {
+    "low": {
+      "maxScore": 0.4,
+      "action": "require-human-review"
+    },
+    "medium": {
+      "minScore": 0.4,
+      "maxScore": 0.7,
+      "action": "flag-for-review"
+    },
+    "high": {
+      "minScore": 0.7,
+      "action": "auto-proceed"
+    }
+  }
+}
