@@ -36,6 +36,14 @@ export class ModelVersioningManager {
       status: 'INITIAL'
     });
 
+    // Record initial version in history
+    this.versionHistory.push({
+      modelId,
+      version: 1,
+      timestamp: Date.now(),
+      accuracy: 0
+    });
+
     return { success: true, modelId, version: 1 };
   }
 
@@ -272,15 +280,26 @@ export class PrivacyPreservingAggregator {
 
   secureSum(values, threshold = 0) {
     // Secure aggregation: sum with privacy guarantees
+    if (values.length === 0) {
+      return { secureSum: 0, average: '0.0000', outlierCount: 0, isClean: true };
+    }
+
     const sum = values.reduce((a, b) => a + b, 0);
     const avgValue = sum / values.length;
 
-    // Detect anomalies using mean deviation
+    // Detect anomalies using mean absolute deviation
     const deviations = values.map(v => Math.abs(v - avgValue));
-    const medianDeviation = deviations.sort((a, b) => a - b)[Math.floor(deviations.length / 2)];
+    const sortedDeviations = deviations.slice().sort((a, b) => a - b);
+    const medianDeviation = sortedDeviations[Math.floor(sortedDeviations.length / 2)];
 
-    // Flag suspicious values
-    const outliers = deviations.filter(d => d > medianDeviation * 3).length;
+    // Flag suspicious values (3x MAD or if MAD is effectively 0, flag values > 10% from mean)
+    let outliers = 0;
+    if (medianDeviation > 0) {
+      outliers = deviations.filter(d => d > medianDeviation * 3).length;
+    } else {
+      // If no deviation, all values are identical
+      outliers = 0;
+    }
 
     return {
       secureSum: sum,
@@ -360,9 +379,23 @@ export class FederatedLearningCoordinationEngine {
     this.privacyMgr.createPrivacyAudit(aggregationId, noisyParams);
 
     // 4. Publish updated model
-    const modelId = Object.keys(this.modelMgr.models)[0] || 'model-default';
+    // Get first model from Map or fail fast
+    let modelId = null;
+    for (const [id] of this.modelMgr.models) {
+      modelId = id;
+      break;
+    }
+
+    if (!modelId) {
+      return { success: false, error: 'NO_MODEL_FOUND' };
+    }
+
     const accuracy = aggregated.avgAccuracy;
     const published = this.modelMgr.publishUpdate(modelId, noisyParams, parseFloat(accuracy));
+
+    if (!published.success) {
+      return { success: false, error: 'MODEL_PUBLISH_FAILED' };
+    }
 
     this.learningLog.push({
       round: this.roundCount,

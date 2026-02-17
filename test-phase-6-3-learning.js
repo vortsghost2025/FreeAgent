@@ -39,7 +39,7 @@ assert(version && version.version === 2, 'Model versioning: Get latest version')
 
 // Test 4: Get version history
 const history = modelMgr.getVersionHistory('medical-model-v1');
-assert(history.length >= 1, 'Model versioning: Get version history');
+assert(history.length === 2, 'Model versioning: Get version history');
 
 // Test 5: Get model stats
 const stats = modelMgr.getModelStats('medical-model-v1');
@@ -95,7 +95,7 @@ assert(noisyData.param1 != null && noisyData.param2 != null, 'Privacy aggregator
 
 // Test 14: Secure sum
 const secureSum = privacy.secureSum([1.0, 1.1, 1.0, 0.9, 1.0]);
-assert(secureSum.secureSum > 0 && secureSum.outlierCount >= 0, 'Privacy aggregator: Secure sum');
+assert(secureSum.secureSum > 0 && secureSum.isClean, 'Privacy aggregator: Secure sum');
 
 // Test 15: Privacy audit
 const audit = privacy.createPrivacyAudit('audit-1', { data: 'test' });
@@ -140,7 +140,7 @@ assert(fedStatus.trainingRounds === 3 && fedStatus.privacy.status === 'COMPLIANT
 
 // Test 24: Model convergence tracking
 const stats2 = engine.modelMgr.getModelStats('fed-model');
-assert(stats2.totalVersions >= 1, 'Learning engine: Model convergence');
+assert(stats2.totalVersions === 4, 'Learning engine: Model convergence');
 
 // Test 25: Privacy compliance verification
 assert(fedStatus.privacy.complianceRate >= 100, 'Learning engine: Privacy compliance');
