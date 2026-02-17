@@ -3,6 +3,8 @@
  * Human-out-of-the-loop mode with strict guardrails, mutation zones, and escalation.
  */
 
+import path from 'node:path';
+
 export class GuardrailPolicy {
   constructor(options = {}) {
     this.thresholds = {
@@ -61,11 +63,14 @@ export class GuardrailPolicy {
 
 export class MutationZoneManager {
   constructor(options = {}) {
-    this.allowedZones = options.allowedZones || [];
+    this.allowedZones = [];
+    this.setAllowedZones(options.allowedZones || []);
   }
 
   setAllowedZones(zones = []) {
-    this.allowedZones = zones.slice();
+    this.allowedZones = zones
+      .map((zone) => this._normalizePath(zone))
+      .filter((zone) => zone && zone !== '.');
     return { success: true, allowedZones: this.allowedZones };
   }
 
@@ -76,7 +81,15 @@ export class MutationZoneManager {
 
     const blockedPaths = [];
     for (const path of paths) {
-      const allowed = this.allowedZones.some((zone) => path.startsWith(zone));
+      const normalizedPath = this._normalizePath(path);
+      if (!normalizedPath) {
+        blockedPaths.push(path);
+        continue;
+      }
+
+      const allowed = this.allowedZones.some((zone) => {
+        return normalizedPath === zone || normalizedPath.startsWith(`${zone}/`);
+      });
       if (!allowed) blockedPaths.push(path);
     }
 
@@ -84,6 +97,14 @@ export class MutationZoneManager {
       allowed: blockedPaths.length === 0,
       blockedPaths
     };
+  }
+
+  _normalizePath(value) {
+    if (typeof value !== 'string') return null;
+    const raw = value.trim();
+    if (!raw) return null;
+    const normalized = path.posix.normalize(raw.replace(/\\/g, '/'));
+    return normalized.replace(/^\.\/+/, '').replace(/\/+$/, '');
   }
 }
 
@@ -246,4 +267,3 @@ export default {
   AutonomyEscalationManager,
   SupervisedAutonomyController
 };
-

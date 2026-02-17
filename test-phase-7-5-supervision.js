@@ -62,6 +62,10 @@ assert(zoneOk.allowed, 'Mutation zones: allow in-zone path');
 const zoneBlock = zones.evaluatePaths(['core/unsafe.js']);
 assert(!zoneBlock.allowed, 'Mutation zones: block out-of-zone path');
 
+// Test 6: Mutation zones block traversal-style escape
+const zoneTraversal = zones.evaluatePaths(['medical/intelligence/../outside.js']);
+assert(!zoneTraversal.allowed, 'Mutation zones: block traversal path');
+
 // Test 6: Escalation manager lifecycle
 const escMgr = new AutonomyEscalationManager();
 const escalation = escMgr.createEscalation({ actionId: 'a1', type: 'CODE_PATCH' }, ['HIGH_IMPACT']);
@@ -127,4 +131,3 @@ assert(status.escalation.pending >= 1, 'Controller: pending escalations tracked'
 
 console.log(`\nTests: ${testsPassed}/${testsPassed + testsFailed} passed`);
 process.exit(testsFailed > 0 ? 1 : 0);
-

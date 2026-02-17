@@ -12,9 +12,9 @@ export class SafetyConstraintEngine {
       'VERSION_MERGE_LOGIC'
     ]);
     this.forbiddenOperations = new Set(options.forbiddenOperations || []);
-    this.maxRiskScore = options.maxRiskScore == null ? 0.6 : options.maxRiskScore;
-    this.maxLatencyRegressionPct = options.maxLatencyRegressionPct == null ? 15 : options.maxLatencyRegressionPct;
-    this.maxFailureRateIncreasePct = options.maxFailureRateIncreasePct == null ? 10 : options.maxFailureRateIncreasePct;
+    this.maxRiskScore = this._boundedNumber(options.maxRiskScore, 0.6, 0, 1);
+    this.maxLatencyRegressionPct = this._boundedNumber(options.maxLatencyRegressionPct, 15, 0, 100);
+    this.maxFailureRateIncreasePct = this._boundedNumber(options.maxFailureRateIncreasePct, 10, 0, 100);
   }
 
   updateConstraints(partial = {}) {
@@ -24,10 +24,20 @@ export class SafetyConstraintEngine {
     if (Array.isArray(partial.forbiddenOperations)) {
       this.forbiddenOperations = new Set(partial.forbiddenOperations);
     }
-    if (partial.maxRiskScore != null) this.maxRiskScore = partial.maxRiskScore;
-    if (partial.maxLatencyRegressionPct != null) this.maxLatencyRegressionPct = partial.maxLatencyRegressionPct;
-    if (partial.maxFailureRateIncreasePct != null) this.maxFailureRateIncreasePct = partial.maxFailureRateIncreasePct;
-    return { success: true };
+    this.maxRiskScore = this._boundedNumber(partial.maxRiskScore, this.maxRiskScore, 0, 1);
+    this.maxLatencyRegressionPct = this._boundedNumber(
+      partial.maxLatencyRegressionPct,
+      this.maxLatencyRegressionPct,
+      0,
+      100
+    );
+    this.maxFailureRateIncreasePct = this._boundedNumber(
+      partial.maxFailureRateIncreasePct,
+      this.maxFailureRateIncreasePct,
+      0,
+      100
+    );
+    return { success: true, constraints: this.getConstraints() };
   }
 
   evaluateExperiment(strategy = {}) {
@@ -50,6 +60,23 @@ export class SafetyConstraintEngine {
       allowed: reasons.length === 0,
       reasons
     };
+  }
+
+  getConstraints() {
+    return {
+      allowedStrategies: Array.from(this.allowedStrategies),
+      forbiddenOperations: Array.from(this.forbiddenOperations),
+      maxRiskScore: this.maxRiskScore,
+      maxLatencyRegressionPct: this.maxLatencyRegressionPct,
+      maxFailureRateIncreasePct: this.maxFailureRateIncreasePct
+    };
+  }
+
+  _boundedNumber(value, fallback, min, max) {
+    if (value == null) return fallback;
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) return fallback;
+    return Math.max(min, Math.min(max, numeric));
   }
 }
 
@@ -257,4 +284,3 @@ export default {
   ExplorationSandbox,
   SafetyBoundedExplorationEngine
 };
-

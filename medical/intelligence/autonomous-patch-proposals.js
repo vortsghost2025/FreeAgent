@@ -3,6 +3,18 @@
  * Builder proposes patches/tests/invariants/optimizations, tester evaluates, human approves or rejects.
  */
 
+const ALLOWED_PROPOSAL_UPDATE_FIELDS = new Set([
+  'status',
+  'evaluation',
+  'evaluatedAt',
+  'approvedBy',
+  'approvedAt',
+  'rejectionReason',
+  'rejectedAt',
+  'appliedAt',
+  'applyMetadata'
+]);
+
 export class ProposalLedger {
   constructor(options = {}) {
     this.proposals = new Map();
@@ -22,8 +34,23 @@ export class ProposalLedger {
   updateProposal(proposalId, updates = {}) {
     const proposal = this.proposals.get(proposalId);
     if (!proposal) return { success: false, error: 'PROPOSAL_NOT_FOUND' };
-    Object.assign(proposal, updates);
-    this._log('UPDATED', proposalId, updates);
+    if (!updates || typeof updates !== 'object') {
+      return { success: false, error: 'INVALID_UPDATES' };
+    }
+
+    const keys = Object.keys(updates);
+    const disallowedFields = keys.filter((key) => !ALLOWED_PROPOSAL_UPDATE_FIELDS.has(key));
+    if (disallowedFields.length > 0) {
+      return { success: false, error: 'DISALLOWED_UPDATE_FIELDS', disallowedFields };
+    }
+
+    const safeUpdates = {};
+    for (const key of keys) {
+      safeUpdates[key] = updates[key];
+    }
+
+    Object.assign(proposal, safeUpdates);
+    this._log('UPDATED', proposalId, safeUpdates);
     return { success: true, proposal };
   }
 

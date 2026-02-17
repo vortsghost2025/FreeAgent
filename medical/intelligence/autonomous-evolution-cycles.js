@@ -229,19 +229,42 @@ export class SelfDirectedImprovementCycleEngine {
     });
 
     const validationByProposal = new Map(validation.results.map((r) => [r.proposalId, r]));
-    const maxAutoRisk = options.maxAutoRisk == null ? 0.45 : options.maxAutoRisk;
+    const maxAutoRisk = this._boundedRisk(options.maxAutoRisk, 0.45);
 
     const accepted = [];
     const rejected = [];
 
     for (const proposal of proposals) {
       const result = validationByProposal.get(proposal.proposalId);
-      if (result && result.passed && proposal.riskScore <= maxAutoRisk) {
+      const proposalRiskScore = this._normalizeRisk(proposal.riskScore);
+      const hasValidRiskScore = proposalRiskScore != null;
+      const isWithinAutoRisk = hasValidRiskScore && proposalRiskScore <= maxAutoRisk;
+
+      if (result && result.passed && isWithinAutoRisk) {
         accepted.push(proposal);
       } else {
+        const rejectionReasons = [];
+        if (!result) {
+          rejectionReasons.push('NO_VALIDATION_RESULT');
+        } else {
+          if (!result.passed) {
+            rejectionReasons.push(...(Array.isArray(result.reasons) && result.reasons.length > 0
+              ? result.reasons
+              : ['VALIDATION_FAILED']));
+          }
+          if (!hasValidRiskScore) {
+            rejectionReasons.push('INVALID_RISK_SCORE');
+          } else if (!isWithinAutoRisk) {
+            rejectionReasons.push('RISK_LIMIT');
+          }
+        }
+        if (rejectionReasons.length === 0) {
+          rejectionReasons.push('UNSPECIFIED_REJECTION');
+        }
+
         rejected.push({
           proposalId: proposal.proposalId,
-          reason: result ? result.reasons.join(',') || 'RISK_LIMIT' : 'NO_VALIDATION_RESULT'
+          reason: rejectionReasons.join(',')
         });
       }
     }
@@ -276,6 +299,17 @@ export class SelfDirectedImprovementCycleEngine {
     }
 
     return cycleResult;
+  }
+
+  _normalizeRisk(value) {
+    return this._boundedRisk(value, null);
+  }
+
+  _boundedRisk(value, fallback) {
+    if (value == null) return fallback;
+    const risk = Number(value);
+    if (!Number.isFinite(risk)) return fallback;
+    return Math.max(0, Math.min(1, risk));
   }
 
   _calculateMetricDeltas(baselineMetrics = {}, observedMetrics = {}) {

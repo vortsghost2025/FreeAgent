@@ -35,6 +35,13 @@ assert(added.success, 'Proposal ledger: add proposal');
 const updated = ledger.updateProposal(seedProposal.proposalId, { status: 'TESTED_PASS' });
 assert(updated.success && updated.proposal.status === 'TESTED_PASS', 'Proposal ledger: update proposal');
 
+// Test 3: Ledger rejects disallowed field mutation
+const blockedMutation = ledger.updateProposal(seedProposal.proposalId, {
+  proposalId: 'tampered-id',
+  requiresHumanApproval: false
+});
+assert(!blockedMutation.success && blockedMutation.error === 'DISALLOWED_UPDATE_FIELDS', 'Proposal ledger: reject unsafe field mutation');
+
 // Test 3: Tester accept
 const tester = new ProposalTester();
 const evalAccept = tester.evaluate(seedProposal, { testPassRate: 1, coverageDelta: 0.05, regressionRisk: 0.1 });
@@ -104,4 +111,3 @@ assert(report.stats.total >= 5, 'Patch engine: proposal report');
 
 console.log(`\nTests: ${testsPassed}/${testsPassed + testsFailed} passed`);
 process.exit(testsFailed > 0 ? 1 : 0);
-

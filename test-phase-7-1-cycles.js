@@ -132,6 +132,77 @@ const strictCycle = engine.runCycle('cycle-d', {
 });
 assert(strictCycle.requiresAuditorIntervention, 'Engine: escalates under strict threshold policy');
 
+// Test 13: Engine rejects invalid proposal risk
+const invalidRiskEngine = new SelfDirectedImprovementCycleEngine({
+  builder: {
+    proposeImprovements: () => [{
+      proposalId: 'invalid-risk-proposal',
+      cycleId: 'cycle-invalid',
+      type: 'OPTIMIZATION',
+      target: 'scheduler',
+      summary: 'invalid risk payload',
+      expectedBenefit: 0.2,
+      riskScore: NaN
+    }]
+  },
+  tester: {
+    validateBatch: () => ({
+      total: 1,
+      passed: 1,
+      failed: 0,
+      passRate: 1,
+      avgScore: 95,
+      results: [{
+        proposalId: 'invalid-risk-proposal',
+        passed: true,
+        reasons: []
+      }]
+    })
+  }
+});
+const invalidRiskCycle = invalidRiskEngine.runCycle('cycle-invalid', {}, { maxAutoRisk: 0.5 });
+assert(
+  invalidRiskCycle.accepted.length === 0 &&
+    invalidRiskCycle.rejected.length === 1 &&
+    invalidRiskCycle.rejected[0].reason.includes('INVALID_RISK_SCORE'),
+  'Engine: reject invalid proposal risk'
+);
+
+// Test 14: Engine emits explicit validation failure reason (no silent fallback)
+const emptyReasonFailureEngine = new SelfDirectedImprovementCycleEngine({
+  builder: {
+    proposeImprovements: () => [{
+      proposalId: 'empty-reason-proposal',
+      cycleId: 'cycle-empty-reason',
+      type: 'OPTIMIZATION',
+      target: 'scheduler',
+      summary: 'failed validation with empty reasons',
+      expectedBenefit: 0.2,
+      riskScore: 0.1
+    }]
+  },
+  tester: {
+    validateBatch: () => ({
+      total: 1,
+      passed: 0,
+      failed: 1,
+      passRate: 0,
+      avgScore: 10,
+      results: [{
+        proposalId: 'empty-reason-proposal',
+        passed: false,
+        reasons: []
+      }]
+    })
+  }
+});
+const explicitReasonCycle = emptyReasonFailureEngine.runCycle('cycle-empty-reason', {}, { maxAutoRisk: 0.5 });
+assert(
+  explicitReasonCycle.rejected.length === 1 &&
+    explicitReasonCycle.rejected[0].reason.includes('VALIDATION_FAILED') &&
+    !explicitReasonCycle.rejected[0].reason.includes('RISK_LIMIT'),
+  'Engine: explicit rejection reason when validation reasons are empty'
+);
+
 console.log(`\nTests: ${testsPassed}/${testsPassed + testsFailed} passed`);
 process.exit(testsFailed > 0 ? 1 : 0);
-

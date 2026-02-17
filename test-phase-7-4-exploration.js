@@ -33,6 +33,20 @@ assert(allowed.allowed, 'Constraint engine: allow valid strategy');
 const blockedStrategy = constraints.evaluateExperiment({ type: 'UNKNOWN_STRATEGY', riskScore: 0.2, operations: [] });
 assert(!blockedStrategy.allowed, 'Constraint engine: block unknown strategy');
 
+// Test 3: Constraint bounds are enforced
+constraints.updateConstraints({
+  maxRiskScore: 5,
+  maxLatencyRegressionPct: -10,
+  maxFailureRateIncreasePct: 500
+});
+const bounded = constraints.getConstraints();
+assert(
+  bounded.maxRiskScore === 1 &&
+    bounded.maxLatencyRegressionPct === 0 &&
+    bounded.maxFailureRateIncreasePct === 100,
+  'Constraint engine: bound threshold updates'
+);
+
 // Test 3: Rollback manager checkpoint/rollback
 const rollbackMgr = new RollbackManager();
 rollbackMgr.createCheckpoint('exp-1', { latency: 200 });
@@ -106,4 +120,3 @@ assert(status.accepted >= 1 && status.blocked >= 1 && status.rolledBack >= 1, 'E
 
 console.log(`\nTests: ${testsPassed}/${testsPassed + testsFailed} passed`);
 process.exit(testsFailed > 0 ? 1 : 0);
-
