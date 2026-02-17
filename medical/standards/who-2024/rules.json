@@ -1,0 +1,63 @@
+{
+  "version": "2024",
+  "effectiveDate": "2024-01-01",
+  "updatedFrom": "2023",
+  "changes": ["Added oxygen saturation thresholds", "Updated troponin critical threshold"],
+  "rules": {
+    "symptomSeverity": {
+      "critical": {
+        "keywords": ["severe chest pain", "difficulty breathing", "unconscious", "seizure", "respiratory distress"],
+        "scoreMultiplier": 1.0
+      },
+      "severe": {
+        "keywords": ["high fever", "persistent vomiting", "severe headache", "confusion"],
+        "scoreMultiplier": 0.8
+      },
+      "moderate": {
+        "keywords": ["fever", "cough", "headache", "fatigue", "body aches"],
+        "scoreMultiplier": 0.5
+      },
+      "mild": {
+        "keywords": ["minor pain", "mild discomfort", "mild cough"],
+        "scoreMultiplier": 0.2
+      }
+    },
+    "labThresholds": {
+      "troponin": {
+        "critical": { "value": 10.0, "unit": "ng/mL" },
+        "abnormal": { "value": 0.04, "unit": "ng/mL" }
+      },
+      "wbc": {
+        "high": { "value": 11.0, "unit": "K/uL" },
+        "low": { "value": 4.5, "unit": "K/uL" }
+      },
+      "oxygenSaturation": {
+        "critical": { "value": 90, "unit": "%" },
+        "concerning": { "value": 94, "unit": "%" }
+      }
+    },
+    "vitalThresholds": {
+      "heartRate": {
+        "tachycardia": { "value": 100, "unit": "bpm" },
+        "bradycardia": { "value": 60, "unit": "bpm" }
+      },
+      "bloodPressure": {
+        "hypertensiveCrisis": { "systolic": 180, "diastolic": 120 }
+      }
+    },
+    "riskFactors": {
+      "travelHistory": {
+        "highRisk": ["outbreak regions", "endemic zones"],
+        "weight": 0.3
+      },
+      "comorbidities": {
+        "highRisk": ["diabetes", "hypertension", "immunocompromised", "chronic respiratory disease"],
+        "weight": 0.4
+      },
+      "age": {
+        "highRisk": { "above": 65 },
+        "weight": 0.2
+      }
+    }
+  }
+}

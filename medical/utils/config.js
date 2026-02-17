@@ -248,3 +248,41 @@ export function isSafeMode() {
 export function isProductionMode() {
   return getGlobalConfig().getMode() === 'production';
 }
+
+/**
+ * WHO Debug Mode Configuration
+ * Logs WHO mapping and rule evaluation details during integration
+ */
+export const WHODebugConfig = {
+  enabled: false,
+  logMapping: true,          // Log WHO → Internal mapping details
+  logRuleEvaluation: true,   // Log which WHO rules fired
+  logThresholds: true,       // Log threshold comparisons
+  logRawText: true,          // Log raw WHO text/data
+  verbose: false             // Extra verbose logging
+};
+
+export function enableWHODebugMode() {
+  WHODebugConfig.enabled = true;
+}
+
+export function disableWHODebugMode() {
+  WHODebugConfig.enabled = false;
+}
+
+export function isWHODebugEnabled() {
+  return WHODebugConfig.enabled;
+}
+
+export function whoDebugLog(category, message, data = null) {
+  if (!WHODebugConfig.enabled) return;
+
+  const categoryEnabled = WHODebugConfig[`log${category.charAt(0).toUpperCase()}${category.slice(1)}`];
+  if (categoryEnabled === false) return;
+
+  console.log(`[WHO-DEBUG:${category}] ${message}`);
+  if (data && WHODebugConfig.verbose) {
+    console.log('  ', JSON.stringify(data, null, 2));
+  }
+}
+

@@ -1,0 +1,91 @@
+{
+  "sources": [
+    {
+      "id": "who-2023",
+      "name": "WHO Clinical Standards 2023",
+      "version": "2023.1.0",
+      "type": "clinical-rules",
+      "url": "https://www.who.int/standards/classifications/",
+      "retrievalDate": "2023-01-15",
+      "contentHash": "sha256:abc123...",
+      "status": "archived",
+      "notes": "Superseded by 2024 standards"
+    },
+    {
+      "id": "who-2024",
+      "name": "WHO Clinical Standards 2024",
+      "version": "2024.1.0",
+      "type": "clinical-rules",
+      "url": "https://www.who.int/standards/classifications/",
+      "retrievalDate": "2024-01-10",
+      "contentHash": "sha256:def456...",
+      "status": "active",
+      "notes": "Current production standard"
+    },
+    {
+      "id": "who-2025",
+      "name": "WHO Clinical Standards 2025",
+      "version": "2025.0.0-beta",
+      "type": "clinical-rules",
+      "url": "https://www.who.int/standards/classifications/",
+      "retrievalDate": "2025-01-05",
+      "contentHash": "sha256:ghi789...",
+      "status": "preview",
+      "notes": "Preview version for testing"
+    },
+    {
+      "id": "icd-10",
+      "name": "ICD-10 Classification",
+      "version": "2023",
+      "type": "classification-codes",
+      "url": "https://icd.who.int/browse10/2023/en",
+      "retrievalDate": "2023-06-01",
+      "contentHash": "sha256:icd10...",
+      "status": "active"
+    },
+    {
+      "id": "loinc",
+      "name": "LOINC Laboratory Codes",
+      "version": "2.76",
+      "type": "laboratory-codes",
+      "url": "https://loinc.org/",
+      "retrievalDate": "2024-03-15",
+      "contentHash": "sha256:loinc...",
+      "status": "active"
+    },
+    {
+      "id": "snomed-ct",
+      "name": "SNOMED CT Clinical Terms",
+      "version": "2024-03",
+      "type": "clinical-terminology",
+      "url": "https://www.snomed.org/",
+      "retrievalDate": "2024-03-20",
+      "contentHash": "sha256:snomed...",
+      "status": "active"
+    }
+  ],
+  "metadata": {
+    "lastUpdated": "2025-01-05T10:00:00Z",
+    "updateFrequency": "quarterly",
+    "maintainer": "WE4FREE Medical Module",
+    "auditLog": [
+      {
+        "date": "2025-01-05",
+        "action": "added",
+        "source": "who-2025",
+        "reason": "New preview standards available"
+      },
+      {
+        "date": "2024-01-10",
+        "action": "updated",
+        "source": "who-2024",
+        "reason": "Annual standards update"
+      }
+    ]
+  },
+  "usage": {
+    "defaultStandard": "who-2024",
+    "fallbackStandard": "who-2023",
+    "previewStandard": "who-2025"
+  }
+}

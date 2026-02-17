@@ -1,0 +1,44 @@
+{
+  "version": "2023",
+  "effectiveDate": "2023-01-01",
+  "rules": {
+    "symptomSeverity": {
+      "critical": {
+        "keywords": ["severe chest pain", "difficulty breathing", "unconscious", "seizure"],
+        "scoreMultiplier": 1.0
+      },
+      "severe": {
+        "keywords": ["high fever", "persistent vomiting", "severe headache"],
+        "scoreMultiplier": 0.8
+      },
+      "moderate": {
+        "keywords": ["fever", "cough", "headache", "fatigue"],
+        "scoreMultiplier": 0.5
+      },
+      "mild": {
+        "keywords": ["minor pain", "mild discomfort"],
+        "scoreMultiplier": 0.2
+      }
+    },
+    "labThresholds": {
+      "troponin": {
+        "critical": { "value": 5.0, "unit": "ng/mL" },
+        "abnormal": { "value": 0.04, "unit": "ng/mL" }
+      },
+      "wbc": {
+        "high": { "value": 11.0, "unit": "K/uL" },
+        "low": { "value": 4.5, "unit": "K/uL" }
+      }
+    },
+    "riskFactors": {
+      "travelHistory": {
+        "highRisk": ["outbreak regions"],
+        "weight": 0.3
+      },
+      "comorbidities": {
+        "highRisk": ["diabetes", "hypertension", "immunocompromised"],
+        "weight": 0.4
+      }
+    }
+  }
+}

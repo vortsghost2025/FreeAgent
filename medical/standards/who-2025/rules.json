@@ -1,0 +1,85 @@
+{
+  "version": "2025",
+  "effectiveDate": "2025-01-01",
+  "updatedFrom": "2024",
+  "changes": ["Added AI risk score integration", "Multi-language symptom support", "Updated comorbidity weights"],
+  "rules": {
+    "symptomSeverity": {
+      "critical": {
+        "keywords": ["severe chest pain", "difficulty breathing", "unconscious", "seizure", "respiratory distress", "stroke symptoms"],
+        "scoreMultiplier": 1.0,
+        "urgency": "immediate"
+      },
+      "severe": {
+        "keywords": ["high fever", "persistent vomiting", "severe headache", "confusion", "altered mental status"],
+        "scoreMultiplier": 0.8,
+        "urgency": "urgent"
+      },
+      "moderate": {
+        "keywords": ["fever", "cough", "headache", "fatigue", "body aches", "shortness of breath"],
+        "scoreMultiplier": 0.5,
+        "urgency": "routine"
+      },
+      "mild": {
+        "keywords": ["minor pain", "mild discomfort", "mild cough", "runny nose"],
+        "scoreMultiplier": 0.2,
+        "urgency": "non-urgent"
+      }
+    },
+    "labThresholds": {
+      "troponin": {
+        "critical": { "value": 10.0, "unit": "ng/mL", "action": "immediate-cardiology" },
+        "abnormal": { "value": 0.04, "unit": "ng/mL", "action": "monitor" }
+      },
+      "wbc": {
+        "high": { "value": 11.0, "unit": "K/uL" },
+        "low": { "value": 4.5, "unit": "K/uL" }
+      },
+      "oxygenSaturation": {
+        "critical": { "value": 90, "unit": "%", "action": "immediate-oxygen" },
+        "concerning": { "value": 94, "unit": "%", "action": "monitor" }
+      },
+      "dDimer": {
+        "abnormal": { "value": 0.5, "unit": "mg/L FEU" }
+      }
+    },
+    "vitalThresholds": {
+      "heartRate": {
+        "tachycardia": { "value": 100, "unit": "bpm" },
+        "bradycardia": { "value": 60, "unit": "bpm" },
+        "severeTachycardia": { "value": 120, "unit": "bpm" }
+      },
+      "bloodPressure": {
+        "hypertensiveCrisis": { "systolic": 180, "diastolic": 120 },
+        "stage2Hypertension": { "systolic": 140, "diastolic": 90 }
+      },
+      "temperature": {
+        "fever": { "value": 38.0, "unit": "C" },
+        "highFever": { "value": 39.5, "unit": "C" }
+      }
+    },
+    "riskFactors": {
+      "travelHistory": {
+        "highRisk": ["outbreak regions", "endemic zones", "areas-with-active-transmission"],
+        "weight": 0.25
+      },
+      "comorbidities": {
+        "highRisk": ["diabetes", "hypertension", "immunocompromised", "chronic respiratory disease", "cardiovascular disease", "obesity"],
+        "weight": 0.35
+      },
+      "age": {
+        "highRisk": { "above": 65 },
+        "weight": 0.15
+      },
+      "socialFactors": {
+        "highRisk": ["healthcare-worker", "group-living", "frequent-travel"],
+        "weight": 0.1
+      }
+    },
+    "aiRiskModifiers": {
+      "useML": true,
+      "confidenceThreshold": 0.7,
+      "escalateIfLowConfidence": true
+    }
+  }
+}

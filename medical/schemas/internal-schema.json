@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Internal Pipeline Schema",
+  "description": "Contract for internal medical pipeline data format",
+  "type": "object",
+  "properties": {
+    "raw": {
+      "type": ["object", "string"],
+      "description": "Raw input data (normalized to internal format)"
+    },
+    "source": {
+      "type": "string",
+      "description": "Data source identifier"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "normalized": {
+      "type": "object",
+      "description": "Normalized representation",
+      "properties": {
+        "content": { "type": "string" },
+        "structure": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string" },
+            "keyCount": { "type": "integer" },
+            "hasArrays": { "type": "boolean" },
+            "hasNested": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "classification": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["symptoms", "labs", "imaging", "vitals", "notes", "other"]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "route": { "type": "string" },
+        "flags": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["type", "confidence"]
+    }
+  },
+  "required": ["raw", "source"]
+}
