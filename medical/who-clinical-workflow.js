@@ -11,6 +11,7 @@ import { mapWHOToInternal } from './mapping/who-mapper.js';
 import { evaluateRules, loadStandards } from './rules/ruleEngine.js';
 import { DifferentialDiagnosisEngine } from './clinical-intelligence/differential-diagnosis-engine.js';
 import { ClinicalRedFlagDetector } from './clinical-intelligence/red-flag-detector.js';
+import { ProtocolActivatorV2 } from './clinical-intelligence/protocol-activator-v2.js';
 
 /**
  * Clinical Workflow Orchestrator
@@ -22,6 +23,7 @@ export class WHOClinicalWorkflow {
     this.standards = null;
     this.differentialEngine = null;
     this.redFlagDetector = null;
+    this.protocolActivator = null;
     this.debug = options.debug || false;
   }
 
@@ -33,9 +35,11 @@ export class WHOClinicalWorkflow {
     this.standards = loadStandards(this.standardsVersion);
     this.differentialEngine = new DifferentialDiagnosisEngine(this.standards, { debug: this.debug });
     this.redFlagDetector = new ClinicalRedFlagDetector({ debug: this.debug });
+    this.protocolActivator = new ProtocolActivatorV2(this.standards, { debug: this.debug });
     if (this.debug) console.log(`[Workflow] Loaded standards: ${this.standards.metadata.name} v${this.standards.metadata.version}`);
     if (this.debug) console.log(`[Workflow] Differential diagnosis engine initialized`);
     if (this.debug) console.log(`[Workflow] Red-flag detector initialized`);
+    if (this.debug) console.log(`[Workflow] Protocol Activator v2 initialized`);
   }
 
   /**
@@ -92,6 +96,10 @@ export class WHOClinicalWorkflow {
     if (this.debug) console.log('[Workflow] Step 8: Detecting critical red flags...');
     const redFlags = this.redFlagDetector.detectRedFlags(normalizedData);
 
+    // Step 9: Activate emergency protocols
+    if (this.debug) console.log('[Workflow] Step 9: Activating emergency protocols...');
+    const protocolActivation = this.protocolActivator.evaluateProtocolActivation(normalizedData);
+
     const processingTime = Date.now() - startTime;
 
     return {
@@ -111,6 +119,7 @@ export class WHOClinicalWorkflow {
       protocols,
       differential,
       redFlags,
+      emergencyProtocols: protocolActivation,
       processingTime,
       timestamp: new Date().toISOString(),
       standardsVersion: this.standardsVersion
@@ -430,6 +439,22 @@ export class WHOClinicalWorkflow {
           lines.push(`   ${flag.value}`);
         });
       }
+    }
+
+    if (result.emergencyProtocols && result.emergencyProtocols.activatedProtocols && result.emergencyProtocols.activatedProtocols.length > 0) {
+      lines.push(`\n⚡ --- EMERGENCY PROTOCOLS ACTIVATED (${result.emergencyProtocols.activatedProtocols.length}) ---`);
+      result.emergencyProtocols.activatedProtocols.forEach((proto, i) => {
+        lines.push(`${i + 1}. ${proto.protocol} [${proto.priority}] (Score: ${proto.score.toFixed(1)})`);
+        if (proto.immediateActions && proto.immediateActions.length > 0) {
+          lines.push(`   Immediate Actions:`);
+          proto.immediateActions.slice(0, 2).forEach(action => {
+            lines.push(`   • ${action}`);
+          });
+          if (proto.immediateActions.length > 2) {
+            lines.push(`   ... and ${proto.immediateActions.length - 2} more actions`);
+          }
+        }
+      });
     }
 
     if (result.differential && result.differential.differentials && result.differential.differentials.length > 0) {
