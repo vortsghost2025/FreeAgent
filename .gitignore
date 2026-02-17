@@ -7,3 +7,6 @@ __pycache__/
 config.py
 .env
 connection_bridge/.env
+
+# Private workspace artifacts (do NOT commit)
+workspace_private/
