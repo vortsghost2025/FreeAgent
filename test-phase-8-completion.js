@@ -45,7 +45,8 @@ const cycle1 = orchestrator.runCycle('phase8-cycle-1', {
   validationEvidence: {
     testPassRate: 1,
     canarySuccessRate: 1,
-    errorRatePct: 0.1
+    errorRatePct: 0.1,
+    observedImprovementPct: 8  // Capture improvement from validation
   },
   learningMetrics: {
     learningEfficiency: 0.75,
@@ -91,7 +92,8 @@ const cycle2 = orchestrator.runCycle('phase8-cycle-2', {
   validationEvidence: {
     testPassRate: 1,
     canarySuccessRate: 1,
-    errorRatePct: 0.1
+    errorRatePct: 0.1,
+    observedImprovementPct: 8  // Capture improvement from validation
   },
   learningMetrics: {
     learningEfficiency: 0.85,

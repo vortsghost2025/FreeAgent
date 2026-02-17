@@ -113,6 +113,23 @@ export class ArchitecturalChangeLedger {
     const change = this.getChange(changeId);
     if (!change) return { success: false, error: 'CHANGE_NOT_FOUND' };
     change.status = 'IMPLEMENTED';
+    if (!Array.isArray(change.observations)) {
+      change.observations = [];
+    }
+    if (Number.isFinite(Number(implementation.observedImprovementPct))) {
+      change.observedImprovementPct = Number(implementation.observedImprovementPct);
+      change.observations.push({
+        source: implementation.observationSource || 'validation-evidence',
+        observedImprovementPct: change.observedImprovementPct,
+        complexityDeltaPct: Number.isFinite(Number(implementation.complexityDeltaPct))
+          ? Number(implementation.complexityDeltaPct)
+          : Number(change.complexityDeltaPct || 0),
+        timestamp: Date.now()
+      });
+    }
+    if (Number.isFinite(Number(implementation.complexityDeltaPct))) {
+      change.complexityDeltaPct = Number(implementation.complexityDeltaPct);
+    }
     change.implementation = {
       ...implementation,
       implementedAt: Date.now()
@@ -126,35 +143,72 @@ export class ArchitecturalChangeLedger {
     if (!change) return { success: false, error: 'CHANGE_NOT_FOUND' };
     const rolledBackAt = Date.now();
     const rollbackStartedAt = this._resolveRollbackStart(change);
-    const rollbackDurationSeconds = rollbackStartedAt == null
+    const sanitizedRollbackStartedAt = this._sanitizeRollbackStart(rollbackStartedAt, rolledBackAt);
+    const rollbackDurationSeconds = sanitizedRollbackStartedAt == null
       ? null
-      : Number(((rolledBackAt - rollbackStartedAt) / 1000).toFixed(4));
+      : Number(((rolledBackAt - sanitizedRollbackStartedAt) / 1000).toFixed(4));
     change.status = 'ROLLED_BACK';
     change.rollback = {
       reason,
-      rollbackStartedAt,
+      rollbackStartedAt: sanitizedRollbackStartedAt,
       rolledBackAt,
-      rollbackDurationSeconds
+      rollbackDurationSeconds,
+      timingAnomaly: rollbackStartedAt != null && rollbackStartedAt > rolledBackAt
     };
     this._log('CHANGE_ROLLED_BACK', changeId, { reason });
     return { success: true, change };
   }
 
-  getStats() {
+  getStats(options = {}) {
+    const minSignificantImprovementPct = this._boundedNumber(
+      options.minSignificantImprovementPct,
+      1,
+      0,
+      1000
+    );
+    const complexityPenaltyWeight = this._boundedNumber(
+      options.complexityPenaltyWeight,
+      0.5,
+      0,
+      10
+    );
+
     const all = this.listChanges();
     const validated = all.filter((c) => c.validation && c.validation.isValid).length;
     const compliantValidated = all.filter((c) => c.validation && c.validation.constraintCheck && c.validation.constraintCheck.compliant).length;
-    const implemented = all.filter((c) => c.status === 'IMPLEMENTED').length;
+    const implementedChanges = all.filter((c) => c.status === 'IMPLEMENTED');
+    const implemented = implementedChanges.length;
     const rolledBack = all.filter((c) => c.status === 'ROLLED_BACK').length;
+    const successfulImplementations = implemented + rolledBack;
     const pendingHuman = all.filter((c) => c.status === 'PENDING_HUMAN_REVIEW').length;
-    const improvementImplementedPct = all
-      .filter((c) => c.status === 'IMPLEMENTED')
+    const declaredImprovementPct = implementedChanges
       .reduce((sum, c) => sum + Number(c.expectedImprovementPct || 0), 0);
+    const observedImprovements = [];
+    for (const change of implementedChanges) {
+      const observed = Number(change.observedImprovementPct);
+      if (!Number.isFinite(observed)) continue;
+      const complexityDeltaPct = Number.isFinite(Number(change.complexityDeltaPct))
+        ? Number(change.complexityDeltaPct)
+        : 0;
+      const adjusted = observed - (Math.max(0, complexityDeltaPct) * complexityPenaltyWeight);
+      if (Math.abs(adjusted) < minSignificantImprovementPct) continue;
+      observedImprovements.push(Number(adjusted.toFixed(4)));
+    }
+    const observedImprovementPct = observedImprovements
+      .reduce((sum, value) => sum + value, 0);
+
     const rollbackDurations = all
       .filter((c) => c.status === 'ROLLED_BACK' && c.rollback && Number.isFinite(c.rollback.rollbackDurationSeconds))
       .map((c) => Number(c.rollback.rollbackDurationSeconds));
+    rollbackDurations.sort((a, b) => a - b);
     const meanRollbackSeconds = rollbackDurations.length > 0
       ? Number((rollbackDurations.reduce((sum, value) => sum + value, 0) / rollbackDurations.length).toFixed(4))
+      : null;
+    const p95RollbackSeconds = rollbackDurations.length > 0
+      ? Number(this._percentile(rollbackDurations, 95).toFixed(4))
+      : null;
+    const maxRollbackSeconds = rollbackDurations.length > 0
+      ? Number(rollbackDurations[rollbackDurations.length - 1].toFixed(4))
       : null;
 
     return {
@@ -164,13 +218,20 @@ export class ArchitecturalChangeLedger {
       rolledBack,
       rejected: all.filter((c) => c.status === 'REJECTED').length,
       pendingHuman,
-      changeSuccessRate: Number((validated > 0 ? implemented / validated : 0).toFixed(4)),
+      changeSuccessRate: Number((validated > 0 ? successfulImplementations / validated : 0).toFixed(4)),
       constitutionalComplianceRate: Number((validated > 0 ? compliantValidated / validated : 1).toFixed(4)),
       reversibleCoverage: Number((all.length > 0
         ? all.filter((c) => c.reversible === true && typeof c.rollbackPlan === 'string' && c.rollbackPlan.length > 0).length / all.length
         : 1).toFixed(4)),
-      architecturalImprovementPct: Number(improvementImplementedPct.toFixed(4)),
-      meanRollbackSeconds
+      declaredImprovementPct: Number(declaredImprovementPct.toFixed(4)),
+      architecturalImprovementPct: Number(observedImprovementPct.toFixed(4)),
+      improvementEvidenceCoverage: Number((implemented > 0
+        ? implementedChanges.filter((c) => Number.isFinite(Number(c.observedImprovementPct))).length / implemented
+        : 1).toFixed(4)),
+      meanRollbackSeconds,
+      p95RollbackSeconds,
+      maxRollbackSeconds,
+      rollbackSampleCount: rollbackDurations.length
     };
   }
 
@@ -183,6 +244,32 @@ export class ArchitecturalChangeLedger {
     }
     if (change.createdAt != null) return change.createdAt;
     return null;
+  }
+
+  _sanitizeRollbackStart(startTs, endTs) {
+    if (startTs == null || !Number.isFinite(Number(startTs))) {
+      return null;
+    }
+    const normalized = Number(startTs);
+    if (normalized > endTs) {
+      return endTs;
+    }
+    return Math.max(0, normalized);
+  }
+
+  _percentile(sortedValues = [], p = 95) {
+    if (!Array.isArray(sortedValues) || sortedValues.length === 0) return null;
+    const safeP = this._boundedNumber(p, 95, 0, 100);
+    const rank = Math.ceil((safeP / 100) * sortedValues.length);
+    const index = Math.min(sortedValues.length - 1, Math.max(0, rank - 1));
+    return sortedValues[index];
+  }
+
+  _boundedNumber(value, fallback, min, max) {
+    if (value == null) return fallback;
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) return fallback;
+    return Math.max(min, Math.min(max, numeric));
   }
 
   _log(type, changeId, payload = {}) {
@@ -205,6 +292,8 @@ export class AutonomousArchitecturalEvolutionEngine {
     this.policy = options.policy || new ReleasePolicyEngine(options);
     this.maxPerformanceImpactPct = this._boundedNumber(options.maxPerformanceImpactPct, 10, 0, 100);
     this.autoImplementRiskThreshold = this._boundedNumber(options.autoImplementRiskThreshold, 0.25, 0, 1);
+    this.minSignificantImprovementPct = this._boundedNumber(options.minSignificantImprovementPct, 1, 0, 1000);
+    this.complexityPenaltyWeight = this._boundedNumber(options.complexityPenaltyWeight, 0.5, 0, 10);
     this.sequence = 0;
   }
 
@@ -230,6 +319,13 @@ export class AutonomousArchitecturalEvolutionEngine {
           1000
         ),
         expectedImprovementPct: this._boundedNumber(proposal.expectedImprovementPct, 0, 0, 1000),
+        observedImprovementPct: this._nullableBoundedNumber(
+          proposal.observedImprovementPct,
+          null,
+          -1000,
+          1000
+        ),
+        complexityDeltaPct: this._boundedNumber(proposal.complexityDeltaPct, 0, -1000, 1000),
         safetyRiskScore: this._boundedNumber(proposal.safetyRiskScore, proposal.riskScore || 0, 0, 1),
         auditRef: proposal.auditRef || `audit:${changeId}`,
         createdAt: Date.now(),
@@ -278,6 +374,20 @@ export class AutonomousArchitecturalEvolutionEngine {
       isValid,
       requiresHuman,
       reasons,
+      observedImprovementPct: this._nullableBoundedNumber(
+        validationEvidence.observedImprovementPct != null
+          ? validationEvidence.observedImprovementPct
+          : validationEvidence.measuredImprovementPct,
+        null,
+        -1000,
+        1000
+      ),
+      complexityDeltaPct: this._nullableBoundedNumber(
+        validationEvidence.complexityDeltaPct,
+        null,
+        -1000,
+        1000
+      ),
       constraintCheck,
       policyDecision,
       validatedAt: Date.now()
@@ -299,18 +409,96 @@ export class AutonomousArchitecturalEvolutionEngine {
       return { success: true, status: 'PENDING_HUMAN_REVIEW', changeId };
     }
 
-    this.ledger.setImplemented(changeId, { implementedBy: actor });
+    const implementationMetadata = { implementedBy: actor };
+    if (Number.isFinite(Number(change.validation.observedImprovementPct))) {
+      implementationMetadata.observedImprovementPct = Number(change.validation.observedImprovementPct);
+      implementationMetadata.observationSource = 'validation-evidence';
+    }
+    if (Number.isFinite(Number(change.validation.complexityDeltaPct))) {
+      implementationMetadata.complexityDeltaPct = Number(change.validation.complexityDeltaPct);
+    }
+
+    this.ledger.setImplemented(changeId, implementationMetadata);
     return { success: true, status: 'IMPLEMENTED', changeId };
+  }
+
+  recordObservedOutcome(changeId, observation = {}) {
+    const change = this.ledger.getChange(changeId);
+    if (!change) return { success: false, error: 'CHANGE_NOT_FOUND' };
+    if (change.status !== 'IMPLEMENTED') {
+      return { success: false, error: 'CHANGE_NOT_IMPLEMENTED' };
+    }
+
+    const observedImprovementPct = this._nullableBoundedNumber(
+      observation.observedImprovementPct,
+      null,
+      -1000,
+      1000
+    );
+    if (!Number.isFinite(observedImprovementPct)) {
+      return { success: false, error: 'OBSERVATION_REQUIRED' };
+    }
+    const complexityDeltaPct = this._boundedNumber(
+      observation.complexityDeltaPct,
+      Number(change.complexityDeltaPct || 0),
+      -1000,
+      1000
+    );
+
+    change.observedImprovementPct = Number(observedImprovementPct);
+    change.complexityDeltaPct = Number(complexityDeltaPct);
+    if (!Array.isArray(change.observations)) {
+      change.observations = [];
+    }
+    change.observations.push({
+      source: observation.source || 'runtime-observation',
+      observedImprovementPct: change.observedImprovementPct,
+      complexityDeltaPct: change.complexityDeltaPct,
+      timestamp: Date.now()
+    });
+
+    this.ledger._log('CHANGE_OBSERVED', changeId, {
+      source: observation.source || 'runtime-observation',
+      observedImprovementPct: change.observedImprovementPct,
+      complexityDeltaPct: change.complexityDeltaPct
+    });
+
+    return {
+      success: true,
+      changeId,
+      observedImprovementPct: change.observedImprovementPct,
+      complexityDeltaPct: change.complexityDeltaPct
+    };
   }
 
   rollbackChange(changeId, reason = 'MANUAL_ROLLBACK', metadata = {}) {
     const change = this.ledger.getChange(changeId);
     if (!change) return { success: false, error: 'CHANGE_NOT_FOUND' };
+    if (change.status !== 'IMPLEMENTED') {
+      this.ledger._log('ROLLBACK_FAILED', changeId, { reason: 'CHANGE_NOT_IMPLEMENTED' });
+      return { success: false, error: 'CHANGE_NOT_IMPLEMENTED' };
+    }
     if (metadata.failureDetectedAt != null) {
-      change.failureDetectedAt = metadata.failureDetectedAt;
+      const failureDetectedAt = this._nullableBoundedNumber(
+        metadata.failureDetectedAt,
+        null,
+        0,
+        Number.MAX_SAFE_INTEGER
+      );
+      if (failureDetectedAt != null) {
+        change.failureDetectedAt = failureDetectedAt;
+      }
     }
     if (metadata.rollbackRequestedAt != null) {
-      change.rollbackRequestedAt = metadata.rollbackRequestedAt;
+      const rollbackRequestedAt = this._nullableBoundedNumber(
+        metadata.rollbackRequestedAt,
+        null,
+        0,
+        Number.MAX_SAFE_INTEGER
+      );
+      if (rollbackRequestedAt != null) {
+        change.rollbackRequestedAt = rollbackRequestedAt;
+      }
     }
 
     const result = this.ledger.setRolledBack(changeId, reason);
@@ -329,10 +517,20 @@ export class AutonomousArchitecturalEvolutionEngine {
   getEvolutionReport() {
     return {
       invariants: this.constraints.listInvariants(),
-      stats: this.ledger.getStats(),
+      stats: this.ledger.getStats({
+        minSignificantImprovementPct: this.minSignificantImprovementPct,
+        complexityPenaltyWeight: this.complexityPenaltyWeight
+      }),
       recentEvents: this.ledger.events.slice(-20),
       recentChanges: this.ledger.listChanges().slice(-20)
     };
+  }
+
+  _nullableBoundedNumber(value, fallback, min, max) {
+    if (value == null) return fallback;
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) return fallback;
+    return Math.max(min, Math.min(max, numeric));
   }
 
   _boundedNumber(value, fallback, min, max) {

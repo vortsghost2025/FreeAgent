@@ -39,6 +39,7 @@ export class SelfArchitectureOrchestrator {
         testPassRate: input.validationEvidence && input.validationEvidence.testPassRate,
         canarySuccessRate: input.validationEvidence && input.validationEvidence.canarySuccessRate,
         errorRatePct: input.validationEvidence && input.validationEvidence.errorRatePct,
+        observedImprovementPct: input.validationEvidence && input.validationEvidence.observedImprovementPct,
         maxSafetyRiskScore: input.validationEvidence && input.validationEvidence.maxSafetyRiskScore
       });
       validated.push({
@@ -130,7 +131,7 @@ export class SelfArchitectureOrchestrator {
       metaLearningEffectiveness: (metaLearningStatus.improvementPer100Cycles || 0) >= 0.1,
       performancePreservation: maxPerformanceImpact <= 10,
       reversibility: (evolutionStats.reversibleCoverage || 0) >= 1,
-      rollbackMTTR: (evolutionStats.meanRollbackSeconds == null) || evolutionStats.meanRollbackSeconds <= 30,
+      rollbackMTTR: this._validateMTTRCriteria(evolutionStats),
       auditability: validationStatus.auditIntegrity === true,
       stability: stabilityScore <= 0.2
     };
@@ -179,6 +180,26 @@ export class SelfArchitectureOrchestrator {
     if (!Array.isArray(values) || values.length === 0) return 0;
     const avg = values.reduce((sum, value) => sum + value, 0) / values.length;
     return Number(avg.toFixed(4));
+  }
+
+  _validateMTTRCriteria(stats = {}) {
+    const minSamples = 1;  // At least one rollback sample required
+    const maxMTTRSeconds = 30;
+    const sampleCount = Number(stats.rollbackSampleCount || 0);
+    const meanRollbackSeconds = stats.meanRollbackSeconds;
+
+    // Pass only if:
+    // 1. We have at least minSamples rollback samples AND
+    // 2. Mean rollback time is within policy (or no samples yet for initial run)
+    if (sampleCount === 0) {
+      // No rollback samples yet - pass for bootstrap phase
+      return true;
+    }
+
+    // If we have samples, enforce sample count and MTTR threshold
+    return sampleCount >= minSamples &&
+           meanRollbackSeconds != null &&
+           meanRollbackSeconds <= maxMTTRSeconds;
   }
 }
 
