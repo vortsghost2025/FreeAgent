@@ -52,6 +52,26 @@ class RiskManagementAgent(BaseAgent):
             'enforce_min_position_size_only', True
         ) if config else True
         self.cumulative_risk_today = 0.0
+
+        # Asset-specific risk configurations (to handle performance differences)
+        # BTC/ETH underperform SOL, so we use tighter controls for those assets
+        self.asset_configs = {
+            'SOL/USDT': {
+                'min_signal_strength_adjustment': 0.0,      # No adjustment (baseline: 0.25)
+                'stop_loss_adjustment': 1.0,               # No adjustment (baseline: 2.0% or 1.5% in sideways)
+                'position_size_multiplier': 1.0,           # Full position size
+            },
+            'BTC/USDT': {
+                'min_signal_strength_adjustment': 0.05,    # +5% → 0.30 min signal strength (5% stricter)
+                'stop_loss_adjustment': 0.95,              # -5% tighter stops (1.9% instead of 2%)
+                'position_size_multiplier': 0.80,          # 20% smaller positions for BTC
+            },
+            'ETH/USDT': {
+                'min_signal_strength_adjustment': 0.03,    # +3% → 0.28 min signal strength (3% stricter)
+                'stop_loss_adjustment': 0.97,              # -3% tighter stops (1.94% instead of 2%)
+                'position_size_multiplier': 0.90,          # 10% smaller positions for ETH
+            }
+        }
     
     def execute(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -218,7 +238,30 @@ class RiskManagementAgent(BaseAgent):
             pair_analysis = {}
         
         signal_strength = pair_analysis.get('signal_strength', 0) if isinstance(pair_analysis, dict) else 0
-        
+
+        # Check volatility suitability (NEW - from Lambda research)
+        volatility_approved = pair_analysis.get('volatility_approved', True)
+        if not volatility_approved:
+            volatility_msg = pair_analysis.get('volatility', 'unknown')
+            self.logger.info(f"[{pair}] Position rejected: Volatility not suitable ({volatility_msg})")
+            return {
+                'pair': pair,
+                'current_price': current_price,
+                'position_size': 0,
+                'position_size_usd': 0,
+                'stop_loss': 0,
+                'take_profit': 0,
+                'stop_loss_pct': 0,
+                'take_profit_pct': 0,
+                'risk_amount': 0,
+                'risk_pct_of_account': 0,
+                'signal_strength': signal_strength,
+                'backtest_win_rate': 0,
+                'position_approved': False,
+                'rejection_reason': f'Volatility not suitable ({volatility_msg})',
+                'risk_reward_ratio': 0
+            }
+
         # Check entry timing approval (maximum restraint)
         entry_timing_approved = pair_analysis.get('entry_timing_approved', True)
         if not entry_timing_approved:
@@ -255,9 +298,40 @@ class RiskManagementAgent(BaseAgent):
         # CORRECTED POSITION SIZING FORMULA
         # Step 1: Calculate max risk amount (1% of account by default)
         max_risk_amount = self.account_balance * self.risk_per_trade
-        
-        # Step 3: Calculate stop-loss price
-        stop_loss_pct = self.default_stop_loss_pct
+
+        # Step 3: Calculate stop-loss price (IMPROVED - regime aware and asset-specific)
+        # In sideways markets (low volatility), use tighter stops to minimize whipsaws
+        current_regime = pair_analysis.get('regime', 'unknown')
+
+        # Get asset-specific configuration (default to SOL if not found)
+        asset_config = self.asset_configs.get(pair, self.asset_configs.get('SOL/USDT'))
+        stop_loss_adjustment = asset_config['stop_loss_adjustment']
+        position_size_multiplier = asset_config['position_size_multiplier']
+        min_signal_strength_adjustment = asset_config['min_signal_strength_adjustment']
+
+        # NEW: Adjust signal strength requirements based on market regime AND asset
+        # In sideways markets, require stronger signals to avoid false entries
+        adjusted_min_signal_strength = self.min_signal_strength + min_signal_strength_adjustment
+        if current_regime == 'sideways':
+            # Require stronger signals in sideways markets (45% vs default 25%)
+            adjusted_min_signal_strength = max(adjusted_min_signal_strength, 0.45)
+            self.logger.debug(f"[{pair}] Sideways regime: adjusted min signal strength {self.min_signal_strength + min_signal_strength_adjustment:.2f} → {adjusted_min_signal_strength:.2f}")
+        else:
+            self.logger.debug(f"[{pair}] Asset adjustment: min signal strength {self.min_signal_strength:.2f} → {adjusted_min_signal_strength:.2f}")
+
+        if current_regime == 'sideways':
+            # Use tighter stops in sideways markets (1.5% instead of 2%, then apply asset adjustment)
+            base_stop_loss_pct = 0.015
+            stop_loss_pct = base_stop_loss_pct * stop_loss_adjustment
+            self.logger.info(f"[{pair}] Sideways regime detected - using tighter stop loss: {base_stop_loss_pct*100:.1f}% × {stop_loss_adjustment:.2f} = {stop_loss_pct*100:.2f}%")
+        else:
+            # Normal market: apply asset-specific adjustment to default stop loss
+            stop_loss_pct = self.default_stop_loss_pct * stop_loss_adjustment
+            if stop_loss_adjustment != 1.0:
+                self.logger.debug(f"[{pair}] Asset adjustment: stop loss {self.default_stop_loss_pct*100:.1f}% × {stop_loss_adjustment:.2f} = {stop_loss_pct*100:.2f}%")
+            else:
+                stop_loss_pct = self.default_stop_loss_pct
+
         stop_loss = current_price * (1 - stop_loss_pct)
         
         # Step 4: Calculate risk per unit (the distance to stop-loss)
@@ -290,7 +364,7 @@ class RiskManagementAgent(BaseAgent):
             # Step 2: Adjust based on signal strength and win rate (only when NOT enforcing minimum-only)
             confidence_multiplier = signal_strength * backtest_win_rate
             actual_risk_amount = max_risk_amount * confidence_multiplier
-            
+
             # Step 5: Calculate position size using correct formula
             # CORRECT: position_size = risk_amount / risk_per_unit
             # This ensures: (position_size * risk_per_unit) = risk_amount
@@ -298,7 +372,13 @@ class RiskManagementAgent(BaseAgent):
                 position_size = actual_risk_amount / risk_per_unit
             else:
                 position_size = 0
-            
+
+            # Apply asset-specific position size multiplier
+            if position_size_multiplier != 1.0:
+                original_position_size = position_size
+                position_size = position_size * position_size_multiplier
+                self.logger.debug(f"[{pair}] Asset adjustment: position size {original_position_size:.6f} × {position_size_multiplier:.2f} = {position_size:.6f}")
+
             # Enforce minimum if dynamic size is below minimum
             if min_size_units > 0 and position_size < min_size_units:
                 position_size = min_size_units
@@ -378,9 +458,9 @@ class RiskManagementAgent(BaseAgent):
             approval = position_size > 0
             rejection_reason = None if approval else "Invalid position size"
         else:
-            # Normal mode: validate signal strength and win rate
+            # Normal mode: validate signal strength and win rate with adjusted thresholds
             approval, rejection_reason = self._validate_trade(
-                pair, position_size, signal_strength, backtest_win_rate, risk_per_unit
+                pair, position_size, signal_strength, backtest_win_rate, risk_per_unit, adjusted_min_signal_strength
             )
         
         return {
@@ -407,33 +487,38 @@ class RiskManagementAgent(BaseAgent):
         position_size: float,
         signal_strength: float,
         win_rate: float,
-        risk_per_unit: float
+        risk_per_unit: float,
+        min_signal_strength: float = None  # NEW PARAMETER for regime-based thresholds
     ) -> tuple[bool, Optional[str]]:
         """
         Validate if a trade should be executed.
-        
+
         Args:
             pair: Trading pair
             position_size: Size of position
             signal_strength: Signal confidence (0-1)
             win_rate: Historical win rate from backtesting
             risk_per_unit: Risk per unit of asset
-            
+            min_signal_strength: Override minimum signal strength (optional, for regime-based adjustments)
+
         Returns:
             Tuple of (is_valid, rejection_reason)
         """
+        # Use provided threshold or default
+        check_min_signal_strength = min_signal_strength if min_signal_strength is not None else self.min_signal_strength
+
         # Check minimum signal strength
-        if signal_strength < self.min_signal_strength:
-            return False, f"Signal strength too low ({signal_strength:.2f} < {self.min_signal_strength})"
-        
+        if signal_strength < check_min_signal_strength:
+            return False, f"Signal strength too low ({signal_strength:.2f} < {check_min_signal_strength:.2f})"
+
         # Check win rate is positive
         if win_rate < self.min_win_rate:
             return False, f"Backtest win rate below {self.min_win_rate*100:.0f}% ({win_rate*100:.1f}%)"
-        
+
         # Check position size is reasonable
         if position_size <= 0:
             return False, "Invalid position size"
-        
+
         # All checks passed
         return True, None
     

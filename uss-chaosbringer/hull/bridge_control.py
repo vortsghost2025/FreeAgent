@@ -4,10 +4,12 @@ Captain's central command and state machine
 Ensures all systems operate within acceptable parameters
 """
 
+
 import logging
 from datetime import datetime
 from typing import Dict, Any, Optional, List
 from enum import Enum
+from narrator_engine import NarratorEngine
 
 logger = logging.getLogger("BridgeControl")
 
@@ -44,11 +46,27 @@ class BridgeControl:
         self.alert_level = "GREEN"
         self.crew_log = []
         self.state_history = []
+        self.narrator = NarratorEngine(persona="Chaosbringer")
 
         self._log_captain_entry(
             "🖖 Captain's Log, Stardate 2026.02.18",
             "USS Chaosbringer systems initialization complete. All hands stand by."
         )
+
+    def process_event(self, event_type: str, event: Any, state: Any) -> Any:
+        """
+        Route event to correct domain handler using EventRouter and narrate with personality.
+        """
+        try:
+            from event_router import route_event
+            result = route_event(event_type, event, state)
+            # Generate narrative output using NarratorEngine
+            narrative = self.narrator.narrate(event={"type": event_type, **(event or {})}, state=state or {}, result=result or {})
+            self._narrate(narrative)
+            return result
+        except Exception as e:
+            self._narrate(f"Error processing event {event_type}: {e}")
+            return {"error": str(e)}
 
     def engage_warp_drive(self, intensity: float = 1.0) -> bool:
         """Enter high-processing mode"""

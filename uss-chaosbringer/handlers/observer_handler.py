@@ -67,7 +67,7 @@ class ObserverHandler:
         elif event_type == 'AnomalyDensityHigh':
             # Abnormal pattern density
             state_delta['anomaly_density'] = payload.get('deviation', 0.0)
-            domain_actions.append({'type': 'INCREASE_MONITORING', 'severity': 'WARNING'})
+            domain_actions.append({'type': 'INCREASE_MONITORING', 'severity': 'ALERT'})
             logs.append(f"[observer] Anomaly density high: {payload.get('anomalies_last_minute')} anomalies (baseline: {payload.get('baseline')})")
 
         else:

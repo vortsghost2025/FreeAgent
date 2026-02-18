@@ -15,10 +15,15 @@ Configuration:
 - Press Ctrl+C to stop gracefully
 """
 
+# CRITICAL: Force UTF-8 encoding to prevent UnicodeEncodeError on Windows
+import sys
+import io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+
 import logging
 import os
 import signal
-import sys
 import time
 from datetime import datetime
 
@@ -371,7 +376,7 @@ def main():
         agents = initialize_agents(config)
         print_system_status(agents)
         
-        trading_pairs = ['SOL/USDT']
+        trading_pairs = TRADING_CONFIG.get('trading_pairs', ['SOL/USDT'])
         cycle_count = 0
         
         logger.info("Starting continuous trading loop...")

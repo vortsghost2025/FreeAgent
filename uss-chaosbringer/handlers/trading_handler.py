@@ -57,7 +57,7 @@ class TradingHandler:
             # Bearish market detected
             state_delta['market_regime'] = 'BEARISH'
             state_delta['regime_confidence'] = payload.get('confidence', 0.0)
-            domain_actions.append({'type': 'REDUCE_EXPOSURE', 'severity': 'WARNING'})
+            domain_actions.append({'type': 'REDUCE_EXPOSURE', 'severity': 'ALERT'})
             logs.append(f"[trading] Bearish regime detected (confidence: {payload.get('confidence')})")
 
         elif event_type == 'VolatilitySpike':

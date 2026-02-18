@@ -49,7 +49,7 @@ class InfraHandler:
             # CPU usage critical
             state_delta['cpu_pct'] = payload.get('cpu_pct', 0)
             state_delta['cpu_process'] = payload.get('process')
-            domain_actions.append({'type': 'THROTTLE_PROCESSING', 'severity': 'WARNING'})
+            domain_actions.append({'type': 'THROTTLE_PROCESSING', 'severity': 'ALERT'})
             logs.append(f"[infra] CPU overload: {payload.get('cpu_pct')}% on {payload.get('process')} for {payload.get('duration_ms')}ms")
 
         elif event_type == 'MemoryPressure':
@@ -57,15 +57,24 @@ class InfraHandler:
             state_delta['mem_pct'] = payload.get('mem_pct', 0)
             state_delta['memory_process'] = payload.get('process')
             state_delta['leak_suspected'] = payload.get('leak_suspected', False)
-            domain_actions.append({'type': 'PAGE_RACCOONS', 'severity': 'WARNING'})
+            domain_actions.append({'type': 'PAGE_RACCOONS', 'severity': 'ALERT'})
             logs.append(f"[infra] Memory pressure: {payload.get('mem_pct')}% on {payload.get('process')} (leak suspected: {payload.get('leak_suspected')})")
 
         elif event_type == 'ReactorOverheat':
             # Reactor core temperature critical
             state_delta['reactor_temp'] = payload.get('core_temp', 0)
             state_delta['reactor_threshold'] = payload.get('threshold', 0)
-            domain_actions.append({'type': 'COOL_DOWN_REACTOR', 'severity': 'CRITICAL'})
-            logs.append(f"[infra] Reactor overheat: {payload.get('core_temp')}°C (threshold: {payload.get('threshold')}°C)")
+
+            # Check if cooling down (negative heat_rate = recovery)
+            heat_rate = payload.get('heat_rate')
+            if heat_rate is not None and heat_rate < 0:
+                # Reactor is cooling - downgrade to ALERT
+                domain_actions.append({'type': 'MONITOR_REACTOR_COOLING', 'severity': 'ALERT'})
+                logs.append(f"[infra] Reactor cooling: {payload.get('core_temp')}°C (threshold: {payload.get('threshold')}°C, cooling at {heat_rate}°C/s)")
+            else:
+                # Reactor heating or status unknown - critical
+                domain_actions.append({'type': 'COOL_DOWN_REACTOR', 'severity': 'CRITICAL'})
+                logs.append(f"[infra] Reactor overheat: {payload.get('core_temp')}°C (threshold: {payload.get('threshold')}°C)")
 
         elif event_type == 'ShieldEnergyLow':
             # Shield energy depleting

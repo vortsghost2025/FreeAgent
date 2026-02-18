@@ -55,11 +55,36 @@ class MarketAnalysisAgent(BaseAgent):
         self.macd_slow = config.get('macd_slow', 26) if config else 26
         self.macd_signal = config.get('macd_signal', 9) if config else 9
         self.downtrend_threshold = config.get('downtrend_threshold', -5) if config else -5
-        
+
+        # Asset-specific configurations (tuned for different asset characteristics)
+        # SOL: stable, well-understood market; baseline performance
+        # BTC: more mature, lower volatility; requires stricter signaling
+        # ETH: moderate volatility, complex dynamics; slightly tighter than SOL
+        self.asset_configs = {
+            'SOL/USDT': {
+                'rsi_weight': 0.8,                  # Equal balance with price action
+                'momentum_weight': 1.0,             # Baseline momentum sensitivity
+                'volatility_adjustment': 0.1,      # Standard volatility buffer
+                'signal_threshold_adj': 0,          # No threshold adjustment (baseline)
+            },
+            'BTC/USDT': {
+                'rsi_weight': 0.6,                  # Reduce RSI weight (BTC is more stable)
+                'momentum_weight': 1.2,             # Require stronger price confirmation
+                'volatility_adjustment': 0.05,     # Tighter volatility requirements
+                'signal_threshold_adj': 5,          # Raise buy threshold by 5 points (70 vs 65)
+            },
+            'ETH/USDT': {
+                'rsi_weight': 0.7,                  # Moderate RSI weight
+                'momentum_weight': 1.1,             # Slightly higher momentum requirement
+                'volatility_adjustment': 0.07,     # Moderate volatility buffer
+                'signal_threshold_adj': 3,          # Raise buy threshold by 3 points (68 vs 65)
+            }
+        }
+
         # Initialize entry timing validator (maximum restraint approach)
         self.entry_timing_enabled = False
         self.entry_timing_validator = None
-        
+
         if ENTRY_TIMING_AVAILABLE and config:
             entry_config = config.get('entry_timing_config', {})
             if entry_config.get('enabled', False):
@@ -73,6 +98,8 @@ class MarketAnalysisAgent(BaseAgent):
             self.logger.warning("[ENTRY TIMING] Module not available (import failed)")
         else:
             self.logger.info("[ENTRY TIMING] Not configured")
+
+        self.logger.info("[ASSET CONFIGS] Loaded asset-specific parameters (SOL/BTC/ETH)")
     
     def execute(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -172,24 +199,34 @@ class MarketAnalysisAgent(BaseAgent):
         
         # Volatility classification
         volatility = self._classify_volatility(price_change_24h)
-        
+
+        # Check if volatility is suitable for trading
+        volatility_approved = self._is_volatility_suitable_for_trading(volatility)
+
         # Market regime
         regime = self._classify_regime(price_change_24h, rsi, volatility)
-        
-        # Buy/Sell signal (0-100, 50 is neutral)
-        signal = self._generate_signal(price_change_24h, rsi)
-        
+
+        # Buy/Sell signal (0-100, 50 is neutral) - now asset-aware
+        signal = self._generate_signal(price_change_24h, rsi, pair)
+
+        # Get asset-specific configuration (default to SOL if not found)
+        asset_config = self.asset_configs.get(pair, self.asset_configs.get('SOL/USDT'))
+
+        # Apply asset-specific signal thresholds
+        buy_threshold = 65 + asset_config['signal_threshold_adj']
+        sell_threshold = 35 - asset_config['signal_threshold_adj']
+
         # Entry timing validation (maximum restraint)
         entry_timing_approved = True
         entry_timing_reason = "Not configured"
-        
+
         if self.entry_timing_enabled and self.entry_timing_validator:
             entry_timing_approved, entry_timing_reason = \
                 self.entry_timing_validator.check_reversal_confirmation(pair, current_price)
-            
+
             if not entry_timing_approved:
                 self.logger.info(f"[{pair}] Entry timing DEFERRED: {entry_timing_reason}")
-        
+
         return {
             'pair': pair,
             'current_price': current_price,
@@ -198,10 +235,11 @@ class MarketAnalysisAgent(BaseAgent):
             'macd_signal': macd_signal,
             'trend': trend,
             'volatility': volatility,
+            'volatility_approved': volatility_approved,
             'regime': regime,
             'buy_signal': signal,
             'signal_strength': abs(signal - 50) / 50,  # 0-1, higher = stronger
-            'recommendation': 'BUY' if signal > 60 else 'SELL' if signal < 40 else 'HOLD',
+            'recommendation': 'BUY' if signal > buy_threshold else 'SELL' if signal < sell_threshold else 'HOLD',
             'entry_timing_approved': entry_timing_approved,
             'entry_timing_reason': entry_timing_reason
         }
@@ -244,6 +282,27 @@ class MarketAnalysisAgent(BaseAgent):
             return 'medium'
         else:
             return 'low'
+
+    def _is_volatility_suitable_for_trading(self, volatility: str) -> bool:
+        """
+        Determine if current volatility level is suitable for trading.
+        In sideways markets (low volatility), we still trade but with higher signal requirements.
+
+        Args:
+            volatility: Current volatility classification ('high', 'medium', 'low')
+
+        Returns:
+            True if suitable for trading, False otherwise
+        """
+        # Low volatility = choppy/sideways market - still tradeable but requires higher confirmation
+        # Medium volatility = normal trading environment
+        # High volatility = trending market or shock conditions
+
+        if volatility in ['very_low', 'low']:
+            self.logger.info("[VOLATILITY] Low volatility detected - will require stronger signals")
+            return True  # Allow trading but with higher quality signals
+
+        return True  # Medium and high volatility always approved for trading
     
     def _classify_regime(self, price_change: float, rsi: float, volatility: str) -> str:
         """
@@ -269,21 +328,48 @@ class MarketAnalysisAgent(BaseAgent):
         # Default to sideways
         return MarketRegime.SIDEWAYS.value
     
-    def _generate_signal(self, price_change: float, rsi: float) -> float:
+    def _generate_signal(self, price_change: float, rsi: float, pair: str = 'SOL/USDT') -> float:
         """
-        Generate buy/sell signal.
-        
+        Generate buy/sell signal with asset-specific tuning.
+
+        IMPROVED: Reduced sensitivity to small price moves to filter noise in sideways markets
+        Now also applies asset-specific RSI and momentum weights per asset characteristics.
+
+        Args:
+            price_change: 24h price change percentage
+            rsi: RSI value (0-100)
+            pair: Trading pair (e.g., 'SOL/USDT', 'BTC/USDT', 'ETH/USDT')
+
         Returns:
-            Signal value 0-100 (50=neutral, >60=buy, <40=sell)
+            Signal value 0-100 (50=neutral, >65=buy, <35=sell - RAISED THRESHOLDS)
         """
+        # Get asset-specific configuration (default to SOL if not found)
+        asset_config = self.asset_configs.get(pair, self.asset_configs.get('SOL/USDT'))
+        rsi_weight = asset_config['rsi_weight']
+        momentum_weight = asset_config['momentum_weight']
+
         signal = 50
-        
-        # Price change component
-        signal += price_change * 2
-        
-        # RSI component
-        signal += (rsi - 50) * 0.5
-        
+
+        # Price change component - with asset-specific momentum weight
+        # Base multiplier 1.5 adjusted by momentum_weight:
+        # - SOL (1.0x): 1.5 (baseline)
+        # - BTC (1.2x): 1.8 (require stronger price confirmation)
+        # - ETH (1.1x): 1.65 (moderately stronger)
+        signal += price_change * (1.5 * momentum_weight)
+
+        # RSI component - with asset-specific RSI weight
+        # - SOL (0.8): balanced with price action
+        # - BTC (0.6): reduce RSI weight (more stable, less reactive)
+        # - ETH (0.7): moderate RSI weight
+        signal += (rsi - 50) * rsi_weight
+
+        # NEW: Additional check for weak momentum - suppress very weak signals
+        # If both price change is tiny AND RSI is near neutral, pull signal to neutral
+        if abs(price_change) < 0.5 and abs(rsi - 50) < 5:
+            # Very low momentum - reduce signal strength by 70% to prevent weak entries
+            signal = 50 + (signal - 50) * 0.3
+            self.logger.debug(f"[{pair}][SIGNAL SUPPRESSION] Very weak momentum: price_chg={price_change:.2f}%, rsi={rsi:.1f} -> signal={signal:.1f}")
+
         return max(0, min(100, signal))
     
     def _determine_overall_regime(self, analysis: Dict[str, Dict]) -> str:

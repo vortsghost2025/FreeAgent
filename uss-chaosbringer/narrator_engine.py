@@ -100,6 +100,30 @@ class NarratorEngine:
                     "Alert: {alert_type}. The sensors are getting chatty again."
                 ]
             },
+            ("NORMAL", "WARNING", "TRADING_BOT"): {
+                "tone": NarratorTone.CONCERNED,
+                "templates": [
+                    "Trading paused: {reason}. Precautions noted.",
+                    "Hold on. The market beckons caution. {reason}",
+                    "Halting trades temporarily. {reason}. Resuming when conditions improve."
+                ]
+            },
+            ("NORMAL", "WARNING", "INTERNAL"): {
+                "tone": NarratorTone.CONCERNED,
+                "templates": [
+                    "Ship subsystem flagged: {topic}. Monitoring closely.",
+                    "Internal warning: {topic}. Nothing critical yet.",
+                    "Subsystem alert: {topic}. Keeping an eye on this."
+                ]
+            },
+            ("NORMAL", "ALERT", "INTERNAL"): {
+                "tone": NarratorTone.RESIGNED,
+                "templates": [
+                    "Shield energy degrading: {energy_remaining} remaining. Rate: {drain_rate}/sec.",
+                    "Core vibration increasing. {vibration_level}. Troubling.",
+                    "Warp core instability detected. Level: {vibration_level}. I recommend caution."
+                ]
+            },
 
             # ===== ELEVATED_ALERT MODE =====
             ("ELEVATED_ALERT", "WARNING", "TRADING_BOT"): {
@@ -241,13 +265,24 @@ class NarratorEngine:
         1. Threat level
         2. Domain actions
         3. Event type (inferred from event name)
+        4. Event payload context (e.g., cooling vs heating)
         """
         # First, check event type for key indicators
         if event:
             event_type = event.get("type", "")
+            payload = event.get("payload", {})
+
+            # Check context: ReactorOverheat with negative heat_rate = recovery
+            if "Overheat" in event_type:
+                heat_rate = payload.get("heat_rate")
+                if heat_rate is not None and heat_rate < 0:
+                    # Cooling down = ALERT, not CRITICAL
+                    return "ALERT"
+                # Heating up or unknown = CRITICAL
+                return "CRITICAL"
 
             # Critical events
-            if any(x in event_type for x in ["Execute Error", "Overheat", "Storm", "HighSeverity", "Emergency"]):
+            if any(x in event_type for x in ["Execute Error", "Storm", "HighSeverity", "Emergency"]):
                 return "CRITICAL"
 
             # Alert events

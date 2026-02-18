@@ -5,7 +5,7 @@
 TRADING_CONFIG = {
     'account_balance': 80,              # $20 withdrawn for VPS - FORTIFIED BOOTSTRAP
     'paper_trading': True,              # True = simulate, False = LIVE TRADING (API timestamp issue - fixing)
-    'trading_pairs': ['SOL/USDT'],      # Pairs to trade (SOL only for micro-live)
+    'trading_pairs': ['SOL/USDT', 'BTC/USDT', 'ETH/USDT'],  # Multi-asset with asset-specific tuning
 }
 
 # Risk Management (CRITICAL - Do not modify lightly)
@@ -14,7 +14,7 @@ RISK_CONFIG = {
     'min_risk_reward_ratio': 1.5,       # Minimum profit:loss ratio
     'max_daily_loss': 0.05,             # 5% max daily loss ($4 at $80 balance)
     'account_balance': 80,              # $20 withdrawn for VPS runway (2-3 months)
-    'min_signal_strength': 0.10,        # Minimum signal strength (lowered from 0.3 to allow weaker signals)
+    'min_signal_strength': 0.25,        # Minimum signal strength (raised from 0.10 to 0.25 for stronger entries)
     'min_win_rate': 0.45,               # Minimum backtest win rate
     'min_notional_usd': 1.0,            # Minimum trade size in USD (lowered for $80 micro-live account)
     'default_stop_loss_pct': 0.02,      # 2% stop loss by default
@@ -22,7 +22,8 @@ RISK_CONFIG = {
     'min_position_size_units': 0.01,    # Default minimum (0.01 SOL)
     'min_position_size_by_pair': {
         'SOL/USDT': 0.01,               # Minimum 0.01 SOL per trade (~$0.88)
-        'BTC/USDT': 0.0001,             # Minimum 0.0001 BTC per trade if enabled later
+        'BTC/USDT': 0.0001,             # Minimum 0.0001 BTC per trade
+        'ETH/USDT': 0.001,              # Minimum 0.001 ETH per trade
     },
     'max_position_size_usd': 10.0,      # HARD CAP: Maximum $10 position size
 }
