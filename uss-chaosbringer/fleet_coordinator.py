@@ -48,10 +48,15 @@ class FleetCoordinator:
         self.cross_ship_routing_rules: Dict[str, List[str]] = {}
         self.fleet_threat_level = 0
         self.telemetry_engine = None  # Optional TelemetryEngine integration
+        self.lore_engine = None  # Optional LoreEngine integration
 
     def set_telemetry_engine(self, telemetry_engine: 'TelemetryEngine'):
         """Wire in a TelemetryEngine for observability"""
         self.telemetry_engine = telemetry_engine
+
+    def set_lore_engine(self, lore_engine: 'LoreEngine'):
+        """Wire in a LoreEngine for story generation"""
+        self.lore_engine = lore_engine
 
     def set_telemetry_hook(self, hook_name: str, hook_fn):
         """Register a telemetry hook (if TelemetryEngine is wired)"""
@@ -68,6 +73,13 @@ class FleetCoordinator:
             self.ships,
             previous_metrics
         )
+
+        # Feed hook results to LoreEngine for story generation
+        if self.lore_engine and hook_results:
+            for hook_result in hook_results:
+                if hook_result.triggered:
+                    self.lore_engine.generate_from_telemetry_hook(hook_result, current_metrics)
+
         return current_metrics, hook_results
 
     def register_ship(self, ship: Starship):
