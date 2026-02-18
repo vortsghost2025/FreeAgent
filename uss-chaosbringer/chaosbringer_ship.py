@@ -28,6 +28,11 @@ class ChaosbringingerShip(Starship):
     This is the primary trading control plane.
     """
 
+    def __init__(self, ship_name: str, personality_mode: str = 'CALM'):
+        """Initialize ChaosbringingerShip with optional personality override"""
+        super().__init__(ship_name)
+        self.personality_mode = personality_mode  # Override default after parent init
+
     def get_initial_state(self) -> Dict[str, Any]:
         """Define ChaosBringer-specific state"""
         return {
@@ -177,4 +182,4 @@ class ChaosbringingerShip(Starship):
         self.cross_ship_event_queue.append(event)
 
     def __repr__(self):
-        return f"<USS Chaosbringer threat={self.state.get('threat_level', 0)} mode={self.state.get('mode')} shields={self.state.get('shields', 0)}%>"
+        return f"<USS Chaosbringer threat={self.state.get('threat_level', 0)} mode={self.state.get('mode')} personality={self.personality_mode}>"

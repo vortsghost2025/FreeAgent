@@ -58,6 +58,7 @@ class Starship(ABC):
         self.state: Dict[str, Any] = self.get_initial_state()
         self.handlers: Dict[str, Callable] = {}
         self.narrator = None
+        self.personality_mode = 'CALM'  # Default personality mode
         self.event_log: List[Dict[str, Any]] = []
         self.cross_ship_event_queue: List[ShipEvent] = []
         self.telemetry = {
@@ -249,6 +250,25 @@ class Starship(ABC):
     def get_state(self) -> Dict[str, Any]:
         """Return current ship state (read-only copy)"""
         return dict(self.state)
+
+    def set_personality_mode(self, mode: str):
+        """
+        Set the personality mode for this ship's narrator.
+
+        Available modes: CALM, SARCASM, NOIR, DOCUMENTARY, TIRED_ENGINEER, CAPTAINS_LOG, AI_TRYING_ITS_BEST
+
+        Does NOT reinitialize the narrator, just updates the mode flag.
+        The narrator will use this mode for all subsequent narratives.
+        """
+        valid_modes = ['CALM', 'SARCASM', 'NOIR', 'DOCUMENTARY', 'TIRED_ENGINEER', 'CAPTAINS_LOG', 'AI_TRYING_ITS_BEST']
+        if mode not in valid_modes:
+            raise ValueError(f"Invalid personality mode: {mode}. Must be one of {valid_modes}")
+
+        self.personality_mode = mode
+
+    def get_personality_mode(self) -> str:
+        """Get current personality mode"""
+        return self.personality_mode
 
     def get_telemetry(self) -> Dict[str, Any]:
         """Return ship telemetry (for dashboard and monitoring)"""
