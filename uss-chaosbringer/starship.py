@@ -260,6 +260,24 @@ class Starship(ABC):
             'cross_ship_queue_size': len(self.cross_ship_event_queue)
         }
 
+    def get_telemetry_snapshot(self) -> Dict[str, Any]:
+        """
+        Return structured telemetry snapshot for TelemetryEngine.
+        Override in subclasses to add ship-specific metrics.
+        """
+        return {
+            'ship_name': self.ship_name,
+            'threat_level': self.state.get('threat_level', 0),
+            'mode': self.state.get('mode', 'UNKNOWN'),
+            'shields': self.state.get('shields', 100),
+            'warp_factor': self.state.get('warp_factor', 0),
+            'reactor_temp': self.state.get('reactor_temp', 0),
+            'event_count': self.telemetry.get('event_count', 0),
+            'severity_distribution': self.telemetry.get('severity_counts', {}),
+            'uptime_seconds': self.telemetry.get('uptime_seconds', 0),
+            'last_event': self.telemetry.get('last_event'),
+        }
+
     def reset_state(self):
         """Reset ship to initial state"""
         self.state = self.get_initial_state()

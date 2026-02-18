@@ -47,6 +47,28 @@ class FleetCoordinator:
         self.event_history: List[Dict[str, Any]] = []
         self.cross_ship_routing_rules: Dict[str, List[str]] = {}
         self.fleet_threat_level = 0
+        self.telemetry_engine = None  # Optional TelemetryEngine integration
+
+    def set_telemetry_engine(self, telemetry_engine: 'TelemetryEngine'):
+        """Wire in a TelemetryEngine for observability"""
+        self.telemetry_engine = telemetry_engine
+
+    def set_telemetry_hook(self, hook_name: str, hook_fn):
+        """Register a telemetry hook (if TelemetryEngine is wired)"""
+        if self.telemetry_engine:
+            self.telemetry_engine.register_hook(hook_name, hook_fn)
+
+    def _update_telemetry(self):
+        """Collect and process telemetry (called after events)"""
+        if not self.telemetry_engine:
+            return None
+
+        previous_metrics = self.telemetry_engine.get_latest_metrics()
+        current_metrics, hook_results = self.telemetry_engine.update_metrics(
+            self.ships,
+            previous_metrics
+        )
+        return current_metrics, hook_results
 
     def register_ship(self, ship: Starship):
         """Register a starship to the fleet"""
@@ -107,6 +129,9 @@ class FleetCoordinator:
 
         # Update fleet threat level
         self._update_fleet_threat_level()
+
+        # Update telemetry
+        self._update_telemetry()
 
         return results
 
