@@ -1,0 +1,284 @@
+#!/usr/bin/env python3
+"""
+STARSHIP — Abstract Base Class for Multi-Ship Fleet Architecture
+Every starship in the USS Chaosbringer fleet inherits from this class.
+Provides the protocol for:
+  - Event routing via domain handlers
+  - State management with safety rules
+  - Personality-driven narration
+  - Cross-ship event emission
+  - Telemetry collection
+"""
+
+from abc import ABC, abstractmethod
+from typing import Dict, Any, Optional, List, Callable
+from dataclasses import dataclass, field
+from datetime import datetime
+import json
+
+
+@dataclass
+class ShipEvent:
+    """A standardized event that flows through a ship"""
+    domain: str
+    type: str
+    payload: Dict[str, Any]
+    source_ship: str = "UNKNOWN"
+    timestamp: float = field(default_factory=lambda: datetime.now().timestamp())
+    cross_ship: bool = False  # True if routed from another ship
+
+
+@dataclass
+class ShipEventResult:
+    """Result of processing an event through a ship"""
+    success: bool
+    severity: str
+    narrative: str
+    state_delta: Optional[Dict[str, Any]]
+    domain_actions: List[Dict[str, Any]]
+    logs: List[str]
+    cross_ship_events: List[ShipEvent] = field(default_factory=list)
+
+
+class Starship(ABC):
+    """
+    Abstract base class defining the contract for all starships.
+
+    Each ship is responsible for:
+    1. Managing its own state (shields, warp_factor, reactor_temp, etc.)
+    2. Registering domain-specific event handlers (TRADING_BOT, OBSERVER, INFRA, etc.)
+    3. Processing events through handlers → narrator → safety rules
+    4. Emitting cross-ship events for fleet coordination
+    5. Tracking telemetry (warp factor, threat level, tone activations, etc.)
+    """
+
+    def __init__(self, ship_name: str):
+        """Initialize a starship with name and empty state"""
+        self.ship_name = ship_name
+        self.state: Dict[str, Any] = self.get_initial_state()
+        self.handlers: Dict[str, Callable] = {}
+        self.narrator = None
+        self.event_log: List[Dict[str, Any]] = []
+        self.cross_ship_event_queue: List[ShipEvent] = []
+        self.telemetry = {
+            "event_count": 0,
+            "severity_counts": {"INFO": 0, "WARNING": 0, "ALERT": 0, "CRITICAL": 0},
+            "last_event": None,
+            "uptime_seconds": 0.0,
+        }
+
+        # Initialize ship-specific configuration
+        self._register_handlers()
+        self._initialize_narrator()
+
+    @abstractmethod
+    def get_initial_state(self) -> Dict[str, Any]:
+        """
+        Override this to define ship-specific initial state.
+
+        Base fields every ship should have:
+        - threat_level: 0-10 (escalates with alerts)
+        - mode: "NORMAL", "ELEVATED_ALERT", "CRITICAL"
+        - shields: 0-100 (shield integrity)
+        - warp_factor: 0-10 (engine output)
+        - reactor_temp: 0-100 (thermal state)
+
+        Ship-specific fields come after base fields.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def _register_handlers(self):
+        """
+        Override this to register domain handlers.
+        Example:
+            from handlers.trading_handler import TradingHandler
+            self.handlers['TRADING_BOT'] = TradingHandler.handle
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def _initialize_narrator(self):
+        """
+        Override this to initialize the narrator engine with ship personality.
+        Example:
+            from narrator_engine import NarratorEngine
+            self.narrator = NarratorEngine(personality_matrix=self.get_narrator_config())
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_narrator_config(self) -> Dict[str, Any]:
+        """
+        Override to return ship-specific narrator personality matrix.
+        Returns dict mapping (mode, severity, domain) → (tone, templates).
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_safety_rules(self) -> List[Dict[str, Any]]:
+        """
+        Override to return ship-specific safety rules.
+        Each rule: {
+            'name': str,
+            'condition': callable(state) -> bool,
+            'action': callable(state) -> state_delta,
+            'severity': 'INFO' | 'WARNING' | 'ALERT' | 'CRITICAL'
+        }
+        """
+        raise NotImplementedError
+
+    def process_event(self, event: ShipEvent) -> ShipEventResult:
+        """
+        Core event processing pipeline:
+        1. Route to domain handler
+        2. Apply state delta
+        3. Check safety rules
+        4. Generate narrative
+        5. Collect telemetry
+        6. Queue cross-ship events
+
+        Returns ShipEventResult with everything needed by FleetCoordinator.
+        """
+        logs = []
+        severity = "INFO"
+        narrative = f"Event {event.type} processed by {self.ship_name}"
+        state_delta = {}
+        domain_actions = []
+        cross_ship_events = []
+
+        # Step 1: Route to domain handler
+        handler = self.handlers.get(event.domain)
+        if not handler:
+            logs.append(f"[{self.ship_name}] Unknown domain: {event.domain}")
+            severity = "WARNING"
+        else:
+            try:
+                from event_router import DomainResult
+                result: DomainResult = handler(event.__dict__, self.state)
+                state_delta = result.state_delta or {}
+                domain_actions = result.domain_actions or []
+                logs.extend(result.logs or [])
+            except Exception as e:
+                logs.append(f"[{self.ship_name}] Handler error: {str(e)}")
+                severity = "CRITICAL"
+
+        # Step 2: Apply state delta
+        if state_delta:
+            self.state.update(state_delta)
+
+        # Step 3: Check safety rules
+        safety_violations = self._check_safety_rules()
+        if safety_violations:
+            logs.extend(safety_violations['logs'])
+            severity = safety_violations['max_severity']
+            if safety_violations['state_delta']:
+                self.state.update(safety_violations['state_delta'])
+
+        # Step 4: Generate narrative
+        if self.narrator:
+            try:
+                narrative = self.narrator.generate_narrative(
+                    event=event.__dict__,
+                    state=self.state,
+                    domain_actions=domain_actions
+                )
+            except Exception as e:
+                narrative = f"Narrator error: {str(e)}"
+                logs.append(f"[{self.ship_name}] Narrator error: {str(e)}")
+
+        # Step 5: Collect telemetry
+        self.telemetry['event_count'] += 1
+        self.telemetry['severity_counts'][severity] = self.telemetry['severity_counts'].get(severity, 0) + 1
+        self.telemetry['last_event'] = {
+            'type': event.type,
+            'severity': severity,
+            'timestamp': event.timestamp
+        }
+
+        # Step 6: Log event
+        self.event_log.append({
+            'event': event.__dict__,
+            'severity': severity,
+            'narrative': narrative,
+            'state_delta': state_delta,
+            'logs': logs,
+            'timestamp': datetime.now().timestamp()
+        })
+
+        return ShipEventResult(
+            success=severity not in ['CRITICAL'],
+            severity=severity,
+            narrative=narrative,
+            state_delta=state_delta,
+            domain_actions=domain_actions,
+            logs=logs,
+            cross_ship_events=cross_ship_events
+        )
+
+    def _check_safety_rules(self) -> Dict[str, Any]:
+        """Apply all safety rules and return violations"""
+        logs = []
+        state_delta = {}
+        max_severity = "INFO"
+
+        for rule in self.get_safety_rules():
+            try:
+                if rule['condition'](self.state):
+                    logs.append(f"[safety] Rule triggered: {rule['name']}")
+                    rule_delta = rule['action'](self.state)
+                    if rule_delta:
+                        state_delta.update(rule_delta)
+                    rule_severity = rule.get('severity', 'INFO')
+                    if rule_severity == 'CRITICAL':
+                        max_severity = 'CRITICAL'
+                    elif rule_severity == 'ALERT' and max_severity != 'CRITICAL':
+                        max_severity = 'ALERT'
+                    elif rule_severity == 'WARNING' and max_severity == 'INFO':
+                        max_severity = 'WARNING'
+            except Exception as e:
+                logs.append(f"[safety] Rule error in {rule['name']}: {str(e)}")
+                max_severity = 'CRITICAL'
+
+        return {
+            'logs': logs,
+            'state_delta': state_delta,
+            'max_severity': max_severity
+        }
+
+    def get_state(self) -> Dict[str, Any]:
+        """Return current ship state (read-only copy)"""
+        return dict(self.state)
+
+    def get_telemetry(self) -> Dict[str, Any]:
+        """Return ship telemetry (for dashboard and monitoring)"""
+        return {
+            'ship_name': self.ship_name,
+            'state': self.state,
+            'telemetry': self.telemetry,
+            'event_log_count': len(self.event_log),
+            'cross_ship_queue_size': len(self.cross_ship_event_queue)
+        }
+
+    def reset_state(self):
+        """Reset ship to initial state"""
+        self.state = self.get_initial_state()
+        self.event_log.clear()
+        self.cross_ship_event_queue.clear()
+        self.telemetry = {
+            "event_count": 0,
+            "severity_counts": {"INFO": 0, "WARNING": 0, "ALERT": 0, "CRITICAL": 0},
+            "last_event": None,
+        }
+
+    def emit_cross_ship_event(self, event: ShipEvent):
+        """
+        Emit an event meant for other ships.
+        FleetCoordinator will route these to their destination ships.
+        """
+        event.source_ship = self.ship_name
+        event.cross_ship = True
+        self.cross_ship_event_queue.append(event)
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__} name={self.ship_name} threat_level={self.state.get('threat_level', 0)}>"
