@@ -49,6 +49,10 @@ class FleetCoordinator:
         self.fleet_threat_level = 0
         self.telemetry_engine = None  # Optional TelemetryEngine integration
         self.lore_engine = None  # Optional LoreEngine integration
+        self.sensing_ship = None  # Optional SensingShip for fleet observation
+        self.fleet_brain = None  # Optional FleetBrain for autonomous decision-making
+        self.ship_generator = None  # Optional ShipGenerator for autonomous spawning
+        self.autonomy_enabled = False  # Enable autonomous fleet operations
 
     def set_telemetry_engine(self, telemetry_engine: 'TelemetryEngine'):
         """Wire in a TelemetryEngine for observability"""
@@ -57,6 +61,25 @@ class FleetCoordinator:
     def set_lore_engine(self, lore_engine: 'LoreEngine'):
         """Wire in a LoreEngine for story generation"""
         self.lore_engine = lore_engine
+
+    def set_sensing_ship(self, sensing_ship: 'SensingShip'):
+        """Register the fleet's sensing ship for autonomous observation"""
+        self.sensing_ship = sensing_ship
+        self.register_ship(sensing_ship)
+
+    def set_fleet_brain(self, fleet_brain: 'FleetBrain'):
+        """Wire in a FleetBrain for autonomous decision-making"""
+        self.fleet_brain = fleet_brain
+
+    def set_ship_generator(self, ship_generator: 'ShipGenerator'):
+        """Wire in a ShipGenerator for autonomous ship spawning"""
+        self.ship_generator = ship_generator
+
+    def enable_autonomy(self, autonomy_level: int = 5):
+        """Enable autonomous fleet operations"""
+        self.autonomy_enabled = True
+        if self.fleet_brain:
+            self.fleet_brain.autonomy_level = autonomy_level
 
     def set_telemetry_hook(self, hook_name: str, hook_fn):
         """Register a telemetry hook (if TelemetryEngine is wired)"""
@@ -288,6 +311,111 @@ class FleetCoordinator:
         self._update_fleet_threat_level()
         return results
 
+    def get_fleet_snapshot(self) -> Dict[str, Any]:
+        """
+        Get a comprehensive snapshot of fleet state.
+        Used by SensingShip and FleetBrain for autonomous operations.
+        """
+        if self.sensing_ship:
+            return self.sensing_ship.get_fleet_snapshot()
+
+        # Fallback: manual snapshot construction
+        return {
+            'ships': list(self.ships.keys()),
+            'threat_map': {
+                name: ship.state.get('threat_level', 0)
+                for name, ship in self.ships.items()
+            },
+            'contact_count': len(self.ships),
+            'threat_level_avg': self.fleet_threat_level,
+        }
+
+    def execute_autonomous_cycle(self) -> Dict[str, Any]:
+        """
+        Execute one autonomous fleet operations cycle:
+        1. SensingShip observes fleet state
+        2. FleetBrain analyzes and makes decision
+        3. Coordinator executes decision
+        4. If needed, ShipGenerator spawns new ship
+        """
+        if not self.autonomy_enabled:
+            return {'status': 'autonomy_disabled'}
+
+        if not self.fleet_brain:
+            return {'status': 'fleet_brain_not_configured'}
+
+        # Get fleet snapshot
+        fleet_snapshot = self.get_fleet_snapshot()
+
+        # Make strategic decision
+        decision = self.fleet_brain.make_strategic_decision(fleet_snapshot)
+
+        # Execute decision actions
+        results = {'status': 'executed', 'decision': decision.decision_id, 'executed_actions': 0}
+
+        for action in decision.actions:
+            action_type = action.get('type')
+            target_ships = action.get('target_ships', list(self.ships.keys()))
+
+            # Execute action on ships
+            for ship_name in target_ships if target_ships != 'ALL' else self.ships.keys():
+                if ship_name in self.ships:
+                    ship = self.ships[ship_name]
+                    # Apply action to ship state (simplified)
+                    if action_type == 'RAISE_SHIELDS':
+                        ship.state['shields'] = action.get('level', 90)
+                    elif action_type == 'REDUCE_SPEED':
+                        ship.state['warp_factor'] = action.get('warp_factor', 2)
+                    elif action_type == 'ALERT_LEVEL':
+                        ship.state['mode'] = 'ELEVATED_ALERT'
+                    results['executed_actions'] += 1
+
+        # Spawn new ship if recommended
+        if decision.ship_spawn_request and self.ship_generator:
+            spawn_result = self.spawn_ship_from_requirement(decision.ship_spawn_request)
+            results['spawn'] = spawn_result
+
+        return results
+
+    def spawn_ship_from_requirement(self, requirement: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Spawn a new ship based on FleetBrain recommendation.
+
+        Args:
+            requirement: {ship_type, personality_mode, reasoning, priority}
+
+        Returns:
+            Result dict with ship_name, status, etc.
+        """
+        if not self.ship_generator:
+            return {'status': 'generator_not_available'}
+
+        try:
+            # Create blueprint from requirement
+            from ship_generator import ShipBlueprint
+            blueprint = ShipBlueprint(
+                ship_type=requirement.get('ship_type', 'SensingShip'),
+                ship_name=f"AUTO-{len(self.ships):03d}",
+                personality_mode=requirement.get('personality_mode', 'CALM'),
+                config={'autonomous_spawn': True},
+                priority=requirement.get('priority', 'NORMAL')
+            )
+
+            # Generate ship
+            new_ship = self.ship_generator.generate_from_blueprint(blueprint)
+
+            # Register to fleet
+            self.register_ship(new_ship)
+
+            return {
+                'status': 'spawned',
+                'ship_name': new_ship.ship_name,
+                'ship_type': requirement.get('ship_type'),
+                'personality': new_ship.personality_mode,
+            }
+        except Exception as e:
+            return {'status': 'spawn_failed', 'error': str(e)}
+
     def print_fleet_status(self):
         """Pretty-print fleet status"""
         print("\n" + "="*80)
@@ -299,6 +427,7 @@ class FleetCoordinator:
         print(f"Total Events Processed: {telemetry.total_events_processed}")
         print(f"Fleet Threat Level: {self.fleet_threat_level}/10")
         print(f"Average Ship Threat: {telemetry.threat_level_avg:.1f}")
+        print(f"Autonomy Enabled: {self.autonomy_enabled}")
         print(f"\nShips by Mode: {telemetry.ships_by_mode}")
         print(f"Severity Distribution: {telemetry.severity_distribution}")
 
@@ -306,9 +435,11 @@ class FleetCoordinator:
         print("-" * 80)
         for ship_name, ship in self.ships.items():
             state = ship.get_state()
+            personality = getattr(ship, 'personality_mode', 'UNKNOWN')
             print(f"{ship_name:20} | Threat: {state.get('threat_level', 0):2}/10 | "
                   f"Mode: {state.get('mode', 'UNKNOWN'):15} | "
                   f"Shields: {state.get('shields', 0):3}% | "
+                  f"Personality: {personality:15} | "
                   f"Events: {ship.telemetry['event_count']:3}")
 
         print("\n" + "="*80)
