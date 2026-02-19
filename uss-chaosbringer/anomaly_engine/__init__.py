@@ -44,6 +44,24 @@ from .cosmic_chaos import (
     GossipEntry,
     MultiverseAlignmentReport,
 )
+from .micro_forking import (
+    MicroForkingEngine,
+    DashboardMockDataGenerator,
+    PersonalitySeeds,
+    CaptainsLogGenerator,
+    CrossForkAnalytics,
+    PersonalityDrivenAnomalyResponse,
+    NarrativeContinuityAcrossForks,
+    PersonalityType,
+    PerturbationStrategy,
+    PersonalityVector,
+    ForkSnapshot,
+    ForkResult,
+    DivergenceAnalysis,
+    CaptainLogEntry,
+    IncidentReport,
+    DashboardSnapshot,
+)
 
 __all__ = [
     # Phase VII - Anomaly Engine
@@ -74,6 +92,14 @@ __all__ = [
     "ParadoxBuffer",
     "UniverseLoreExpander",
     "ChaosbringerPersonalityDriftTracker",
+    # Phase VII.6 - Micro-Forking Evolution
+    "MicroForkingEngine",
+    "DashboardMockDataGenerator",
+    "PersonalitySeeds",
+    "CaptainsLogGenerator",
+    "CrossForkAnalytics",
+    "PersonalityDrivenAnomalyResponse",
+    "NarrativeContinuityAcrossForks",
     # Data structures
     "UniverseMood",
     "ShipMoodColor",
@@ -86,4 +112,13 @@ __all__ = [
     "ShipDream",
     "GossipEntry",
     "MultiverseAlignmentReport",
+    "PersonalityType",
+    "PerturbationStrategy",
+    "PersonalityVector",
+    "ForkSnapshot",
+    "ForkResult",
+    "DivergenceAnalysis",
+    "CaptainLogEntry",
+    "IncidentReport",
+    "DashboardSnapshot",
 ]
