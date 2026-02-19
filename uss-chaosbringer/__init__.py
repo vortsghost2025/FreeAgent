@@ -1,19 +1,60 @@
+#!/usr/bin/env python3
 """
-USS Chaosbringer - Starship Framework
-Narrative-wrapped distributed systems architecture
+USS Chaosbringer Fleet Package
+Complete autonomous + metaphysical universe framework
 """
 
-from .hull.bridge_control import get_bridge, ShipState, ProcessingMode
-from .hull.warp_core import get_warp_core, ProcessingMode
-from .starship_integration import get_integration
+__version__ = "5.0"
+__author__ = "USS Chaosbringer Development"
 
-__version__ = "1.0.0-ALPHA"
-__name__ = "USS CHAOSBRINGER"
+# Import all public APIs
+from starship import Starship, ShipEvent, ShipEventResult
+from event_router import DomainResult
+
+# Phase V Ships
+from chaosbringer_ship import ChaosbringingerShip
+from sensing_ship import SensingShip
+from signal_harvester_ship import SignalHarvesterShip
+from probability_weaver_ship import ProbabilityWeaverShip
+from paradox_runner_ship import ParadoxRunnerShip
+
+# Phase V Autonomy
+from fleet_brain import FleetBrain, StrategicDecision
+from ship_generator import ShipGenerator, ShipBlueprint
+from fleet_coordinator import FleetCoordinator, FleetTelemetry
+
+# Phase VI Metaphysics
+from ontology_engine import OntologyEngine, ArchetypeDefinition, OntologicalRule, IdentitySeed, ArchetypeCategory
+from transcendence_layer import TranscendenceLayer, UniversalInterpreter, MythosGenerator
+
+# Observability
+from telemetry_engine import TelemetryEngine, ShipMetrics, FleetMetrics
+from lore_engine import LoreEngine, LoreEntry, LoreEntryType
+
+# Narrative
+from narrator_engine import NarratorEngine
 
 __all__ = [
-    'get_bridge',
-    'get_warp_core',
-    'get_integration',
-    'ShipState',
-    'ProcessingMode'
+    # Core
+    'Starship', 'ShipEvent', 'ShipEventResult', 'DomainResult',
+
+    # Phase V Ships
+    'ChaosbringingerShip', 'SensingShip', 'SignalHarvesterShip',
+    'ProbabilityWeaverShip', 'ParadoxRunnerShip',
+
+    # Phase V Autonomy
+    'FleetBrain', 'StrategicDecision', 'ShipGenerator', 'ShipBlueprint',
+    'FleetCoordinator', 'FleetTelemetry',
+
+    # Phase VI Metaphysics
+    'OntologyEngine', 'ArchetypeDefinition', 'OntologicalRule', 'IdentitySeed',
+    'ArchetypeCategory', 'TranscendenceLayer', 'UniversalInterpreter',
+    'MythosGenerator',
+
+    # Observability
+    'TelemetryEngine', 'ShipMetrics', 'FleetMetrics',
+    'LoreEngine', 'LoreEntry', 'LoreEntryType',
+
+    # Narrative
+    'NarratorEngine',
 ]

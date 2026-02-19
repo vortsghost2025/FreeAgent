@@ -5,28 +5,22 @@ Concrete implementation of Starship for signal detection and analysis.
 Domains: NOISE_FILTER, SIGNAL_LOCK, DECRYPT_ATTEMPT
 """
 
-import sys
-import os
-import importlib.util
+from dataclasses import dataclass
+from typing import Dict, Any, List
 
-# Explicit import path setup
-_current_dir = os.path.dirname(os.path.abspath(__file__))
-if _current_dir not in sys.path:
-    sys.path.insert(0, _current_dir)
+from starship import Starship, ShipEvent, ShipEventResult
+
+# Fallback DomainResult if event_router not available
+@dataclass
+class DomainResult:
+    state_delta: Dict[str, Any] = None
+    domain_actions: List[Dict[str, Any]] = None
+    logs: List[str] = None
 
 try:
-    from starship import Starship, ShipEvent, ShipEventResult
     from event_router import DomainResult
 except ImportError:
-    # Fallback: try to load directly
-    spec = importlib.util.spec_from_file_location("starship", os.path.join(_current_dir, "starship.py"))
-    starship_module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(starship_module)
-    Starship = starship_module.Starship
-    ShipEvent = starship_module.ShipEvent
-    ShipEventResult = starship_module.ShipEventResult
-
-from typing import Dict, Any, List
+    pass  # Use fallback defined above
 
 
 class SignalHarvesterShip(Starship):
@@ -94,17 +88,6 @@ class SignalHarvesterShip(Starship):
 
     def _handle_noise_filter(self, event: Dict[str, Any], state: Dict[str, Any]) -> Any:
         """Filter noise from signal data"""
-        try:
-            from event_router import DomainResult
-        except ImportError:
-            # Define inline if not available
-            from dataclasses import dataclass
-            @dataclass
-            class DomainResult:
-                state_delta: Dict[str, Any] = None
-                domain_actions: List[Dict[str, Any]] = None
-                logs: List[str] = None
-
         signal_quality = event.get('payload', {}).get('signal_quality', 50)
         noise_level = event.get('payload', {}).get('noise_level', 30)
 
@@ -135,8 +118,6 @@ class SignalHarvesterShip(Starship):
 
     def _handle_signal_lock(self, event: Dict[str, Any], state: Dict[str, Any]) -> Any:
         """Lock onto target signal"""
-        from event_router import DomainResult
-
         signal_frequency = event.get('payload', {}).get('frequency', 1000)
         lock_strength = event.get('payload', {}).get('lock_strength', 75)
 
@@ -160,8 +141,6 @@ class SignalHarvesterShip(Starship):
 
     def _handle_decrypt_attempt(self, event: Dict[str, Any], state: Dict[str, Any]) -> Any:
         """Attempt to decrypt signal data"""
-        from event_router import DomainResult
-
         encrypted_data = event.get('payload', {}).get('encrypted_data', '')
         algorithm = event.get('payload', {}).get('algorithm', 'RSA')
         key_length = event.get('payload', {}).get('key_length', 2048)
