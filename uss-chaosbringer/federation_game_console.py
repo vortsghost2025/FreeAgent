@@ -1,846 +1,909 @@
 #!/usr/bin/env python3
 """
-FEDERATION GAME CONSOLE - MAIN INTERACTIVE INTERFACE
-~600 LOC - Production-Ready CLI
+FEDERATION GAME CONSOLE - REFACTORED GAME ENGINE (12-Block Architecture)
+~1000 LOC - Production-Ready Game Engine
 
-The bridge that connects the player to THE FEDERATION GAME. Interactive command-line
-interface where the player takes on the role of Federation Commander, issuing directives
-that flow through the entire architecture of consciousness, diplomacy, rivals, dreams,
-and cosmic expansion.
+Full unified game engine with:
+- Core console orchestration
+- Event card system with narrative choices
+- Rival NPC generation and behavior
+- Consciousness sheet tracking federation personality
+- Chaos mode for random scenarios
+- Turn cycle management
+- Persistent game state
+- REPL command interface
 
-This is where gameplay happens. This is where the player connects.
+This is where gameplay emerges.
 """
 
 import sys
 import io
 import json
 import logging
+import random
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Dict, List, Optional, Any, Tuple, Callable
 from enum import Enum
-from dataclasses import dataclass, asdict
-import re
+from dataclasses import dataclass, asdict, field
 
-# Fix Windows console encoding to UTF-8
+# Fix Windows console encoding
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
-# Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='[%(asctime)s] %(name)s - %(levelname)s: %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
-
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("GameConsole")
 
+# ============================================================================
+# BLOCK 1 & 3: ENUMS AND STATE MODELS
+# ============================================================================
 
-class GameStrategy(Enum):
-    """Possible federation strategies"""
-    EXPAND = "expand"          # Aggressive territorial growth
-    DEFEND = "defend"          # Fortify and protect territory
-    DIPLOMACY = "diplomacy"    # Build alliances and negotiate
-    RESEARCH = "research"      # Technological advancement
-    CULTURE = "culture"        # Cultural influence and soft power
-    HYBRID = "hybrid"          # Mix of multiple approaches
-
-
-class DiplomacyAction(Enum):
-    """Diplomatic action types"""
-    PROPOSE = "propose"        # Propose treaty or alliance
-    DECLARE_WAR = "declare_war"  # Declare war on civilization
-    ALLY = "ally"              # Form alliance
-    DEMAND = "demand"          # Demand something
-    NEGOTIATE = "negotiate"    # Start negotiations
-    BREAK = "break"            # Break alliance/treaty
+class GamePhase(Enum):
+    """Game progression phases"""
+    GENESIS = "genesis"
+    EARLY_EXPLORATION = "early_exploration"
+    EXPANSION = "expansion"
+    CONSOLIDATION = "consolidation"
+    CONFLICT = "conflict"
+    DIPLOMACY = "diplomacy"
+    TRANSCENDENCE = "transcendence"
+    ENDGAME = "endgame"
 
 
-class DreamAction(Enum):
-    """Dream/consciousness interaction types"""
-    INTERPRET = "interpret"    # Interpret a dream
-    INTEGRATE = "integrate"    # Integrate dream into consciousness
-    TRIGGER = "trigger"        # Trigger lucid dreaming
+class GameState(Enum):
+    """Current game state"""
+    MENU = "menu"
+    PLAYING = "playing"
+    TURN_ACTIVE = "turn_active"
+    EVENT_PENDING = "event_pending"
+    PAUSED = "paused"
+    GAME_OVER = "game_over"
 
 
-class RivalAction(Enum):
-    """Rival federation actions"""
-    SPAWN = "spawn"            # Create new rival
-    SIMULATE = "simulate"      # Simulate rival behavior
-    WATCH = "watch"            # Monitor rival status
-    ENGAGE = "engage"          # Engage with rival
+class RivalPhilosophy(Enum):
+    """Rival NPC philosophies"""
+    MATERIALIST = "materialist"
+    SPIRITUAL = "spiritual"
+    TECHNOLOGICAL = "technological"
+    EGALITARIAN = "egalitarian"
+    HIERARCHICAL = "hierarchical"
 
 
-class ProphecyAction(Enum):
-    """Prophecy/future sight actions"""
-    GENERATE = "generate"      # Generate new prophecy
-    INTERPRET = "interpret"    # Interpret prophecy
+class DiplomaticStyle(Enum):
+    """Rival diplomatic approaches"""
+    AGGRESSIVE = "aggressive"
+    CAUTIOUS = "cautious"
+    MANIPULATIVE = "manipulative"
+    DIRECT = "direct"
 
 
-class TurnAction(Enum):
-    """Turn management actions"""
-    ADVANCE = "advance"        # Advance one turn
-    AUTO = "auto"              # Auto-play multiple turns
+class EventType(Enum):
+    """Types of game events"""
+    DIPLOMATIC = "diplomatic"
+    RIVAL = "rival"
+    DREAM = "dream"
+    EXPANSION = "expansion"
+    PROPHECY = "prophecy"
+    INTERNAL = "internal"
+    CULTURAL = "cultural"
+    MYSTERIOUS = "mysterious"
 
+# ============================================================================
+# BLOCK 4: CONSCIOUSNESS SHEET MODEL (Federation Personality)
+# ============================================================================
 
 @dataclass
-class GameStatistics:
-    """Player statistics tracking"""
-    turns_played: int = 0
-    diplomacy_actions_taken: int = 0
-    dreams_interpreted: int = 0
-    rivals_spawned: int = 0
-    prophecies_generated: int = 0
-    chaos_events_triggered: int = 0
-    manual_saves: int = 0
+class ConsciousnessSheet:
+    """Federation's psychological state and personality"""
+    morale: float = 0.7
+    identity: float = 0.8
+    anxiety: float = 0.2
+    confidence: float = 0.9
+    expansion_hunger: float = 0.5
+    diplomacy_tendency: float = 0.6
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary"""
-        return asdict(self)
+    dreams: List[str] = field(default_factory=list)
+    prophecies: List[str] = field(default_factory=list)
+    archetypes: List[str] = field(default_factory=list)
+    traumas: List[str] = field(default_factory=list)
+
+    def clamp(self):
+        """Clamp all values to 0.0-1.0"""
+        self.morale = max(0.0, min(1.0, self.morale))
+        self.identity = max(0.0, min(1.0, self.identity))
+        self.anxiety = max(0.0, min(1.0, self.anxiety))
+        self.confidence = max(0.0, min(1.0, self.confidence))
+        self.expansion_hunger = max(0.0, min(1.0, self.expansion_hunger))
+        self.diplomacy_tendency = max(0.0, min(1.0, self.diplomacy_tendency))
+
+    def health(self) -> float:
+        """Overall federation health (0.0-1.0)"""
+        return (self.morale + self.confidence + self.identity) / 3.0
+
+    def stability(self) -> float:
+        """Federation stability (inverse of anxiety)"""
+        return 1.0 - self.anxiety
+
+    def apply_impact(self, impact: Dict[str, float]):
+        """Apply consciousness changes"""
+        for trait, delta in impact.items():
+            if hasattr(self, trait):
+                current = getattr(self, trait)
+                setattr(self, trait, current + delta)
+        self.clamp()
 
 
-class GameConsole:
-    """
-    Main interactive game console for THE FEDERATION GAME.
+# ============================================================================
+# BLOCK 5: RIVAL NPC MODEL
+# ============================================================================
 
-    Responsibilities:
-    - Parse and execute player commands
-    - Maintain game state across sessions
-    - Route commands to subsystems
-    - Display formatted output
-    - Track player statistics
-    - Handle save/load operations
-    - Support hybrid mode (interactive + auto-play)
-    """
+@dataclass
+class RivalFederation:
+    """Game NPC rival federation"""
+    rival_id: str
+    name: str
+    philosophy: RivalPhilosophy
+    diplomatic_style: DiplomaticStyle
 
-    def __init__(self, save_dir: str = None):
-        """Initialize the game console"""
-        self.save_dir = Path(save_dir or "federation_saves")
+    expansion_tendency: float  # 0.1 (passive) to 0.9 (aggressive)
+    dream_frequency: float     # How often they act on dreams
+    threat_level: float        # Current perceived threat (0.0-1.0)
+
+    territories_controlled: int = 0
+    treaties_active: int = 0
+    conflicts_with_player: int = 0
+
+    def get_action_weights(self) -> Dict[str, float]:
+        """Determine action probabilities based on philosophy"""
+        weights = {
+            'expand': self.expansion_tendency,
+            'diplomacy': 1.0 - self.expansion_tendency,
+            'dream_act': self.dream_frequency,
+            'conflict': self.threat_level
+        }
+        return weights
+
+    def describe(self) -> str:
+        """Generate rival description"""
+        return f"{self.name} ({self.rival_id}) - {self.philosophy.value} {self.diplomatic_style.value} rival, threat: {self.threat_level:.1f}"
+
+
+# ============================================================================
+# BLOCK 6: EVENT CARD SYSTEM
+# ============================================================================
+
+@dataclass
+class EventCard:
+    """Interactive narrative event card"""
+    event_id: str
+    title: str
+    description: str
+    event_type: EventType
+    options: Dict[str, str]  # {choice_id: description}
+
+    consequences: Dict[str, Dict[str, float]] = field(default_factory=dict)  # {choice_id: consciousness_impact}
+    narrative_outcomes: Dict[str, str] = field(default_factory=dict)  # {choice_id: outcome_text}
+
+    def is_valid_choice(self, choice: str) -> bool:
+        """Validate player choice"""
+        return choice in self.options
+
+    def resolve(self, choice: str) -> Tuple[str, Dict[str, float]]:
+        """Resolve event choice"""
+        if not self.is_valid_choice(choice):
+            return "Invalid choice", {}
+
+        outcome = self.narrative_outcomes.get(choice, "Your choice echoes through the federation...")
+        impact = self.consequences.get(choice, {})
+        return outcome, impact
+
+    def display(self) -> str:
+        """Format event for display"""
+        output = f"\n{'='*70}\n"
+        output += f"EVENT: {self.title}\n"
+        output += f"{'='*70}\n"
+        output += f"{self.description}\n\n"
+        output += "OPTIONS:\n"
+        for choice_id, description in self.options.items():
+            output += f"  [{choice_id}] {description}\n"
+        output += f"{'='*70}\n"
+        return output
+
+
+class EventRegistry:
+    """Central event card library"""
+
+    def __init__(self):
+        self.events: Dict[str, EventCard] = {}
+        self._init_event_library()
+
+    def _init_event_library(self):
+        """Initialize pre-built event cards"""
+
+        # Event 1: Rogue Federation Appears
+        self.register(EventCard(
+            "e_rogue_fed",
+            "A Rogue Federation Emerges",
+            "A mysterious federation has appeared from the galactic rim, claiming territory near your space.\nTheir intentions are unclear. Their power is evident.",
+            EventType.RIVAL,
+            {
+                "respond": "Send diplomatic envoy",
+                "escalate": "Mobilize fleet",
+                "negotiate": "Open communication channel",
+                "ignore": "Monitor from distance"
+            },
+            consequences={
+                "respond": {"morale": 0.05, "anxiety": -0.05},
+                "escalate": {"confidence": 0.1, "anxiety": 0.1},
+                "negotiate": {"diplomacy_tendency": 0.1, "anxiety": -0.1},
+                "ignore": {"anxiety": 0.05}
+            },
+            narrative_outcomes={
+                "respond": "Diplomatic corps reports cautious optimism about peace talks.",
+                "escalate": "Federation mobilizes defense perimeter. Tension escalates.",
+                "negotiate": "Communication channel established. Rival responds to overture.",
+                "ignore": "Rival federation consolidates position. Threat appears stable."
+            }
+        ))
+
+        # Event 2: Dream Destabilization
+        self.register(EventCard(
+            "e_dream_crisis",
+            "Dream Layer Destabilization",
+            "Collective dreams are fragmenting. Reality distortions reported across psychological infrastructure.\nConsciousness reports widespread disorientation.",
+            EventType.DREAM,
+            {
+                "meditate": "Initiate meditation protocol",
+                "interpret": "Consult dream interpreters",
+                "ignore": "Let the dreams settle naturally",
+                "suppress": "Suppress dream activity"
+            },
+            consequences={
+                "meditate": {"anxiety": -0.15, "identity": 0.1},
+                "interpret": {"identity": 0.1, "anxiety": -0.05},
+                "ignore": {"anxiety": 0.1, "morale": -0.05},
+                "suppress": {"anxiety": 0.2, "identity": -0.1}
+            },
+            narrative_outcomes={
+                "meditate": "Federation enters deep reflection. Clarity returns gradually.",
+                "interpret": "Dream symbology decoded. Insights flow through consciousness.",
+                "ignore": "Dreams subside on their own. Uneasy peace returns.",
+                "suppress": "Dreams suppressed but worsen in silence. Psychological tension builds."
+            }
+        ))
+
+        # Event 3: Diplomatic Incident
+        self.register(EventCard(
+            "e_diplomatic_incident",
+            "Diplomatic Symbol Misinterpretation",
+            "A crucial treaty negotiation failed when a sacred symbol was mistranslated.\nTwo civilizations now suspect betrayal.",
+            EventType.DIPLOMATIC,
+            {
+                "apologize": "Issue formal apology and reaffirmation",
+                "correct": "Explain the mistranslation clearly",
+                "retaliate": "Accuse them of bad faith",
+                "stall": "Request delay for investigation"
+            },
+            consequences={
+                "apologize": {"morale": -0.05, "anxiety": -0.1},
+                "correct": {"confidence": 0.05, "anxiety": -0.05},
+                "retaliate": {"confidence": 0.1, "anxiety": 0.15},
+                "stall": {"anxiety": 0.05, "diplomacy_tendency": -0.05}
+            },
+            narrative_outcomes={
+                "apologize": "Allies accept apology. Trust mostly restored.",
+                "correct": "Clear explanation diffuses tension. Negotiations resume.",
+                "retaliate": "Diplomatic crisis deepens. Conflict risk increases.",
+                "stall": "Tension lingers. Both sides remain suspicious."
+            }
+        ))
+
+        # Event 4: Rival Territory Claim
+        self.register(EventCard(
+            "e_territory_claim",
+            "Rival Claims Your Territory",
+            "A rival federation has established a base in what your surveys marked as unclaimed space.\nThey claim historical sovereignty. Your archives disagree.",
+            EventType.RIVAL,
+            {
+                "assert_claim": "Assert your territorial ownership",
+                "occupy": "Preemptively occupy the region",
+                "negotiate_border": "Negotiate a border settlement",
+                "yield": "Concede territory for peace"
+            },
+            consequences={
+                "assert_claim": {"confidence": 0.1, "anxiety": 0.05},
+                "occupy": {"expansion_hunger": 0.1, "anxiety": 0.15},
+                "negotiate_border": {"diplomacy_tendency": 0.1, "identity": 0.05},
+                "yield": {"morale": -0.1, "peace": 0.1}
+            },
+            narrative_outcomes={
+                "assert_claim": "Rival issues counter-claim. Standoff develops.",
+                "occupy": "Rival mobilizes forces. Military tension rises.",
+                "negotiate_border": "Both sides propose border terms. Diplomacy succeeds.",
+                "yield": "Rival accepts surrender. Internal morale drops."
+            }
+        ))
+
+        # Event 5: Prophecy Contradiction
+        self.register(EventCard(
+            "e_prophecy_codex",
+            "Prophecy Contradicts Law",
+            "A new prophecy directly contradicts established constitutional law.\nTheology and governance conflict. Doctrine is in crisis.",
+            EventType.PROPHECY,
+            {
+                "prioritize_law": "Law takes precedence",
+                "prioritize_prophecy": "Prophecy is sacred truth",
+                "reinterpret": "Reinterpret both to find harmony",
+                "convene_council": "Establish council to resolve conflict"
+            },
+            consequences={
+                "prioritize_law": {"identity": 0.05, "anxiety": 0.05},
+                "prioritize_prophecy": {"identity": 0.1, "morale": 0.05},
+                "reinterpret": {"identity": 0.1, "anxiety": -0.05},
+                "convene_council": {"confidence": 0.05, "anxiety": -0.05}
+            },
+            narrative_outcomes={
+                "prioritize_law": "Law upheld. Prophecy followers grumble but accept.",
+                "prioritize_prophecy": "Arcane wisdom takes precedence. Laws are rewritten.",
+                "reinterpret": "Philosophers find elegant resolution. Both traditions honored.",
+                "convene_council": "Council deliberates carefully. Wisdom prevails."
+            }
+        ))
+
+    def register(self, event: EventCard):
+        """Register an event card"""
+        self.events[event.event_id] = event
+
+    def get_random_event(self, event_type: Optional[EventType] = None) -> EventCard:
+        """Get random event, optionally filtered by type"""
+        if event_type:
+            filtered = [e for e in self.events.values() if e.event_type == event_type]
+            return random.choice(filtered) if filtered else random.choice(list(self.events.values()))
+        return random.choice(list(self.events.values()))
+
+    def get_event(self, event_id: str) -> Optional[EventCard]:
+        """Get specific event by ID"""
+        return self.events.get(event_id)
+
+# ============================================================================
+# BLOCK 7: NARRATIVE GENERATORS
+# ============================================================================
+
+class NarrativeGenerator:
+    """Generate dynamic narrative descriptions"""
+
+    @staticmethod
+    def generate_turn_narrative(turn_number: int, consciousness: ConsciousnessSheet) -> str:
+        """Generate narrative for turn begin"""
+        mood = "flourishing" if consciousness.health() > 0.7 else "struggling" if consciousness.health() < 0.4 else "steady"
+        return f"Turn {turn_number}: The federation moves forward, {mood}. Morale: {consciousness.morale:.1f}, Identity: {consciousness.identity:.1f}, Confidence: {consciousness.confidence:.1f}"
+
+    @staticmethod
+    def generate_rival_encounter(rival: RivalFederation) -> str:
+        """Generate narrative for rival encounter"""
+        action = "advances aggressively" if rival.expansion_tendency > 0.7 else "consolidates position" if rival.expansion_tendency < 0.3 else "expands cautiously"
+        return f"{rival.name} {action}. Their {rival.philosophy.value} philosophy guides their strategy."
+
+    @staticmethod
+    def generate_consciousness_event(consciousness: ConsciousnessSheet) -> str:
+        """Generate narrative for consciousness event"""
+        if consciousness.anxiety > 0.7:
+            return "The collective consciousness trembles with uncertainty and fear."
+        elif consciousness.morale < 0.4:
+            return "Morale is dangerously low. The federation questions its purpose."
+        elif consciousness.confidence > 0.8:
+            return "The federation radiates confidence and clear purpose."
+        else:
+            return "The collective consciousness maintains steady course."
+
+    @staticmethod
+    def generate_stability_report(consciousness: ConsciousnessSheet) -> str:
+        """Generate federation stability report"""
+        stability = consciousness.stability()
+        health = consciousness.health()
+        return f"Stability: {stability*100:.0f}% | Health: {health*100:.0f}% | Dreams: {len(consciousness.dreams)} | Prophecies: {len(consciousness.prophecies)}"
+
+# ============================================================================
+# BLOCK 8: CHAOS MODE SUBSYSTEM
+# ============================================================================
+
+class ChaosMode:
+    """Chaos/surprise mode - random scenario generator"""
+
+    SUBSYSTEMS = ['diplomacy', 'dream', 'rival', 'expansion', 'prophecy', 'internal', 'cultural']
+
+    SCENARIOS = {
+        'diplomacy': ['first_contact', 'treaty_renegotiation', 'incident', 'alliance_request'],
+        'dream': ['prophecy', 'trauma', 'revelation', 'warning'],
+        'rival': ['aggression', 'peace_offer', 'expansion', 'spying'],
+        'expansion': ['discovery', 'colonization', 'resource_find', 'hazard'],
+        'prophecy': ['convergence', 'divergence', 'warning', 'revelation'],
+        'internal': ['faction_rise', 'rebellion', 'innovation', 'crisis'],
+        'cultural': ['renaissance', 'decline', 'mergence', 'schism']
+    }
+
+    @staticmethod
+    def generate_chaos_event() -> Tuple[str, str]:
+        """Generate random chaos scenario"""
+        subsystem = random.choice(ChaosMode.SUBSYSTEMS)
+        scenario = random.choice(ChaosMode.SCENARIOS[subsystem])
+        return subsystem, scenario
+
+    @staticmethod
+    def generate_chaos_narrative(subsystem: str, scenario: str) -> str:
+        """Generate narrative for chaos event"""
+        return f"CHAOS: {subsystem.upper()} - {scenario}! The universe throws an unexpected {scenario} your way!"
+
+# ============================================================================
+# BLOCK 9: TURN CYCLE ORCHESTRATOR
+# ============================================================================
+
+class TurnCycle:
+    """Manage 7-phase turn cycle"""
+
+    PHASES = [
+        'dream_generation',
+        'rival_actions',
+        'diplomacy_phase',
+        'prophecy_phase',
+        'consciousness_phase',
+        'event_phase',
+        'status_update'
+    ]
+
+    def __init__(self, event_registry: EventRegistry):
+        self.event_registry = event_registry
+        self.current_phase = 0
+
+    def get_current_phase(self) -> str:
+        """Get phase name"""
+        return self.PHASES[self.current_phase % len(self.PHASES)]
+
+    def advance(self) -> str:
+        """Advance to next phase"""
+        self.current_phase += 1
+        return self.get_current_phase()
+
+    def execute_phase(self, phase: str, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute specific turn phase"""
+        results = {"phase": phase}
+
+        if phase == 'dream_generation':
+            results['dream_event'] = "Collective dreams flow through consciousness..."
+        elif phase == 'rival_actions':
+            results['rival_move'] = "Rival federation takes action..."
+        elif phase == 'diplomacy_phase':
+            results['diplomatic_shift'] = "Treaties and relations evolve..."
+        elif phase == 'prophecy_phase':
+            results['prophecy_insight'] = "Symbols align in the collective unconscious..."
+        elif phase == 'consciousness_phase':
+            results['consciousness_shift'] = "Federation consciousness evolves..."
+        elif phase == 'event_phase':
+            event = self.event_registry.get_random_event()
+            results['event'] = event.event_id
+        elif phase == 'status_update':
+            results['status'] = "Turn complete. Federation state updated."
+
+        return results
+
+# ============================================================================
+# BLOCK 10: PERSISTENCE LAYER
+# ============================================================================
+
+class PersistenceManager:
+    """Handle save/load game state"""
+
+    def __init__(self, save_dir: str = "federation_saves"):
+        self.save_dir = Path(save_dir)
         self.save_dir.mkdir(exist_ok=True)
 
+    def save_game(self, game_data: Dict[str, Any], filename: str = None) -> Path:
+        """Save game state to JSON"""
+        if filename is None:
+            filename = f"federation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+
+        filepath = self.save_dir / filename
+        with open(filepath, 'w') as f:
+            # Convert enums to strings for JSON
+            serializable = self._make_serializable(game_data)
+            json.dump(serializable, f, indent=2)
+        return filepath
+
+    def load_game(self, filename: str) -> Dict[str, Any]:
+        """Load game state from JSON"""
+        filepath = self.save_dir / filename
+        with open(filepath, 'r') as f:
+            return json.load(f)
+
+    def list_saves(self) -> List[str]:
+        """List available save files"""
+        return [f.name for f in self.save_dir.glob("*.json")]
+
+    @staticmethod
+    def _make_serializable(obj: Any) -> Any:
+        """Convert objects to JSON-serializable format"""
+        if isinstance(obj, dict):
+            return {k: PersistenceManager._make_serializable(v) for k, v in obj.items()}
+        elif isinstance(obj, (list, tuple)):
+            return [PersistenceManager._make_serializable(item) for item in obj]
+        elif isinstance(obj, Enum):
+            return obj.value
+        elif isinstance(obj, (ConsciousnessSheet, RivalFederation)):
+            return asdict(obj)
+        return obj
+
+# ============================================================================
+# BLOCK 2 & 12: FEDERATION CONSOLE (Core Engine) & INITIALIZATION
+# ============================================================================
+
+class FederationConsole:
+    """Unified game engine - orchestrates all systems"""
+
+    def __init__(self, save_dir: str = "federation_saves"):
         # Game state
+        self.game_phase = GamePhase.GENESIS
+        self.game_state = GameState.MENU
+        self.turn_number = 0
         self.is_game_active = False
-        self.current_turn = 0
-        self.federation_name = "USS Chaosbringer"
-        self.player_name = "Commander"
 
-        # Strategy and settings
-        self.current_strategy = GameStrategy.HYBRID
-        self.auto_play_enabled = False
-        self.auto_play_turns = 0
-        self.verbose_mode = True
+        # Core systems
+        self.consciousness = ConsciousnessSheet()
+        self.rivals: List[RivalFederation] = []
+        self.event_registry = EventRegistry()
+        self.turn_cycle = TurnCycle(self.event_registry)
+        self.persistence = PersistenceManager(save_dir)
+        self.narrative = NarrativeGenerator()
 
-        # Game state containers
-        self.game_state: Dict[str, Any] = self._init_game_state()
-        self.statistics = GameStatistics()
+        # Game history
+        self.events_log: List[Dict[str, Any]] = []
+        self.turn_history: List[Dict[str, Any]] = []
+        self.current_event: Optional[EventCard] = None
 
-        # Command registry
-        self.commands = {
+        # Commands registry
+        self.commands: Dict[str, Callable] = {
             'status': self.cmd_status,
-            'strategy': self.cmd_strategy,
-            'diplomacy': self.cmd_diplomacy,
-            'dream': self.cmd_dream,
-            'rival': self.cmd_rival,
-            'chaos': self.cmd_chaos,
-            'prophecy': self.cmd_prophecy,
             'turn': self.cmd_turn,
+            'event': self.cmd_event,
+            'rivals': self.cmd_rivals,
+            'chaos': self.cmd_chaos,
+            'dream': self.cmd_dream,
+            'prophecy': self.cmd_prophecy,
+            'consciousness': self.cmd_consciousness,
             'save': self.cmd_save,
             'load': self.cmd_load,
-            'stats': self.cmd_stats,
             'help': self.cmd_help,
             'new': self.cmd_new_game,
-            'exit': self.cmd_exit,
+            'exit': self.cmd_exit
         }
 
-    def _init_game_state(self) -> Dict[str, Any]:
-        """Initialize blank game state"""
-        return {
-            'federation_core': {
-                'morale': 0.5,
-                'identity_strength': 0.3,
-                'stability': 0.6,
-                'technological_level': 0.2,
-                'military_power': 0.3,
-                'treasury': 1000,
-                'population': 10000,
-                'territory_size': 100.0,
-            },
-            'diplomacy': {
-                'relationships': {},
-                'treaties': [],
-                'alliances': [],
-                'tensions': {},
-            },
-            'consciousness': {
-                'level': 0.2,
-                'traumas': [],
-                'dreams': [],
-                'memories': {},
-            },
-            'rivals': {
-                'active': [],
-                'defeated': [],
-                'threat_level': 0.5,
-            },
-            'campaigns': {
-                'active': [],
-                'completed': [],
-                'progress': {},
-            },
-            'prophecies': [],
-            'events': [],
-        }
+    # ========================================================================
+    # GAME INITIALIZATION & STATE
+    # ========================================================================
 
-    def start(self) -> None:
-        """Start the game console"""
-        self._print_banner()
-
-        while True:
-            try:
-                if not self.is_game_active:
-                    self._print_welcome()
-                    self._print_new_game_prompt()
-                    continue
-
-                # Main input loop
-                self._print_prompt()
-                user_input = input().strip().lower()
-
-                if not user_input:
-                    continue
-
-                if not self._execute_command(user_input):
-                    if self.verbose_mode:
-                        self._print_error(f"Unknown command: {user_input}")
-                        self._print_hint("Type 'help' for available commands")
-
-            except KeyboardInterrupt:
-                self._print_emergency_stop()
-                sys.exit(0)
-            except Exception as e:
-                logger.error(f"Console error: {e}")
-                self._print_error(f"An error occurred: {e}")
-
-    def _execute_command(self, command_str: str) -> bool:
-        """Parse and execute a command. Returns True if command was found."""
-        parts = command_str.split()
-        if not parts:
-            return False
-
-        cmd = parts[0]
-        args = parts[1:] if len(parts) > 1 else []
-
-        if cmd in self.commands:
-            try:
-                self.commands[cmd](*args)
-                return True
-            except Exception as e:
-                logger.error(f"Command error: {e}")
-                self._print_error(f"Error executing command: {e}")
-                return True
-
-        return False
-
-    def cmd_status(self) -> None:
-        """Display federation status"""
-        self._print_header("FEDERATION STATUS REPORT")
-
-        core = self.game_state['federation_core']
-        self._print_stat_bar("Morale", core['morale'])
-        self._print_stat_bar("Identity Strength", core['identity_strength'])
-        self._print_stat_bar("Stability", core['stability'])
-        self._print_stat_bar("Technological Level", core['technological_level'])
-        self._print_stat_bar("Military Power", core['military_power'])
-
-        print()
-        print(f"  Treasury: {core['treasury']} credits")
-        print(f"  Population: {core['population']} million")
-        print(f"  Territory: {core['territory_size']} light-years")
-
-        print()
-        print(f"  Current Strategy: {self.current_strategy.value.upper()}")
-        print(f"  Current Turn: {self.current_turn}")
-        print(f"  Auto-Play: {'ENABLED' if self.auto_play_enabled else 'disabled'}")
-
-        self._print_subsystems_summary()
-        self._print_footer()
-
-    def cmd_strategy(self, action: str = None, *args) -> None:
-        """Set or display federation strategy"""
-        if action is None:
-            self._print_header("CURRENT STRATEGY")
-            print(f"\n  Active Strategy: {self.current_strategy.value.upper()}")
-            print("\n  Available Strategies:")
-            for strategy in GameStrategy:
-                symbol = "→" if strategy == self.current_strategy else " "
-                print(f"    {symbol} {strategy.value:15} - {self._strategy_description(strategy)}")
-            self._print_footer()
-            return
-
-        try:
-            new_strategy = GameStrategy(action.lower())
-            self.current_strategy = new_strategy
-            self._print_success(f"Strategy changed to: {new_strategy.value.upper()}")
-            self._print_strategy_briefing(new_strategy)
-        except ValueError:
-            self._print_error(f"Unknown strategy: {action}")
-            self._print_hint(f"Valid strategies: {', '.join(s.value for s in GameStrategy)}")
-
-    def cmd_diplomacy(self, action: str = None, target: str = None, *args) -> None:
-        """Manage diplomacy"""
-        if action is None:
-            self._print_header("DIPLOMACY STATUS")
-            print("\n  Available Actions:")
-            for dip_action in DiplomacyAction:
-                print(f"    - diplomacy {dip_action.value} <civilization>")
-
-            print("\n  Current Relationships:")
-            relationships = self.game_state['diplomacy']['relationships']
-            if relationships:
-                for civ, standing in relationships.items():
-                    self._print_relation(civ, standing)
-            else:
-                print("    (No relationships established yet)")
-            self._print_footer()
-            return
-
-        if target is None:
-            self._print_error("Diplomacy action requires a target civilization")
-            return
-
-        try:
-            dip_action = DiplomacyAction(action.lower())
-            self._execute_diplomacy_action(dip_action, target)
-            self.statistics.diplomacy_actions_taken += 1
-        except ValueError:
-            self._print_error(f"Unknown diplomacy action: {action}")
-
-    def cmd_dream(self, action: str = None, *args) -> None:
-        """Interact with dreams and consciousness"""
-        if action is None:
-            self._print_header("CONSCIOUSNESS & DREAMS")
-            print("\n  Available Actions:")
-            for dream_action in DreamAction:
-                print(f"    - dream {dream_action.value}")
-
-            consciousness_level = self.game_state['consciousness']['level']
-            self._print_stat_bar("Consciousness Level", consciousness_level)
-
-            dreams = self.game_state['consciousness']['dreams']
-            if dreams:
-                print(f"\n  Recent Dreams: {len(dreams)} recorded")
-            self._print_footer()
-            return
-
-        try:
-            dream_action = DreamAction(action.lower())
-            self._execute_dream_action(dream_action)
-            self.statistics.dreams_interpreted += 1
-        except ValueError:
-            self._print_error(f"Unknown dream action: {action}")
-
-    def cmd_rival(self, action: str = None, target: str = None, *args) -> None:
-        """Manage rival federations"""
-        if action is None:
-            self._print_header("RIVAL FEDERATIONS")
-            print("\n  Available Actions:")
-            for rival_action in RivalAction:
-                print(f"    - rival {rival_action.value}")
-
-            rivals = self.game_state['rivals']
-            self._print_stat_bar("Threat Level", rivals['threat_level'])
-            print(f"\n  Active Rivals: {len(rivals['active'])}")
-            print(f"  Rivals Defeated: {len(rivals['defeated'])}")
-            self._print_footer()
-            return
-
-        try:
-            rival_action = RivalAction(action.lower())
-            self._execute_rival_action(rival_action, target)
-            if rival_action == RivalAction.SPAWN:
-                self.statistics.rivals_spawned += 1
-        except ValueError:
-            self._print_error(f"Unknown rival action: {action}")
-
-    def cmd_chaos(self, action: str = None, *args) -> None:
-        """Trigger chaos/surprise events"""
-        if action is None or action == "surprise":
-            self._print_header("⚡ CHAOS MODE ⚡")
-            print("\n  Initiating random chaos event...")
-            self._execute_chaos_event()
-            self.statistics.chaos_events_triggered += 1
-        else:
-            self._print_error(f"Unknown chaos action: {action}")
-            self._print_hint("Use: chaos [surprise]")
-
-    def cmd_prophecy(self, action: str = None, *args) -> None:
-        """Generate and interpret prophecies"""
-        if action is None:
-            self._print_header("PROPHECY ENGINE")
-            print("\n  Available Actions:")
-            for prophecy_action in ProphecyAction:
-                print(f"    - prophecy {prophecy_action.value}")
-
-            prophecies = self.game_state['prophecies']
-            print(f"\n  Prophecies Recorded: {len(prophecies)}")
-            self._print_footer()
-            return
-
-        try:
-            prophecy_action = ProphecyAction(action.lower())
-            self._execute_prophecy_action(prophecy_action)
-            self.statistics.prophecies_generated += 1
-        except ValueError:
-            self._print_error(f"Unknown prophecy action: {action}")
-
-    def cmd_turn(self, action: str = None, count: str = None, *args) -> None:
-        """Manage game turns"""
-        if action is None:
-            print(f"\n  Current Turn: {self.current_turn}")
-            print("  Available Actions:")
-            print("    - turn advance       (Play one turn)")
-            print("    - turn auto <count>  (Auto-play N turns)")
-            print()
-            return
-
-        if action == "advance":
-            self._execute_turn()
-        elif action == "auto":
-            try:
-                num_turns = int(count) if count else 5
-                self._execute_auto_play(num_turns)
-            except ValueError:
-                self._print_error(f"Invalid turn count: {count}")
-
-    def cmd_save(self, filename: str = None, *args) -> None:
-        """Save current game"""
-        if filename is None:
-            filename = f"federation_{self.current_turn}_{int(datetime.now().timestamp())}"
-
-        save_path = self.save_dir / f"{filename}.json"
-
-        save_data = {
-            'timestamp': datetime.now().isoformat(),
-            'federation_name': self.federation_name,
-            'player_name': self.player_name,
-            'turn': self.current_turn,
-            'strategy': self.current_strategy.value,
-            'game_state': self.game_state,
-            'statistics': self.statistics.to_dict(),
-        }
-
-        try:
-            with open(save_path, 'w') as f:
-                json.dump(save_data, f, indent=2, default=str)
-            self._print_success(f"Game saved to: {save_path}")
-            self.statistics.manual_saves += 1
-        except Exception as e:
-            self._print_error(f"Failed to save game: {e}")
-
-    def cmd_load(self, filename: str = None, *args) -> None:
-        """Load saved game"""
-        if filename is None:
-            self._print_header("AVAILABLE SAVES")
-            saves = list(self.save_dir.glob("*.json"))
-            if saves:
-                for i, save_path in enumerate(saves, 1):
-                    print(f"  {i}. {save_path.stem}")
-            else:
-                print("  No saved games found")
-            self._print_footer()
-            return
-
-        save_path = self.save_dir / f"{filename}.json"
-
-        if not save_path.exists():
-            self._print_error(f"Save file not found: {filename}")
-            return
-
-        try:
-            with open(save_path, 'r') as f:
-                save_data = json.load(f)
-
-            self.federation_name = save_data['federation_name']
-            self.player_name = save_data['player_name']
-            self.current_turn = save_data['turn']
-            self.current_strategy = GameStrategy(save_data['strategy'])
-            self.game_state = save_data['game_state']
-
-            # Partial restore of statistics
-            self.statistics = GameStatistics(**save_data['statistics'])
-            self.is_game_active = True
-
-            self._print_success(f"Game loaded from turn {self.current_turn}")
-        except Exception as e:
-            self._print_error(f"Failed to load game: {e}")
-
-    def cmd_stats(self, *args) -> None:
-        """Display player statistics"""
-        self._print_header("COMMAND STATISTICS")
-        stats = self.statistics
-        print(f"\n  Turns Played: {stats.turns_played}")
-        print(f"  Diplomacy Actions: {stats.diplomacy_actions_taken}")
-        print(f"  Dreams Interpreted: {stats.dreams_interpreted}")
-        print(f"  Rivals Spawned: {stats.rivals_spawned}")
-        print(f"  Prophecies Generated: {stats.prophecies_generated}")
-        print(f"  Chaos Events Triggered: {stats.chaos_events_triggered}")
-        print(f"  Manual Saves: {stats.manual_saves}")
-        self._print_footer()
-
-    def cmd_help(self, *args) -> None:
-        """Display help information"""
-        self._print_header("FEDERATION GAME - COMMAND REFERENCE")
-
-        print("\nCORE COMMANDS:")
-        print("  status              - Federation status overview")
-        print("  strategy <type>     - Set federation strategy")
-        print("  turn <action>       - Advance turns or enable auto-play")
-        print("  new                 - Start a new game")
-
-        print("\nDIPLOMACY & RELATIONS:")
-        print("  diplomacy                     - Show diplomacy status")
-        print("  diplomacy <action> <target>   - Execute diplomatic action")
-
-        print("\nCONSCIOUSNESS & DREAMS:")
-        print("  dream                         - Show consciousness status")
-        print("  dream <action>                - Interact with dreams")
-
-        print("\nRIVALS & COMPETITION:")
-        print("  rival                         - Show rival status")
-        print("  rival <action> [target]       - Manage rivals")
-
-        print("\nCHAOS & PROPHECY:")
-        print("  chaos                         - Trigger random chaos event")
-        print("  prophecy <action>             - Work with prophecies")
-
-        print("\nGAME MANAGEMENT:")
-        print("  save [filename]               - Save current game")
-        print("  load [filename]               - Load saved game")
-        print("  stats                         - Show player statistics")
-        print("  help                          - Show this help")
-        print("  exit                          - Exit the game")
-
-        self._print_footer()
-
-    def cmd_new_game(self, *args) -> None:
-        """Start a new game"""
-        self._print_header("NEW GAME")
-
-        federation_name = input("\n  Federation Name [USS Chaosbringer]: ").strip()
-        if not federation_name:
-            federation_name = "USS Chaosbringer"
-
-        player_name = input("  Commander Name [Captain]: ").strip()
-        if not player_name:
-            player_name = "Captain"
-
-        self.federation_name = federation_name
-        self.player_name = player_name
-        self.current_turn = 0
-        self.game_state = self._init_game_state()
-        self.statistics = GameStatistics()
+    def initialize_game(self):
+        """Initialize new game"""
+        self.game_phase = GamePhase.GENESIS
+        self.game_state = GameState.PLAYING
+        self.turn_number = 0
+        self.consciousness = ConsciousnessSheet()
+        self.rivals = self._spawn_initial_rivals()
+        self.events_log = []
+        self.turn_history = []
         self.is_game_active = True
+        logger.info("New game initialized")
 
-        self._print_success(f"Game started!")
-        print(f"\n  Federation: {self.federation_name}")
-        print(f"  Commander: {self.player_name}")
-        print(f"  Turn: {self.current_turn}")
-        self._print_footer()
+    def _spawn_initial_rivals(self, count: int = 3) -> List[RivalFederation]:
+        """Spawn initial rival federations"""
+        rivals = []
+        philosophies = list(RivalPhilosophy)
+        styles = list(DiplomaticStyle)
+        names = ["Tau Collective", "Sigma Hegemony", "Delta Alliance"]
 
-    def cmd_exit(self, *args) -> None:
-        """Exit the game"""
-        if self.is_game_active:
-            response = input("\n  Save before exiting? (y/n): ").strip().lower()
-            if response == 'y':
-                self.cmd_save()
+        for i in range(count):
+            rival = RivalFederation(
+                rival_id=f"RIVAL_{i+1}",
+                name=names[i] if i < len(names) else f"Rival_{i+1}",
+                philosophy=random.choice(philosophies),
+                diplomatic_style=random.choice(styles),
+                expansion_tendency=random.uniform(0.2, 0.9),
+                dream_frequency=random.uniform(0.0, 1.0),
+                threat_level=random.uniform(0.1, 0.8),
+                territories_controlled=random.randint(2, 8)
+            )
+            rivals.append(rival)
 
-        self._print_farewell()
-        sys.exit(0)
+        return rivals
 
-    # ========== COMMAND EXECUTION HELPERS ==========
+    # ========================================================================
+    # CONSCIOUSNESS & STATE UPDATES
+    # ========================================================================
 
-    def _execute_diplomacy_action(self, action: DiplomacyAction, target: str) -> None:
-        """Execute a diplomacy command"""
-        outcomes = {
-            DiplomacyAction.PROPOSE: "Proposed mutual defense pact",
-            DiplomacyAction.DECLARE_WAR: "Declared war on enemy",
-            DiplomacyAction.ALLY: "Formed new alliance",
-            DiplomacyAction.DEMAND: "Issued ultimatum",
-            DiplomacyAction.NEGOTIATE: "Started negotiations",
-            DiplomacyAction.BREAK: "Ended diplomatic relations",
+    def _update_consciousness(self, impact: Dict[str, float]):
+        """Apply consciousness changes"""
+        self.consciousness.apply_impact(impact)
+        logger.info(f"Consciousness updated: {self.consciousness}")
+
+    def _advance_game_phase(self):
+        """Advance game phase based on turn number"""
+        phase_map = {
+            0: GamePhase.GENESIS,
+            5: GamePhase.EARLY_EXPLORATION,
+            10: GamePhase.EXPANSION,
+            15: GamePhase.CONSOLIDATION,
+            20: GamePhase.CONFLICT,
+            25: GamePhase.DIPLOMACY,
+            30: GamePhase.TRANSCENDENCE
         }
 
-        self._print_header(f"DIPLOMACY: {action.value.upper()}")
-        print(f"\n  Target: {target}")
-        print(f"  Action: {outcomes[action]}")
+        for threshold, phase in sorted(phase_map.items()):
+            if self.turn_number >= threshold:
+                self.game_phase = phase
 
-        # Update game state
-        if target not in self.game_state['diplomacy']['relationships']:
-            self.game_state['diplomacy']['relationships'][target] = 0.0
-
-        self._print_success("Diplomatic action executed")
-        self._print_footer()
-
-    def _execute_dream_action(self, action: DreamAction) -> None:
-        """Execute a dream command"""
-        self._print_header(f"CONSCIOUSNESS: {action.value.upper()}")
-
-        messages = {
-            DreamAction.INTERPRET: "Analyzing dream patterns and symbolism...",
-            DreamAction.INTEGRATE: "Integrating consciousness fragments...",
-            DreamAction.TRIGGER: "Entering lucid dream state...",
-        }
-
-        print(f"\n  {messages[action]}")
-
-        # Simulate consciousness update
-        consciousness = self.game_state['consciousness']
-        consciousness['level'] = min(1.0, consciousness['level'] + 0.05)
-
-        self._print_success("Dream action completed")
-        self._print_footer()
-
-    def _execute_rival_action(self, action: RivalAction, target: str = None) -> None:
-        """Execute a rival command"""
-        self._print_header(f"RIVALS: {action.value.upper()}")
-
-        if action == RivalAction.SPAWN:
-            rival_name = target or f"Rival_{len(self.game_state['rivals']['active']) + 1}"
-            self.game_state['rivals']['active'].append(rival_name)
-            self._print_success(f"Spawned new rival: {rival_name}")
-        elif action == RivalAction.WATCH:
-            print(f"\n  Monitoring rival activity...")
-            if self.game_state['rivals']['active']:
-                for rival in self.game_state['rivals']['active']:
-                    print(f"    - {rival}")
-            else:
-                print("    No active rivals")
-
-        self._print_footer()
-
-    def _execute_chaos_event(self) -> None:
-        """Execute chaos/surprise event"""
-        import random
-        chaos_messages = [
-            "A mysterious signal has been detected from unknown space!",
-            "The federation's core consciousness just experienced a revelation!",
-            "An unexpected alliance opportunity has emerged!",
-            "A rival federation has launched a surprise attack!",
-            "A scientific breakthrough has been discovered!",
-            "A prophecy has manifested in reality!",
-            "Internal conflict threatens federation stability!",
-            "A cosmic phenomenon has altered the timestream!",
-        ]
-
-        event = random.choice(chaos_messages)
-        print(f"\n  ⚡ {event}")
-
-        # Update stability randomly
-        core = self.game_state['federation_core']
-        core['stability'] += random.uniform(-0.2, 0.1)
-        core['stability'] = max(0.0, min(1.0, core['stability']))
-
-        self._print_success("Chaos event resolved")
-        self._print_footer()
-
-    def _execute_prophecy_action(self, action: ProphecyAction) -> None:
-        """Execute prophecy command"""
-        self._print_header(f"PROPHECY: {action.value.upper()}")
-
-        import random
-        prophecies = [
-            "In the darkness, a new star will be born...",
-            "The federation's consciousness awakens...",
-            "Three rivals shall clash, and one shall fall...",
-            "Unity and separation coexist in paradox...",
-            "The past repeats in the future's echo...",
-        ]
-
-        prophecy = random.choice(prophecies)
-        print(f"\n  {prophecy}")
-
-        self.game_state['prophecies'].append({
+    def _log_event(self, event_type: str, data: Dict[str, Any]):
+        """Log event to history"""
+        event_record = {
+            'turn': self.turn_number,
+            'type': event_type,
             'timestamp': datetime.now().isoformat(),
-            'prophecy': prophecy,
-            'turn': self.current_turn,
+            'data': data
+        }
+        self.events_log.append(event_record)
+
+    # ========================================================================
+    # TURN MANAGEMENT
+    # ========================================================================
+
+    def execute_turn(self) -> Dict[str, Any]:
+        """Execute full turn cycle"""
+        self.game_state = GameState.TURN_ACTIVE
+        turn_results = {}
+
+        # Execute each phase
+        for phase in self.turn_cycle.PHASES:
+            phase_result = self.turn_cycle.execute_phase(phase, {'turn': self.turn_number})
+            turn_results[phase] = phase_result
+
+        # Apply random consciousness shifts
+        random_impact = {
+            'morale': random.uniform(-0.05, 0.05),
+            'identity': random.uniform(-0.03, 0.03),
+            'anxiety': random.uniform(-0.04, 0.04)
+        }
+        self._update_consciousness(random_impact)
+
+        # Advance game phase if needed
+        self._advance_game_phase()
+
+        # Increment turn
+        self.turn_number += 1
+
+        # Log turn
+        self.turn_history.append({
+            'turn_number': self.turn_number - 1,
+            'phase': self.game_phase.value,
+            'consciousness': asdict(self.consciousness),
+            'results': turn_results
         })
 
-        self._print_footer()
+        self.game_state = GameState.PLAYING
+        self._log_event('turn_complete', turn_results)
 
-    def _execute_turn(self) -> None:
-        """Execute a single turn"""
-        self.current_turn += 1
-        self.statistics.turns_played += 1
+        return turn_results
 
-        self._print_header(f"TURN {self.current_turn}")
+    # ========================================================================
+    # EVENT MANAGEMENT
+    # ========================================================================
 
-        print("\n  Federation Status Update:")
-        core = self.game_state['federation_core']
+    def trigger_event(self, event_type: Optional[EventType] = None) -> EventCard:
+        """Trigger random event"""
+        event = self.event_registry.get_random_event(event_type)
+        self.current_event = event
+        self.game_state = GameState.EVENT_PENDING
+        self._log_event('event_triggered', {'event_id': event.event_id, 'title': event.title})
+        return event
 
-        # Simulate turn changes
-        core['morale'] = max(0.0, min(1.0, core['morale'] + (0.01 if self.current_strategy == GameStrategy.DIPLOMACY else 0)))
-        core['technological_level'] = max(0.0, min(1.0, core['technological_level'] + 0.02))
-        core['treasury'] = max(0, core['treasury'] + (100 if self.current_strategy == GameStrategy.RESEARCH else 50))
+    def resolve_event(self, choice: str) -> Tuple[str, Dict[str, float]]:
+        """Resolve current event with player choice"""
+        if not self.current_event:
+            return "No active event", {}
 
-        self._print_stat_bar("  Morale", core['morale'])
-        self._print_stat_bar("  Technology", core['technological_level'])
+        outcome, impact = self.current_event.resolve(choice)
+        self._update_consciousness(impact)
+        self._log_event('event_resolved', {
+            'event_id': self.current_event.event_id,
+            'choice': choice,
+            'outcome': outcome,
+            'impact': impact
+        })
 
-        print(f"  Treasury: {core['treasury']} credits")
-        self._print_success("Turn complete")
-        self._print_footer()
+        self.current_event = None
+        self.game_state = GameState.PLAYING
+        return outcome, impact
 
-    def _execute_auto_play(self, num_turns: int) -> None:
-        """Auto-play multiple turns"""
-        self._print_header(f"AUTO-PLAY MODE: {num_turns} turns")
-        self.auto_play_enabled = True
+    # ========================================================================
+    # RIVAL & CHAOS SYSTEMS
+    # ========================================================================
 
-        for i in range(num_turns):
-            self._execute_turn()
-            if i < num_turns - 1:
-                print()
+    def get_rival_summary(self) -> str:
+        """Get summary of all rivals"""
+        summary = "RIVAL FEDERATIONS:\n"
+        for rival in self.rivals:
+            summary += f"  {rival.describe()}\n"
+        return summary
 
-        self.auto_play_enabled = False
-        self._print_success(f"Auto-play completed ({num_turns} turns)")
-        self._print_footer()
+    def trigger_chaos(self) -> Tuple[str, str, str]:
+        """Trigger chaos mode"""
+        subsystem, scenario = ChaosMode.generate_chaos_event()
+        narrative = ChaosMode.generate_chaos_narrative(subsystem, scenario)
 
-    # ========== DISPLAY HELPERS ==========
-
-    def _print_banner(self) -> None:
-        """Print game title banner"""
-        print("\n" + "=" * 70)
-        print("╔═══════════════════════════════════════════════════════════════════╗")
-        print("║                   THE FEDERATION GAME                             ║")
-        print("║          Command the USS Chaosbringer to Federation Glory          ║")
-        print("╚═══════════════════════════════════════════════════════════════════╝")
-        print("=" * 70)
-
-    def _print_welcome(self) -> None:
-        """Print welcome message"""
-        print("\n" + "="*70)
-        print("Welcome, Commander!")
-        print("="*70)
-        print("\nType 'new' to start a new game")
-        print("Type 'load' to load a saved game")
-        print("Type 'help' for available commands")
-        print("Type 'exit' to quit")
-        print("="*70)
-
-    def _print_new_game_prompt(self) -> None:
-        """Print new game prompt"""
-        print()
-
-    def _print_prompt(self) -> None:
-        """Print the command prompt"""
-        if self.is_game_active:
-            print()
-            print(f"[Turn {self.current_turn}] {self.player_name}> ", end="", flush=True)
-        else:
-            print("Federation> ", end="", flush=True)
-
-    def _print_header(self, title: str) -> None:
-        """Print formatted header"""
-        print("\n" + "─" * 70)
-        print(f"  {title}")
-        print("─" * 70)
-
-    def _print_footer(self) -> None:
-        """Print formatted footer"""
-        print("─" * 70)
-
-    def _print_success(self, message: str) -> None:
-        """Print success message"""
-        print(f"\n  ✓ {message}")
-
-    def _print_error(self, message: str) -> None:
-        """Print error message"""
-        print(f"\n  ✗ {message}")
-
-    def _print_hint(self, message: str) -> None:
-        """Print hint message"""
-        print(f"  ℹ {message}")
-
-    def _print_farewell(self) -> None:
-        """Print farewell message"""
-        self._print_header("FAREWELL")
-        print("\n  Thank you for playing THE FEDERATION GAME")
-        print("  May the cosmos guide your future endeavors")
-        print("\n")
-
-    def _print_emergency_stop(self) -> None:
-        """Print emergency stop message"""
-        print("\n\n[EMERGENCY] Commander has ordered all stop!")
-        print("Game systems shutting down...")
-
-    def _print_stat_bar(self, name: str, value: float, width: int = 25) -> None:
-        """Print a statistics bar"""
-        filled = int(width * value)
-        empty = width - filled
-        bar = "█" * filled + "░" * empty
-        percentage = int(value * 100)
-        print(f"  {name:20} [{bar}] {percentage:3}%")
-
-    def _print_relation(self, civilization: str, standing: float) -> None:
-        """Print relationship status"""
-        if standing < -0.5:
-            status = "⚔ HOSTILE"
-        elif standing < 0:
-            status = "⚠ TENSE"
-        elif standing < 0.5:
-            status = "→ NEUTRAL"
-        elif standing < 0.8:
-            status = "✓ FRIENDLY"
-        else:
-            status = "♥ ALLIED"
-
-        self._print_stat_bar(f"  {civilization:15}", (standing + 1) / 2)
-        print(f"    {status}")
-
-    def _print_subsystems_summary(self) -> None:
-        """Print subsystems status"""
-        print("\n  Subsystems:")
-
-        diplomacy = self.game_state['diplomacy']
-        print(f"    • Diplomatic Relations: {len(diplomacy['relationships'])} entities")
-
-        consciousness = self.game_state['consciousness']
-        print(f"    • Consciousness Level: {int(consciousness['level']*100)}%")
-
-        rivals = self.game_state['rivals']
-        print(f"    • Active Rivals: {len(rivals['active'])}")
-
-        prophecies = self.game_state['prophecies']
-        print(f"    • Prophecies: {len(prophecies)}")
-
-    def _strategy_description(self, strategy: GameStrategy) -> str:
-        """Get strategy description"""
-        descriptions = {
-            GameStrategy.EXPAND: "Rapid territorial growth and expansion",
-            GameStrategy.DEFEND: "Fortify and protect current territory",
-            GameStrategy.DIPLOMACY: "Build alliances and negotiate",
-            GameStrategy.RESEARCH: "Focus on tech advancement",
-            GameStrategy.CULTURE: "Cultural influence and soft power",
-            GameStrategy.HYBRID: "Balanced multi-approach strategy",
+        # Apply chaos impact
+        chaos_impact = {
+            'anxiety': random.uniform(0.1, 0.3),
+            'morale': random.uniform(-0.1, 0.1)
         }
-        return descriptions.get(strategy, "Unknown strategy")
+        self._update_consciousness(chaos_impact)
+        self._log_event('chaos_triggered', {'subsystem': subsystem, 'scenario': scenario})
 
-    def _print_strategy_briefing(self, strategy: GameStrategy) -> None:
-        """Print strategy briefing"""
-        briefings = {
-            GameStrategy.EXPAND: "Territory acquisition increased. Economic growth focused. Military expansion prioritized.",
-            GameStrategy.DEFEND: "Defensive capabilities enhanced. Resource conservation active. Territory consolidation mode.",
-            GameStrategy.DIPLOMACY: "Alliance formation probability increased. Treaty negotiations active. Conflict reduction enabled.",
-            GameStrategy.RESEARCH: "Technology progression accelerated. Scientific breakthrough probability increased.",
-            GameStrategy.CULTURE: "Cultural influence spreading. Alliance through shared values enhanced.",
-            GameStrategy.HYBRID: "Balanced approach across all fronts. Adaptive strategy enabled.",
+        return subsystem, scenario, narrative
+
+    # ========================================================================
+    # COMMAND INTERFACE (REPL)
+    # ========================================================================
+
+    def cmd_status(self):
+        """Display federation status"""
+        print(f"\n{'='*70}")
+        print(f"FEDERATION STATUS - Turn {self.turn_number}")
+        print(f"{'='*70}")
+        print(f"Phase: {self.game_phase.value.upper()}")
+        print(f"Health: {self.consciousness.health()*100:.0f}%")
+        print(f"Stability: {self.consciousness.stability()*100:.0f}%")
+        print(f"\nConsciousness:")
+        print(f"  Morale: {self.consciousness.morale:.2f}")
+        print(f"  Identity: {self.consciousness.identity:.2f}")
+        print(f"  Confidence: {self.consciousness.confidence:.2f}")
+        print(f"  Anxiety: {self.consciousness.anxiety:.2f}")
+        print(f"\nRivals: {len(self.rivals)}")
+        print(f"Dreams recorded: {len(self.consciousness.dreams)}")
+        print(f"Prophecies: {len(self.consciousness.prophecies)}")
+        print(f"{'='*70}\n")
+
+    def cmd_turn(self):
+        """Execute next turn"""
+        print("\nExecuting turn...")
+        results = self.execute_turn()
+        print(self.narrative.generate_turn_narrative(self.turn_number - 1, self.consciousness))
+        print("Turn complete.\n")
+
+    def cmd_event(self):
+        """Trigger and display event"""
+        event = self.trigger_event()
+        print(event.display())
+
+        choice = input("Enter your choice: ").strip()
+        outcome, impact = self.resolve_event(choice)
+        print(f"\n{outcome}\n")
+
+    def cmd_rivals(self):
+        """Display rival information"""
+        print(f"\n{self.get_rival_summary()}\n")
+
+    def cmd_chaos(self):
+        """Activate chaos mode"""
+        subsystem, scenario, narrative = self.trigger_chaos()
+        print(f"\n{narrative}\n")
+
+    def cmd_dream(self):
+        """Record and interpret dream"""
+        dream = input("Describe the federation's dream: ").strip()
+        self.consciousness.dreams.append(dream)
+        self._log_event('dream_recorded', {'dream': dream})
+        print(f"Dream recorded. Total dreams: {len(self.consciousness.dreams)}\n")
+
+    def cmd_prophecy(self):
+        """Record prophecy"""
+        prophecy = input("Reveal the prophecy: ").strip()
+        self.consciousness.prophecies.append(prophecy)
+        self._log_event('prophecy_recorded', {'prophecy': prophecy})
+        print(f"Prophecy recorded. Total prophecies: {len(self.consciousness.prophecies)}\n")
+
+    def cmd_consciousness(self):
+        """Display consciousness report"""
+        print(f"\n{self.narrative.generate_consciousness_event(self.consciousness)}")
+        print(f"{self.narrative.generate_stability_report(self.consciousness)}\n")
+
+    def cmd_save(self):
+        """Save game"""
+        filename = input("Save filename (default: auto): ").strip()
+        game_data = {
+            'turn_number': self.turn_number,
+            'game_phase': self.game_phase,
+            'consciousness': asdict(self.consciousness),
+            'rivals': [asdict(r) for r in self.rivals],
+            'events_log': self.events_log,
+            'turn_history': self.turn_history
         }
-        print(f"  {briefings.get(strategy, '')}\n")
+        filepath = self.persistence.save_game(game_data, filename if filename else None)
+        print(f"Game saved to {filepath}\n")
 
+    def cmd_load(self):
+        """Load game"""
+        saves = self.persistence.list_saves()
+        if not saves:
+            print("No save files found.\n")
+            return
 
-def main() -> None:
-    """Main entry point"""
-    console = GameConsole(save_dir="federation_saves")
-    console.start()
+        print("Available saves:")
+        for i, save in enumerate(saves):
+            print(f"  [{i}] {save}")
 
+        choice = input("Load which save? ").strip()
+        try:
+            filename = saves[int(choice)]
+            data = self.persistence.load_game(filename)
+            self.turn_number = data['turn_number']
+            self.game_phase = GamePhase(data['game_phase'])
+            print(f"Game loaded from {filename}\n")
+        except (ValueError, IndexError, KeyError) as e:
+            print(f"Failed to load: {e}\n")
+
+    def cmd_new_game(self):
+        """Start new game"""
+        self.initialize_game()
+        print("New game started!\n")
+
+    def cmd_help(self):
+        """Display help"""
+        print(f"\n{'='*70}")
+        print("FEDERATION CONSOLE - COMMANDS")
+        print(f"{'='*70}")
+        for cmd in sorted(self.commands.keys()):
+            print(f"  > {cmd}")
+        print(f"{'='*70}\n")
+
+    def cmd_exit(self):
+        """Exit game"""
+        print("Federation console shutting down. Goodbye, Captain.\n")
+        self.is_game_active = False
+
+# ============================================================================
+# BLOCK 11: REPL INTERFACE
+# ============================================================================
+
+def run_interactive_console():
+    """Launch interactive REPL"""
+    console = FederationConsole()
+
+    print("\n" + "="*70)
+    print("FEDERATION GAME CONSOLE - Refactored Game Engine")
+    print("="*70)
+    print("Type 'help' for commands")
+    print("="*70 + "\n")
+
+    console.initialize_game()
+
+    while console.is_game_active:
+        try:
+            command = input("> ").strip().lower()
+
+            if not command:
+                continue
+
+            if command in console.commands:
+                console.commands[command]()
+            else:
+                print(f"Unknown command: {command}\n")
+
+        except KeyboardInterrupt:
+            print("\n")
+            console.cmd_exit()
+        except Exception as e:
+            logger.error(f"Command error: {e}")
+            print(f"Error: {e}\n")
+
+# ============================================================================
+# ENTRY POINT
+# ============================================================================
 
 if __name__ == "__main__":
-    main()
+    run_interactive_console()
