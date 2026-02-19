@@ -18,8 +18,13 @@ from enum import Enum
 import threading
 import time
 
+from diplomatic_engine import DiplomaticEngine
+from fleet_expansion_engine import FleetExpansionEngine
+from first_contact_engine import FirstContactEngine
+
 
 # ===== DASHBOARD PANEL TYPES =====
+
 
 class DashboardPanel(Enum):
     FLEET_OVERVIEW = "fleet_overview"
@@ -28,6 +33,74 @@ class DashboardPanel(Enum):
     CULTURE_GRAPH = "culture_graph"
     CONTINUITY_MONITOR = "continuity_monitor"
     CAPTAINS_LOG = "captains_log"
+    DIPLOMATIC = "diplomatic"
+    FLEET_EXPANSION = "fleet_expansion"
+    FIRST_CONTACT = "first_contact"
+# ===== DIPLOMATIC PANEL =====
+
+class DiplomaticPanel:
+    """Diplomatic engine telemetry: treaties, alliances, negotiations"""
+    def __init__(self, diplomatic_engine: DiplomaticEngine):
+        self.engine = diplomatic_engine
+
+    def get_current_data(self) -> Dict[str, Any]:
+        """Get real diplomatic engine status"""
+        status = self.engine.get_diplomatic_status()
+        return {
+            "timestamp": datetime.now().timestamp(),
+            "active_treaties": status.active_treaties,
+            "treaty_types": status.treaty_types,
+            "active_alliances": status.active_alliances,
+            "ideological_blocs": status.ideological_blocs,
+            "bilateral_relations": status.bilateral_relations,
+            "active_negotiations": status.active_negotiations,
+            "active_crises": status.active_crises,
+            "registered_sovereignties": status.registered_sovereignties,
+            "overall_stability": status.overall_stability,
+        }
+
+class FleetExpansionPanel:
+    """Fleet expansion telemetry: new ships, archetypes, personalities"""
+    def __init__(self, expansion_engine: FleetExpansionEngine):
+        self.engine = expansion_engine
+
+    def get_current_data(self) -> Dict[str, Any]:
+        """Get real fleet expansion engine status"""
+        status = self.engine.get_expansion_status()
+        composition = self.engine.get_fleet_composition()
+        composition_dict = {arch.value: count for arch, count in composition.items()}
+
+        return {
+            "timestamp": datetime.now().timestamp(),
+            "total_ships": status.total_ships,
+            "active_ships": status.active_ships,
+            "decommissioned_ships": status.decommissioned_ships,
+            "fleet_composition": composition_dict,
+            "archetypes_defined": status.archetypes_defined,
+            "mythologies_created": status.mythologies_created,
+            "emergent_behaviors_observed": status.emergent_behaviors_observed,
+            "fleet_complexity": status.fleet_complexity,
+        }
+
+class FirstContactPanel:
+    """First contact era telemetry: external fleets, alien governance, cultural shocks"""
+    def __init__(self, first_contact_engine: FirstContactEngine):
+        self.engine = first_contact_engine
+
+    def get_current_data(self) -> Dict[str, Any]:
+        """Get real first contact engine status"""
+        status = self.engine.get_first_contact_status()
+        return {
+            "timestamp": datetime.now().timestamp(),
+            "external_fleets_detected": status.external_fleets_detected,
+            "formal_contact_established": status.formal_contact_established,
+            "allied_fleets": status.allied_fleets,
+            "hostile_fleets": status.hostile_fleets,
+            "total_threat_assessment": status.total_threat_assessment,
+            "confederation_candidates": status.confederation_candidates,
+            "active_cultural_shocks": status.active_cultural_shocks,
+            "federation_stability_under_contact": status.federation_stability_under_contact,
+        }
 
 
 @dataclass
@@ -55,6 +128,24 @@ class FleetOverviewPanel:
 
     def get_current_data(self) -> Dict[str, Any]:
         """Gather current fleet status from republic"""
+        if not self.republic:
+            return {
+                "timestamp": datetime.now().timestamp(),
+                "government_type": "Constitutional Republic",
+                "house_seats": 0,
+                "senate_seats": 0,
+                "judges_appointed": 0,
+                "bills_introduced": 0,
+                "bills_passed": 0,
+                "treaties_ratified": 0,
+                "executive_orders": 0,
+                "active_cases": 0,
+                "amendments_proposed": 0,
+                "amendments_ratified": 0,
+                "fleet_health": 0.85,
+                "governmental_stability": 0.8,
+            }
+
         # Get current government status
         gov_status = self.republic.get_status()
 
@@ -111,6 +202,24 @@ class GovernanceConsolePanel:
 
     def get_current_data(self) -> Dict[str, Any]:
         """Gather current governance state from republic"""
+        if not self.republic:
+            return {
+                "timestamp": datetime.now().timestamp(),
+                "bills_active": 0,
+                "bills_passed_house": 0,
+                "bills_approved_senate": 0,
+                "bills_signed": 0,
+                "bills_vetoed": 0,
+                "amendments_pending": 0,
+                "amendments_ratified": 0,
+                "courts_operational": 0,
+                "judges_appointed": 0,
+                "cases_filed": 0,
+                "bill_of_rights_protected": True,
+                "separation_of_powers_intact": True,
+                "constitutional_equilibrium": 0.9,
+            }
+
         rights_status = self._check_bill_of_rights_compliance()
         separation_status = self._check_separation_of_powers()
 
@@ -250,6 +359,14 @@ class CaptainLogPanel:
 
     def get_current_data(self) -> Dict[str, Any]:
         """Get recent republic events"""
+        if not self.republic:
+            return {
+                "timestamp": datetime.now().timestamp(),
+                "recent_events": [],
+                "total_events_logged": 0,
+                "critical_events": 0,
+            }
+
         events = []
 
         # Log governmental events
@@ -296,34 +413,44 @@ class CaptainLogPanel:
 # ===== DASHBOARD CORE =====
 
 class DashboardCore:
-    """Live integration with Constitutional Republic"""
+    """Live integration with Constitutional Republic and Phase XIV engines"""
 
-    def __init__(self, republic):
-        """Initialize with live ConstitutionalRepublic"""
+    def __init__(
+        self,
+        republic=None,
+        diplomatic_engine: Optional[DiplomaticEngine] = None,
+        expansion_engine: Optional[FleetExpansionEngine] = None,
+        first_contact_engine: Optional[FirstContactEngine] = None,
+    ):
+        """Initialize with optional Phase XIV engines"""
         self.republic = republic
         self.panels = {}
         self.last_update = {}
         self.update_queue = []
 
-        # Initialize all panels with real data sources
-        self._initialize_panels()
+        # Initialize all panels with data sources
+        self._initialize_panels(diplomatic_engine, expansion_engine, first_contact_engine)
 
         # Start synchronization thread
         self.sync_thread = threading.Thread(target=self._sync_loop, daemon=True)
         self.sync_thread.start()
 
-    def _initialize_panels(self):
-        """Wire all panels to republic data"""
+    def _initialize_panels(self, diplomatic_engine, expansion_engine, first_contact_engine):
+        """Wire all panels to republic and engine data"""
         self.panels[DashboardPanel.FLEET_OVERVIEW] = FleetOverviewPanel(self.republic)
-        self.panels[DashboardPanel.GOVERNANCE_CONSOLE] = GovernanceConsolePanel(
-            self.republic
-        )
+        self.panels[DashboardPanel.GOVERNANCE_CONSOLE] = GovernanceConsolePanel(self.republic)
         self.panels[DashboardPanel.ANOMALY_MAP] = AnomalyMapPanel(self.republic)
         self.panels[DashboardPanel.CULTURE_GRAPH] = CultureGraphPanel(self.republic)
-        self.panels[DashboardPanel.CONTINUITY_MONITOR] = ContinuityMonitorPanel(
-            self.republic
-        )
+        self.panels[DashboardPanel.CONTINUITY_MONITOR] = ContinuityMonitorPanel(self.republic)
         self.panels[DashboardPanel.CAPTAINS_LOG] = CaptainLogPanel(self.republic)
+
+        # Phase XIV engine panels
+        if diplomatic_engine:
+            self.panels[DashboardPanel.DIPLOMATIC] = DiplomaticPanel(diplomatic_engine)
+        if expansion_engine:
+            self.panels[DashboardPanel.FLEET_EXPANSION] = FleetExpansionPanel(expansion_engine)
+        if first_contact_engine:
+            self.panels[DashboardPanel.FIRST_CONTACT] = FirstContactPanel(first_contact_engine)
 
     def _sync_loop(self):
         """Continuously synchronize panel data"""
@@ -354,6 +481,9 @@ class DashboardCore:
             DashboardPanel.ANOMALY_MAP: 8,
             DashboardPanel.CULTURE_GRAPH: 7,
             DashboardPanel.CAPTAINS_LOG: 6,
+            DashboardPanel.DIPLOMATIC: 8,
+            DashboardPanel.FLEET_EXPANSION: 8,
+            DashboardPanel.FIRST_CONTACT: 8,
         }
         return priorities.get(panel_id, 5)
 
@@ -412,6 +542,33 @@ GOVERNMENT STATUS:
   - Constitutional Amendments: {gov_data.get("amendments_ratified", 0)} ratified
   - Courts Operational: {gov_data.get("courts_operational", 0)}
   - Separation of Powers: {"INTACT" if gov_data.get("separation_of_powers_intact") else "COMPROMISED"}
+"""
+
+        briefing += "\nDIPLOMATIC STATUS:\n"
+        if DashboardPanel.DIPLOMATIC in self.last_update:
+            dip_data = self.last_update[DashboardPanel.DIPLOMATIC].data
+            briefing += f"""
+  - Active Treaties: {dip_data.get("active_treaties", 0)}
+  - Active Alliances: {dip_data.get("active_alliances", 0)}
+  - Diplomatic Stability: {dip_data.get("overall_stability", 0.0):.1%}
+"""
+
+        briefing += "\nFLEET EXPANSION STATUS:\n"
+        if DashboardPanel.FLEET_EXPANSION in self.last_update:
+            exp_data = self.last_update[DashboardPanel.FLEET_EXPANSION].data
+            briefing += f"""
+  - Active Ships: {exp_data.get("active_ships", 0)}
+  - Fleet Complexity: {exp_data.get("fleet_complexity", 0.0):.1%}
+  - Mythologies Created: {exp_data.get("mythologies_created", 0)}
+"""
+
+        briefing += "\nFIRST CONTACT STATUS:\n"
+        if DashboardPanel.FIRST_CONTACT in self.last_update:
+            fc_data = self.last_update[DashboardPanel.FIRST_CONTACT].data
+            briefing += f"""
+  - External Fleets Detected: {fc_data.get("external_fleets_detected", 0)}
+  - Threat Level: {fc_data.get("total_threat_assessment", 0.0):.1%}
+  - Federation Stability: {fc_data.get("federation_stability_under_contact", 1.0):.1%}
 """
 
         briefing += "\n========================================================\n"
