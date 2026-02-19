@@ -1422,6 +1422,29 @@ def run_interactive_console():
             print(f"Error: {e}\n")
 
 # ============================================================================
+# CLASS ALIASES FOR TEST COMPATIBILITY
+# ============================================================================
+
+# Support both GameConsole and FederationConsole names
+GameConsole = FederationConsole
+
+# Export strategy and action enums for backward compatibility
+GameStrategy = None  # Placeholder - using command methods instead
+DiplomacyAction = None
+DreamAction = None
+RivalAction = None
+ProphecyAction = None
+
+# Game statistics tracking
+class GameStatistics:
+    """Container for game statistics"""
+    def __init__(self):
+        self.turns_played = 0
+        self.events_triggered = 0
+        self.choices_made = 0
+        self.consciousness_changes = {}
+
+# ============================================================================
 # ENTRY POINT
 # ============================================================================
 
