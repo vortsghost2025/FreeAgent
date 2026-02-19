@@ -139,6 +139,21 @@ from .narrative_services import (
     InsuranceStatus,
 )
 
+# Phase X - Emergent Governance + Fleet Expansion
+from governance import (
+    GovernanceEngine,
+    Constitution,
+    FactionManager,
+    DiplomacyEngine,
+    LawRegistry,
+    LawEngine,
+)
+from starship_archetypes import (
+    MythosWeaver,
+    AnomalyHunter,
+    ContinuityGuardian,
+)
+
 __all__ = [
     # Phase VII - Anomaly Engine
     "AnomalyDetector",
@@ -274,4 +289,15 @@ __all__ = [
     "PestType",
     "TraumaSeverity",
     "InsuranceStatus",
+    # Phase X - Emergent Governance + Fleet Expansion
+    "GovernanceEngine",
+    "Constitution",
+    "FactionManager",
+    "DiplomacyEngine",
+    "LawRegistry",
+    "LawEngine",
+    # Starship Archetypes
+    "MythosWeaver",
+    "AnomalyHunter",
+    "ContinuityGuardian",
 ]
