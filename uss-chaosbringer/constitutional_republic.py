@@ -387,15 +387,15 @@ class ChecksAndBalances:
     def can_override_veto(self, bill_id: str, house_yes: int, senate_yes: int,
                          house_total: int, senate_total: int) -> bool:
         """Check if veto can be overridden (2/3 both chambers)"""
-        house_threshold = (house_total * 2) // 3 + 1
-        senate_threshold = (senate_total * 2) // 3 + 1
+        house_threshold = (house_total * 2 + 2) // 3
+        senate_threshold = (senate_total * 2 + 2) // 3
         return house_yes >= house_threshold and senate_yes >= senate_threshold
 
     def validate_executive_action(self, action: str, context: Dict[str, Any]) -> Tuple[bool, str]:
         """Validate executive action doesn't exceed constitutional limits"""
         if "violates_separation" in context:
             return False, "Executive action violates separation of powers"
-        if "without_senate_approval" in context and "appointment" in action:
+        if "without_senate_approval" in context and "appoint" in action:
             return False, "Appointments require Senate confirmation"
         return True, "Executive action is constitutional"
 
@@ -454,7 +454,7 @@ class AmendmentProcess:
         if amendment_id not in self.amendments:
             return False
 
-        threshold = (total_votes * 3) // 4 + 1
+        threshold = (total_votes * 3 + 3) // 4
         if yes_votes >= threshold:
             amendment = self.amendments[amendment_id]
             amendment.status = "RATIFIED"
@@ -475,6 +475,10 @@ class Federation:
     central_power: float = 0.6
     local_power: float = 0.4
     created_date: float = field(default_factory=lambda: datetime.now().timestamp())
+
+    def add_member_ship(self, ship_name: str):
+        """Add ship to federation"""
+        self.member_ships.append(ship_name)
 
 
 # ===== CONSTITUTIONAL REPUBLIC CORE =====
