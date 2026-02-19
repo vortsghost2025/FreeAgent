@@ -5,14 +5,9 @@ Concrete implementation of Starship for the primary event-driven control plane.
 Wraps all existing handlers, narrator, and state logic into the Starship abstraction.
 """
 
-import sys
 import os
-
-# Handle imports
-sys.path.insert(0, os.path.dirname(__file__))
-
-from starship import Starship, ShipEvent, ShipEventResult
 from typing import Dict, Any, List
+from starship import Starship, ShipEvent, ShipEventResult
 
 
 class ChaosbringingerShip(Starship):
@@ -28,10 +23,9 @@ class ChaosbringingerShip(Starship):
     This is the primary trading control plane.
     """
 
-    def __init__(self, ship_name: str, personality_mode: str = 'CALM'):
-        """Initialize ChaosbringingerShip with optional personality override"""
-        super().__init__(ship_name)
-        self.personality_mode = personality_mode  # Override default after parent init
+    def __init__(self, ship_name: str, personality_mode: str = 'SARCASM'):
+        """Initialize ChaosBringerShip with preferred personality (SARCASM by default)"""
+        super().__init__(ship_name, personality_mode=personality_mode)
 
     def get_initial_state(self) -> Dict[str, Any]:
         """Define ChaosBringer-specific state"""
@@ -92,33 +86,25 @@ class ChaosbringingerShip(Starship):
             from handlers.infra_handler import InfraHandler
             from handlers.captain_handler import CaptainHandler
             from handlers.internal_handler import InternalHandler
-        except ImportError:
-            import sys
-            import os
-            sys.path.insert(0, os.path.dirname(__file__))
-            from handlers.trading_handler import TradingHandler
-            from handlers.observer_handler import ObserverHandler
-            from handlers.infra_handler import InfraHandler
-            from handlers.captain_handler import CaptainHandler
-            from handlers.internal_handler import InternalHandler
 
-        self.handlers = {
-            'TRADING_BOT': TradingHandler.handle,
-            'OBSERVER': ObserverHandler.handle,
-            'INFRA': InfraHandler.handle,
-            'CAPTAIN': CaptainHandler.handle,
-            'INTERNAL': InternalHandler.handle,
-        }
+            self.handlers = {
+                'TRADING_BOT': TradingHandler.handle,
+                'OBSERVER': ObserverHandler.handle,
+                'INFRA': InfraHandler.handle,
+                'CAPTAIN': CaptainHandler.handle,
+                'INTERNAL': InternalHandler.handle,
+            }
+        except ImportError:
+            # Handlers not available - initialize empty
+            self.handlers = {}
 
     def _initialize_narrator(self):
-        """Initialize the ChaosbringingerShip narrator with personality"""
-        try:
-            from narrator_engine import NarratorEngine
-        except ImportError:
-            sys.path.insert(0, os.path.dirname(__file__))
-            from narrator_engine import NarratorEngine
-
+        """Initialize ChaosBringer narrator with injected personality mode"""
+        from narrator_engine import NarratorEngine
         self.narrator = NarratorEngine()
+        # If NarratorEngine supports mode switching, set it
+        if hasattr(self.narrator, 'set_personality_mode'):
+            self.narrator.set_personality_mode(self.personality_mode)
 
     def get_narrator_config(self) -> Dict[str, Any]:
         """

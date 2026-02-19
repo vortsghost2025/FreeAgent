@@ -11,14 +11,15 @@ Tests for:
 
 import sys
 import io
+import os
+import json
 
 # UTF-8 support on Windows
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
-# Path setup
-sys.path = [p for p in sys.path if 'c:\\workspace' not in p.lower() or 'site-packages' in p.lower()]
-sys.path.insert(0, r'c:\workspace\uss-chaosbringer')
+# Add test directory to path for clean imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from sensing_ship import SensingShip
 from chaosbringer_ship import ChaosbringingerShip
@@ -26,7 +27,6 @@ from fleet_coordinator import FleetCoordinator
 from fleet_brain import FleetBrain, StrategicDecision
 from ship_generator import ShipGenerator, ShipBlueprint
 from starship import ShipEvent
-import json
 
 
 def test_sensing_ship_initialization():

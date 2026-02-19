@@ -12,9 +12,8 @@ import os
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
-# Path setup - CRITICAL for imports to work
-_test_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path = [_test_dir] + [p for p in sys.path if 'workspace' not in p.lower() or 'site-packages' in p.lower()]
+# Add test directory to path for clean imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from signal_harvester_ship import SignalHarvesterShip
 from probability_weaver_ship import ProbabilityWeaverShip

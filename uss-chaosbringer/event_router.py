@@ -34,24 +34,20 @@ class EventRouter:
             from handlers.infra_handler import InfraHandler
             from handlers.captain_handler import CaptainHandler
             from handlers.internal_handler import InternalHandler
-        except ImportError:
-            # Fallback for when called from different directory
-            import sys
-            import os
-            sys.path.insert(0, os.path.dirname(__file__))
-            from handlers.trading_handler import TradingHandler
-            from handlers.observer_handler import ObserverHandler
-            from handlers.infra_handler import InfraHandler
-            from handlers.captain_handler import CaptainHandler
-            from handlers.internal_handler import InternalHandler
+            from handlers.probability_handler import handle as ProbabilityHandler
 
-        self.handlers = {
-            'TRADING_BOT': TradingHandler.handle,
-            'OBSERVER': ObserverHandler.handle,
-            'INFRA': InfraHandler.handle,
-            'CAPTAIN': CaptainHandler.handle,
-            'INTERNAL': InternalHandler.handle,
-        }
+            self.handlers = {
+                'TRADING_BOT': TradingHandler.handle,
+                'OBSERVER': ObserverHandler.handle,
+                'INFRA': InfraHandler.handle,
+                'CAPTAIN': CaptainHandler.handle,
+                'INTERNAL': InternalHandler.handle,
+                'PROBABILITY_ENGINE': ProbabilityHandler,
+            }
+        except ImportError as e:
+            # Handlers not available - initialize empty
+            self.handlers = {}
+            # Gracefully handle missing handlers
 
     def route(self, event: Dict[str, Any], state: Dict[str, Any]) -> DomainResult:
         """

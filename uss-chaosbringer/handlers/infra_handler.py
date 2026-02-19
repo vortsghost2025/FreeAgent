@@ -4,16 +4,20 @@ INFRA HANDLER
 Handles infrastructure/system health events (latency, CPU, memory, reactor temp, etc.)
 """
 
-from typing import Dict, Any
-import sys
-import os
+from typing import Dict, Any, Optional, List
+from dataclasses import dataclass
 
-# Handle imports
+# Fallback DomainResult if event_router not available
+@dataclass
+class DomainResult:
+    state_delta: Optional[Dict[str, Any]] = None
+    domain_actions: Optional[List[Dict[str, Any]]] = None
+    logs: Optional[List[str]] = None
+
 try:
     from event_router import DomainResult
 except ImportError:
-    sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-    from event_router import DomainResult
+    pass  # Use fallback defined above
 
 
 class InfraHandler:

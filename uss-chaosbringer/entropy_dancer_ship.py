@@ -5,13 +5,8 @@ Specialized starship for pattern recognition and anomaly analysis.
 Receives anomaly detection events from other ships and performs deep analysis.
 """
 
-import sys
-import os
-
-sys.path.insert(0, os.path.dirname(__file__))
-
-from starship import Starship, ShipEvent
 from typing import Dict, Any, List
+from starship import Starship, ShipEvent
 
 
 class EntropyDancerShip(Starship):

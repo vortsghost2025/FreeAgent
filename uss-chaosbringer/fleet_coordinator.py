@@ -4,14 +4,10 @@ FLEET COORDINATOR — Multi-Ship Orchestration Layer
 Manages registration, event routing, cross-ship communication, and fleet-level telemetry.
 """
 
-import sys
 import os
 from typing import Dict, Any, Optional, List
 from dataclasses import dataclass
 from datetime import datetime
-
-sys.path.insert(0, os.path.dirname(__file__))
-
 from starship import Starship, ShipEvent, ShipEventResult
 
 

@@ -9,14 +9,8 @@ Provides:
   - Feeds data to FleetBrain for autonomous decision-making
 """
 
-import sys
-import os
-
-# Handle imports
-sys.path.insert(0, os.path.dirname(__file__))
-
-from starship import Starship, ShipEvent, ShipEventResult
 from typing import Dict, Any, List
+from starship import Starship, ShipEvent, ShipEventResult
 
 
 class SensingShip(Starship):

@@ -5,13 +5,9 @@ Concrete implementation of Starship for probability manipulation and superpositi
 Domains: SUPERPOSITION, COLLAPSE_MEASUREMENT, ENTANGLEMENT
 """
 
-import sys
-import os
-
-sys.path.insert(0, os.path.dirname(__file__))
+from typing import Dict, Any, List
 
 from starship import Starship, ShipEvent, ShipEventResult
-from typing import Dict, Any, List
 
 
 class ProbabilityWeaverShip(Starship):
