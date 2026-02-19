@@ -53,6 +53,7 @@ class FleetCoordinator:
         self.fleet_brain = None  # Optional FleetBrain for autonomous decision-making
         self.ship_generator = None  # Optional ShipGenerator for autonomous spawning
         self.autonomy_enabled = False  # Enable autonomous fleet operations
+        self.transcendence_layer = None  # Optional TranscendenceLayer for metaphysics
 
     def set_telemetry_engine(self, telemetry_engine: 'TelemetryEngine'):
         """Wire in a TelemetryEngine for observability"""
@@ -80,6 +81,10 @@ class FleetCoordinator:
         self.autonomy_enabled = True
         if self.fleet_brain:
             self.fleet_brain.autonomy_level = autonomy_level
+
+    def set_transcendence_layer(self, transcendence_layer: 'TranscendenceLayer'):
+        """Wire in a TranscendenceLayer for metaphysical governance"""
+        self.transcendence_layer = transcendence_layer
 
     def set_telemetry_hook(self, hook_name: str, hook_fn):
         """Register a telemetry hook (if TelemetryEngine is wired)"""
@@ -415,6 +420,57 @@ class FleetCoordinator:
             }
         except Exception as e:
             return {'status': 'spawn_failed', 'error': str(e)}
+
+    def apply_metaphysical_governance(self) -> Dict[str, Any]:
+        """
+        Apply metaphysical governance (TranscendenceLayer).
+        Interprets fleet state, generates meaning, and governs archetype evolution.
+        """
+        if not self.transcendence_layer:
+            return {'status': 'transcendence_layer_not_configured'}
+
+        # Build universe state for interpretation
+        universe_state = {
+            'ships': [{'archetype': 'SENSORY'} for ship in self.ships.values()],  # Simplified
+            'balance': self._assess_fleet_balance(),
+            'diversity': self._calculate_fleet_diversity(),
+            'patterns': self._detect_fleet_patterns(),
+            'activities': [],
+            'events': self.event_history[-20:] if self.event_history else [],
+            'environmental_pressures': [],  # Updated by autonomous systems
+        }
+
+        # Apply governance
+        governance_result = self.transcendence_layer.govern_ship_hood(universe_state)
+
+        return governance_result
+
+    def _assess_fleet_balance(self) -> str:
+        """Assess fleet operational balance"""
+        if self.fleet_threat_level >= 8:
+            return 'CRITICAL'
+        elif self.fleet_threat_level >= 6:
+            return 'ELEVATED'
+        else:
+            return 'NORMAL'
+
+    def _calculate_fleet_diversity(self) -> float:
+        """Calculate fleet archetype diversity"""
+        if not self.ships:
+            return 0.0
+        # Simplified: just return count vs max expected
+        return min(1.0, len(self.ships) / 10.0)
+
+    def _detect_fleet_patterns(self) -> List[str]:
+        """Detect emergent patterns in fleet behavior"""
+        patterns = []
+        if len(self.ships) > 5:
+            patterns.append('FLEET_EXPANSION')
+        if self.fleet_threat_level > 6:
+            patterns.append('HIGH_THREAT_RESPONSE')
+        if len(self.event_history) > 100:
+            patterns.append('EXTENDED_OPERATIONS')
+        return patterns
 
     def print_fleet_status(self):
         """Pretty-print fleet status"""

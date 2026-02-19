@@ -52,13 +52,13 @@ class Starship(ABC):
     5. Tracking telemetry (warp factor, threat level, tone activations, etc.)
     """
 
-    def __init__(self, ship_name: str):
-        """Initialize a starship with name and empty state"""
+    def __init__(self, ship_name: str, personality_mode: str = 'CALM'):
+        """Initialize a starship with name, personality, and empty state"""
         self.ship_name = ship_name
         self.state: Dict[str, Any] = self.get_initial_state()
         self.handlers: Dict[str, Callable] = {}
+        self.personality_mode = personality_mode  # Default personality mode, can be overridden
         self.narrator = None
-        self.personality_mode = 'CALM'  # Default personality mode
         self.event_log: List[Dict[str, Any]] = []
         self.cross_ship_event_queue: List[ShipEvent] = []
         self.telemetry = {
@@ -98,15 +98,13 @@ class Starship(ABC):
         """
         raise NotImplementedError
 
-    @abstractmethod
     def _initialize_narrator(self):
         """
-        Override this to initialize the narrator engine with ship personality.
-        Example:
-            from narrator_engine import NarratorEngine
-            self.narrator = NarratorEngine(personality_matrix=self.get_narrator_config())
+        Initialize the narrator engine with the current personality mode.
+        Ships may override for custom narrator/personality.
         """
-        raise NotImplementedError
+        from narrator_engine import NarratorEngine
+        self.narrator = NarratorEngine()
 
     @abstractmethod
     def get_narrator_config(self) -> Dict[str, Any]:
@@ -254,17 +252,17 @@ class Starship(ABC):
     def set_personality_mode(self, mode: str):
         """
         Set the personality mode for this ship's narrator.
-
         Available modes: CALM, SARCASM, NOIR, DOCUMENTARY, TIRED_ENGINEER, CAPTAINS_LOG, AI_TRYING_ITS_BEST
-
         Does NOT reinitialize the narrator, just updates the mode flag.
         The narrator will use this mode for all subsequent narratives.
         """
         valid_modes = ['CALM', 'SARCASM', 'NOIR', 'DOCUMENTARY', 'TIRED_ENGINEER', 'CAPTAINS_LOG', 'AI_TRYING_ITS_BEST']
         if mode not in valid_modes:
             raise ValueError(f"Invalid personality mode: {mode}. Must be one of {valid_modes}")
-
         self.personality_mode = mode
+        # If the narrator supports runtime mode switching, update it here
+        if self.narrator and hasattr(self.narrator, 'set_personality_mode'):
+            self.narrator.set_personality_mode(mode)
 
     def get_personality_mode(self) -> str:
         """Get current personality mode"""
