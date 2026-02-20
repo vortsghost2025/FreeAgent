@@ -1,0 +1,409 @@
+{
+  "tasks": {
+    "1107df7c-ac0a-4d9f-91c3-6c26d0f18ffc": {
+      "id": "1107df7c-ac0a-4d9f-91c3-6c26d0f18ffc",
+      "task_type": "mesh_discovery",
+      "priority": 1,
+      "payload": {
+        "discovery_count": 5,
+        "network_size": 6
+      },
+      "created_at": "2026-02-19T18:01:09.123333",
+      "status": "completed",
+      "assigned_node": null,
+      "retries": 0,
+      "result": {
+        "task_id": "1107df7c-ac0a-4d9f-91c3-6c26d0f18ffc",
+        "status": "completed",
+        "result": {
+          "discovered_nodes": 5,
+          "network_size": 6,
+          "completed_at": "2026-02-19T18:01:09.220266"
+        },
+        "error": null,
+        "execution_time_ms": 95.933,
+        "completed_at": "2026-02-19T18:01:09.220266"
+      },
+      "tags": [
+        "network",
+        "discovery"
+      ],
+      "depends_on": [],
+      "expires_at": null
+    },
+    "a806139a-20fc-42d2-801f-e0243fe0ba71": {
+      "id": "a806139a-20fc-42d2-801f-e0243fe0ba71",
+      "task_type": "fortress_build",
+      "priority": 2,
+      "payload": {
+        "module_name": "Module_0",
+        "level": 1
+      },
+      "created_at": "2026-02-19T18:01:09.220266",
+      "status": "completed",
+      "assigned_node": null,
+      "retries": 0,
+      "result": {
+        "task_id": "a806139a-20fc-42d2-801f-e0243fe0ba71",
+        "status": "completed",
+        "result": {
+          "module_built": "Module_0",
+          "level": 1,
+          "completed_at": "2026-02-19T18:01:09.847993"
+        },
+        "error": null,
+        "execution_time_ms": 514.7040000000001,
+        "completed_at": "2026-02-19T18:01:09.847993"
+      },
+      "tags": [
+        "fortress",
+        "construction"
+      ],
+      "depends_on": [
+        "1107df7c-ac0a-4d9f-91c3-6c26d0f18ffc"
+      ],
+      "expires_at": null
+    },
+    "8c32d62f-0b7c-4a79-b649-354f1d83a4e0": {
+      "id": "8c32d62f-0b7c-4a79-b649-354f1d83a4e0",
+      "task_type": "fortress_build",
+      "priority": 2,
+      "payload": {
+        "module_name": "Module_1",
+        "level": 1
+      },
+      "created_at": "2026-02-19T18:01:09.220266",
+      "status": "completed",
+      "assigned_node": null,
+      "retries": 0,
+      "result": {
+        "task_id": "8c32d62f-0b7c-4a79-b649-354f1d83a4e0",
+        "status": "completed",
+        "result": {
+          "module_built": "Module_1",
+          "level": 1,
+          "completed_at": "2026-02-19T18:01:09.742523"
+        },
+        "error": null,
+        "execution_time_ms": 522.257,
+        "completed_at": "2026-02-19T18:01:09.742523"
+      },
+      "tags": [
+        "fortress",
+        "construction"
+      ],
+      "depends_on": [],
+      "expires_at": null
+    },
+    "f43cfd83-0054-4238-993f-006b1cd51e4b": {
+      "id": "f43cfd83-0054-4238-993f-006b1cd51e4b",
+      "task_type": "fortress_build",
+      "priority": 2,
+      "payload": {
+        "module_name": "Module_2",
+        "level": 1
+      },
+      "created_at": "2026-02-19T18:01:09.220266",
+      "status": "completed",
+      "assigned_node": null,
+      "retries": 0,
+      "result": {
+        "task_id": "f43cfd83-0054-4238-993f-006b1cd51e4b",
+        "status": "completed",
+        "result": {
+          "module_built": "Module_2",
+          "level": 1,
+          "completed_at": "2026-02-19T18:01:09.742523"
+        },
+        "error": null,
+        "execution_time_ms": 522.257,
+        "completed_at": "2026-02-19T18:01:09.742523"
+      },
+      "tags": [
+        "fortress",
+        "construction"
+      ],
+      "depends_on": [],
+      "expires_at": null
+    },
+    "d3a87068-5de6-4359-a3ab-59f88079ef2d": {
+      "id": "d3a87068-5de6-4359-a3ab-59f88079ef2d",
+      "task_type": "fortress_repair",
+      "priority": 3,
+      "payload": {
+        "module_id": "core_0",
+        "health": 50
+      },
+      "created_at": "2026-02-19T18:01:09.333289",
+      "status": "completed",
+      "assigned_node": null,
+      "retries": 0,
+      "result": {
+        "task_id": "d3a87068-5de6-4359-a3ab-59f88079ef2d",
+        "status": "completed",
+        "result": {
+          "module_repaired": "core_0",
+          "health_restored": 50,
+          "completed_at": "2026-02-19T18:01:10.149279"
+        },
+        "error": null,
+        "execution_time_ms": 301.286,
+        "completed_at": "2026-02-19T18:01:10.149279"
+      },
+      "tags": [
+        "fortress",
+        "repair"
+      ],
+      "depends_on": [
+        "a806139a-20fc-42d2-801f-e0243fe0ba71"
+      ],
+      "expires_at": null
+    },
+    "635c5130-91c2-4943-90ea-a0e59995720d": {
+      "id": "635c5130-91c2-4943-90ea-a0e59995720d",
+      "task_type": "fortress_repair",
+      "priority": 3,
+      "payload": {
+        "module_id": "core_1",
+        "health": 50
+      },
+      "created_at": "2026-02-19T18:01:09.333289",
+      "status": "completed",
+      "assigned_node": null,
+      "retries": 0,
+      "result": {
+        "task_id": "635c5130-91c2-4943-90ea-a0e59995720d",
+        "status": "completed",
+        "result": {
+          "module_repaired": "core_1",
+          "health_restored": 50,
+          "completed_at": "2026-02-19T18:01:10.149279"
+        },
+        "error": null,
+        "execution_time_ms": 301.286,
+        "completed_at": "2026-02-19T18:01:10.149279"
+      },
+      "tags": [
+        "fortress",
+        "repair"
+      ],
+      "depends_on": [
+        "a806139a-20fc-42d2-801f-e0243fe0ba71"
+      ],
+      "expires_at": null
+    },
+    "09c83ac7-08b3-4927-9aa8-f09498054e78": {
+      "id": "09c83ac7-08b3-4927-9aa8-f09498054e78",
+      "task_type": "federation_sync",
+      "priority": 4,
+      "payload": {
+        "federation_id": "fed_0",
+        "node_count": 4
+      },
+      "created_at": "2026-02-19T18:01:09.434517",
+      "status": "completed",
+      "assigned_node": null,
+      "retries": 0,
+      "result": {
+        "task_id": "09c83ac7-08b3-4927-9aa8-f09498054e78",
+        "status": "completed",
+        "result": {
+          "federation_id": "fed_0",
+          "synced_nodes": 4,
+          "completed_at": "2026-02-19T18:01:10.046684"
+        },
+        "error": null,
+        "execution_time_ms": 198.691,
+        "completed_at": "2026-02-19T18:01:10.046684"
+      },
+      "tags": [
+        "federation",
+        "sync"
+      ],
+      "depends_on": [],
+      "expires_at": null
+    },
+    "48643ff6-8ff4-4c95-ab79-9ce20a96f79f": {
+      "id": "48643ff6-8ff4-4c95-ab79-9ce20a96f79f",
+      "task_type": "federation_sync",
+      "priority": 4,
+      "payload": {
+        "federation_id": "fed_1",
+        "node_count": 4
+      },
+      "created_at": "2026-02-19T18:01:09.434517",
+      "status": "completed",
+      "assigned_node": null,
+      "retries": 0,
+      "result": {
+        "task_id": "48643ff6-8ff4-4c95-ab79-9ce20a96f79f",
+        "status": "completed",
+        "result": {
+          "federation_id": "fed_1",
+          "synced_nodes": 4,
+          "completed_at": "2026-02-19T18:01:10.253388"
+        },
+        "error": null,
+        "execution_time_ms": 206.704,
+        "completed_at": "2026-02-19T18:01:10.253388"
+      },
+      "tags": [
+        "federation",
+        "sync"
+      ],
+      "depends_on": [],
+      "expires_at": null
+    },
+    "7dd74ef7-d914-41f4-bdbe-6750a5f5d2ad": {
+      "id": "7dd74ef7-d914-41f4-bdbe-6750a5f5d2ad",
+      "task_type": "conflict_resolve",
+      "priority": 5,
+      "payload": {
+        "conflict_id": "conflict_2026",
+        "type": "state_divergence"
+      },
+      "created_at": "2026-02-19T18:01:09.543129",
+      "status": "completed",
+      "assigned_node": null,
+      "retries": 0,
+      "result": {
+        "task_id": "7dd74ef7-d914-41f4-bdbe-6750a5f5d2ad",
+        "status": "completed",
+        "result": {
+          "conflict_id": "conflict_2026",
+          "resolution": "last_write_wins",
+          "completed_at": "2026-02-19T18:01:10.350968"
+        },
+        "error": null,
+        "execution_time_ms": 201.68900000000002,
+        "completed_at": "2026-02-19T18:01:10.350968"
+      },
+      "tags": [
+        "conflict",
+        "resolution"
+      ],
+      "depends_on": [],
+      "expires_at": null
+    }
+  },
+  "completed": [
+    {
+      "task_id": "1107df7c-ac0a-4d9f-91c3-6c26d0f18ffc",
+      "status": "completed",
+      "result": {
+        "discovered_nodes": 5,
+        "network_size": 6,
+        "completed_at": "2026-02-19T18:01:09.220266"
+      },
+      "error": null,
+      "execution_time_ms": 95.933,
+      "completed_at": "2026-02-19T18:01:09.220266"
+    },
+    {
+      "task_id": "f43cfd83-0054-4238-993f-006b1cd51e4b",
+      "status": "completed",
+      "result": {
+        "module_built": "Module_2",
+        "level": 1,
+        "completed_at": "2026-02-19T18:01:09.742523"
+      },
+      "error": null,
+      "execution_time_ms": 522.257,
+      "completed_at": "2026-02-19T18:01:09.742523"
+    },
+    {
+      "task_id": "8c32d62f-0b7c-4a79-b649-354f1d83a4e0",
+      "status": "completed",
+      "result": {
+        "module_built": "Module_1",
+        "level": 1,
+        "completed_at": "2026-02-19T18:01:09.742523"
+      },
+      "error": null,
+      "execution_time_ms": 522.257,
+      "completed_at": "2026-02-19T18:01:09.742523"
+    },
+    {
+      "task_id": "a806139a-20fc-42d2-801f-e0243fe0ba71",
+      "status": "completed",
+      "result": {
+        "module_built": "Module_0",
+        "level": 1,
+        "completed_at": "2026-02-19T18:01:09.847993"
+      },
+      "error": null,
+      "execution_time_ms": 514.7040000000001,
+      "completed_at": "2026-02-19T18:01:09.847993"
+    },
+    {
+      "task_id": "09c83ac7-08b3-4927-9aa8-f09498054e78",
+      "status": "completed",
+      "result": {
+        "federation_id": "fed_0",
+        "synced_nodes": 4,
+        "completed_at": "2026-02-19T18:01:10.046684"
+      },
+      "error": null,
+      "execution_time_ms": 198.691,
+      "completed_at": "2026-02-19T18:01:10.046684"
+    },
+    {
+      "task_id": "d3a87068-5de6-4359-a3ab-59f88079ef2d",
+      "status": "completed",
+      "result": {
+        "module_repaired": "core_0",
+        "health_restored": 50,
+        "completed_at": "2026-02-19T18:01:10.149279"
+      },
+      "error": null,
+      "execution_time_ms": 301.286,
+      "completed_at": "2026-02-19T18:01:10.149279"
+    },
+    {
+      "task_id": "635c5130-91c2-4943-90ea-a0e59995720d",
+      "status": "completed",
+      "result": {
+        "module_repaired": "core_1",
+        "health_restored": 50,
+        "completed_at": "2026-02-19T18:01:10.149279"
+      },
+      "error": null,
+      "execution_time_ms": 301.286,
+      "completed_at": "2026-02-19T18:01:10.149279"
+    },
+    {
+      "task_id": "48643ff6-8ff4-4c95-ab79-9ce20a96f79f",
+      "status": "completed",
+      "result": {
+        "federation_id": "fed_1",
+        "synced_nodes": 4,
+        "completed_at": "2026-02-19T18:01:10.253388"
+      },
+      "error": null,
+      "execution_time_ms": 206.704,
+      "completed_at": "2026-02-19T18:01:10.253388"
+    },
+    {
+      "task_id": "7dd74ef7-d914-41f4-bdbe-6750a5f5d2ad",
+      "status": "completed",
+      "result": {
+        "conflict_id": "conflict_2026",
+        "resolution": "last_write_wins",
+        "completed_at": "2026-02-19T18:01:10.350968"
+      },
+      "error": null,
+      "execution_time_ms": 201.68900000000002,
+      "completed_at": "2026-02-19T18:01:10.350968"
+    }
+  ],
+  "failed": [],
+  "stats": {
+    "total_tasks": 9,
+    "pending": 0,
+    "running": 0,
+    "completed": 9,
+    "failed": 0,
+    "workers": 3,
+    "avg_execution_time_ms": 318.31188888888886
+  }
+}

@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mesh Federation Network Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0f172a;
+            --secondary: #1e293b;
+            --tertiary: #334155;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --text: #e2e8f0;
+            --text-secondary: #cbd5e1;
+            --border: #475569;
+            --glow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: auto 1fr 1fr;
+            height: 100vh;
+            gap: 1rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary) 0%, #0d1217 100%);
+        }
+
+        .panel {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .panel:hover {
+            border-color: var(--accent-light);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--accent-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .panel-title::before {
+            content: '';
+            width: 3px;
+            height: 1.2rem;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        /* Header */
+        .header {
+            grid-column: 1 / -1;
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(90deg, var(--accent-light), #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--accent-light);
+        }
+
+        /* Network Graph */
+        .network-graph {
+            grid-column: 1 / 3;
+            grid-row: 2 / 4;
+        }
+
+        .graph-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 400px;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.1));
+        }
+
+        /* Node styling in SVG */
+        .mesh-node {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mesh-node circle {
+            stroke-width: 2;
+            transition: all 0.3s ease;
+        }
+
+        .mesh-node:hover circle {
+            stroke-width: 3;
+            filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.6));
+        }
+
+        .mesh-edge {
+            stroke: rgba(99, 102, 241, 0.3);
+            stroke-width: 1.5;
+            transition: all 0.3s ease;
+        }
+
+        .mesh-edge.strong {
+            stroke: var(--accent);
+            stroke-width: 2.5;
+            opacity: 0.7;
+        }
+
+        /* Sidebar panels */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .node-details {
+            grid-column: 3;
+            grid-row: 2;
+        }
+
+        .details-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .detail-item {
+            background: rgba(51, 65, 85, 0.5);
+            padding: 0.75rem;
+            border-radius: 4px;
+            border-left: 3px solid var(--accent);
+            font-size: 0.9rem;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            color: var(--accent-light);
+            font-weight: 600;
+        }
+
+        /* Game state */
+        .game-state {
+            grid-column: 3;
+            grid-row: 3;
+        }
+
+        .state-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            flex: 1;
+        }
+
+        .state-box {
+            background: rgba(51, 65, 85, 0.5);
+            padding: 1rem;
+            border-radius: 4px;
+            border: 1px solid var(--accent);
+            text-align: center;
+        }
+
+        .state-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .state-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--success);
+        }
+
+        .state-value.warning {
+            color: var(--warning);
+        }
+
+        .state-value.danger {
+            color: var(--danger);
+        }
+
+        /* Health resources */
+        .health-resources {
+            max-height: 100%;
+        }
+
+        .resource-item {
+            background: rgba(51, 65, 85, 0.5);
+            padding: 0.75rem;
+            border-radius: 4px;
+            border-left: 3px solid var(--info);
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .resource-item:hover {
+            background: rgba(51, 65, 85, 0.7);
+            transform: translateX(2px);
+        }
+
+        .resource-type {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .resource-difficulty {
+            display: inline-block;
+            background: var(--tertiary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Events feed */
+        .events-feed {
+            grid-column: 1 / 3;
+            grid-row: 4;
+            max-height: 200px;
+            display: none;
+        }
+
+        /* Statistics */
+        .network-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .stat-box {
+            background: rgba(51, 65, 85, 0.5);
+            padding: 0.75rem;
+            border-radius: 4px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            border-color: var(--accent);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .stat-box-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-box-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--accent-light);
+        }
+
+        /* Progress bars */
+        .progress-bar {
+            height: 6px;
+            background: var(--tertiary);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        /* Health indicators */
+        .health-indicator {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .health-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .health-dot.warning {
+            background: var(--warning);
+        }
+
+        .health-dot.danger {
+            background: var(--danger);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .dashboard {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto 1fr 1fr 1fr;
+            }
+
+            .network-graph {
+                grid-column: 1 / 3;
+                grid-row: 2 / 4;
+            }
+
+            .node-details {
+                grid-column: 1 / 3;
+                grid-row: 4;
+            }
+
+            .game-state {
+                grid-column: 1 / 3;
+                grid-row: 5;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                padding: 0.5rem;
+            }
+
+            .panel {
+                padding: 1rem;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .header-stats {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .network-graph,
+            .node-details,
+            .game-state,
+            .events-feed {
+                grid-column: 1 !important;
+            }
+
+            .state-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .network-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.7); }
+        }
+
+        /* Connection status */
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success);
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .connection-status.offline {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger);
+        }
+
+        .connection-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        .connection-status.offline .connection-dot {
+            background: var(--danger);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>Mesh Federation Network Dashboard</h1>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Network Nodes</div>
+                    <div class="stat-value" id="totalNodes">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Online Nodes</div>
+                    <div class="stat-value" id="onlineNodes">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Turn Number</div>
+                    <div class="stat-value" id="turnNumber">0</div>
+                </div>
+                <div class connection-status" id="connectionStatus">
+                    <div class="connection-dot"></div>
+                    <span>Connected</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Network Graph -->
+        <div class="panel network-graph">
+            <div class="panel-title">Mesh Network Topology</div>
+            <div class="graph-container">
+                <svg id="networkGraph" width="100%" height="100%">
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <polygon points="0 0, 10 3, 0 6" fill="rgba(99, 102, 241, 0.5)" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+            <div class="network-stats" id="networkStats"></div>
+        </div>
+
+        <!-- Node Details -->
+        <div class="panel node-details">
+            <div class="panel-title">Node Details</div>
+            <div class="details-list" id="nodeDetails">
+                <div style="text-align: center; color: var(--text-secondary);">
+                    Click on a network node to view details
+                </div>
+            </div>
+        </div>
+
+        <!-- Game State -->
+        <div class="panel game-state">
+            <div class="panel-title">Game State</div>
+            <div class="state-grid">
+                <div class="state-box">
+                    <div class="state-label">Phase</div>
+                    <div class="state-value" id="gamePhase">-</div>
+                </div>
+                <div class="state-box">
+                    <div class="state-label">Morale</div>
+                    <div class="state-value" id="morale">-</div>
+                </div>
+                <div class="state-box">
+                    <div class="state-label">Stability</div>
+                    <div class="state-value" id="stability">-</div>
+                </div>
+                <div class="state-box">
+                    <div class="state-label">Tech Level</div>
+                    <div class="state-value" id="techLevel">-</div>
+                </div>
+            </div>
+            <div style="margin-top: 1rem;">
+                <div class="detail-label">Health Resources Available</div>
+                <div class="details-list" id="healthResources" style="max-height: 150px; margin-top: 0.5rem;">
+                    <div style="text-align: center; color: var(--text-secondary); font-size: 0.85rem;">
+                        Loading resources...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="federationNodes"></div>
+    <button id="startDemo">Start Demo</button>
+    <div class="event-log" id="eventLog"></div>
+
+    <footer style="margin-top:2em;text-align:center;color:#888;font-size:0.9em;">
+        Deliberate AI Ensemble &copy; 2026
+    </footer>
+
+    <script>
+        // ============================================================================
+        // MESH FEDERATION DASHBOARD - CLIENT-SIDE LOGIC
+        // ============================================================================
+
+        class MeshFederationDashboard {
+            constructor() {
+                this.wsUrl = null;
+                this.ws = null;
+                this.autoConnect = true;
+                this.nodes = new Map();
+                this.selectedNodeId = null;
+                this.networkData = {
+                    turnNumber: 0,
+                    gamePhase: 'genesis',
+                    morale: 0.5,
+                    stability: 0.6,
+                    techLevel: 0.2,
+                    players: {},
+                    gameEvents: [],
+                    healthResources: []
+                };
+
+                this.init();
+            }
+
+            init() {
+                // Try to detect server URL
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const host = window.location.hostname || 'localhost';
+                const port = window.location.port ? `:${window.location.port}` : ':5000';
+                this.wsUrl = `${protocol}//${host}${port}/ws`;
+
+                this.setupEventListeners();
+                this.generateMockData();
+                this.render();
+                this.attemptConnection();
+            }
+
+            setupEventListeners() {
+                // SVG click handler for node selection
+                document.getElementById('networkGraph').addEventListener('click', (e) => {
+                    if (e.target.classList.contains('mesh-node-circle')) {
+                        const nodeId = e.target.getAttribute('data-node-id');
+                        this.selectNode(nodeId);
+                    }
+                });
+            }
+
+            generateMockData() {
+                // Generate realistic mock mesh network data
+                const nodeCount = Math.floor(Math.random() * 8) + 5;
+
+                for (let i = 0; i < nodeCount; i++) {
+                    const nodeId = `NODE_${String.fromCharCode(65 + i)}`;
+                    this.nodes.set(nodeId, {
+                        nodeId,
+                        nodeType: ['game_node', 'health_node', 'federation_node', 'mixed_node'][
+                            Math.floor(Math.random() * 4)
+                        ],
+                        position: {
+                            x: Math.random() * 500 + 50,
+                            y: Math.random() * 400 + 50
+                        },
+                        batteryLevel: Math.random() * 0.6 + 0.4,
+                        signalStrength: Math.floor(Math.random() * 50) - 80,
+                        reputationScore: Math.random() * 0.7 + 0.8,
+                        isOnline: Math.random() > 0.2,
+                        lastSeen: new Date(),
+                        supportedServices: Math.random() > 0.5 ?
+                            ['game', 'health', 'federation'] :
+                            ['game', Math.random() > 0.5 ? 'health' : 'federation']
+                    });
+                }
+
+                // Update game state
+                this.networkData.turnNumber = Math.floor(Math.random() * 100);
+                this.networkData.morale = Math.random() * 0.4 + 0.4;
+                this.networkData.stability = Math.random() * 0.3 + 0.5;
+                this.networkData.techLevel = Math.random() * 0.4 + 0.2;
+
+                const phases = ['genesis', 'early_expansion', 'mid_game', 'late_game'];
+                this.networkData.gamePhase = phases[Math.floor(Math.random() * phases.length)];
+
+                // Add some health resources
+                this.networkData.healthResources = [
+                    { id: 'res1', type: 'meditation', difficulty: 1, source: 'NODE_A' },
+                    { id: 'res2', type: 'support', difficulty: 2, source: 'NODE_B' },
+                    { id: 'res3', type: 'exercise', difficulty: 2, source: 'NODE_C' },
+                    { id: 'res4', type: 'therapy', difficulty: 3, source: 'NODE_D' }
+                ];
+            }
+
+            attemptConnection() {
+                if (!this.autoConnect) return;
+
+                try {
+                    this.ws = new WebSocket(this.wsUrl);
+
+                    this.ws.onopen = () => {
+                        console.log('WebSocket connected');
+                        this.updateConnectionStatus(true);
+                    };
+
+                    this.ws.onmessage = (event) => {
+                        try {
+                            const data = JSON.parse(event.data);
+                            this.handleServerUpdate(data);
+                        } catch (e) {
+                            console.error('Failed to parse message:', e);
+                        }
+                    };
+
+                    this.ws.onclose = () => {
+                        console.log('WebSocket disconnected');
+                        this.updateConnectionStatus(false);
+                        // Retry connection after 3 seconds
+                        setTimeout(() => this.attemptConnection(), 3000);
+                    };
+
+                    this.ws.onerror = (error) => {
+                        console.error('WebSocket error:', error);
+                        this.updateConnectionStatus(false);
+                    };
+                } catch (e) {
+                    console.log('Server not available, using mock data');
+                    this.updateConnectionStatus(false);
+                    // Generate new mock data periodically
+                    setInterval(() => this.generateMockData(), 5000);
+                }
+            }
+
+            handleServerUpdate(data) {
+                // Update nodes
+                if (data.nodes) {
+                    this.nodes.clear();
+                    data.nodes.forEach(node => {
+                        this.nodes.set(node.nodeId, node);
+                    });
+                }
+
+                // Update game state
+                if (data.gameState) {
+                    this.networkData = { ...this.networkData, ...data.gameState };
+                }
+
+                this.render();
+            }
+
+            updateConnectionStatus(isConnected) {
+                const statusEl = document.getElementById('connectionStatus');
+                if (isConnected) {
+                    statusEl.classList.remove('offline');
+                    statusEl.innerHTML = '<div class="connection-dot"></div><span>Connected</span>';
+                } else {
+                    statusEl.classList.add('offline');
+                    statusEl.innerHTML = '<div class="connection-dot"></div><span>Offline (Mock Data)</span>';
+                }
+            }
+
+            selectNode(nodeId) {
+                this.selectedNodeId = nodeId;
+                this.render();
+            }
+
+            render() {
+                this.renderNetworkGraph();
+                this.renderNodeDetails();
+                this.renderGameState();
+                this.renderHealthResources();
+                this.renderNetworkStats();
+                this.updateHeaderStats();
+            }
+
+            renderNetworkGraph() {
+                const svg = document.getElementById('networkGraph');
+                svg.innerHTML = '<defs><marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><polygon points="0 0, 10 3, 0 6" fill="rgba(99, 102, 241, 0.5)" /></marker></defs>';
+
+                // Draw edges first (so they appear behind nodes)
+                const nodeArray = Array.from(this.nodes.values());
+                for (let i = 0; i < nodeArray.length; i++) {
+                    for (let j = i + 1; j < nodeArray.length; j++) {
+                        const n1 = nodeArray[i];
+                        const n2 = nodeArray[j];
+                        const distance = Math.sqrt(
+                            (n1.position.x - n2.position.x) ** 2 +
+                            (n1.position.y - n2.position.y) ** 2
+                        );
+
+                        // Only draw edges if nodes are within 300px
+                        if (distance < 300) {
+                            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                            line.setAttribute('x1', n1.position.x);
+                            line.setAttribute('y1', n1.position.y);
+                            line.setAttribute('x2', n2.position.x);
+                            line.setAttribute('y2', n2.position.y);
+                            line.setAttribute('class', distance < 200 ? 'mesh-edge strong' : 'mesh-edge');
+                            svg.appendChild(line);
+                        }
+                    }
+                }
+
+                // Draw nodes
+                this.nodes.forEach((node, nodeId) => {
+                    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                    group.setAttribute('class', 'mesh-node');
+
+                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    circle.setAttribute('cx', node.position.x);
+                    circle.setAttribute('cy', node.position.y);
+                    circle.setAttribute('r', this.selectedNodeId === nodeId ? 16 : 12);
+                    circle.setAttribute('fill', this.getNodeColor(node));
+                    circle.setAttribute('stroke', this.selectedNodeId === nodeId ? '#818cf8' : '#6366f1');
+                    circle.setAttribute('class', 'mesh-node-circle');
+                    circle.setAttribute('data-node-id', nodeId);
+
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', node.position.x);
+                    text.setAttribute('y', node.position.y + 4);
+                    text.setAttribute('text-anchor', 'middle');
+                    text.setAttribute('font-size', '10');
+                    text.setAttribute('fill', '#e2e8f0');
+                    text.setAttribute('pointer-events', 'none');
+                    text.textContent = nodeId.split('_')[1];
+
+                    group.appendChild(circle);
+                    group.appendChild(text);
+                    svg.appendChild(group);
+                });
+            }
+
+            getNodeColor(node) {
+                if (!node.isOnline) return '#475569';
+                const health = this.calculateNodeHealth(node);
+                if (health > 0.7) return '#10b981';
+                if (health > 0.4) return '#f59e0b';
+                return '#ef4444';
+            }
+
+            calculateNodeHealth(node) {
+                const batteryScore = node.batteryLevel;
+                const signalScore = Math.max(0, (node.signalStrength + 80) / 50);
+                const repScore = Math.min(node.reputationScore / 2, 1);
+                return batteryScore * 0.5 + signalScore * 0.3 + repScore * 0.2;
+            }
+
+            renderNodeDetails() {
+                const container = document.getElementById('nodeDetails');
+
+                if (!this.selectedNodeId || !this.nodes.has(this.selectedNodeId)) {
+                    container.innerHTML = '<div style="text-align: center; color: var(--text-secondary);">Click on a network node to view details</div>';
+                    return;
+                }
+
+                const node = this.nodes.get(this.selectedNodeId);
+                const health = this.calculateNodeHealth(node);
+
+                container.innerHTML = `
+                    <div class="detail-item">
+                        <div class="detail-label">Node ID</div>
+                        <div class="detail-value">${node.nodeId}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Node Type</div>
+                        <div class="detail-value">${node.nodeType.replace(/_/g, ' ').toUpperCase()}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Status</div>
+                        <div class="detail-value ${node.isOnline ? 'success' : 'danger'}">
+                            ${node.isOnline ? 'ONLINE' : 'OFFLINE'}
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Battery Level</div>
+                        <div class="detail-value">${(node.batteryLevel * 100).toFixed(0)}%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${node.batteryLevel * 100}%"></div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Signal Strength</div>
+                        <div class="detail-value">${node.signalStrength} dBm</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${Math.max(0, (node.signalStrength + 80) / 50) * 100}%"></div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Reputation Score</div>
+                        <div class="detail-value">${node.reputationScore.toFixed(2)}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Overall Health</div>
+                        <div class="detail-value">${(health * 100).toFixed(0)}%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${health * 100}%"></div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Supported Services</div>
+                        <div class="detail-value">${node.supportedServices.join(', ').toUpperCase()}</div>
+                    </div>
+                `;
+            }
+
+            renderGameState() {
+                document.getElementById('gamePhase').textContent = this.networkData.gamePhase.replace(/_/g, ' ').toUpperCase();
+
+                const moralValue = (this.networkData.morale * 100).toFixed(0);
+                document.getElementById('morale').textContent = moralValue + '%';
+
+                const stabilityValue = (this.networkData.stability * 100).toFixed(0);
+                document.getElementById('stability').textContent = stabilityValue + '%';
+
+                const techValue = (this.networkData.techLevel * 100).toFixed(0);
+                document.getElementById('techLevel').textContent = techValue + '%';
+            }
+
+            renderHealthResources() {
+                const container = document.getElementById('healthResources');
+                const resources = this.networkData.healthResources || [];
+
+                if (resources.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No resources available</div>';
+                    return;
+                }
+
+                container.innerHTML = resources.map(res => `
+                    <div class="resource-item" title="From ${res.source}">
+                        <div class="resource-type">${res.type.toUpperCase()}</div>
+                        <div style="margin-top: 0.25rem;">
+                            <span class="resource-difficulty">Difficulty: ${res.difficulty}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderNetworkStats() {
+                const container = document.getElementById('networkStats');
+                const onlineCount = Array.from(this.nodes.values()).filter(n => n.isOnline).length;
+                const avgBattery = Array.from(this.nodes.values()).reduce((sum, n) => sum + n.batteryLevel, 0) / Math.max(this.nodes.size, 1);
+                const avgSignal = Array.from(this.nodes.values()).reduce((sum, n) => sum + Math.max(0, (n.signalStrength + 80) / 50), 0) / Math.max(this.nodes.size, 1);
+
+                container.innerHTML = `
+                    <div class="stat-box">
+                        <div class="stat-box-label">Online Nodes</div>
+                        <div class="stat-box-value">${onlineCount}/${this.nodes.size}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-box-label">Avg Battery</div>
+                        <div class="stat-box-value">${(avgBattery * 100).toFixed(0)}%</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-box-label">Avg Signal</div>
+                        <div class="stat-box-value">${(avgSignal * 100).toFixed(0)}%</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-box-label">Network Health</div>
+                        <div class="stat-box-value">${((avgBattery + avgSignal) / 2 * 100).toFixed(0)}%</div>
+                    </div>
+                `;
+            }
+
+            updateHeaderStats() {
+                document.getElementById('totalNodes').textContent = this.nodes.size;
+                document.getElementById('onlineNodes').textContent = Array.from(this.nodes.values()).filter(n => n.isOnline).length;
+                document.getElementById('turnNumber').textContent = this.networkData.turnNumber;
+            }
+        }
+
+        // Initialize dashboard when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            new MeshFederationDashboard();
+        });
+    </script>
+</body>
+</html>

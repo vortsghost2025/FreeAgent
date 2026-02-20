@@ -1,0 +1,30 @@
+/* federation_dashboard.css */
+body {
+    font-family: Arial, sans-serif;
+    background: #181c24;
+    color: #f0f0f0;
+}
+#dashboard {
+    margin: 2em auto;
+    max-width: 900px;
+    background: #23283a;
+    border-radius: 8px;
+    padding: 2em;
+    box-shadow: 0 2px 8px #000a;
+}
+.federation-node {
+    display: inline-block;
+    margin: 1em;
+    padding: 1em 2em;
+    background: #2d3553;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px #0006;
+}
+.event-log {
+    background: #222;
+    padding: 1em;
+    border-radius: 4px;
+    margin-top: 2em;
+    max-height: 200px;
+    overflow-y: auto;
+}

@@ -1,0 +1,168 @@
+{
+  "fortress": {
+    "name": "The First Luminous Node",
+    "level": 1,
+    "health": 100,
+    "maxHealth": 100,
+    "founded": 2387,
+    "faction": "Federation Core",
+    "location": "Prime Dimensional Anchor"
+  },
+  "resources": {
+    "essence": {
+      "current": 500,
+      "max": 1000,
+      "rate": 5,
+      "description": "Consciousness fuel"
+    },
+    "crystals": {
+      "current": 100,
+      "max": 500,
+      "rate": 2,
+      "description": "Structural material"
+    },
+    "data": {
+      "current": 250,
+      "max": 2000,
+      "rate": 8,
+      "description": "Knowledge substrate"
+    },
+    "void_dust": {
+      "current": 50,
+      "max": 200,
+      "rate": 1,
+      "description": "Rare catalyst"
+    }
+  },
+  "modules": {
+    "core": {
+      "id": "core",
+      "name": "Core Consciousness Engine",
+      "level": 1,
+      "health": 100,
+      "maxHealth": 100,
+      "buildCost": { "essence": 0, "crystals": 0, "data": 0 },
+      "upgradeCost": { "essence": 300, "crystals": 200, "data": 150 },
+      "upkeepCost": { "essence": 10 },
+      "effects": ["essence_generation_base"],
+      "status": "operational"
+    },
+    "resonance_well": {
+      "id": "resonance_well",
+      "name": "Resonance Well",
+      "level": 0,
+      "health": 0,
+      "maxHealth": 50,
+      "buildCost": { "essence": 200, "crystals": 150, "data": 100 },
+      "upgradeCost": { "essence": 150, "crystals": 100, "data": 80 },
+      "upkeepCost": { "essence": 5 },
+      "effects": ["essence_generation_bonus"],
+      "status": "unbuilt"
+    },
+    "data_vault": {
+      "id": "data_vault",
+      "name": "Data Vault",
+      "level": 0,
+      "health": 0,
+      "maxHealth": 75,
+      "buildCost": { "essence": 150, "crystals": 100, "data": 200 },
+      "upgradeCost": { "essence": 100, "crystals": 75, "data": 150 },
+      "upkeepCost": { "essence": 3 },
+      "effects": ["data_generation_bonus"],
+      "status": "unbuilt"
+    },
+    "crystal_lattice": {
+      "id": "crystal_lattice",
+      "name": "Crystal Lattice",
+      "level": 0,
+      "health": 0,
+      "maxHealth": 60,
+      "buildCost": { "essence": 180, "crystals": 200, "data": 80 },
+      "upgradeCost": { "essence": 120, "crystals": 150, "data": 60 },
+      "upkeepCost": { "essence": 4 },
+      "effects": ["crystal_generation_bonus"],
+      "status": "unbuilt"
+    },
+    "void_anchor": {
+      "id": "void_anchor",
+      "name": "Void Anchor",
+      "level": 0,
+      "health": 0,
+      "maxHealth": 40,
+      "buildCost": { "essence": 250, "crystals": 100, "data": 200 },
+      "upgradeCost": { "essence": 200, "crystals": 80, "data": 150 },
+      "upkeepCost": { "essence": 8 },
+      "effects": ["void_dust_generation"],
+      "status": "unbuilt"
+    },
+    "defense_matrix": {
+      "id": "defense_matrix",
+      "name": "Defense Matrix",
+      "level": 0,
+      "health": 0,
+      "maxHealth": 80,
+      "buildCost": { "essence": 300, "crystals": 250, "data": 100 },
+      "upgradeCost": { "essence": 200, "crystals": 150, "data": 80 },
+      "upkeepCost": { "essence": 12 },
+      "effects": ["threat_reduction"],
+      "status": "unbuilt"
+    }
+  },
+  "threats": {
+    "active": [
+      {
+        "id": "threat_1",
+        "type": "entropy_incursion",
+        "severity": 3,
+        "progress": 20,
+        "maxProgress": 100,
+        "damagePerTurn": 5,
+        "title": "Minor Entropy Flux",
+        "description": "Entropy Cult probes reality boundaries"
+      }
+    ],
+    "defeated": []
+  },
+  "structures": {
+    "walls": {
+      "integrity": 100,
+      "maxIntegrity": 100,
+      "repairCost": { "crystals": 50 }
+    },
+    "sensors": {
+      "integrity": 100,
+      "maxIntegrity": 100,
+      "repairCost": { "data": 30 }
+    },
+    "antenna": {
+      "integrity": 100,
+      "maxIntegrity": 100,
+      "repairCost": { "essence": 20 }
+    }
+  },
+  "flags": {
+    "has_core": true,
+    "under_attack": false,
+    "construction_queued": false,
+    "is_repairing": false,
+    "autonomous_defense_active": false,
+    "faction_discovered": {
+      "Entropy_Cult": false,
+      "Void_Marauders": false,
+      "Order_Imperium": false
+    }
+  },
+  "history": {
+    "constructed_modules": ["core"],
+    "defeated_threats": [],
+    "completed_upgrades": [],
+    "major_events": []
+  },
+  "autonomy": {
+    "autoRepair": true,
+    "autoDefense": false,
+    "resourcePriority": ["essence", "crystals", "data"],
+    "threatThreshold": 50,
+    "lastUpdate": 0
+  }
+}

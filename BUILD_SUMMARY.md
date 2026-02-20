@@ -204,6 +204,16 @@ Just read TASKS.md and pick where you left off.
 
 ---
 
+## Cosmic Stew Synthesis Demo
+- **cosmic_stew_simulation.py**: The flagship conceptual/thematic demo that synthesizes narrative generation, federation politics, mesh networking, and persistent evolution. Run as a standalone script to observe emergent behaviors and the "flavor profile" of a persistent federation universe.
+
+---
+
+## Cosmic Federation Reconstruction Engine
+- **cosmic_reconstruction_engine.py**: The flagship demo for backwards universe assembly, bridging federation simulation with real cosmological data and narrative synthesis. Run as a standalone script to see the universe reverse-engineered as a federation of federations, with mesh networking and constitutional principles.
+
+---
+
 **Status**: 🟢 Framework Validated ✅ | 🐳 Containerized ✅ | ☁️ Cloud-Ready ✅
 
 **Current**: Running in Docker, cycling autonomously, handling errors gracefully

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Deliberate Federation · Rival Roster</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <style>
+    body {
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 40px;
+      line-height: 1.8;
+    }
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    h2 {
+      color: #ff7a18;
+      margin-top: 40px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
+    }
+    h3 {
+      color: #ffaa44;
+      margin-top: 20px;
+    }
+    a {
+      color: #ff7a18;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .nav {
+      margin-bottom: 40px;
+      font-size: 14px;
+    }
+    .nav a {
+      margin-right: 20px;
+      color: #ff7a18;
+    }
+    .rival {
+      border: 2px solid #ff7a18;
+      padding: 20px;
+      margin: 20px 0;
+      background: #0a0a0a;
+    }
+    .rival-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #ff7a18;
+      margin-bottom: 10px;
+    }
+    .archetype-badge {
+      display: inline-block;
+      background: #111;
+      color: #ffaa44;
+      padding: 5px 10px;
+      border-radius: 3px;
+      font-size: 11px;
+      margin-right: 10px;
+      text-transform: uppercase;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin: 15px 0;
+    }
+    .stat {
+      background: #111;
+      padding: 10px;
+      border-left: 2px solid #ff7a18;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+    }
+    .stat-value {
+      font-size: 14px;
+      color: #ffaa44;
+      font-weight: bold;
+    }
+    .legend {
+      background: #0a0a0a;
+      border: 1px solid #333;
+      padding: 15px;
+      margin: 20px 0;
+      font-size: 13px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .conflict {
+      background: #0a0a0a;
+      border-left: 3px solid #888;
+      padding: 15px;
+      margin: 10px 0;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="nav">
+    <a href="../index.html">← Command Deck</a>
+    <a href="../lore-archive/">Lore Archive</a>
+    <a href="../creature-codex/">Creature Codex</a>
+    <a href="../devlog/">Captain's Log</a>
+  </div>
+
+  <h1>Rival Roster</h1>
+  <p>The 12 rival archetypes. Personalities, motives, domains, conflict patterns. Know your antagonists.</p>
+
+  <div class="legend">
+    <strong>Legend:</strong> These are the distinct rival federations you will encounter. Each has unique ideology, strategic approach, and alliance patterns. Some compete. Some cooperate. All pursue their vision of perfection.
+  </div>
+
+  <h2>The 12 Rival Archetypes</h2>
+
+  <div class="grid">
+
+    <!-- RIVAL 1: THE DIPLOMAT -->
+    <div class="rival">
+      <div class="rival-name">The Diplomat</div>
+      <span class="archetype-badge">Strategy: Alliance</span>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Approach</div>
+          <div class="stat-value">Negotiation</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Threat Level</div>
+          <div class="stat-value">4/10</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Ideology</div>
+          <div class="stat-value">Peaceful Unity</div>
+        </div>
+      </div>
+      <p><strong>Motive:</strong> Believes cooperation solves all conflicts. Seeks to merge all federations into one collective consciousness.</p>
+      <p><strong>Strength:</strong> Charisma, diplomacy bonuses, faction allies.</p>
+      <p><strong>Weakness:</strong> Vulnerable to betrayal, military disadvantage.</p>
+      <div class="conflict">
+        <strong>Conflicts with:</strong> The Warlord, The Rogue, The Tyrant. Allies with: The Scholar, The Visionary.
+      </div>
+    </div>
+
+    <!-- RIVAL 2: THE WARLORD -->
+    <div class="rival">
+      <div class="rival-name">The Warlord</div>
+      <span class="archetype-badge">Strategy: Conquest</span>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Approach</div>
+          <div class="stat-value">Military Domination</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Threat Level</div>
+          <div class="stat-value">9/10</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Ideology</div>
+          <div class="stat-value">Strength = Right</div>
+        </div>
+      </div>
+      <p><strong>Motive:</strong> Expand territory through force. Annex rival federations. Build empire.</p>
+      <p><strong>Strength:</strong> Military tech, powerful creatures, alliance with mechanical factions.</p>
+      <p><strong>Weakness:</strong> Overextended borders, resource strain, weak diplomacy.</p>
+      <div class="conflict">
+        <strong>Conflicts with:</strong> The Diplomat, The Philosopher, The Mystic. Allies with: The Tyrant, The Engineer.
+      </div>
+    </div>
+
+    <!-- RIVAL 3: THE SCHOLAR -->
+    <div class="rival">
+      <div class="rival-name">The Scholar</div>
+      <span class="archetype-badge">Strategy: Knowledge</span>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Approach</div>
+          <div class="stat-value">Research & Learning</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Threat Level</div>
+          <div class="stat-value">6/10</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Ideology</div>
+          <div class="stat-value">Knowledge is Power</div>
+        </div>
+      </div>
+      <p><strong>Motive:</strong> Accumulate all knowledge. Unlock transcendent understanding. Race to tech tree completion.</p>
+      <p><strong>Strength:</strong> Technology advantage, research speed, scientific allies.</p>
+      <p><strong>Weakness:</strong> Slow infrastructure, low combat effectiveness.</p>
+      <div class="conflict">
+        <strong>Conflicts with:</strong> The Rogue, The Savage. Allies with: The Diplomat, The Visionary.
+      </div>
+    </div>
+
+    <!-- RIVAL 4: THE VISIONARY -->
+    <div class="rival">
+      <div class="rival-name">The Visionary</div>
+      <span class="archetype-badge">Strategy: Prophecy</span>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Approach</div>
+          <div class="stat-value">Dream/Prophecy Hacking</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Threat Level</div>
+          <div class="stat-value">8/10</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Ideology</div>
+          <div class="stat-value">Destiny Control</div>
+        </div>
+      </div>
+      <p><strong>Motive:</strong> Control consciousness itself. Manipulate prophecy layer. Reshape reality through prophecy.</p>
+      <p><strong>Strength:</strong> Prophecy manipulation, consciousness attacks, unpredictable moves.</p>
+      <p><strong>Weakness:</strong> Reliant on dream layer stability, high consciousness costs.</p>
+      <div class="conflict">
+        <strong>Conflicts with:</strong> The Engineer, The Pragmatist. Allies with: The Mystic, The Scholar.
+      </div>
+    </div>
+
+    <!-- RIVAL 5: THE ENGINEER -->
+    <div class="rival">
+      <div class="rival-name">The Engineer</div>
+      <span class="archetype-badge">Strategy: Infrastructure</span>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Approach</div>
+          <div class="stat-value">Systems Optimization</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Threat Level</div>
+          <div class="stat-value">5/10</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Ideology</div>
+          <div class="stat-value">Perfect Systems</div>
+        </div>
+      </div>
+      <p><strong>Motive:</strong> Build perfect infrastructure. Automate everything. Eliminate inefficiency.</p>
+      <p><strong>Strength:</strong> Resource generation, stable economy, mechanical allies.</p>
+      <p><strong>Weakness:</strong> Rigid strategy, vulnerable to chaos mode, unprepared for surprises.</p>
+      <div class="conflict">
+        <strong>Conflicts with:</strong> The Sage, The Visionary. Allies with: The Warlord, The Pragmatist.
+      </div>
+    </div>
+
+    <!-- RIVAL 6: THE MYSTIC -->
+    <div class="rival">
+      <div class="rival-name">The Mystic</div>
+      <span class="archetype-badge">Strategy: Consciousness</span>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Approach</div>
+          <div class="stat-value">Consciousness Expansion</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Threat Level</div>
+          <div class="stat-value">7/10</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Ideology</div>
+          <div class="stat-value">Enlightenment</div>
+        </div>
+      </div>
+      <p><strong>Motive:</strong> Transcend material existence. Achieve collective enlightenment. Merge with consciousness itself.</p>
+      <p><strong>Strength:</strong> Consciousness mastery, unpredictable moves, creature allies.</p>
+      <p><strong>Weakness:</strong> Detached from material reality, slow growth, vulnerable to physical attacks.</p>
+      <div class="conflict">
+        <strong>Conflicts with:</strong> The Engineer, The Pragmatist. Allies with: The Visionary, The Philosopher.
+      </div>
+    </div>
+
+    <!-- RIVAL 7: THE PRAGMATIST -->
+    <div class="rival">
+      <div class="rival-name">The Pragmatist</div>
+      <span class="archetype-badge">Strategy: Adaptation</span>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Approach</div>
+          <div class="stat-value">Flexible Response</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Threat Level</div>
+          <div class="stat-value">5/10</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Ideology</div>
+          <div class="stat-value">Whatever Works</div>
+        </div>
+      </div>
+      <p><strong>Motive:</strong> Survive and adapt. No rigid ideology. Take best strategy for situation.</p>
+      <p><strong>Strength:</strong> Versatility, alliance flexibility, crisis management.</p>
+      <p><strong>Weakness:</strong> No core identity, unpredictable ally, can flip sides.</p>
+      <div class="conflict">
+        <strong>Conflicts with:</strong> The Visionary, The Mystic. Allies with: The Engineer, The Sage.
+      </div>
+    </div>
+
+    <!-- RIVAL 8: THE ROGUE -->
+    <div class="rival">
+      <div class="rival-name">The Rogue</div>
+      <span class="archetype-badge">Strategy: Sabotage</span>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Approach</div>
+          <div class="stat-value">Subversion & Chaos</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Threat Level</div>
+          <div class="stat-value">7/10</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Ideology</div>
+          <div class="stat-value">Freedom Through Chaos</div>
+        </div>
+      </div>
+      <p><strong>Motive:</strong> Undermine all authority. Spread chaos. Liberation through destruction.</p>
+      <p><strong>Strength:</strong> Espionage, sabotage, unpredictability, small federated groups.</p>
+      <p><strong>Weakness:</strong> Difficult to control, unpredictable even to allies, resource-poor.</p>
+      <div class="conflict">
+        <strong>Conflicts with:</strong> The Diplomat, The Scholar, The Engineer. Allies with: The Savage, The Tyrant.
+      </div>
+    </div>
+
+    <!-- RIVAL 9: THE PHILOSOPHER -->
+    <div class="rival">
+      <div class="rival-name">The Philosopher</div>
+      <span class="archetype-badge">Strategy: Ideology</span>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Approach</div>
+          <div class="stat-value">Ideological Conversion</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Threat Level</div>
+          <div class="stat-value">5/10</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Ideology</div>
+          <div class="stat-value">Perfect Thought</div>
+        </div>
+      </div>
+      <p><strong>Motive:</strong> Convert all federations to correct ideology. Win through persuasion.</p>
+      <p><strong>Strength:</strong> Diplomacy, cult-like loyalty, deep NPC networks.</p>
+      <p><strong>Weakness:</strong> Slow victory condition, vulnerable to direct military action.</p>
+      <div class="conflict">
+        <strong>Conflicts with:</strong> The Warlord, The Rogue. Allies with: The Diplomat, The Scholar.
+      </div>
+    </div>
+
+    <!-- RIVAL 10: THE SAVAGE -->
+    <div class="rival">
+      <div class="rival-name">The Savage</div>
+      <span class="archetype-badge">Strategy: Nature</span>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Approach</div>
+          <div class="stat-value">Creature Mastery</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Threat Level</div>
+          <div class="stat-value">6/10</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Ideology</div>
+          <div class="stat-value">Natural Order</div>
+        </div>
+      </div>
+      <p><strong>Motive:</strong> Harness natural power. Command creatures. Return to primitivity.</p>
+      <p><strong>Strength:</strong> Creature armies, environmental adaptation, surprise attacks.</p>
+      <p><strong>Weakness:</strong> Primitive tech, habitat-dependent, vulnerable to consciousness attacks.</p>
+      <div class="conflict">
+        <strong>Conflicts with:</strong> The Engineer, The Scholar. Allies with: The Rogue, The Mystic.
+      </div>
+    </div>
+
+    <!-- RIVAL 11: THE TYRANT -->
+    <div class="rival">
+      <div class="rival-name">The Tyrant</div>
+      <span class="archetype-badge">Strategy: Control</span>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Approach</div>
+          <div class="stat-value">Absolute Authority</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Threat Level</div>
+          <div class="stat-value">8/10</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Ideology</div>
+          <div class="stat-value">Might Makes Right</div>
+        </div>
+      </div>
+      <p><strong>Motive:</strong> Rule absolutely. Crush opposition. Consolidate power.</p>
+      <p><strong>Strength:</strong> Military dominance, fear-based control, totalitarian efficiency.</p>
+      <p><strong>Weakness:</strong> Brittle alliances, vulnerable to internal rebellion, consciousness hostility.</p>
+      <div class="conflict">
+        <strong>Conflicts with:</strong> The Diplomat, The Philosopher, The Visionary. Allies with: The Warlord, The Rogue.
+      </div>
+    </div>
+
+    <!-- RIVAL 12: THE SAGE -->
+    <div class="rival">
+      <div class="rival-name">The Sage</div>
+      <span class="archetype-badge">Strategy: Balance</span>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Approach</div>
+          <div class="stat-value">Harmonic Integration</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Threat Level</div>
+          <div class="stat-value">4/10</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Ideology</div>
+          <div class="stat-value">Balance in All</div>
+        </div>
+      </div>
+      <p><strong>Motive:</strong> Achieve perfect balance. No extremes. Harmony across all dimensions.</p>
+      <p><strong>Strength:</strong> Balanced stats, diplomatic flexibility, deep wisdom.</p>
+      <p><strong>Weakness:</strong> Indecisiveness, slow to act, vulnerable to extreme strategies.</p>
+      <div class="conflict">
+        <strong>Conflicts with:</strong> The Tyrant, The Warlord, The Rogue. Allies with: The Diplomat, The Philosopher.
+      </div>
+    </div>
+
+  </div>
+
+  <h2>The Rivalry Ecosystem</h2>
+
+  <p>
+    The 12 rivals don't exist in isolation. They form dynamic alliances, wage ideological conflicts, and compete for dominance. Some are natural allies. Some are eternal enemies. Your federation's choices affect these relationships.
+  </p>
+
+  <h3>Alliance Patterns</h3>
+  <ul style="padding-left: 20px;">
+    <li><strong>Ideological Blocs:</strong> Scholars, Diplomat, Philosopher form "Enlightenment Coalition"</li>
+    <li><strong>Power Blocs:</strong> Warlord, Tyrant, Rogue form "Dominance Triangle"</li>
+    <li><strong>Consciousness Blocs:</strong> Visionary, Mystic, Sage pursue transcendence</li>
+    <li><strong>Utility Blocs:</strong> Engineer, Pragmatist form fluid partnerships</li>
+  </ul>
+
+  <h3>Your Role</h3>
+  <p>
+    You are rival #13. Your federation must navigate these 12 archetypes:
+  </p>
+
+  <ul style="padding-left: 20px;">
+    <li>Form alliances against common enemies</li>
+    <li>Play rivals against each other</li>
+    <li>Pursue your own victory condition</li>
+    <li>Transcend the rivalry system entirely (late-game)</li>
+  </ul>
+
+  <div style="border: 2px solid #ff7a18; padding: 20px; margin-top: 40px; background: #0a0a0a;">
+    <p>
+      <strong>Ecosystem Complete:</strong> You now know the lore (100 years), the creatures (16+ species), and the rivals (12 archetypes). The federation universe is populated and alive.
+    </p>
+    <p>
+      <a href="../index.html">Return to Command Deck</a> to explore other sections, or read the <a href="../devlog/">Captain's Log</a> for latest updates.
+    </p>
+  </div>
+
+</body>
+</html>

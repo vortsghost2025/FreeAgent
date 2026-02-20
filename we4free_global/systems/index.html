@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Deliberate Federation · Systems Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <style>
+    body {
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 40px;
+      line-height: 1.8;
+    }
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    h2 {
+      color: #ff7a18;
+      margin-top: 40px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
+    }
+    h3 {
+      color: #ffaa44;
+      margin-top: 25px;
+    }
+    a {
+      color: #ff7a18;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .nav {
+      margin-bottom: 40px;
+      font-size: 14px;
+    }
+    .nav a {
+      margin-right: 20px;
+      color: #ff7a18;
+    }
+    .system {
+      border: 2px solid #ff7a18;
+      padding: 20px;
+      margin: 20px 0;
+      background: #0a0a0a;
+    }
+    .system-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #ff7a18;
+      margin-bottom: 10px;
+    }
+    .stats {
+      display: flex;
+      gap: 30px;
+      margin: 15px 0;
+      flex-wrap: wrap;
+    }
+    .stat {
+      flex: 1;
+      min-width: 150px;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+    }
+    .stat-value {
+      font-size: 18px;
+      color: #ffaa44;
+      font-weight: bold;
+    }
+    .flow {
+      background: #0a0a0a;
+      border-left: 3px solid #888;
+      padding: 15px;
+      margin: 20px 0;
+      font-size: 13px;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    code {
+      background: #111;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: monospace;
+      color: #ffaa44;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="nav">
+    <a href="../index.html">← Back to Federation</a>
+    <a href="../github/">GitHub Repo</a>
+    <a href="../devlog/">Captain's Log</a>
+  </div>
+
+  <h1>Systems Map</h1>
+  <p>The complete federation architecture. Five systems working together to create an autonomous, responsive game engine.</p>
+
+  <h2>Core Architecture</h2>
+
+  <div class="flow">
+    <strong>Federation Console</strong> (Core Orchestrator)<br/>
+    ↓<br/>
+    Executes Turn Cycle → Triggers Events → Updates Consciousness<br/>
+    ↓<br/>
+    All Systems React (Quests, Factions, Tech, NPCs)<br/>
+    ↓<br/>
+    State Persists (Save/Load)
+  </div>
+
+  <h2>The Five Systems</h2>
+
+  <!-- SYSTEM 1: FEDERATION CONSOLE -->
+  <div class="system">
+    <div class="system-title">1. Federation Console</div>
+    <p>The orchestrator. Runs the game loop, manages phases, triggers events, and tracks consciousness evolution.</p>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Architecture</div>
+        <div class="stat-value">12 Blocks</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Game Phases</div>
+        <div class="stat-value">7 Stages</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Events</div>
+        <div class="stat-value">25 Cards</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Consciousness Dims</div>
+        <div class="stat-value">6 Metrics</div>
+      </div>
+    </div>
+
+    <h3>What It Does</h3>
+    <ul>
+      <li>Executes autonomous turn cycles</li>
+      <li>Manages game phases (Genesis → Late Expansion)</li>
+      <li>Triggers narrative events (with 4-choice branching)</li>
+      <li>Updates consciousness metrics (Morale, Identity, Confidence, Anxiety, Expansion, Diplomacy)</li>
+      <li>Maintains rival NPC federations</li>
+      <li>Generates dynamic narratives based on game state</li>
+      <li>Saves and loads game state (JSON persistence)</li>
+      <li>Provides REPL interface with 13+ commands</li>
+    </ul>
+
+    <h3>Integration Points</h3>
+    <p>
+      Events from Console → Consciousness changes → Faction shifts → Quest progress → Tech unlocks → NPC reactions
+    </p>
+  </div>
+
+  <!-- SYSTEM 2: QUEST SYSTEM -->
+  <div class="system">
+    <div class="system-title">2. Quest System</div>
+    <p>Player progression engine. Quests offer objectives, track completion, and distribute rewards.</p>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Quests Registered</div>
+        <div class="stat-value">4+</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Difficulty Levels</div>
+        <div class="stat-value">5 Tiers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">TUTORIAL - LEGENDARY</div>
+        <div class="stat-value">Scaling</div>
+      </div>
+    </div>
+
+    <h3>Difficulty Tiers</h3>
+    <ul>
+      <li><strong>Tutorial:</strong> New player onboarding</li>
+      <li><strong>Easy:</strong> Simple objectives</li>
+      <li><strong>Normal:</strong> Balanced challenges</li>
+      <li><strong>Hard:</strong> Complex requirements</li>
+      <li><strong>Legendary:</strong> Ultra-challenging</li>
+    </ul>
+
+    <h3>What It Tracks</h3>
+    <ul>
+      <li>Quest acceptance and completion</li>
+      <li>Objective progress (0-100%)</li>
+      <li>Quest chains and prerequisites</li>
+      <li>Faction affiliation bonuses</li>
+      <li>Reward distribution (resources, perks, unlocks)</li>
+    </ul>
+  </div>
+
+  <!-- SYSTEM 3: FACTION SYSTEM -->
+  <div class="system">
+    <div class="system-title">3. Faction System</div>
+    <p>Player alignment engine. Join factions, gain reputation, unlock faction-specific content.</p>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Factions Registered</div>
+        <div class="stat-value">3</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Ideologies Available</div>
+        <div class="stat-value">8 Types</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Reputation Tracking</div>
+        <div class="stat-value">0.0 - 1.0</div>
+      </div>
+    </div>
+
+    <h3>Registered Factions</h3>
+    <ul>
+      <li><strong>Exploration Corps</strong> (Ideology: Discovery) — HQ: Prime Station Alpha</li>
+      <li><strong>Peace Alliance</strong> (Ideology: Diplomatic) — HQ: Nexus Station</li>
+      <li><strong>Science Consortium</strong> (Ideology: Scientific) — HQ: Research Station Delta</li>
+    </ul>
+
+    <h3>Available Ideologies</h3>
+    <ul>
+      <li>Diplomatic, Military, Cultural, Scientific</li>
+      <li>Spiritual, Economic, Discovery, Stability</li>
+    </ul>
+
+    <h3>Progression System</h3>
+    <ul>
+      <li>Join faction → Gain reputation from quests</li>
+      <li>Reputation unlocks perks (at 0.2, 0.4, 0.6, 0.8, 1.0)</li>
+      <li>Faction-specific quests become available</li>
+      <li>Factions compete for player loyalty</li>
+    </ul>
+  </div>
+
+  <!-- SYSTEM 4: TECHNOLOGY TREE -->
+  <div class="system">
+    <div class="system-title">4. Technology Tree</div>
+    <p>Research progression. Unlock new capabilities through technology advancement.</p>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Techs Registered</div>
+        <div class="stat-value">4+</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Research Philosophies</div>
+        <div class="stat-value">4 Paths</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Tech Tiers</div>
+        <div class="stat-value">5 Levels</div>
+      </div>
+    </div>
+
+    <h3>Research Philosophies</h3>
+    <ul>
+      <li><strong>Scientific:</strong> Pure research and innovation</li>
+      <li><strong>Cultural:</strong> Prosperity, unity, influence</li>
+      <li><strong>Military:</strong> Defense, power, dominance</li>
+      <li><strong>Consciousness:</strong> Enlightenment, transcendence, harmony</li>
+    </ul>
+
+    <h3>Registered Core Technologies</h3>
+    <ul>
+      <li><strong>Faster Engines</strong> (Sci, Cost 50) — Increase movement speed</li>
+      <li><strong>Diplomatic Protocol</strong> (Cul, Cost 75) — Improve faction relations</li>
+      <li><strong>Shield Technology</strong> (Mil, Cost 100) — Deploy protective shields</li>
+      <li><strong>Consciousness Interface</strong> (Cons, Cost 200) — Interface with collective consciousness</li>
+    </ul>
+
+    <h3>Tier Progression</h3>
+    <ul>
+      <li>Tier 1 (Foundation) → Tier 2 (Classical) → Tier 3 (Medieval)</li>
+      <li>Tier 4 (Industrial) → Tier 5 (Modern/Future) → Transcendent unlocks</li>
+    </ul>
+  </div>
+
+  <!-- SYSTEM 5: NPC SYSTEM -->
+  <div class="system">
+    <div class="system-title">5. NPC System</div>
+    <p>Character universe. Recruit companions, interact with rivals, build relationships.</p>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Characters Registered</div>
+        <div class="stat-value">3</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Total Available</div>
+        <div class="stat-value">30+</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Personality Traits</div>
+        <div class="stat-value">5 Dimensions</div>
+      </div>
+    </div>
+
+    <h3>Registered Characters</h3>
+    <ul>
+      <li><strong>Captain Zara</strong> (Explorer) — Leads expeditions into the unknown</li>
+      <li><strong>Ambassador Chen</strong> (Diplomat) — Negotiates peace treaties</li>
+      <li><strong>Dr. Vel'Kaith</strong> (Scientist) — Conducts frontier research</li>
+    </ul>
+
+    <h3>Personality System</h3>
+    <p>Each character has 5 traits (0.0 - 1.0 scale):</p>
+    <ul>
+      <li><strong>Loyalty:</strong> Faithful vs. self-interested</li>
+      <li><strong>Ambition:</strong> Power-seeking vs. content</li>
+      <li><strong>Wisdom:</strong> Thoughtful vs. reactive</li>
+      <li><strong>Charisma:</strong> Charming vs. isolated</li>
+      <li><strong>Cunning:</strong> Strategic vs. straightforward</li>
+    </ul>
+
+    <h3>NPC Types (Planned)</h3>
+    <ul>
+      <li>Historical figures, Faction leaders, Companions</li>
+      <li>Antagonists, Mysterious characters, Unique archetypes</li>
+      <li>Recruitable companions with gameplay bonuses</li>
+      <li>Mythic creatures (8 creature types)</li>
+    </ul>
+  </div>
+
+  <h2>System Interactions</h2>
+
+  <h3>Turn Cycle Flow</h3>
+  <div class="flow">
+    1. Console executes turn<br/>
+    2. Event triggered (25% probability)<br/>
+    3. Player makes choice (4 options)<br/>
+    4. Consciousness updated<br/>
+    5. Quests check completion<br/>
+    6. Factions update reputation<br/>
+    7. Tech tree checks unlocks<br/>
+    8. NPCs react to changes
+  </div>
+
+  <h3>Example Interaction Chain</h3>
+  <div class="flow">
+    <strong>Event:</strong> "Revolutionary Technology Breakthrough"<br/>
+    → <strong>Console:</strong> Consciousness changes (morale +0.2)<br/>
+    → <strong>Quests:</strong> "Research Ancient Tech" progresses 20%<br/>
+    → <strong>Factions:</strong> Science Consortium +0.1 reputation<br/>
+    → <strong>Tech:</strong> Faster Engines moves 50 points closer to unlock<br/>
+    → <strong>NPCs:</strong> Dr. Vel'Kaith relationship increases 0.05
+  </div>
+
+  <h2>Development Status</h2>
+
+  <h3>Completed</h3>
+  <ul>
+    <li>✅ All 5 core systems implemented</li>
+    <li>✅ Integration layer working</li>
+    <li>✅ 10+ integration tests passing</li>
+    <li>✅ Autonomous 10-turn gameplay demonstrated</li>
+    <li>✅ Cross-system interactions verified</li>
+  </ul>
+
+  <h3>Next Phases</h3>
+  <ul>
+    <li>Phase 2: Make the engine visible (logs, turn summaries, event cards)</li>
+    <li>Phase 3: Interactive console (run turns, generate events, draw cards)</li>
+    <li>Phase 4: Expand federation (add quests, factions, techs, NPCs)</li>
+  </ul>
+
+  <p>
+    For the complete codebase and latest updates, visit the <a href="../github/">GitHub repository</a>.
+  </p>
+
+</body>
+</html>

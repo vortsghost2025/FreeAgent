@@ -1,0 +1,350 @@
+FEDERATION GAME STATE MANAGER - ARCHITECTURE & USAGE GUIDE
+============================================================
+
+FILE LOCATION: c:\workspace\uss-chaosbringer\federation_game_state.py (679 LOC)
+TEST SUITE:   c:\workspace\uss-chaosbringer\test_federation_game_state.py (232 LOC)
+
+STATUS: Production-ready. All 10 tests passing.
+
+
+ARCHITECTURE OVERVIEW
+=====================
+
+Central game state manager for THE FEDERATION GAME. Acts as the unified source of truth
+for all federation data, ensuring consistency across all subsystems.
+
+Three-tier data structure:
+  1. FederationCoreState   - Core federation metrics (morale, identity, stability, etc.)
+  2. SubsystemState        - Individual subsystem states (diplomacy, consciousness, etc.)
+  3. GameStatistics        - Aggregate gameplay metrics and history
+
+
+KEY CLASSES
+===========
+
+1. GamePhase (Enum)
+   - GENESIS, EARLY_EXPANSION, MID_GAME, LATE_GAME, ENDGAME, VICTORY, DEFEAT
+   - Auto-updates based on turn count
+   - Ties game progression to mechanical phases
+
+2. VictoryType (Enum)
+   - SUPREMACY (military dominance)
+   - CULTURAL (cultural influence)
+   - FEDERATION_UNITY (all rivals joined)
+   - CONSCIOUSNESS (achieved transcendence)
+   - DIPLOMATIC (peaceful coalition)
+
+3. FederationCoreState (Dataclass)
+   Core metrics:
+   - morale (0.0-1.0)
+   - identity_strength (0.0-1.0)
+   - stability (0.0-1.0)
+   - technological_level (0.0-1.0)
+   - military_power (0.0-1.0)
+
+   Resources:
+   - treasury (int, resource currency)
+   - population (int, millions)
+   - territory_size (float, light-years)
+
+4. SubsystemState (Dataclass)
+   Tracks all subsystems:
+   - Diplomacy (relationships, treaties, tensions)
+   - Consciousness (level, traumas, dreams)
+   - Rivals (count, defeated, threat level)
+   - Campaigns (active, completed, progress)
+   - Infrastructure & Research
+
+5. GameStatistics (Dataclass)
+   Aggregate metrics:
+   - current_turn: int
+   - total_events_triggered: int
+   - total_decisions_made: int
+   - battles_fought, won, lost
+   - treaties_signed, alliances_formed
+   - Resource flow tracking
+   - Playtime
+
+6. ActionRecord (Dataclass)
+   Single player action:
+   - turn, timestamp
+   - action_type, description, outcome
+   - state deltas (morale, stability, treasury)
+
+7. GameState (Primary Class)
+   Central state manager with methods:
+   - advance_turn()
+   - record_action()
+   - set_victory_condition()
+   - set_defeat_condition()
+   - get_game_summary()
+   - get_statistics()
+   - reset_game()
+   - save_game(filepath)
+   - load_game(filepath)
+   - validate_state()
+
+
+CORE METHODS
+============
+
+GameState.advance_turn() -> Dict[str, Any]
+  Advance to next turn and update game phase automatically
+  Returns: success, new_turn, game_phase
+
+  Example:
+    state.advance_turn()
+    # Turn 1, EARLY_EXPANSION phase
+
+
+GameState.record_action(action_type: str, description: str, outcome: str,
+                        morale_delta: float = 0.0, stability_delta: float = 0.0,
+                        treasury_delta: int = 0) -> Dict[str, Any]
+  Record player action and update state
+  Returns: success, updated metrics
+
+  Example:
+    state.record_action(
+        action_type="diplomacy",
+        description="Negotiated peace with rivals",
+        outcome="Treaty accepted",
+        morale_delta=0.15,
+        stability_delta=0.05,
+        treasury_delta=-100
+    )
+
+
+GameState.get_game_summary() -> Dict[str, Any]
+  Generate comprehensive federation status report
+  Includes: turn count, phase, core metrics, subsystem status, playtime
+
+  Returns:
+    {
+      "federation_core": {morale, stability, treasury, etc.},
+      "subsystems": {diplomacy, consciousness, rivals, campaigns},
+      "current_turn": int,
+      "game_phase": str
+    }
+
+
+GameState.get_statistics() -> Dict[str, Any]
+  Get detailed gameplay statistics
+  Includes: military record, diplomacy, resources, population
+
+  Example output:
+    {
+      "military": {"battles_fought": 12, "win_rate": 0.75},
+      "diplomacy": {"treaties_signed": 3, "alliances_formed": 2},
+      "resources": {"net_resources": 500, "current_treasury": 1500}
+    }
+
+
+GameState.set_victory_condition(victory_type: VictoryType) -> Dict[str, Any]
+  Mark game as won with specific victory type
+  Sets game_phase to VICTORY, is_game_over to True
+
+  Example:
+    state.set_victory_condition(VictoryType.DIPLOMATIC)
+
+
+GameState.set_defeat_condition(reason: str) -> Dict[str, Any]
+  Mark game as lost with reason
+  Sets game_phase to DEFEAT, is_game_over to True
+
+  Example:
+    state.set_defeat_condition("Internal collapse from low morale")
+
+
+GameState.save_game(filepath: str) -> Dict[str, Any]
+  Serialize entire state to JSON file
+  Includes: all metrics, action history, timestamps
+
+  Returns:
+    {
+      "success": True,
+      "filepath": "/path/to/save.json",
+      "file_size_bytes": 8432,
+      "save_count": 1
+    }
+
+
+GameState.load_game(filepath: str) -> Dict[str, Any]
+  Restore game state from JSON save file
+  Rebuilds all state including action history
+
+  Returns:
+    {
+      "success": True,
+      "turn_restored": 45,
+      "game_phase": "mid_game",
+      "federation_morale": 0.642
+    }
+
+
+GameState.reset_game() -> Dict[str, Any]
+  Clear all state and return to initial conditions
+  Preserves previous game stats in return value
+
+  Returns:
+    {
+      "success": True,
+      "previous_game_stats": {
+        "turns_played": 50,
+        "decisions_made": 120,
+        "playtime_hours": 2.5
+      }
+    }
+
+
+GameState.validate_state() -> Dict[str, Any]
+  Check state integrity and consistency
+  Validates: value ranges, metric consistency, game logic
+
+  Returns:
+    {
+      "validation_passed": True/False,
+      "issues": ["issue1", "issue2"],
+      "state_hash": "a3f4b2c1..."
+    }
+
+
+USAGE EXAMPLE
+=============
+
+from federation_game_state import GameState, VictoryType
+
+# Initialize new game
+game = GameState()
+
+# Play through game
+for turn in range(100):
+    game.advance_turn()
+
+    # Player takes an action
+    game.record_action(
+        action_type="diplomacy",
+        description="Formed alliance with faction X",
+        outcome="Success",
+        morale_delta=0.1,
+        treasury_delta=-200
+    )
+
+    # Check status
+    summary = game.get_game_summary()
+    print(f"Turn {summary['current_turn']}: Phase {summary['game_phase']}")
+    print(f"Morale: {summary['federation_core']['morale']:.2f}")
+
+    # Check victory condition
+    if summary['federation_core']['morale'] > 0.9:
+        game.set_victory_condition(VictoryType.CULTURAL)
+        break
+
+# Get final statistics
+stats = game.get_statistics()
+print(f"Battles: {stats['military']['battles_fought']}")
+print(f"Win rate: {stats['military']['win_rate']:.1%}")
+
+# Save game
+game.save_game("federation_save.json")
+
+# Later: Load and continue
+game2 = GameState()
+game2.load_game("federation_save.json")
+print(f"Resumed at turn {game2.statistics.current_turn}")
+
+
+SUBSYSTEM INTEGRATION
+====================
+
+All subsystems feed into GameState:
+
+Diplomacy System:
+  → Updates: diplomacy_relationships, diplomacy_treaties, diplomacy_tensions
+  → Triggers: record_action() with morale/stability deltas
+
+Consciousness Engine:
+  → Updates: consciousness_level, consciousness_traumas, consciousness_dreams
+  → Triggers: record_action() with identity_strength changes
+
+Rivals Simulator:
+  → Updates: rival_count, rivals_defeated, rival_threat_level
+  → Triggers: record_action() with military/morale impact
+
+Campaign System:
+  → Updates: active_campaigns, campaign_progress, completed_campaigns
+  → Triggers: record_action() with various deltas
+
+
+STATE PERSISTENCE
+================
+
+Save Format: JSON
+  - Human-readable structure
+  - Preserves all metrics, action history, timestamps
+  - Includes metadata (version, save_count, timestamp)
+
+Save Contains:
+  - All federation core metrics
+  - Complete subsystem states
+  - Full statistics
+  - Complete action history (auditable)
+  - Game phase and victory/defeat state
+
+Integrity Check:
+  - State hash computed (SHA256 truncated)
+  - validate_state() checks consistency
+  - Load process reconstructs ActionRecords with timestamps
+
+
+VALIDATION & INTEGRITY
+======================
+
+validate_state() checks:
+  - Value ranges (0-1 for percentages)
+  - Metric consistency (eg: defeated < total)
+  - Logical consistency (game_phase vs is_game_over)
+  - Campaign tracking (should exist if turn > 10)
+
+Issues are non-blocking but reported for debugging
+
+
+GAME PHASE PROGRESSION
+======================
+
+Automatic phase Management:
+  - GENESIS        : Turn 0 (initialization)
+  - EARLY_EXPANSION: Turns 1-50
+  - MID_GAME       : Turns 51-150
+  - LATE_GAME      : Turns 151-300
+  - ENDGAME        : Turns 300+
+  - VICTORY/DEFEAT : When set explicitly
+
+
+PRODUCTION NOTES
+================
+
+Thread-safe: No (design for single-threaded gameplay)
+Dependencies: Python 3.7+ (uses dataclasses)
+Testing: 10 comprehensive tests covering all major features
+Performance: O(1) for most operations, O(n) for action_history searches
+Memory: ~1MB per save file (depends on action history length)
+
+All game flows must go through record_action() for proper state synchronization.
+
+
+FILES
+=====
+
+federation_game_state.py (679 LOC)
+  - Core implementation
+  - Production-ready
+  - Fully documented
+
+test_federation_game_state.py (232 LOC)
+  - Comprehensive test suite
+  - 10 tests, all passing
+  - Coverage: init, turns, actions, summary, stats, victory, defeat, save/load, validation, reset
+
+Run tests:
+  $ cd c:\workspace\uss-chaosbringer
+  $ python test_federation_game_state.py

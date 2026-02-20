@@ -1,4 +1,4 @@
-
+claude
 How to use Claude
 /
 Hi Claude! Could you explore logical fallacies? If you need more information from me, ask me 1-2 key questions right away. If you think I should upload any documents that would help you do a better job, let me know. You can use the tools you have access to — like Google Drive, web search, etc. — if they’ll help you better accomplish this task. Do not use analysis tool. Please keep your responses friendly, brief and conversational. 

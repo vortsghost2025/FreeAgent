@@ -1,0 +1,7 @@
+QUICKSTART
+==========
+
+1. Install Python 3.8+
+2. Run `deploy.sh` (Linux/macOS) or `deploy.bat` (Windows)
+3. Open the federation dashboard in your browser
+4. Run demo scripts for each phase to explore features

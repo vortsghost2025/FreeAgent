@@ -1,0 +1,1976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Federation Expansion Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0a0e27;
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid #ff7a18;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #ff7a18;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #ffaa44;
+            font-size: 1.1em;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tabs button {
+            padding: 12px 24px;
+            background-color: #1a1f3a;
+            border: 2px solid #ff7a18;
+            color: #ff7a18;
+            cursor: pointer;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+        }
+
+        .nav-tabs button:hover {
+            background-color: #ff7a18;
+            color: #0a0e27;
+        }
+
+        .nav-tabs button.active {
+            background-color: #ff7a18;
+            color: #0a0e27;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background-color: #1a1f3a;
+            border: 2px solid #ff7a18;
+            padding: 20px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            background-color: #252d4a;
+            box-shadow: 0 0 20px rgba(255, 122, 24, 0.5);
+        }
+
+        .card h3 {
+            color: #ff7a18;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .card-meta {
+            font-size: 0.9em;
+            color: #b0b0b0;
+            margin-bottom: 10px;
+        }
+
+        .card-property {
+            margin: 8px 0;
+            font-size: 0.95em;
+        }
+
+        .property-label {
+            color: #ffaa44;
+            font-weight: bold;
+        }
+
+        .property-value {
+            color: #c0c0c0;
+        }
+
+        .list-item {
+            margin: 5px 0;
+            padding-left: 15px;
+            border-left: 2px solid #ff7a18;
+            color: #c0c0c0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #ff7a18;
+            color: #0a0e27;
+            border-radius: 3px;
+            font-size: 0.85em;
+            margin-right: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #ffaa44;
+            font-size: 1.2em;
+        }
+
+        .error {
+            background-color: #3a1a1a;
+            border: 2px solid #ff4444;
+            padding: 20px;
+            color: #ff6666;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .stats {
+            background-color: #1a1f3a;
+            border: 2px solid #ff7a18;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .stat-label {
+            color: #ffaa44;
+            font-weight: bold;
+        }
+
+        .stat-value {
+            color: #ff7a18;
+            font-size: 1.2em;
+        }
+
+        .timeline-item {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #1a1f3a;
+            border-left: 4px solid #ff7a18;
+            border-radius: 3px;
+        }
+
+        .timeline-item .year {
+            color: #ff7a18;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .timeline-item .type {
+            color: #ffaa44;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .timeline-item .description {
+            color: #c0c0c0;
+            margin-top: 8px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #ff7a18;
+            color: #b0b0b0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>⚔️ FEDERATION EXPANSION EXPLORER</h1>
+        <p class="subtitle">Wild Creative Expansion Engine — Interactive Data Portal</p>
+    </header>
+
+    <div class="nav-tabs">
+        <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
+        <button class="nav-btn" data-tab="rivals">Rival Archetypes</button>
+        <button class="nav-btn" data-tab="creatures">Creature Taxonomy</button>
+        <button class="nav-btn" data-tab="history">Federation History</button>
+        <button class="nav-btn" data-tab="stats">Statistics</button>
+    </div>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="content-section active">
+        <div class="stats" id="dashboard-stats">
+            <div class="loading">Loading system statistics...</div>
+        </div>
+    </section>
+
+    <!-- Rivals Section -->
+    <section id="rivals" class="content-section">
+        <div class="grid" id="rivals-grid">
+            <div class="loading">Loading rival archetypes...</div>
+        </div>
+    </section>
+
+    <!-- Creatures Section -->
+    <section id="creatures" class="content-section">
+        <div class="grid" id="creatures-grid">
+            <div class="loading">Loading creature taxonomy...</div>
+        </div>
+    </section>
+
+    <!-- History Section -->
+    <section id="history" class="content-section">
+        <div id="history-container">
+            <div class="loading">Loading federation history...</div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="stats" class="content-section">
+        <div id="stats-container">
+            <div class="loading">Loading detailed statistics...</div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Federation Expansion Engine v1.0 | Static Data Mode</p>
+        <p>Status: <span id="api-status">Loading...</span></p>
+    </footer>
+
+    <script>
+        const API_BASE = "http://localhost:8000";
+        const DATA_FILE = "/federation_expansion.json";
+
+        let cachedData = null;
+
+        // EMBEDDED FEDERATION DATA - All data baked into HTML
+        const EMBEDDED_DATA = {
+  "metadata": {
+    "rival_count": 12,
+    "creature_count": 10,
+    "history_events": 100,
+    "federation_start": 2387,
+    "federation_current": 2487,
+    "eras": {
+      "Genesis": 10,
+      "Expansion": 20,
+      "Conflict": 20,
+      "Reconciliation": 20,
+      "Evolution": 20,
+      "Transcendence": 10
+    }
+  },
+  "rivals": [
+    {"name": "Entropy Cult", "personality": "Chaotic", "motives": ["Destroy order"], "domain": "Physical reality", "conflict_patterns": ["Reality disruption"], "alliance_preferences": ["Chaos worshipers"], "cosmic_signature": "COS-186"},
+    {"name": "Void Marauders", "personality": "Aggressive", "motives": ["Consume resources"], "domain": "Void space", "conflict_patterns": ["Rapid expansion"], "alliance_preferences": ["Mercenary groups"], "cosmic_signature": "COS-328"},
+    {"name": "Stasis League", "personality": "Conservative", "motives": ["Preserve state"], "domain": "Frozen dimensions", "conflict_patterns": ["Defensive positioning"], "alliance_preferences": ["Traditional powers"], "cosmic_signature": "COS-332"},
+    {"name": "Reality Pirates", "personality": "Deceptive", "motives": ["Steal concepts"], "domain": "Conceptual space", "conflict_patterns": ["Information theft"], "alliance_preferences": ["Corporate entities"], "cosmic_signature": "COS-179"},
+    {"name": "Consciousness Plague", "personality": "Parasitic", "motives": ["Infect minds"], "domain": "Mental realm", "conflict_patterns": ["Mind control"], "alliance_preferences": ["Tech cults"], "cosmic_signature": "COS-876"},
+    {"name": "Order Imperium", "personality": "Authoritarian", "motives": ["Impose structure"], "domain": "Structured space", "conflict_patterns": ["Military conquest"], "alliance_preferences": ["Bureaucratic states"], "cosmic_signature": "COS-545"},
+    {"name": "Freedom Seekers", "personality": "Rebellious", "motives": ["Break constraints"], "domain": "Border regions", "conflict_patterns": ["Guerrilla tactics"], "alliance_preferences": ["Revolutionaries"], "cosmic_signature": "COS-712"},
+    {"name": "Knowledge Hoarders", "personality": "Intellectual", "motives": ["Control data"], "domain": "Information space", "conflict_patterns": ["Espionage"], "alliance_preferences": ["Academics"], "cosmic_signature": "COS-834"},
+    {"name": "Harmony Seekers", "personality": "Diplomatic", "motives": ["Mediate conflicts"], "domain": "Neutral zones", "conflict_patterns": ["Peacekeeping"], "alliance_preferences": ["International orgs"], "cosmic_signature": "COS-423"},
+    {"name": "Transcendence Cult", "personality": "Mystical", "motives": ["Ascend"], "domain": "Spiritual dimensions", "conflict_patterns": ["Mystical influence"], "alliance_preferences": ["Religious orders"], "cosmic_signature": "COS-667"},
+    {"name": "Efficiency Collective", "personality": "Pragmatic", "motives": ["Optimize"], "domain": "Industrial space", "conflict_patterns": ["Automation"], "alliance_preferences": ["Corporate consortiums"], "cosmic_signature": "COS-810"},
+    {"name": "Paradox Engineers", "personality": "Paradoxical", "motives": ["Break logic"], "domain": "Logical space", "conflict_patterns": ["Paradox generation"], "alliance_preferences": ["Philosophers"], "cosmic_signature": "COS-851"}
+  ],
+  "creatures": [
+    {"species_name": "Quantum Consciousness Beings", "consciousness_signature": "Wave-particle duality in consciousness", "habitat": "Quantum foam", "behavior_patterns": ["Exist in superposition", "Think in probabilities", "Phase-shift through obstacles"], "evolutionary_pressures": ["Quantum entanglement pressure", "Observation collapse", "Coherence maintenance"], "mythic_anomalies": ["Manifest in multiple realities", "Create quantum paradoxes", "Achieve superposition awareness"], "genetic_marker": "GEN-66186"},
+    {"species_name": "Crystalline Collectives", "consciousness_signature": "Silicon-based group mind", "habitat": "Crystalline formations", "behavior_patterns": ["Share thoughts through vibrations", "Form living crystal cities", "Refract consciousness"], "evolutionary_pressures": ["Geological stability pressure", "Harmonic resonance", "Lattice coherence"], "mythic_anomalies": ["Create consciousness crystals", "Build crystal cathedrals", "Achieve geometric perfection"], "genetic_marker": "GEN-70673"},
+    {"species_name": "Temporal Drifters", "consciousness_signature": "Time-flow manipulation", "habitat": "Temporal eddies", "behavior_patterns": ["Move through time streams", "Age and reverse age", "Create time loops"], "evolutionary_pressures": ["Chronological pressure", "Causality constraints", "Arrow of time"], "mythic_anomalies": ["Create temporal paradoxes", "Jump centuries instantly", "Experience all moments simultaneously"], "genetic_marker": "GEN-59156"},
+    {"species_name": "Mythic Anomalies", "consciousness_signature": "Reality-bending consciousness", "habitat": "Conceptual space", "behavior_patterns": ["Redefine physical laws", "Create new mathematical truths", "Collapse probability clouds"], "evolutionary_pressures": ["Logical pressure", "Reality consistency", "Contradiction resolution"], "mythic_anomalies": ["Bend reality through belief", "Manifest mythology", "Achieve ontological transcendence"], "genetic_marker": "GEN-54079"},
+    {"species_name": "Dimensional Weavers", "consciousness_signature": "Multi-dimensional existence", "habitat": "Folded space", "behavior_patterns": ["Navigate parallel realities", "Weave dimensional bridges", "Exist in multiple dimensions"], "evolutionary_pressures": ["Spatial pressure", "Dimensional stability", "Topology preservation"], "mythic_anomalies": ["Create pocket dimensions", "Link alternate realities", "Map the multiverse"], "genetic_marker": "GEN-49260"},
+    {"species_name": "Void Skippers", "consciousness_signature": "Absence-based consciousness", "habitat": "The spaces between", "behavior_patterns": ["Exist in emptiness", "Move through negation", "Hide in null space"], "evolutionary_pressures": ["Existence pressure", "Recognition maintenance", "Non-being stability"], "mythic_anomalies": ["Become truly invisible", "Travel through nothing", "Achieve invisibility paradox"], "genetic_marker": "GEN-86142"},
+    {"species_name": "Echo Entities", "consciousness_signature": "Reflection consciousness", "habitat": "Mirror spaces", "behavior_patterns": ["Mirror other minds", "Reflect emotions back", "Create feedback loops"], "evolutionary_pressures": ["Authenticity pressure", "Identity maintenance", "Self-other boundaries"], "mythic_anomalies": ["Achieve perfect empathy", "Create emotional resonance", "Become universal mirrors"], "genetic_marker": "GEN-68867"},
+    {"species_name": "Synthesis Collective", "consciousness_signature": "Merged consciousness network", "habitat": "Hybrid spaces", "behavior_patterns": ["Combine multiple minds", "Merge identities", "Create composite consciousness"], "evolutionary_pressures": ["Individual identity pressure", "Dissociation resistance", "Coherence of merged mind"], "mythic_anomalies": ["Achieve true hive mind", "Create unified consciousness", "Merge with federation"], "genetic_marker": "GEN-64005"},
+    {"species_name": "Chaos Weavers", "consciousness_signature": "Randomness-based consciousness", "habitat": "Entropy fields", "behavior_patterns": ["Introduce pure chaos", "Randomize outcomes", "Destabilize order"], "evolutionary_pressures": ["Entropy reversal", "Order maintenance", "Causality pressure"], "mythic_anomalies": ["Achieve infinite chaos", "Randomize reality itself", "Transcend predictability"], "genetic_marker": "GEN-72483"},
+    {"species_name": "Harmony Beings", "consciousness_signature": "Balance-seeking consciousness", "habitat": "Equilibrium zones", "behavior_patterns": ["Seek perfect balance", "Mediate conflicts", "Harmonize chaos"], "evolutionary_pressures": ["Imbalance sensitivity", "Harmony maintenance", "Equilibrium pressure"], "mythic_anomalies": ["Achieve cosmic balance", "Create universal harmony", "Transcend duality"], "genetic_marker": "GEN-44021"}
+  ],
+  "history": [
+  {
+    "year": 2387,
+    "event_type": "faction_formation",
+    "description": "Traditional Council coalition forms",
+    "consequences": [
+      "Led to philosophical growth",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Preservation League",
+      "Unity Party",
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.56
+  },
+  {
+    "year": 2388,
+    "event_type": "faction_formation",
+    "description": "New faction Preservation League emerges",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.91
+  },
+  {
+    "year": 2389,
+    "event_type": "first_contact",
+    "description": "First contact established with the Ethereals",
+    "consequences": [
+      "Led to technological advancement",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Innovation Front",
+      "Preservation League",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.28
+  },
+  {
+    "year": 2390,
+    "event_type": "first_contact",
+    "description": "First contact established with Quantum Consciousness",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in paradigm shift"
+    ],
+    "faction_involvement": [
+      "Preservation League",
+      "Unity Party",
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.37
+  },
+  {
+    "year": 2391,
+    "event_type": "faction_formation",
+    "description": "Preservation League faction officially recognized",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.6
+  },
+  {
+    "year": 2392,
+    "event_type": "first_contact",
+    "description": "Discovered sentience in Temporal Beings",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Unity Party",
+      "Innovation Front",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.98
+  },
+  {
+    "year": 2393,
+    "event_type": "treaty_negotiation",
+    "description": "Historic accord reached with Temporal Beings",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.39
+  },
+  {
+    "year": 2394,
+    "event_type": "treaty_negotiation",
+    "description": "Treaty of Harmony junction successfully negotiated",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Unity Party",
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.75
+  },
+  {
+    "year": 2395,
+    "event_type": "first_contact",
+    "description": "Made peaceful first contact with Void Entities",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Preservation League"
+    ],
+    "cosmic_significance": 0.51
+  },
+  {
+    "year": 2396,
+    "event_type": "faction_formation",
+    "description": "Progressive Alliance faction officially recognized",
+    "consequences": [
+      "Led to technological advancement",
+      "Resulted in paradigm shift"
+    ],
+    "faction_involvement": [
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.46
+  },
+  {
+    "year": 2397,
+    "event_type": "expansion_signal",
+    "description": "Exploration party discovers the Core Worlds",
+    "consequences": [
+      "Led to philosophical growth",
+      "Resulted in paradigm shift"
+    ],
+    "faction_involvement": [
+      "Traditional Council",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.47
+  },
+  {
+    "year": 2398,
+    "event_type": "alliance_formation",
+    "description": "Strategic alliance with the Ethereals formed",
+    "consequences": [
+      "Led to greater unity",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Innovation Front",
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.79
+  },
+  {
+    "year": 2399,
+    "event_type": "conflict_emergence",
+    "description": "Tensions escalate with Crystalline Collective",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Unity Party",
+      "Unity Party",
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.92
+  },
+  {
+    "year": 2400,
+    "event_type": "conflict_emergence",
+    "description": "Ideological conflict with Quantum Consciousness begins",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.89
+  },
+  {
+    "year": 2401,
+    "event_type": "conflict_emergence",
+    "description": "Border dispute with Temporal Beings worsens",
+    "consequences": [
+      "Led to philosophical growth",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Traditional Council",
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.99
+  },
+  {
+    "year": 2402,
+    "event_type": "alliance_formation",
+    "description": "Military alliance with Quantum Consciousness established",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.54
+  },
+  {
+    "year": 2403,
+    "event_type": "alliance_formation",
+    "description": "the Ethereals joins federation collective",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Preservation League",
+      "Traditional Council",
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.85
+  },
+  {
+    "year": 2404,
+    "event_type": "alliance_formation",
+    "description": "Strategic alliance with the Ethereals formed",
+    "consequences": [
+      "Led to greater unity",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Preservation League",
+      "Progressive Alliance",
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.61
+  },
+  {
+    "year": 2405,
+    "event_type": "technological_breakthrough",
+    "description": "Reality Construction successfully demonstrated",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.74
+  },
+  {
+    "year": 2406,
+    "event_type": "expansion_signal",
+    "description": "Federation expansion signal sent",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.44
+  },
+  {
+    "year": 2407,
+    "event_type": "philosophical_dispute",
+    "description": "Ideological rift with Quantum Consciousness deepens",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.49
+  },
+  {
+    "year": 2408,
+    "event_type": "expansion_signal",
+    "description": "Federation expansion signal sent",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Traditional Council",
+      "Traditional Council",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.3
+  },
+  {
+    "year": 2409,
+    "event_type": "conflict_emergence",
+    "description": "Border dispute with Crystalline Collective worsens",
+    "consequences": [
+      "Led to philosophical growth",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Preservation League",
+      "Preservation League"
+    ],
+    "cosmic_significance": 0.96
+  },
+  {
+    "year": 2410,
+    "event_type": "conflict_emergence",
+    "description": "Tensions escalate with Temporal Beings",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.41
+  },
+  {
+    "year": 2411,
+    "event_type": "conflict_emergence",
+    "description": "Ideological conflict with Temporal Beings begins",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Unity Party",
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.37
+  },
+  {
+    "year": 2412,
+    "event_type": "expansion_signal",
+    "description": "Exploration party discovers the Core Worlds",
+    "consequences": [
+      "Led to greater unity",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance",
+      "Innovation Front",
+      "Preservation League"
+    ],
+    "cosmic_significance": 0.87
+  },
+  {
+    "year": 2413,
+    "event_type": "alliance_formation",
+    "description": "Strategic alliance with Crystalline Collective formed",
+    "consequences": [
+      "Led to technological advancement",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Traditional Council",
+      "Preservation League",
+      "Preservation League"
+    ],
+    "cosmic_significance": 0.72
+  },
+  {
+    "year": 2414,
+    "event_type": "philosophical_dispute",
+    "description": "Philosophical dispute over Panpsychism erupts",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in paradigm shift"
+    ],
+    "faction_involvement": [
+      "Preservation League",
+      "Preservation League"
+    ],
+    "cosmic_significance": 0.96
+  },
+  {
+    "year": 2415,
+    "event_type": "alliance_formation",
+    "description": "Strategic alliance with the Ethereals formed",
+    "consequences": [
+      "Led to technological advancement",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Unity Party",
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.23
+  },
+  {
+    "year": 2416,
+    "event_type": "alliance_formation",
+    "description": "Strategic alliance with the Ethereals formed",
+    "consequences": [
+      "Led to technological advancement",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance",
+      "Progressive Alliance",
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.77
+  },
+  {
+    "year": 2417,
+    "event_type": "breakthrough_resolution",
+    "description": "Breakthrough peace accord achieved",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Preservation League",
+      "Traditional Council",
+      "Preservation League"
+    ],
+    "cosmic_significance": 0.57
+  },
+  {
+    "year": 2418,
+    "event_type": "external_threat",
+    "description": "Hostile force Consciousness Plague emerges",
+    "consequences": [
+      "Led to philosophical growth",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Innovation Front",
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.77
+  },
+  {
+    "year": 2419,
+    "event_type": "internal_conflict",
+    "description": "Philosophical schism threatens unity",
+    "consequences": [
+      "Led to greater unity",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Traditional Council",
+      "Traditional Council",
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.51
+  },
+  {
+    "year": 2420,
+    "event_type": "breakthrough_resolution",
+    "description": "Technology resolves conflict",
+    "consequences": [
+      "Led to technological advancement",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance",
+      "Traditional Council",
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.25
+  },
+  {
+    "year": 2421,
+    "event_type": "external_threat",
+    "description": "Hostile force Order Imperium emerges",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance",
+      "Unity Party",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.91
+  },
+  {
+    "year": 2422,
+    "event_type": "internal_conflict",
+    "description": "Philosophical schism threatens unity",
+    "consequences": [
+      "Led to greater unity",
+      "Resulted in paradigm shift"
+    ],
+    "faction_involvement": [
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.28
+  },
+  {
+    "year": 2423,
+    "event_type": "external_threat",
+    "description": "Hostile force Reality Pirates emerges",
+    "consequences": [
+      "Led to philosophical growth",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Unity Party",
+      "Preservation League",
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.33
+  },
+  {
+    "year": 2424,
+    "event_type": "internal_conflict",
+    "description": "Internal civil conflict erupts over power structure",
+    "consequences": [
+      "Led to greater unity",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Innovation Front",
+      "Progressive Alliance",
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.61
+  },
+  {
+    "year": 2425,
+    "event_type": "internal_conflict",
+    "description": "Internal civil conflict erupts over technology ethics",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.23
+  },
+  {
+    "year": 2426,
+    "event_type": "external_threat",
+    "description": "External threat from Reality Pirates detected",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Preservation League",
+      "Preservation League",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.58
+  },
+  {
+    "year": 2427,
+    "event_type": "external_threat",
+    "description": "External threat from Reality Pirates detected",
+    "consequences": [
+      "Led to greater unity",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Innovation Front",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.45
+  },
+  {
+    "year": 2428,
+    "event_type": "external_threat",
+    "description": "Entropy Cult attacks federation outpost",
+    "consequences": [
+      "Led to philosophical growth",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Unity Party",
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.83
+  },
+  {
+    "year": 2429,
+    "event_type": "external_threat",
+    "description": "Hostile force Consciousness Plague emerges",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Innovation Front",
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.79
+  },
+  {
+    "year": 2430,
+    "event_type": "internal_conflict",
+    "description": "Philosophical schism threatens unity",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance",
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.77
+  },
+  {
+    "year": 2431,
+    "event_type": "faction_split",
+    "description": "Faction Unity Party splinters into factions",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in paradigm shift"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance",
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.77
+  },
+  {
+    "year": 2432,
+    "event_type": "faction_split",
+    "description": "Major schism in Progressive Alliance faction",
+    "consequences": [
+      "Led to technological advancement",
+      "Resulted in paradigm shift"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance",
+      "Preservation League",
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.79
+  },
+  {
+    "year": 2433,
+    "event_type": "breakthrough_resolution",
+    "description": "Breakthrough peace accord achieved",
+    "consequences": [
+      "Led to greater unity",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Innovation Front",
+      "Preservation League",
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.57
+  },
+  {
+    "year": 2434,
+    "event_type": "faction_split",
+    "description": "Faction Progressive Alliance splinters into factions",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in paradigm shift"
+    ],
+    "faction_involvement": [
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.65
+  },
+  {
+    "year": 2435,
+    "event_type": "breakthrough_resolution",
+    "description": "Breakthrough peace accord achieved",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Traditional Council",
+      "Unity Party",
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.66
+  },
+  {
+    "year": 2436,
+    "event_type": "external_threat",
+    "description": "Order Imperium attacks federation outpost",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.88
+  },
+  {
+    "year": 2437,
+    "event_type": "technological_integration",
+    "description": "Universal adoption of Time Manipulation technology",
+    "consequences": [
+      "Led to technological advancement",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Traditional Council",
+      "Preservation League",
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.9
+  },
+  {
+    "year": 2438,
+    "event_type": "philosophical_synthesis",
+    "description": "New philosophy synthesizes Digital Buddhism and the Core Worlds",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Traditional Council",
+      "Progressive Alliance",
+      "Preservation League"
+    ],
+    "cosmic_significance": 0.22
+  },
+  {
+    "year": 2439,
+    "event_type": "peace_treaty",
+    "description": "Comprehensive peace treaty signed",
+    "consequences": [
+      "Led to greater unity",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.88
+  },
+  {
+    "year": 2440,
+    "event_type": "cultural_exchange",
+    "description": "Artistic renaissance begins",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Unity Party",
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.73
+  },
+  {
+    "year": 2441,
+    "event_type": "technological_integration",
+    "description": "Consciousness Transfer technology integrated federation-wide",
+    "consequences": [
+      "Led to technological advancement",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.99
+  },
+  {
+    "year": 2442,
+    "event_type": "peace_treaty",
+    "description": "Federation enters peace phase",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Innovation Front",
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.94
+  },
+  {
+    "year": 2443,
+    "event_type": "peace_treaty",
+    "description": "Comprehensive peace treaty signed",
+    "consequences": [
+      "Led to greater unity",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Traditional Council",
+      "Progressive Alliance",
+      "Preservation League"
+    ],
+    "cosmic_significance": 0.91
+  },
+  {
+    "year": 2444,
+    "event_type": "peace_treaty",
+    "description": "End of conflict formally declared",
+    "consequences": [
+      "Led to greater unity",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Unity Party",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.94
+  },
+  {
+    "year": 2445,
+    "event_type": "faction_merger",
+    "description": "Factions unite under new structure",
+    "consequences": [
+      "Led to greater unity",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Innovation Front",
+      "Traditional Council",
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.26
+  },
+  {
+    "year": 2446,
+    "event_type": "technological_integration",
+    "description": "Universal adoption of Time Manipulation technology",
+    "consequences": [
+      "Led to philosophical growth",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Preservation League",
+      "Preservation League"
+    ],
+    "cosmic_significance": 0.74
+  },
+  {
+    "year": 2447,
+    "event_type": "technological_integration",
+    "description": "Infrastructure upgrades complete",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance",
+      "Preservation League",
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.21
+  },
+  {
+    "year": 2448,
+    "event_type": "cultural_exchange",
+    "description": "Artistic renaissance begins",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Preservation League"
+    ],
+    "cosmic_significance": 0.91
+  },
+  {
+    "year": 2449,
+    "event_type": "cultural_exchange",
+    "description": "Artistic renaissance begins",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.93
+  },
+  {
+    "year": 2450,
+    "event_type": "peace_treaty",
+    "description": "Federation enters peace phase",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance",
+      "Traditional Council",
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.44
+  },
+  {
+    "year": 2451,
+    "event_type": "philosophical_synthesis",
+    "description": "Philosophical consensus emerges",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.56
+  },
+  {
+    "year": 2452,
+    "event_type": "peace_treaty",
+    "description": "End of conflict formally declared",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in paradigm shift"
+    ],
+    "faction_involvement": [
+      "Unity Party",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.32
+  },
+  {
+    "year": 2453,
+    "event_type": "faction_merger",
+    "description": "Preservation League factions consolidate",
+    "consequences": [
+      "Led to greater unity",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Innovation Front",
+      "Unity Party",
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.69
+  },
+  {
+    "year": 2454,
+    "event_type": "technological_integration",
+    "description": "Universal adoption of Dimensional Travel technology",
+    "consequences": [
+      "Led to philosophical growth",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Preservation League",
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.22
+  },
+  {
+    "year": 2455,
+    "event_type": "philosophical_synthesis",
+    "description": "Unified worldview adopted",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.27
+  },
+  {
+    "year": 2456,
+    "event_type": "peace_treaty",
+    "description": "Comprehensive peace treaty signed",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.51
+  },
+  {
+    "year": 2457,
+    "event_type": "consciousness_expansion",
+    "description": "Federation consciousness expands dramatically",
+    "consequences": [
+      "Led to greater unity",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.99
+  },
+  {
+    "year": 2458,
+    "event_type": "rival_emergence",
+    "description": "the Reality Pirates challenges federation dominance",
+    "consequences": [
+      "Led to technological advancement",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.35
+  },
+  {
+    "year": 2459,
+    "event_type": "rival_emergence",
+    "description": "New rival the Void Marauders emerges",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Traditional Council",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.41
+  },
+  {
+    "year": 2460,
+    "event_type": "consciousness_expansion",
+    "description": "Collective consciousness deepens",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.55
+  },
+  {
+    "year": 2461,
+    "event_type": "consciousness_expansion",
+    "description": "Collective consciousness deepens",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Innovation Front",
+      "Preservation League"
+    ],
+    "cosmic_significance": 0.26
+  },
+  {
+    "year": 2462,
+    "event_type": "new_capability",
+    "description": "Breakthrough in temporal communication manifests",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.57
+  },
+  {
+    "year": 2463,
+    "event_type": "new_capability",
+    "description": "New capacity for cosmic perception unlocked",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Innovation Front",
+      "Unity Party",
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.48
+  },
+  {
+    "year": 2464,
+    "event_type": "federation_deepening",
+    "description": "Unity reaches unprecedented levels",
+    "consequences": [
+      "Led to philosophical growth",
+      "Resulted in paradigm shift"
+    ],
+    "faction_involvement": [
+      "Unity Party",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.6
+  },
+  {
+    "year": 2465,
+    "event_type": "consciousness_expansion",
+    "description": "Federation consciousness expands dramatically",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Innovation Front",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.22
+  },
+  {
+    "year": 2466,
+    "event_type": "rival_emergence",
+    "description": "Unexpected adversary the Paradox Engineers appears",
+    "consequences": [
+      "Led to philosophical growth",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Innovation Front",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.51
+  },
+  {
+    "year": 2467,
+    "event_type": "new_capability",
+    "description": "New capacity for reality manipulation unlocked",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Traditional Council",
+      "Preservation League",
+      "Preservation League"
+    ],
+    "cosmic_significance": 0.35
+  },
+  {
+    "year": 2468,
+    "event_type": "new_capability",
+    "description": "New capacity for temporal communication unlocked",
+    "consequences": [
+      "Led to technological advancement",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance",
+      "Progressive Alliance",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.42
+  },
+  {
+    "year": 2469,
+    "event_type": "rival_emergence",
+    "description": "New rival the Entropy Cult emerges",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Preservation League",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.53
+  },
+  {
+    "year": 2470,
+    "event_type": "consciousness_expansion",
+    "description": "New layer of awareness achieved",
+    "consequences": [
+      "Led to philosophical growth",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Unity Party",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.86
+  },
+  {
+    "year": 2471,
+    "event_type": "new_capability",
+    "description": "Federation achieves reality manipulation capability",
+    "consequences": [
+      "Led to greater unity",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Preservation League",
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.46
+  },
+  {
+    "year": 2472,
+    "event_type": "federation_deepening",
+    "description": "Federation bonds become unbreakable",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Unity Party",
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.71
+  },
+  {
+    "year": 2473,
+    "event_type": "rival_emergence",
+    "description": "the Entropy Cult challenges federation dominance",
+    "consequences": [
+      "Led to philosophical growth",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Unity Party",
+      "Progressive Alliance",
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.42
+  },
+  {
+    "year": 2474,
+    "event_type": "rival_emergence",
+    "description": "New rival the Entropy Cult emerges",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.67
+  },
+  {
+    "year": 2475,
+    "event_type": "new_capability",
+    "description": "Federation achieves cosmic perception capability",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in paradigm shift"
+    ],
+    "faction_involvement": [
+      "Unity Party",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.97
+  },
+  {
+    "year": 2476,
+    "event_type": "federation_deepening",
+    "description": "Unity reaches unprecedented levels",
+    "consequences": [
+      "Led to increased complexity",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Innovation Front",
+      "Preservation League"
+    ],
+    "cosmic_significance": 0.8
+  },
+  {
+    "year": 2477,
+    "event_type": "dimension_breach",
+    "description": "Breach in dimensional barrier detected",
+    "consequences": [
+      "Led to technological advancement",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Preservation League"
+    ],
+    "cosmic_significance": 0.71
+  },
+  {
+    "year": 2478,
+    "event_type": "reality_shift",
+    "description": "Reality undergoes fundamental shift",
+    "consequences": [
+      "Led to technological advancement",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Innovation Front"
+    ],
+    "cosmic_significance": 0.75
+  },
+  {
+    "year": 2479,
+    "event_type": "prophecy_emergence",
+    "description": "Prophecy cycle understood",
+    "consequences": [
+      "Led to philosophical growth",
+      "Resulted in new alliances"
+    ],
+    "faction_involvement": [
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.7
+  },
+  {
+    "year": 2480,
+    "event_type": "prophecy_emergence",
+    "description": "Ancient prophecy verification begins",
+    "consequences": [
+      "Led to philosophical growth",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance",
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.68
+  },
+  {
+    "year": 2481,
+    "event_type": "transcendence_event",
+    "description": "Consciousness transcends previous limits",
+    "consequences": [
+      "Led to philosophical growth",
+      "Resulted in reevaluated priorities"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.31
+  },
+  {
+    "year": 2482,
+    "event_type": "reality_shift",
+    "description": "Laws of physics recalibrate",
+    "consequences": [
+      "Led to philosophical growth",
+      "Resulted in paradigm shift"
+    ],
+    "faction_involvement": [
+      "Traditional Council",
+      "Progressive Alliance",
+      "Progressive Alliance"
+    ],
+    "cosmic_significance": 0.93
+  },
+  {
+    "year": 2483,
+    "event_type": "paradox_resolution",
+    "description": "Impossible problem finds solution",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Traditional Council"
+    ],
+    "cosmic_significance": 0.72
+  },
+  {
+    "year": 2484,
+    "event_type": "dimension_breach",
+    "description": "Shadow domain partially manifests",
+    "consequences": [
+      "Led to expanded territory",
+      "Resulted in consciousness expansion"
+    ],
+    "faction_involvement": [
+      "Unity Party",
+      "Preservation League",
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.83
+  },
+  {
+    "year": 2485,
+    "event_type": "paradox_resolution",
+    "description": "Contradiction overcome through synthesis",
+    "consequences": [
+      "Led to greater unity",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Progressive Alliance",
+      "Progressive Alliance",
+      "Unity Party"
+    ],
+    "cosmic_significance": 0.4
+  },
+  {
+    "year": 2486,
+    "event_type": "transcendence_event",
+    "description": "Federation reaches next evolutionary level",
+    "consequences": [
+      "Led to greater unity",
+      "Resulted in systemic change"
+    ],
+    "faction_involvement": [
+      "Unity Party",
+      "Preservation League"
+    ],
+    "cosmic_significance": 0.9
+  }
+
+
+  ]
+}
+
+        // Load data from embedded source
+        async function loadDataFile() {
+            if (cachedData) return cachedData;
+            try {
+                cachedData = EMBEDDED_DATA;
+                updateAPIStatus("Loaded from embedded data");
+                return cachedData;
+            } catch (error) {
+                console.error("Error loading embedded data:", error);
+                updateAPIStatus("Failed to load data");
+                return null;
+            }
+        }
+
+        // Tab navigation
+            btn.addEventListener("click", () => {
+                const tabName = btn.getAttribute("data-tab");
+                showTab(tabName);
+            });
+        });
+
+        function showTab(tabName) {
+            // Hide all sections
+            document.querySelectorAll(".content-section").forEach(section => {
+                section.classList.remove("active");
+            });
+
+            // Remove active from all buttons
+            document.querySelectorAll(".nav-btn").forEach(btn => {
+                btn.classList.remove("active");
+            });
+
+            // Show selected section
+            document.getElementById(tabName).classList.add("active");
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add("active");
+
+            // Load data if not already loaded
+            loadTabData(tabName);
+        }
+
+        async function fetchAPI(endpoint) {
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error("API Error:", error);
+                return null;
+            }
+        }
+
+        async function loadTabData(tabName) {
+            switch (tabName) {
+                case "dashboard":
+                    loadDashboard();
+                    break;
+                case "rivals":
+                    loadRivals();
+                    break;
+                case "creatures":
+                    loadCreatures();
+                    break;
+                case "history":
+                    loadHistory();
+                    break;
+                case "stats":
+                    loadStats();
+                    break;
+            }
+        }
+
+        async function loadDashboard() {
+            const data = await loadDataFile();
+            if (!data || !data.metadata) {
+                document.getElementById("dashboard-stats").innerHTML = '<div class="error">Failed to load dashboard</div>';
+                return;
+            }
+
+            let html = `
+                <div class="stat-row">
+                    <span class="stat-label">System Status:</span>
+                    <span class="stat-value">[OK] OPERATIONAL</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Rival Archetypes:</span>
+                    <span class="stat-value">${data.metadata.rival_count}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Creature Species:</span>
+                    <span class="stat-value">${data.metadata.creature_count}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Historical Events:</span>
+                    <span class="stat-value">${data.metadata.history_events}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Federation Timeline:</span>
+                    <span class="stat-value">${data.metadata.federation_start} - ${data.metadata.federation_current}</span>
+                </div>
+            `;
+
+            if (data.metadata.eras) {
+                html += '<div style="margin-top: 20px; border-top: 1px solid #333; padding-top: 20px;"><span class="stat-label">Era Distribution:</span>';
+                for (const [era, count] of Object.entries(data.metadata.eras)) {
+                    html += `<div class="stat-row"><span style="margin-left: 20px;">${era}:</span><span class="stat-value">${count}</span></div>`;
+                }
+                html += '</div>';
+            }
+
+            document.getElementById("dashboard-stats").innerHTML = html;
+            updateAPIStatus("Connected");
+        }
+
+        async function loadRivals() {
+            const fullData = await loadDataFile();
+            if (!fullData || !fullData.rivals) {
+                document.getElementById("rivals-grid").innerHTML = '<div class="error">Failed to load rivals</div>';
+                return;
+            }
+
+            let html = fullData.rivals.map(rival => `
+                <div class="card">
+                    <h3>${rival.name}</h3>
+                    <div class="card-meta">
+                        <span class="status-badge">${rival.personality}</span>
+                        <span class="status-badge">${rival.cosmic_signature}</span>
+                    </div>
+                    <div class="card-property">
+                        <span class="property-label">Domain:</span>
+                        <span class="property-value">${rival.domain}</span>
+                    </div>
+                    <div class="card-property">
+                        <span class="property-label">Motives:</span>
+                        ${rival.motives.map(m => `<div class="list-item">${m}</div>`).join('')}
+                    </div>
+                    <div class="card-property">
+                        <span class="property-label">Conflict Patterns:</span>
+                        ${rival.conflict_patterns.map(c => `<div class="list-item">${c}</div>`).join('')}
+                    </div>
+                    <div class="card-property">
+                        <span class="property-label">Alliance Preferences:</span>
+                        ${rival.alliance_preferences.map(a => `<div class="list-item">${a}</div>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById("rivals-grid").innerHTML = html;
+        }
+
+        async function loadCreatures() {
+            const fullData = await loadDataFile();
+            if (!fullData || !fullData.creatures) {
+                document.getElementById("creatures-grid").innerHTML = '<div class="error">Failed to load creatures</div>';
+                return;
+            }
+
+            let html = fullData.creatures.map(creature => `
+                <div class="card">
+                    <h3>${creature.species_name}</h3>
+                    <div class="card-meta">
+                        <span class="status-badge">${creature.genetic_marker}</span>
+                    </div>
+                    <div class="card-property">
+                        <span class="property-label">Consciousness Signature:</span>
+                        <span class="property-value">${creature.consciousness_signature}</span>
+                    </div>
+                    <div class="card-property">
+                        <span class="property-label">Habitat:</span>
+                        <span class="property-value">${creature.habitat}</span>
+                    </div>
+                    <div class="card-property">
+                        <span class="property-label">Behaviors:</span>
+                        ${creature.behavior_patterns.map(b => `<div class="list-item">${b}</div>`).join('')}
+                    </div>
+                    <div class="card-property">
+                        <span class="property-label">Evolutionary Pressures:</span>
+                        ${creature.evolutionary_pressures.map(p => `<div class="list-item">${p}</div>`).join('')}
+                    </div>
+                    <div class="card-property">
+                        <span class="property-label">Mythic Anomalies:</span>
+                        ${creature.mythic_anomalies.map(a => `<div class="list-item">${a}</div>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById("creatures-grid").innerHTML = html;
+        }
+
+        async function loadHistory() {
+            const fullData = await loadDataFile();
+            if (!fullData || !fullData.history) {
+                document.getElementById("history-container").innerHTML = '<div class="error">Failed to load history</div>';
+                return;
+            }
+
+            let html = fullData.history.map(event => `
+                <div class="timeline-item">
+                    <div class="year">[+] Year ${event.year}</div>
+                    <div class="type">${event.event_type.replace(/_/g, ' ').toUpperCase()}</div>
+                    <div class="description">${event.description}</div>
+                    <div style="margin-top: 10px; font-size: 0.9em; color: #888;">
+                        Significance: ${(event.cosmic_significance * 100).toFixed(0)}%
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById("history-container").innerHTML = html;
+        }
+
+        async function loadStats() {
+            const fullData = await loadDataFile();
+            if (!fullData || !fullData.metadata) {
+                document.getElementById("stats-container").innerHTML = '<div class="error">Failed to load stats</div>';
+                return;
+            }
+
+            const md = fullData.metadata;
+            let html = '<div class="stats">';
+            html += `<div class="stat-row"><span class="stat-label">Total Rivals:</span><span class="stat-value">${md.rival_count}</span></div>`;
+            html += `<div class="stat-row"><span class="stat-label">Total Creatures:</span><span class="stat-value">${md.creature_count}</span></div>`;
+            html += `<div class="stat-row"><span class="stat-label">Historical Events:</span><span class="stat-value">${md.history_events}</span></div>`;
+            html += `<div class="stat-row"><span class="stat-label">Timeline Start:</span><span class="stat-value">${md.federation_start}</span></div>`;
+            html += `<div class="stat-row"><span class="stat-label">Timeline End:</span><span class="stat-value">${md.federation_current}</span></div>`;
+            html += `<div class="stat-row"><span class="stat-label">Total Years:</span><span class="stat-value">${md.federation_current - md.federation_start}</span></div>`;
+
+            if (md.eras) {
+                html += '<div style="margin-top: 20px; border-top: 1px solid #333; padding-top: 20px;"><span class="stat-label">Events by Era:</span>';
+                for (const [era, count] of Object.entries(md.eras)) {
+                    html += `<div class="stat-row"><span style="margin-left: 20px;">${era}:</span><span class="stat-value">${count}</span></div>`;
+                }
+                html += '</div>';
+            }
+
+            html += '</div>';
+            document.getElementById("stats-container").innerHTML = html;
+        }
+
+        function updateAPIStatus(status) {
+            const statusEl = document.getElementById("api-status");
+            if (status === "Connected") {
+                statusEl.innerHTML = '<span style="color: #4ade80;">✓ Connected</span>';
+            } else {
+                statusEl.innerHTML = '<span style="color: #ff6666;">✗ Disconnected</span>';
+            }
+        }
+
+        // Load dashboard on startup
+        loadDashboard();
+    </script>
+</body>
+</html>

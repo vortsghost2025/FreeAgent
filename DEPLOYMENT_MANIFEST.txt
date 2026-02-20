@@ -1,0 +1,49 @@
+FEDERATION EXPANSION ENGINE - DEPLOYMENT MANIFEST
+==================================================
+
+Files Ready for Deployment to Hostinger (public_html):
+
+1. expansion-explorer.html
+   - Interactive frontend dashboard
+   - Connects to FastAPI backend on localhost:8000
+   - Requires: FastAPI backend running
+
+Backend Files (run on server with Python):
+
+1. models.py - Core data structures
+2. rivals.py - Rival generation (12 archetypes)
+3. creatures.py - Creature generation (10 species)
+4. history.py - History generation (100 events over 100 years)
+5. wild_expansion.py - Main orchestrator
+6. serializer.py - JSON serialization
+7. cli.py - CLI interface
+8. api.py - FastAPI REST backend
+9. requirements.txt - Python dependencies
+
+Deployment Steps:
+
+1. Copy expansion-explorer.html to c:\inetpub\wwwroot\ (or Hostinger public_html)
+2. On server: pip install -r requirements.txt
+3. On server: python api.py (runs on port 8000)
+4. Update expansion-explorer.html API_BASE if backend is on different URL/port
+5. Access at http://your-domain.com/expansion-explorer.html
+
+Data Generated:
+
+- 12 Rival Archetypes
+- 10 Creature Species  
+- 100 Historical Events (2387-2487)
+- All in JSON format via API
+
+API Endpoints:
+
+GET /api/rivals - List all rivals
+GET /api/rivals/{name} - Single rival
+GET /api/creatures - List all creatures
+GET /api/creatures/{species} - Single creature
+GET /api/history - Historical events (paginated)
+GET /api/history/{year} - Events for year
+GET /api/stats - System statistics
+GET /metadata - System metadata
+
+Status: Ready for Deployment

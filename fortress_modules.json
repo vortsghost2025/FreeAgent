@@ -1,0 +1,181 @@
+{
+  "modules": {
+    "core": {
+      "name": "Core Consciousness Engine",
+      "description": "The heart of the fortress. Generates essence and powers all systems.",
+      "category": "core",
+      "tier": "essential",
+      "baseStats": {
+        "healthPerLevel": 10,
+        "essenceGeneration": 5,
+        "costMultiplier": 1
+      },
+      "effects": {
+        "essence_generation_base": 5,
+        "essence_generation_per_level": 2,
+        "stability": 0.8
+      },
+      "buildCost": { "essence": 0, "crystals": 0, "data": 0 },
+      "upgradeCostBase": { "essence": 300, "crystals": 200, "data": 150 },
+      "upkeepCost": { "essence": 10 },
+      "startingLevel": 1,
+      "flavor": "Ancient technology. Powers the entire federation."
+    },
+
+    "resonance_well": {
+      "name": "Resonance Well",
+      "description": "Taps into dimensional frequencies to boost essence generation.",
+      "category": "generation",
+      "tier": "advanced",
+      "baseStats": {
+        "healthPerLevel": 5,
+        "essenceBonus": 3,
+        "costMultiplier": 1.2
+      },
+      "effects": {
+        "essence_generation_bonus": 3,
+        "essence_generation_per_level": 1.5,
+        "efficiency": 0.7
+      },
+      "buildCost": { "essence": 200, "crystals": 150, "data": 100 },
+      "upgradeCostBase": { "essence": 150, "crystals": 100, "data": 80 },
+      "upkeepCost": { "essence": 5 },
+      "startingLevel": 0,
+      "flavor": "Resonates with the fabric of reality itself."
+    },
+
+    "data_vault": {
+      "name": "Data Vault",
+      "description": "Stores and processes federation knowledge. Boosts data generation.",
+      "category": "generation",
+      "tier": "advanced",
+      "baseStats": {
+        "healthPerLevel": 7.5,
+        "dataBonus": 4,
+        "costMultiplier": 1.15
+      },
+      "effects": {
+        "data_generation_bonus": 4,
+        "data_generation_per_level": 2,
+        "knowledge_storage": 0.85
+      },
+      "buildCost": { "essence": 150, "crystals": 100, "data": 200 },
+      "upgradeCostBase": { "essence": 100, "crystals": 75, "data": 150 },
+      "upkeepCost": { "essence": 3 },
+      "startingLevel": 0,
+      "flavor": "The memory of the federation."
+    },
+
+    "crystal_lattice": {
+      "name": "Crystal Lattice",
+      "description": "Grows crystalline structures. Increases crystal production.",
+      "category": "generation",
+      "tier": "advanced",
+      "baseStats": {
+        "healthPerLevel": 6,
+        "crystalBonus": 2,
+        "costMultiplier": 1.1
+      },
+      "effects": {
+        "crystal_generation_bonus": 2,
+        "crystal_generation_per_level": 1,
+        "structural_integrity": 0.9
+      },
+      "buildCost": { "essence": 180, "crystals": 200, "data": 80 },
+      "upgradeCostBase": { "essence": 120, "crystals": 150, "data": 60 },
+      "upkeepCost": { "essence": 4 },
+      "startingLevel": 0,
+      "flavor": "Living crystal grows stronger with each upgrade."
+    },
+
+    "void_anchor": {
+      "name": "Void Anchor",
+      "description": "Harvests void dust from dimensional rifts.",
+      "category": "generation",
+      "tier": "rare",
+      "baseStats": {
+        "healthPerLevel": 4,
+        "voidDustBonus": 1,
+        "costMultiplier": 1.3
+      },
+      "effects": {
+        "void_dust_generation": 1,
+        "void_dust_generation_per_level": 0.5,
+        "dimensional_stability": 0.6
+      },
+      "buildCost": { "essence": 250, "crystals": 100, "data": 200 },
+      "upgradeCostBase": { "essence": 200, "crystals": 80, "data": 150 },
+      "upkeepCost": { "essence": 8 },
+      "startingLevel": 0,
+      "flavor": "Dangerous. Requires constant attention."
+    },
+
+    "defense_matrix": {
+      "name": "Defense Matrix",
+      "description": "Actively defends against threats and reduces incoming damage.",
+      "category": "defense",
+      "tier": "critical",
+      "baseStats": {
+        "healthPerLevel": 8,
+        "threatReduction": 5,
+        "costMultiplier": 1.25
+      },
+      "effects": {
+        "threat_reduction": 5,
+        "threat_reduction_per_level": 3,
+        "defense_power": 0.75
+      },
+      "buildCost": { "essence": 300, "crystals": 250, "data": 100 },
+      "upgradeCostBase": { "essence": 200, "crystals": 150, "data": 80 },
+      "upkeepCost": { "essence": 12 },
+      "startingLevel": 0,
+      "flavor": "The fortress's shield against dimensional attacks."
+    }
+  },
+
+  "moduleGroups": {
+    "generation": ["resonance_well", "data_vault", "crystal_lattice", "void_anchor"],
+    "defense": ["defense_matrix"],
+    "core": ["core"]
+  },
+
+  "effects": {
+    "essence_generation_base": {
+      "description": "Base essence generation rate",
+      "type": "passive",
+      "stackable": true
+    },
+    "essence_generation_bonus": {
+      "description": "Bonus essence generation",
+      "type": "passive",
+      "stackable": true
+    },
+    "data_generation_bonus": {
+      "description": "Bonus data generation",
+      "type": "passive",
+      "stackable": true
+    },
+    "crystal_generation_bonus": {
+      "description": "Bonus crystal generation",
+      "type": "passive",
+      "stackable": true
+    },
+    "void_dust_generation": {
+      "description": "Void dust generation rate",
+      "type": "passive",
+      "stackable": true
+    },
+    "threat_reduction": {
+      "description": "Reduces active threat progress",
+      "type": "combat",
+      "stackable": true
+    }
+  },
+
+  "tiers": {
+    "essential": { "color": "#ff7a18", "label": "Essential" },
+    "advanced": { "color": "#ffaa44", "label": "Advanced" },
+    "rare": { "color": "#ff4488", "label": "Rare" },
+    "critical": { "color": "#ff0000", "label": "Critical" }
+  }
+}

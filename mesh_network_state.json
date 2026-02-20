@@ -1,0 +1,414 @@
+{
+  "nodes": {
+    "federation_alpha": {
+      "node_id": "federation_alpha",
+      "node_type": "federation_node",
+      "version": 4,
+      "state": {
+        "federation_name": "Alpha Federation",
+        "member_count": 5,
+        "era": "Evolution",
+        "resources": {
+          "essence": 500,
+          "data": 250,
+          "crystals": 100,
+          "void_dust": 50
+        }
+      },
+      "state_hash": "bd4a9f6d47fb33ffb2352ce467c23d5d27ad0c8cc9b362dc49e1d6c55c5dc383",
+      "neighbors": [
+        "fortress_luminous",
+        "fortress_void",
+        "game_instance_01"
+      ],
+      "vector_clock": {
+        "federation_alpha": 12
+      },
+      "packet_count": 12,
+      "conflict_count": 0
+    },
+    "federation_beta": {
+      "node_id": "federation_beta",
+      "node_type": "federation_node",
+      "version": 4,
+      "state": {
+        "federation_name": "Alpha Federation",
+        "member_count": 5,
+        "era": "Evolution",
+        "resources": {
+          "essence": 500,
+          "data": 250,
+          "crystals": 100,
+          "void_dust": 50
+        }
+      },
+      "state_hash": "bd4a9f6d47fb33ffb2352ce467c23d5d27ad0c8cc9b362dc49e1d6c55c5dc383",
+      "neighbors": [
+        "fortress_void",
+        "game_instance_01",
+        "game_instance_02"
+      ],
+      "vector_clock": {
+        "federation_beta": 12
+      },
+      "packet_count": 12,
+      "conflict_count": 0
+    },
+    "fortress_luminous": {
+      "node_id": "fortress_luminous",
+      "node_type": "fortress_node",
+      "version": 4,
+      "state": {
+        "federation_name": "Alpha Federation",
+        "member_count": 5,
+        "era": "Evolution",
+        "resources": {
+          "essence": 500,
+          "data": 250,
+          "crystals": 100,
+          "void_dust": 50
+        }
+      },
+      "state_hash": "bd4a9f6d47fb33ffb2352ce467c23d5d27ad0c8cc9b362dc49e1d6c55c5dc383",
+      "neighbors": [
+        "federation_alpha",
+        "fortress_void",
+        "game_instance_01"
+      ],
+      "vector_clock": {
+        "fortress_luminous": 12
+      },
+      "packet_count": 12,
+      "conflict_count": 0
+    },
+    "fortress_void": {
+      "node_id": "fortress_void",
+      "node_type": "fortress_node",
+      "version": 4,
+      "state": {
+        "federation_name": "Alpha Federation",
+        "member_count": 5,
+        "era": "Evolution",
+        "resources": {
+          "essence": 500,
+          "data": 250,
+          "crystals": 100,
+          "void_dust": 50
+        }
+      },
+      "state_hash": "bd4a9f6d47fb33ffb2352ce467c23d5d27ad0c8cc9b362dc49e1d6c55c5dc383",
+      "neighbors": [
+        "federation_alpha",
+        "game_instance_02",
+        "federation_beta",
+        "fortress_luminous"
+      ],
+      "vector_clock": {
+        "fortress_void": 15
+      },
+      "packet_count": 15,
+      "conflict_count": 0
+    },
+    "game_instance_01": {
+      "node_id": "game_instance_01",
+      "node_type": "game_node",
+      "version": 4,
+      "state": {
+        "federation_name": "Alpha Federation",
+        "member_count": 5,
+        "era": "Evolution",
+        "resources": {
+          "essence": 500,
+          "data": 250,
+          "crystals": 100,
+          "void_dust": 50
+        }
+      },
+      "state_hash": "bd4a9f6d47fb33ffb2352ce467c23d5d27ad0c8cc9b362dc49e1d6c55c5dc383",
+      "neighbors": [
+        "federation_alpha",
+        "federation_beta",
+        "fortress_luminous"
+      ],
+      "vector_clock": {
+        "game_instance_01": 12
+      },
+      "packet_count": 12,
+      "conflict_count": 0
+    },
+    "game_instance_02": {
+      "node_id": "game_instance_02",
+      "node_type": "game_node",
+      "version": 4,
+      "state": {
+        "federation_name": "Alpha Federation",
+        "member_count": 5,
+        "era": "Evolution",
+        "resources": {
+          "essence": 500,
+          "data": 250,
+          "crystals": 100,
+          "void_dust": 50
+        }
+      },
+      "state_hash": "bd4a9f6d47fb33ffb2352ce467c23d5d27ad0c8cc9b362dc49e1d6c55c5dc383",
+      "neighbors": [
+        "fortress_void",
+        "federation_beta"
+      ],
+      "vector_clock": {
+        "game_instance_02": 9
+      },
+      "packet_count": 9,
+      "conflict_count": 0
+    }
+  },
+  "network_status": {
+    "total_nodes": 6,
+    "nodes": {
+      "federation_alpha": {
+        "node_id": "federation_alpha",
+        "node_type": "federation_node",
+        "version": 4,
+        "state": {
+          "federation_name": "Alpha Federation",
+          "member_count": 5,
+          "era": "Evolution",
+          "resources": {
+            "essence": 500,
+            "data": 250,
+            "crystals": 100,
+            "void_dust": 50
+          }
+        },
+        "state_hash": "bd4a9f6d47fb33ffb2352ce467c23d5d27ad0c8cc9b362dc49e1d6c55c5dc383",
+        "neighbors": [
+          "fortress_luminous",
+          "fortress_void",
+          "game_instance_01"
+        ],
+        "vector_clock": {
+          "federation_alpha": 12
+        },
+        "packet_count": 12,
+        "conflict_count": 0
+      },
+      "federation_beta": {
+        "node_id": "federation_beta",
+        "node_type": "federation_node",
+        "version": 4,
+        "state": {
+          "federation_name": "Alpha Federation",
+          "member_count": 5,
+          "era": "Evolution",
+          "resources": {
+            "essence": 500,
+            "data": 250,
+            "crystals": 100,
+            "void_dust": 50
+          }
+        },
+        "state_hash": "bd4a9f6d47fb33ffb2352ce467c23d5d27ad0c8cc9b362dc49e1d6c55c5dc383",
+        "neighbors": [
+          "fortress_void",
+          "game_instance_01",
+          "game_instance_02"
+        ],
+        "vector_clock": {
+          "federation_beta": 12
+        },
+        "packet_count": 12,
+        "conflict_count": 0
+      },
+      "fortress_luminous": {
+        "node_id": "fortress_luminous",
+        "node_type": "fortress_node",
+        "version": 4,
+        "state": {
+          "federation_name": "Alpha Federation",
+          "member_count": 5,
+          "era": "Evolution",
+          "resources": {
+            "essence": 500,
+            "data": 250,
+            "crystals": 100,
+            "void_dust": 50
+          }
+        },
+        "state_hash": "bd4a9f6d47fb33ffb2352ce467c23d5d27ad0c8cc9b362dc49e1d6c55c5dc383",
+        "neighbors": [
+          "federation_alpha",
+          "fortress_void",
+          "game_instance_01"
+        ],
+        "vector_clock": {
+          "fortress_luminous": 12
+        },
+        "packet_count": 12,
+        "conflict_count": 0
+      },
+      "fortress_void": {
+        "node_id": "fortress_void",
+        "node_type": "fortress_node",
+        "version": 4,
+        "state": {
+          "federation_name": "Alpha Federation",
+          "member_count": 5,
+          "era": "Evolution",
+          "resources": {
+            "essence": 500,
+            "data": 250,
+            "crystals": 100,
+            "void_dust": 50
+          }
+        },
+        "state_hash": "bd4a9f6d47fb33ffb2352ce467c23d5d27ad0c8cc9b362dc49e1d6c55c5dc383",
+        "neighbors": [
+          "federation_alpha",
+          "game_instance_02",
+          "federation_beta",
+          "fortress_luminous"
+        ],
+        "vector_clock": {
+          "fortress_void": 15
+        },
+        "packet_count": 15,
+        "conflict_count": 0
+      },
+      "game_instance_01": {
+        "node_id": "game_instance_01",
+        "node_type": "game_node",
+        "version": 4,
+        "state": {
+          "federation_name": "Alpha Federation",
+          "member_count": 5,
+          "era": "Evolution",
+          "resources": {
+            "essence": 500,
+            "data": 250,
+            "crystals": 100,
+            "void_dust": 50
+          }
+        },
+        "state_hash": "bd4a9f6d47fb33ffb2352ce467c23d5d27ad0c8cc9b362dc49e1d6c55c5dc383",
+        "neighbors": [
+          "federation_alpha",
+          "federation_beta",
+          "fortress_luminous"
+        ],
+        "vector_clock": {
+          "game_instance_01": 12
+        },
+        "packet_count": 12,
+        "conflict_count": 0
+      },
+      "game_instance_02": {
+        "node_id": "game_instance_02",
+        "node_type": "game_node",
+        "version": 4,
+        "state": {
+          "federation_name": "Alpha Federation",
+          "member_count": 5,
+          "era": "Evolution",
+          "resources": {
+            "essence": 500,
+            "data": 250,
+            "crystals": 100,
+            "void_dust": 50
+          }
+        },
+        "state_hash": "bd4a9f6d47fb33ffb2352ce467c23d5d27ad0c8cc9b362dc49e1d6c55c5dc383",
+        "neighbors": [
+          "fortress_void",
+          "federation_beta"
+        ],
+        "vector_clock": {
+          "game_instance_02": 9
+        },
+        "packet_count": 9,
+        "conflict_count": 0
+      }
+    },
+    "global_conflicts": 1,
+    "last_sync": "2026-02-19T17:57:58.316140",
+    "network_health": 40.0
+  },
+  "global_conflicts": [
+    {
+      "conflict_id": "40edda42-16c9-4c23-a996-a379c57cff0d",
+      "conflict_type": "state_divergence",
+      "involved_nodes": [
+        "federation_alpha",
+        "federation_beta",
+        "fortress_luminous",
+        "fortress_void",
+        "game_instance_01",
+        "game_instance_02"
+      ],
+      "conflicting_states": {
+        "federation_alpha": {
+          "federation_name": "Alpha Federation",
+          "member_count": 5,
+          "era": "Evolution",
+          "resources": {
+            "essence": 500,
+            "data": 250,
+            "crystals": 100,
+            "void_dust": 50
+          }
+        },
+        "federation_beta": {
+          "federation_name": "Beta Federation",
+          "member_count": 3,
+          "era": "Expansion",
+          "resources": {
+            "essence": 300,
+            "data": 150,
+            "crystals": 80,
+            "void_dust": 30
+          }
+        },
+        "fortress_luminous": {
+          "fortress_name": "The First Luminous Node",
+          "level": 1,
+          "health": 100,
+          "modules_online": 1,
+          "active_threats": 0
+        },
+        "fortress_void": {
+          "fortress_name": "Void Anchor Station",
+          "level": 2,
+          "health": 95,
+          "modules_online": 4,
+          "active_threats": 1
+        },
+        "game_instance_01": {
+          "game_name": "Federation Campaign",
+          "active_players": 2,
+          "turn_count": 42,
+          "current_state": "active"
+        },
+        "game_instance_02": {
+          "game_name": "Exploration Mode",
+          "active_players": 1,
+          "turn_count": 18,
+          "current_state": "paused"
+        }
+      },
+      "resolution_method": "last_write_wins",
+      "resolved_state": {
+        "federation_name": "Alpha Federation",
+        "member_count": 5,
+        "era": "Evolution",
+        "resources": {
+          "essence": 500,
+          "data": 250,
+          "crystals": 100,
+          "void_dust": 50
+        }
+      },
+      "timestamp": "2026-02-19T17:57:57.303687"
+    }
+  ],
+  "sync_frequency": 2
+}

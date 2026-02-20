@@ -1,0 +1,922 @@
+{
+  "turn_number": 18,
+  "game_phase": "consolidation",
+  "consciousness": {
+    "morale": 0.9968862275954671,
+    "identity": 1.0,
+    "anxiety": 0.7102429448145248,
+    "confidence": 1.0,
+    "expansion_hunger": 0.5,
+    "diplomacy_tendency": 1.0,
+    "dreams": [],
+    "prophecies": [],
+    "archetypes": [],
+    "traumas": []
+  },
+  "rivals": [
+    {
+      "rival_id": "RIVAL_1",
+      "name": "Tau Collective",
+      "philosophy": "technological",
+      "diplomatic_style": "direct",
+      "expansion_tendency": 0.4666966634205351,
+      "dream_frequency": 0.49684666037470826,
+      "threat_level": 0.5719791729113248,
+      "territories_controlled": 2,
+      "treaties_active": 0,
+      "conflicts_with_player": 0
+    },
+    {
+      "rival_id": "RIVAL_2",
+      "name": "Sigma Hegemony",
+      "philosophy": "spiritual",
+      "diplomatic_style": "direct",
+      "expansion_tendency": 0.8064380970517191,
+      "dream_frequency": 0.7559772575750066,
+      "threat_level": 0.12486325741492905,
+      "territories_controlled": 4,
+      "treaties_active": 0,
+      "conflicts_with_player": 0
+    },
+    {
+      "rival_id": "RIVAL_3",
+      "name": "Delta Alliance",
+      "philosophy": "egalitarian",
+      "diplomatic_style": "cautious",
+      "expansion_tendency": 0.7942303295176283,
+      "dream_frequency": 0.1553770863400814,
+      "threat_level": 0.6245623358859406,
+      "territories_controlled": 3,
+      "treaties_active": 0,
+      "conflicts_with_player": 0
+    }
+  ],
+  "events_log": [
+    {
+      "turn": 1,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.288072",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_artifact_discovery"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    },
+    {
+      "turn": 1,
+      "type": "event_triggered",
+      "timestamp": "2026-02-19T18:08:26.288072",
+      "data": {
+        "event_id": "e_cosmic_signal",
+        "title": "Ancient Cosmic Signal Decoded"
+      }
+    },
+    {
+      "turn": 1,
+      "type": "event_resolved",
+      "timestamp": "2026-02-19T18:08:26.288072",
+      "data": {
+        "event_id": "e_cosmic_signal",
+        "choice": "welcome",
+        "outcome": "Invalid choice",
+        "impact": {}
+      }
+    },
+    {
+      "turn": 2,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_species_merger"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    },
+    {
+      "turn": 3,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_species_merger"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    },
+    {
+      "turn": 4,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_prophecy_codex"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    },
+    {
+      "turn": 4,
+      "type": "chaos_triggered",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "subsystem": "prophecy",
+        "scenario": "revelation"
+      }
+    },
+    {
+      "turn": 5,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_faction_rise"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    },
+    {
+      "turn": 5,
+      "type": "event_triggered",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "event_id": "e_prophecy_codex",
+        "title": "Prophecy Contradicts Law"
+      }
+    },
+    {
+      "turn": 5,
+      "type": "event_resolved",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "event_id": "e_prophecy_codex",
+        "choice": "reinterpret",
+        "outcome": "Philosophers find elegant resolution. Both traditions honored.",
+        "impact": {
+          "identity": 0.1,
+          "anxiety": -0.05
+        }
+      }
+    },
+    {
+      "turn": 6,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_rival_alliance"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    },
+    {
+      "turn": 6,
+      "type": "event_triggered",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "event_id": "e_generational_shift",
+        "title": "Generational Shift - Young Leaders Emerge"
+      }
+    },
+    {
+      "turn": 6,
+      "type": "event_resolved",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "event_id": "e_generational_shift",
+        "choice": "resist",
+        "outcome": "Resentment builds. Generational conflict grows.",
+        "impact": {
+          "morale": -0.1,
+          "anxiety": 0.15
+        }
+      }
+    },
+    {
+      "turn": 7,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_corruption_exposed"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    },
+    {
+      "turn": 8,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_parallel_universe"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    },
+    {
+      "turn": 9,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_resource_crisis"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    },
+    {
+      "turn": 9,
+      "type": "event_triggered",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "event_id": "e_cosmic_signal",
+        "title": "Ancient Cosmic Signal Decoded"
+      }
+    },
+    {
+      "turn": 9,
+      "type": "event_resolved",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "event_id": "e_cosmic_signal",
+        "choice": "study",
+        "outcome": "The civilization's wisdom becomes your own.",
+        "impact": {
+          "identity": 0.15,
+          "confidence": 0.1
+        }
+      }
+    },
+    {
+      "turn": 10,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_trade_disrupted"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    },
+    {
+      "turn": 10,
+      "type": "event_triggered",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "event_id": "e_species_merger",
+        "title": "Genetic Merger with Another Species Proposed"
+      }
+    },
+    {
+      "turn": 10,
+      "type": "event_resolved",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "event_id": "e_species_merger",
+        "choice": "refuse",
+        "outcome": "You remain as you are.",
+        "impact": {
+          "morale": -0.1,
+          "anxiety": 0.05
+        }
+      }
+    },
+    {
+      "turn": 11,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_prophecy_codex"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    },
+    {
+      "turn": 12,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_rival_alliance"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    },
+    {
+      "turn": 12,
+      "type": "event_triggered",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "event_id": "e_diplomatic_miracle",
+        "title": "Historic Peace Accord Proposed"
+      }
+    },
+    {
+      "turn": 12,
+      "type": "event_resolved",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "event_id": "e_diplomatic_miracle",
+        "choice": "sign",
+        "outcome": "Peace established. New era begins.",
+        "impact": {
+          "diplomacy_tendency": 0.2,
+          "morale": 0.15
+        }
+      }
+    },
+    {
+      "turn": 13,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_cultural_renaissance"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    },
+    {
+      "turn": 14,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_ultimate_choice"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    },
+    {
+      "turn": 14,
+      "type": "event_triggered",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "event_id": "e_rogue_fed",
+        "title": "A Rogue Federation Emerges"
+      }
+    },
+    {
+      "turn": 14,
+      "type": "event_resolved",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "event_id": "e_rogue_fed",
+        "choice": "respond",
+        "outcome": "Diplomatic corps reports cautious optimism about peace talks.",
+        "impact": {
+          "morale": 0.05,
+          "anxiety": -0.05
+        }
+      }
+    },
+    {
+      "turn": 15,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_rogue_fed"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    },
+    {
+      "turn": 15,
+      "type": "event_triggered",
+      "timestamp": "2026-02-19T18:08:26.289072",
+      "data": {
+        "event_id": "e_artifact_discovery",
+        "title": "Ancient Artifact Unearthed"
+      }
+    },
+    {
+      "turn": 15,
+      "type": "event_resolved",
+      "timestamp": "2026-02-19T18:08:26.290071",
+      "data": {
+        "event_id": "e_artifact_discovery",
+        "choice": "use",
+        "outcome": "The artifact activates. You glimpse something vast and strange.",
+        "impact": {
+          "confidence": 0.1,
+          "anxiety": 0.2
+        }
+      }
+    },
+    {
+      "turn": 16,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.290071",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_cultural_renaissance"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    },
+    {
+      "turn": 16,
+      "type": "event_triggered",
+      "timestamp": "2026-02-19T18:08:26.290071",
+      "data": {
+        "event_id": "e_dream_crisis",
+        "title": "Dream Layer Destabilization"
+      }
+    },
+    {
+      "turn": 16,
+      "type": "event_resolved",
+      "timestamp": "2026-02-19T18:08:26.290071",
+      "data": {
+        "event_id": "e_dream_crisis",
+        "choice": "meditate",
+        "outcome": "Federation enters deep reflection. Clarity returns gradually.",
+        "impact": {
+          "anxiety": -0.15,
+          "identity": 0.1
+        }
+      }
+    },
+    {
+      "turn": 17,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.290071",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_ultimate_choice"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    },
+    {
+      "turn": 17,
+      "type": "event_triggered",
+      "timestamp": "2026-02-19T18:08:26.290071",
+      "data": {
+        "event_id": "e_faction_rise",
+        "title": "Faction Gains Influence"
+      }
+    },
+    {
+      "turn": 17,
+      "type": "event_resolved",
+      "timestamp": "2026-02-19T18:08:26.290071",
+      "data": {
+        "event_id": "e_faction_rise",
+        "choice": "debate",
+        "outcome": "Public discourse strengthens collective understanding.",
+        "impact": {
+          "confidence": 0.1,
+          "identity": 0.05
+        }
+      }
+    },
+    {
+      "turn": 18,
+      "type": "turn_complete",
+      "timestamp": "2026-02-19T18:08:26.290071",
+      "data": {
+        "dream_generation": {
+          "phase": "dream_generation",
+          "dream_event": "Collective dreams flow through consciousness..."
+        },
+        "rival_actions": {
+          "phase": "rival_actions",
+          "rival_move": "Rival federation takes action..."
+        },
+        "diplomacy_phase": {
+          "phase": "diplomacy_phase",
+          "diplomatic_shift": "Treaties and relations evolve..."
+        },
+        "prophecy_phase": {
+          "phase": "prophecy_phase",
+          "prophecy_insight": "Symbols align in the collective unconscious..."
+        },
+        "consciousness_phase": {
+          "phase": "consciousness_phase",
+          "consciousness_shift": "Federation consciousness evolves..."
+        },
+        "event_phase": {
+          "phase": "event_phase",
+          "event": "e_dream_plague"
+        },
+        "status_update": {
+          "phase": "status_update",
+          "status": "Turn complete. Federation state updated."
+        }
+      }
+    }
+  ]
+}

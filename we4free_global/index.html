@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Deliberate Federation · Command Deck</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+    }
+    .header {
+      padding: 60px 40px;
+      text-align: center;
+      border-bottom: 2px solid #333;
+    }
+    h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    .tagline {
+      font-size: 16px;
+      color: #888;
+      margin-bottom: 30px;
+    }
+    .nav {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .nav a {
+      color: #ff7a18;
+      text-decoration: none;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 10px 20px;
+      border: 1px solid #ff7a18;
+      transition: all 0.3s ease;
+    }
+    .nav a:hover {
+      background: #ff7a18;
+      color: #000;
+    }
+    .main {
+      padding: 60px 40px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .section {
+      margin: 60px 0;
+    }
+    .section-title {
+      font-size: 24px;
+      color: #ff7a18;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin: 30px 0;
+    }
+    .card {
+      border: 1px solid #333;
+      padding: 30px;
+      background: #0a0a0a;
+      transition: border-color 0.3s ease;
+    }
+    .card:hover {
+      border-color: #ff7a18;
+    }
+    .card h3 {
+      color: #ff7a18;
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    .card p {
+      color: #ccc;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .card a {
+      color: #ff7a18;
+      text-decoration: none;
+      margin-top: 15px;
+      display: inline-block;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .card a:hover {
+      text-decoration: underline;
+    }
+    .status {
+      background: #0a0a0a;
+      border-left: 3px solid #ff7a18;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .status-label {
+      font-size: 12px;
+      color: #888;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .status-value {
+      font-size: 18px;
+      color: #ff7a18;
+      font-weight: bold;
+    }
+    footer {
+      border-top: 1px solid #333;
+      padding: 40px;
+      text-align: center;
+      color: #666;
+      font-size: 12px;
+    }
+    a {
+      color: #ff7a18;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h1>DELIBERATE FEDERATION</h1>
+    <p class="tagline">A living game engine. All systems operational.</p>
+
+    <div class="nav">
+      <a href="devlog/">Captain's Log</a>
+      <a href="systems/">Systems Map</a>
+      <a href="lore-archive/">Lore Archive</a>
+      <a href="creature-codex/">Creature Codex</a>
+      <a href="rival-roster/">Rival Roster</a>
+      <a href="github/">GitHub</a>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- OVERVIEW -->
+    <div class="section">
+      <div class="section-title">Command Deck Status</div>
+
+      <div class="status">
+        <div class="status-label">Federation Status</div>
+        <div class="status-value">ALL SYSTEMS OPERATIONAL</div>
+      </div>
+
+      <p>
+        The Deliberate Federation is a fully integrated game engine featuring five core systems working in concert. The federation runs autonomously, responds to events in real-time, and maintains persistent state across all dimensions of play.
+      </p>
+    </div>
+
+    <!-- CORE SYSTEMS -->
+    <div class="section">
+      <div class="section-title">Five Core Systems</div>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Federation Console</h3>
+          <p>12-block architecture. 7-phase turn cycle. 25 event cards with branching choices. Full consciousness tracking. Autonomous game loop.</p>
+          <a href="systems/">View Architecture →</a>
+        </div>
+
+        <div class="card">
+          <h3>Quest System</h3>
+          <p>Multi-level quests with difficulty scaling. Chain progression. Objective tracking. Rewards and faction alignment. Player advancement backbone.</p>
+          <a href="systems/">View System →</a>
+        </div>
+
+        <div class="card">
+          <h3>Faction System</h3>
+          <p>8 ideologies. Reputation tracking. 3 registered factions. Headquarters. Faction-specific quests and perks. Player affiliation mechanics.</p>
+          <a href="systems/">View System →</a>
+        </div>
+
+        <div class="card">
+          <h3>Technology Tree</h3>
+          <p>4 research philosophies. Tier progression. 50+ technologies planned. Unlocks and prerequisites. Research cost tracking.</p>
+          <a href="systems/">View System →</a>
+        </div>
+
+        <div class="card">
+          <h3>NPC System</h3>
+          <p>30+ characters available. Personality systems. Dialogue engine. Companion recruitment. Relationship tracking. Creatures and mythic beings.</p>
+          <a href="systems/">View System →</a>
+        </div>
+
+        <div class="card">
+          <h3>Chaos Mode</h3>
+          <p>56+ random scenarios. Prophecy system. Dream layer. Rival federation behavior. Emergent gameplay moments.</p>
+          <a href="systems/">View System →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTEGRATION STATUS -->
+    <div class="section">
+      <div class="section-title">Integration Status</div>
+
+      <div class="status">
+        <div class="status-label">Latest Commit</div>
+        <div class="status-value">0b1d9be — Complete Integration</div>
+      </div>
+
+      <ul style="padding-left: 20px; margin: 20px 0;">
+        <li><strong>All 5 systems load successfully</strong> — No import errors, full initialization</li>
+        <li><strong>10 integration tests passing</strong> — System initialization, functionality, cross-interaction</li>
+        <li><strong>10-turn gameplay demo executed</strong> — Full session with events, consciousness changes, phase progression</li>
+        <li><strong>Cross-system interactions verified</strong> — Events impact consciousness, quests affect factions, tech unlocks work</li>
+        <li><strong>Autonomous game loop operational</strong> — Turns execute independently, all systems respond</li>
+      </ul>
+    </div>
+
+    <!-- LIVE PAGES -->
+    <div class="section">
+      <div class="section-title">The Living Federation</div>
+
+      <p>
+        The federation doesn't just run turns—it generates worlds. Lore, creatures, rivals. All alive. All interconnected. These are the slow-cooker outputs.
+      </p>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Lore Archive</h3>
+          <p>100 years of hidden federation history. Four epochs. Lore that becomes event cards, factions, NPCs, and technology progressions.</p>
+          <a href="lore-archive/">Explore History →</a>
+        </div>
+
+        <div class="card">
+          <h3>Creature Codex</h3>
+          <p>The biological taxonomy. 16+ species with behaviors, habitats, consciousness signatures. Creatures that can be recruited as companions.</p>
+          <a href="creature-codex/">Meet Creatures →</a>
+        </div>
+
+        <div class="card">
+          <h3>Rival Roster</h3>
+          <p>The 12 rival archetypes. Personalities, motives, domains. Know your antagonists. Form alliances. Win the federation.</p>
+          <a href="rival-roster/">Know Your Rivals →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- NAVIGATE THE FEDERATION -->
+    <div class="section">
+      <div class="section-title">Navigate the Federation</div>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Captain's Log</h3>
+          <p>Integration summaries, build progress, and federation-scale updates. Watch the engine come alive.</p>
+          <a href="devlog/">Read Latest Entry →</a>
+        </div>
+
+        <div class="card">
+          <h3>Systems Map</h3>
+          <p>Complete architecture overview. All 5 systems detailed. Interaction flows. Development roadmap.</p>
+          <a href="systems/">Explore Map →</a>
+        </div>
+
+        <div class="card">
+          <h3>GitHub Repository</h3>
+          <p>Full source code. Integration tests. Gameplay demos. Meta-process architecture. All systems live.</p>
+          <a href="github/">Visit Repo →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHAT'S NEXT -->
+    <div class="section">
+      <div class="section-title">Roadmap</div>
+
+      <h3 style="color: #ffaa44; margin-top: 20px;">Phase 2: Make the Engine Visible</h3>
+      <p>Live gameplay logs, event card feeds, consciousness evolution graphs, faction status updates, technology research progress.</p>
+
+      <h3 style="color: #ffaa44; margin-top: 20px;">Phase 3: Interactive Console</h3>
+      <p>Browser-based REPL. Run turns directly from the site. Generate events. Draw cards. Recruit NPCs. See the federation respond in real-time.</p>
+
+      <h3 style="color: #ffaa44; margin-top: 20px;">Phase 4: Expand the Federation</h3>
+      <p>New quests, factions, technologies, NPCs, events, and chaos scenarios. Every addition becomes a new page, a new artifact, a new entry in the Captain's Log.</p>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>Deliberate Federation · Built with autonomous systems and persistent consciousness</p>
+    <p><a href="github/">GitHub Repo</a> · <a href="devlog/">Captain's Log</a> · <a href="systems/">Systems Map</a></p>
+  </footer>
+
+</body>
+</html>
