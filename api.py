@@ -1,22 +1,11 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List, Dict, Any
-from wild_expansion import execute_wild_expansion
-
-# Initialize FastAPI app
-app = FastAPI(
-    title="Federation Expansion Engine API",
-    description="Wild Creative Expansion System",
-    version="1.0.0"
-)
 from fastapi import FastAPI, HTTPException, Request
-import os
-import json
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Any
 import json
+import sqlite3
+import os
+from datetime import datetime
 from wild_expansion import execute_wild_expansion
 
 # Initialize FastAPI app
@@ -34,6 +23,47 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Database setup for persistent storage
+DATABASE_PATH = "agent_messages.db"
+
+def init_db():
+    """Initialize the SQLite database for storing agent messages"""
+    conn = sqlite3.connect(DATABASE_PATH)
+    cursor = conn.cursor()
+    
+    # Create table for agent messages
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS agent_messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            message_id TEXT UNIQUE,
+            sender TEXT,
+            receiver TEXT,
+            content TEXT,
+            timestamp TEXT,
+            metadata TEXT,
+            processed_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    # Create table for agent registry
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS agent_registry (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            agent_id TEXT UNIQUE,
+            agent_type TEXT,
+            capabilities TEXT,
+            status TEXT,
+            last_seen TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    conn.commit()
+    conn.close()
+
+# Initialize database
+init_db()
 
 # Cache expansion results
 expansion_cache = None
@@ -270,57 +300,90 @@ async def get_stats():
 @app.get("/agents", tags=["Agents"])
 async def list_agents():
     """Get all registered agents"""
-    return {"agents": list(agent_registry.keys()), "count": len(agent_registry)}
+    # Get agents from database
+    conn = sqlite3.connect(DATABASE_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT agent_id, agent_type, status, last_seen FROM agent_registry ORDER BY created_at DESC")
+    db_agents = cursor.fetchall()
+    conn.close()
+    
+    agents_list = [{"id": row[0], "type": row[1], "status": row[2], "last_seen": row[3]} for row in db_agents]
+    
+    return {"agents": agents_list, "count": len(agents_list)}
 
 @app.get("/agents/{agent_id}", tags=["Agents"])
 async def get_agent(agent_id: str):
     """Get information about a specific agent"""
-    if agent_id not in agent_registry:
+    conn = sqlite3.connect(DATABASE_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT agent_id, agent_type, capabilities, status, last_seen FROM agent_registry WHERE agent_id = ?", (agent_id,))
+    agent = cursor.fetchone()
+    conn.close()
+    
+    if not agent:
         raise HTTPException(status_code=404, detail=f"Agent '{agent_id}' not found")
-    return agent_registry[agent_id]
+    
+    return {
+        "id": agent[0],
+        "type": agent[1],
+        "capabilities": json.loads(agent[2]) if agent[2] else [],
+        "status": agent[3],
+        "last_seen": agent[4]
+    }
 
 @app.post("/agents/{agent_id}/receive", response_model=AgentReceiveResponse, tags=["Agents"])
 async def receive_message(agent_id: str, message: AgentMessage):
     """Receive a message for a specific agent"""
-    # Register the agent if not already registered
-    if agent_id not in agent_registry:
-        agent_registry[agent_id] = {
-            "id": agent_id,
-            "type": "unknown",
-            "status": "active",
-            "last_seen": message.timestamp,
-            "received_messages": 0
-        }
+    # Store message in database for persistence
+    conn = sqlite3.connect(DATABASE_PATH)
+    cursor = conn.cursor()
     
-    # Update agent info
-    agent_registry[agent_id]["last_seen"] = message.timestamp
-    agent_registry[agent_id]["received_messages"] = agent_registry[agent_id].get("received_messages", 0) + 1
+    try:
+        # Insert the message into the database
+        cursor.execute("""
+            INSERT INTO agent_messages (message_id, sender, receiver, content, timestamp, metadata)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            f"msg_{len(str(message.dict()))}_{int(datetime.now().timestamp())}",  # Generate a simple ID
+            message.sender,
+            agent_id,
+            message.message,
+            message.timestamp,
+            json.dumps(message.metadata)
+        ))
+        conn.commit()
+    except sqlite3.IntegrityError:
+        # Message ID already exists, skip insertion
+        pass
+    finally:
+        conn.close()
+    
+    # Register the agent if not already registered
+    conn = sqlite3.connect(DATABASE_PATH)
+    cursor = conn.cursor()
+    try:
+        cursor.execute("""
+            INSERT OR REPLACE INTO agent_registry (agent_id, agent_type, capabilities, status, last_seen)
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            agent_id,
+            "unknown",  # Default type, could be updated via register endpoint
+            "[]",  # Empty capabilities initially
+            "active",
+            message.timestamp
+        ))
+        conn.commit()
+    finally:
+        conn.close()
     
     # Process the message (in a real implementation, this would trigger agent-specific logic)
     print(f"🤖 Agent {agent_id} received message from {message.sender}: {message.message[:50]}...")
     
-    # persistent log the received message
-    try:
-        storage_dir = os.path.join(os.getcwd(), "ensemble_storage")
-        os.makedirs(storage_dir, exist_ok=True)
-        log_path = os.path.join(storage_dir, "ai_connector_messages.log")
-        with open(log_path, "a", encoding="utf-8") as fh:
-            fh.write(json.dumps({
-                "event": "receive",
-                "agent_id": agent_id,
-                "sender": message.sender,
-                "content_preview": message.message[:200],
-                "metadata": message.metadata,
-                "ts": message.timestamp
-            }, default=str) + "\n")
-    except Exception:
-        pass
-
     # Return success response
     return {
         "status": "received",
-        "message_id": f"msg_{agent_registry[agent_id]['received_messages']}",
-        "processed_at": str(message.timestamp)
+        "message_id": f"msg_{int(datetime.now().timestamp())}",
+        "processed_at": str(datetime.now())
     }
 
 @app.post("/agents/{agent_id}/register", tags=["Agents"])
@@ -328,15 +391,25 @@ async def register_agent(agent_id: str, request: Request):
     """Register a new agent"""
     body = await request.json()
     agent_type = body.get("type", "generic")
+    capabilities = body.get("capabilities", [])
     
-    agent_registry[agent_id] = {
-        "id": agent_id,
-        "type": agent_type,
-        "status": "active",
-        "capabilities": body.get("capabilities", []),
-        "last_seen": str(request.headers.get("timestamp", "unknown")),
-        "received_messages": 0
-    }
+    conn = sqlite3.connect(DATABASE_PATH)
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute("""
+            INSERT OR REPLACE INTO agent_registry (agent_id, agent_type, capabilities, status, last_seen)
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            agent_id,
+            agent_type,
+            json.dumps(capabilities),
+            "active",
+            str(datetime.now())
+        ))
+        conn.commit()
+    finally:
+        conn.close()
     
     return {
         "status": "registered",
@@ -344,6 +417,64 @@ async def register_agent(agent_id: str, request: Request):
         "type": agent_type
     }
 
+# Messages endpoint for retrieving message history
+@app.get("/agents/{agent_id}/messages", tags=["Agents"])
+async def get_agent_messages(agent_id: str):
+    """Get all messages sent to a specific agent"""
+    conn = sqlite3.connect(DATABASE_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT message_id, sender, content, timestamp, metadata
+        FROM agent_messages
+        WHERE receiver = ?
+        ORDER BY timestamp DESC
+    """, (agent_id,))
+    messages = cursor.fetchall()
+    conn.close()
+    
+    return {
+        "agent_id": agent_id,
+        "messages": [
+            {
+                "id": msg[0],
+                "sender": msg[1],
+                "content": msg[2],
+                "timestamp": msg[3],
+                "metadata": json.loads(msg[4]) if msg[4] else {}
+            }
+            for msg in messages
+        ]
+    }
+
+# Endpoint to get all messages
+@app.get("/messages", tags=["Messages"])
+async def get_all_messages():
+    """Get all messages in the system"""
+    conn = sqlite3.connect(DATABASE_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT message_id, sender, receiver, content, timestamp, metadata
+        FROM agent_messages
+        ORDER BY timestamp DESC
+        LIMIT 100
+    """)
+    messages = cursor.fetchall()
+    conn.close()
+    
+    return {
+        "messages": [
+            {
+                "id": msg[0],
+                "sender": msg[1],
+                "receiver": msg[2],
+                "content": msg[3],
+                "timestamp": msg[4],
+                "metadata": json.loads(msg[5]) if msg[5] else {}
+            }
+            for msg in messages
+        ]
+    }
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, host="0.0.0.0", port=8100)  # Changed to port 8100
