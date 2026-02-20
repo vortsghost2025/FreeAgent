@@ -1,57 +1,53 @@
 """
-AI_CONNECTOR_FRAMEWORK.PY
-Enhanced AI Connector Framework for VS Code
+tools/ai_connector_framework.py
+Enhanced AI Connector Framework for VS Code Multi-Agent Coordination
 
-Lightweight connector framework with REST-first connector and demo.
+REST-first implementation that registers agents, connects them, and sends messages
+to agent endpoints. Designed to integrate with local agent services (e.g. `api.py`).
 """
 
-import uuid
 import json
-from typing import Dict, Any, Callable, Optional, List
+import requests
+from typing import Dict, Any, List, Optional
+import threading
+import time
 from datetime import datetime
-import asyncio
+import uuid
 
 
 class AIConnector:
     """Framework for connecting multiple AI agents in VS Code"""
 
-    def __init__(self):
+    def __init__(self, base_url: str = "http://localhost:8001"):
+        self.base_url = base_url
         self.connectors: Dict[str, Dict[str, Any]] = {}
         self.agent_registry: Dict[str, Dict[str, Any]] = {}
-        self._connections: List[Dict[str, Any]] = []
+        self.connections: Dict[str, Dict[str, Any]] = {}
 
         # Initialize with default connectors
         self._setup_default_connectors()
 
+        print(f"🔗 AI Connector Framework initialized with base URL: {base_url}")
+
     def _setup_default_connectors(self):
         """Setup default connectors"""
-        # MCP (Model Context Protocol) connector (placeholder)
-        self.connectors["mcp"] = {
-            "type": "mcp",
-            "description": "Model Context Protocol for agent communication",
-            "enabled": True,
-            "config": {}
-        }
-
-        # REST API connector
+        # REST API connector (primary)
         self.connectors["rest"] = {
             "type": "rest",
             "description": "REST API connector for HTTP-based communication",
             "enabled": True,
             "config": {
-                "base_url": "http://localhost:8001",
+                "base_url": self.base_url,
                 "timeout": 30
             }
         }
 
-        # WebSocket connector (disabled by default)
-        self.connectors["websocket"] = {
-            "type": "websocket",
-            "description": "WebSocket connector for real-time communication",
+        # MCP (Model Context Protocol) connector
+        self.connectors["mcp"] = {
+            "type": "mcp",
+            "description": "Model Context Protocol for agent communication",
             "enabled": False,
-            "config": {
-                "url": "ws://localhost:8002"
-            }
+            "config": {}
         }
 
     def register_agent(self, agent_id: str, agent_type: str, capabilities: List[str]):
@@ -60,13 +56,14 @@ class AIConnector:
             "type": agent_type,
             "capabilities": capabilities,
             "status": "idle",
-            "last_active": datetime.now().isoformat()
+            "last_active": datetime.now().isoformat(),
+            "endpoint": f"{self.base_url}/agents/{agent_id}"
         }
 
-        print(f"🔗 Registered agent: {agent_id}")
+        print(f"👤 Registered agent: {agent_id} ({agent_type})")
 
     def connect_agents(self, sender_id: str, receiver_id: str,
-                      connector_type: str = "mcp") -> bool:
+                      connector_type: str = "rest") -> bool:
         """Connect two agents using a specific connector"""
         if sender_id not in self.agent_registry:
             raise ValueError(f"Sender agent {sender_id} not found")
@@ -81,8 +78,9 @@ class AIConnector:
         self.connectors[connector_type]["enabled"] = True
 
         # Create connection
+        connection_id = f"conn_{uuid.uuid4()}"
         connection = {
-            "id": f"conn_{uuid.uuid4()}",
+            "id": connection_id,
             "sender": sender_id,
             "receiver": receiver_id,
             "connector_type": connector_type,
@@ -90,10 +88,9 @@ class AIConnector:
             "status": "active"
         }
 
-        # Store connection
-        self._connections.append(connection)
+        self.connections[connection_id] = connection
 
-        print(f"🔌 Connected {sender_id} to {receiver_id} via {connector_type}")
+        print(f"🔗 Connected {sender_id} to {receiver_id} via {connector_type}")
 
         return True
 
@@ -122,45 +119,138 @@ class AIConnector:
         }
 
         # Process message based on connector type
-        if connection["connector_type"] == "mcp":
-            self._send_mcp_message(message)
-        elif connection["connector_type"] == "rest":
-            self._send_rest_message(message)
-        elif connection["connector_type"] == "websocket":
-            self._send_websocket_message(message)
+        if connection["connector_type"] == "rest":
+            return self._send_rest_message(message)
+        elif connection["connector_type"] == "mcp":
+            return self._send_mcp_message(message)
+        else:
+            raise ValueError(f"Unsupported connector type: {connection['connector_type']}")
 
-        return {"status": "sent", "message_id": message["id"]}
+    def _send_rest_message(self, message: Dict[str, Any]) -> Dict[str, Any]:
+        """Send message using REST API"""
+        try:
+            # Prepare the request payload
+            payload = {
+                "message": message["content"],
+                "sender": message["sender"],
+                "receiver": message["receiver"],
+                "timestamp": message["timestamp"],
+                "metadata": message["metadata"]
+            }
 
-    def _send_mcp_message(self, message: Dict[str, Any]):
-        """Send message using MCP protocol (placeholder)"""
-        print(f"📤 Sending MCP message: {message['content'][:50]}...")
+            # Send POST request to receiver endpoint
+            receiver_endpoint = self.agent_registry[message["receiver"]]["endpoint"]
+            response = requests.post(
+                f"{receiver_endpoint}/receive",
+                json=payload,
+                timeout=self.connectors["rest"]["config"]["timeout"]
+            )
 
-    def _send_rest_message(self, message: Dict[str, Any]):
-        """Send message using REST API (demo prints, user can extend with requests)"""
-        cfg = self.connectors["rest"]["config"]
-        print(f"📤 Sending REST message to {cfg.get('base_url')}: {message['content'][:50]}...")
+            if response.status_code == 200:
+                print(f"📤 REST message sent successfully: {message['content'][:50]}...")
+                try:
+                    resp_json = response.json()
+                except Exception:
+                    resp_json = {"text": response.text}
+                return {"status": "sent", "message_id": message["id"], "response": resp_json}
+            else:
+                print(f"❌ REST message failed with status {response.status_code}")
+                return {"status": "failed", "message_id": message["id"], "error": response.text}
 
-    def _send_websocket_message(self, message: Dict[str, Any]):
-        """Send message using WebSocket (placeholder)"""
-        print(f"📤 Sending WebSocket message: {message['content'][:50]}...")
+        except requests.exceptions.RequestException as e:
+            print(f"❌ REST message failed: {str(e)}")
+            return {"status": "failed", "message_id": message["id"], "error": str(e)}
+
+    def _send_mcp_message(self, message: Dict[str, Any]) -> Dict[str, Any]:
+        """Send message using MCP protocol (placeholder implementation)"""
+        # MCP implementation would go here
+        print(f"📤 MCP message prepared: {message['content'][:50]}...")
+        return {"status": "sent", "message_id": message["id"], "response": "MCP mock response"}
 
     def _find_connection(self, sender_id: str, receiver_id: str) -> Optional[Dict[str, Any]]:
         """Find an active connection between two agents"""
-        for c in self._connections:
-            if c["sender"] == sender_id and c["receiver"] == receiver_id and c["status"] == "active":
-                return c
+        for conn_id, connection in self.connections.items():
+            if (connection["sender"] == sender_id and 
+                connection["receiver"] == receiver_id and 
+                connection["status"] == "active"):
+                return connection
         return None
 
+    def get_agent_status(self, agent_id: str) -> Dict[str, Any]:
+        """Get status of a specific agent"""
+        if agent_id not in self.agent_registry:
+            raise ValueError(f"Agent {agent_id} not found")
 
-def demo():
-    ac = AIConnector()
-    ac.register_agent("lingma", "research", ["search", "summarize"])
-    ac.register_agent("claude_code", "coding", ["generate_code", "refactor"])
+        return self.agent_registry[agent_id]
 
-    ac.connect_agents("lingma", "claude_code", connector_type="rest")
-    r = ac.send_message("lingma", "claude_code", "Please generate starter code for a REST connector demo")
-    print(json.dumps(r, indent=2))
+    def get_all_agents(self) -> Dict[str, Any]:
+        """Get all registered agents"""
+        return self.agent_registry
 
+    def get_connections(self) -> Dict[str, Any]:
+        """Get all active connections"""
+        return self.connections
+
+def demo_ai_connector():
+    """Demo function to showcase the AI Connector Framework"""
+    print("🚀 AI Connector Framework Demo")
+    print("="*50)
+
+    # Initialize connector
+    connector = AIConnector(base_url="http://localhost:8001")
+
+    # Register agents
+    print("\n1. Registering agents...")
+    connector.register_agent("lingma", "research", ["research", "analysis", "context_understanding"])
+    connector.register_agent("claude_code", "coding", ["code_generation", "debugging", "refactoring"])
+    connector.register_agent("gpt_codex", "verification", ["code_review", "security_analysis", "compliance_check"])
+
+    # Connect agents
+    print("\n2. Connecting agents...")
+    connector.connect_agents("lingma", "claude_code", "rest")
+    connector.connect_agents("claude_code", "gpt_codex", "rest")
+    connector.connect_agents("gpt_codex", "lingma", "rest")
+
+    # Send messages between agents
+    print("\n3. Sending messages...")
+
+    # Research agent sends analysis to coding agent
+    result1 = connector.send_message(
+        sender_id="lingma",
+        receiver_id="claude_code",
+        content="Analysis complete: The optimal approach is to implement a distributed computing solution using Map/Reduce patterns for the genomics data processing.",
+        metadata={"task": "genomics_analysis", "priority": "high"}
+    )
+    print(f"   Message 1 result: {result1['status']}")
+
+    # Coding agent sends generated code to verification agent
+    result2 = connector.send_message(
+        sender_id="claude_code",
+        receiver_id="gpt_codex",
+        content="Code generated: Implementation of Map/Reduce pattern for genomics data. Includes error handling, validation, and performance optimizations.",
+        metadata={"task": "code_generation", "priority": "normal"}
+    )
+    print(f"   Message 2 result: {result2['status']}")
+
+    # Verification agent sends feedback to research agent
+    result3 = connector.send_message(
+        sender_id="gpt_codex",
+        receiver_id="lingma",
+        content="Code review completed: The implementation follows best practices, has good security measures, and passes all compliance checks. Ready for deployment.",
+        metadata={"task": "code_review", "priority": "normal"}
+    )
+    print(f"   Message 3 result: {result3['status']}")
+
+    # Display system status
+    print("\n4. System status:")
+    print(f"   Registered agents: {len(connector.get_all_agents())}")
+    print(f"   Active connections: {len(connector.get_connections())}")
+
+    agents = connector.get_all_agents()
+    for agent_id, agent_info in agents.items():
+        print(f"   - {agent_id} ({agent_info['type']}): {agent_info['status']}")
+
+    print("\n✅ AI Connector Framework demo completed successfully!")
 
 if __name__ == "__main__":
-    demo()
+    demo_ai_connector()
