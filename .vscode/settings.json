@@ -18,5 +18,11 @@
     "Lingma.aI Chat.mcpToolsInAgentMode": true,
     "Lingma.DisplayLanguage": "English",
     "Lingma.PreferredLanguage for AI Chat": "English",
-    "Lingma.PreferredLanguage forCommitMessage": "English"
+    "Lingma.PreferredLanguage forCommitMessage": "English",
+    "[javascript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
+    }
 }

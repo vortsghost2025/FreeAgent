@@ -130,6 +130,7 @@ class TaskQueue:
 
     def register_handler(self, task_type: TaskType, handler: Callable[..., Coroutine]):
         """Register a handler for a task type"""
+        # Arbitrage handler can be registered here (see ArbitrageOrchestrator)
         self.task_handlers[task_type] = handler
 
     def register_completion_callback(self, task_id: str, callback: Callable):
