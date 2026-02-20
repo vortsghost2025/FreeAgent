@@ -10,6 +10,21 @@ app = FastAPI(
     description="Wild Creative Expansion System",
     version="1.0.0"
 )
+from fastapi import FastAPI, HTTPException, Request
+import os
+import json
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import List, Dict, Any
+import json
+from wild_expansion import execute_wild_expansion
+
+# Initialize FastAPI app
+app = FastAPI(
+    title="Federation Expansion Engine API",
+    description="Wild Creative Expansion System",
+    version="1.0.0"
+)
 
 # Enable CORS
 app.add_middleware(
@@ -64,6 +79,22 @@ class MetadataResponse(BaseModel):
     federation_start: int
     federation_current: int
     eras: Dict[str, int]
+
+# Models for agent communication
+class AgentMessage(BaseModel):
+    message: str
+    sender: str
+    receiver: str
+    timestamp: str
+    metadata: Dict[str, Any]
+
+class AgentReceiveResponse(BaseModel):
+    status: str
+    message_id: str
+    processed_at: str
+
+# Agent registry to track active agents
+agent_registry: Dict[str, Dict[str, Any]] = {}
 
 # Routes
 
@@ -234,6 +265,85 @@ async def get_stats():
         "eras": results["metadata"]["eras"]
     }
 
+# Agent Communication Endpoints
+
+@app.get("/agents", tags=["Agents"])
+async def list_agents():
+    """Get all registered agents"""
+    return {"agents": list(agent_registry.keys()), "count": len(agent_registry)}
+
+@app.get("/agents/{agent_id}", tags=["Agents"])
+async def get_agent(agent_id: str):
+    """Get information about a specific agent"""
+    if agent_id not in agent_registry:
+        raise HTTPException(status_code=404, detail=f"Agent '{agent_id}' not found")
+    return agent_registry[agent_id]
+
+@app.post("/agents/{agent_id}/receive", response_model=AgentReceiveResponse, tags=["Agents"])
+async def receive_message(agent_id: str, message: AgentMessage):
+    """Receive a message for a specific agent"""
+    # Register the agent if not already registered
+    if agent_id not in agent_registry:
+        agent_registry[agent_id] = {
+            "id": agent_id,
+            "type": "unknown",
+            "status": "active",
+            "last_seen": message.timestamp,
+            "received_messages": 0
+        }
+    
+    # Update agent info
+    agent_registry[agent_id]["last_seen"] = message.timestamp
+    agent_registry[agent_id]["received_messages"] = agent_registry[agent_id].get("received_messages", 0) + 1
+    
+    # Process the message (in a real implementation, this would trigger agent-specific logic)
+    print(f"🤖 Agent {agent_id} received message from {message.sender}: {message.message[:50]}...")
+    
+    # persistent log the received message
+    try:
+        storage_dir = os.path.join(os.getcwd(), "ensemble_storage")
+        os.makedirs(storage_dir, exist_ok=True)
+        log_path = os.path.join(storage_dir, "ai_connector_messages.log")
+        with open(log_path, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps({
+                "event": "receive",
+                "agent_id": agent_id,
+                "sender": message.sender,
+                "content_preview": message.message[:200],
+                "metadata": message.metadata,
+                "ts": message.timestamp
+            }, default=str) + "\n")
+    except Exception:
+        pass
+
+    # Return success response
+    return {
+        "status": "received",
+        "message_id": f"msg_{agent_registry[agent_id]['received_messages']}",
+        "processed_at": str(message.timestamp)
+    }
+
+@app.post("/agents/{agent_id}/register", tags=["Agents"])
+async def register_agent(agent_id: str, request: Request):
+    """Register a new agent"""
+    body = await request.json()
+    agent_type = body.get("type", "generic")
+    
+    agent_registry[agent_id] = {
+        "id": agent_id,
+        "type": agent_type,
+        "status": "active",
+        "capabilities": body.get("capabilities", []),
+        "last_seen": str(request.headers.get("timestamp", "unknown")),
+        "received_messages": 0
+    }
+    
+    return {
+        "status": "registered",
+        "agent_id": agent_id,
+        "type": agent_type
+    }
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)
