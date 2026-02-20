@@ -1,23 +1,25 @@
-PR Update: feature/ensemble-roadmap — agent endpoints & AI connector
-===============================================================
+````markdown
+PR Update: feature/ensemble-roadmap — agent endpoints, DB persistence & connector
+==========================================================================
 
 Summary
 -------
-- Added agent endpoints to `api.py`: `/agents`, `/agents/{id}`, `/agents/{id}/register`, `/agents/{id}/receive`.
-- Added `tools/ai_connector_framework.py` (REST-first connector) to register agents and send messages.
-- Added persistent logging for agent registration, send attempts, and received messages to `ensemble_storage/ai_connector_messages.log`.
+- Added agent endpoints to `api.py`: `/agents`, `/agents/{id}`, `/agents/{id}/register`, `/agents/{id}/receive`, `/agents/{id}/messages`, and `/messages`.
+- Replaced the REST connector with a cleaned, DB-aware `tools/ai_connector_framework.py` (uses REST by default).
+- Switched persistence from a JSON-lines log to SQLite (`agent_messages.db`) in the API; messages and registry entries are stored durably.
 
-Test notes
-----------
-- API launched on `http://127.0.0.1:8002` during testing.
-- Ran `python tools/ai_connector_framework.py` successfully; connector registered three agents and delivered three messages to `/agents/{id}/receive` (all returned 200).
-- The demo will fall back to a mock 'sent' response when the API is unreachable; such mock sends are also recorded in the log.
+Test notes (current)
+--------------------
+- Default API port changed to `8100` to avoid conflicts in the local environment.
+- I started the API on `http://127.0.0.1:8100`, ran the cleaned connector demo, and verified end-to-end persistence.
+  - Connector registered three agents and sent three messages.
+  - Verified via API that each agent had one persisted message (checked `/agents/{id}/messages`).
 
 Files changed / added
 ---------------------
-- `api.py` — added endpoints and receive logging
-- `tools/ai_connector_framework.py` — new connector; persistent logging
-- `PR_UPDATE_NOTES.md` — this file
+- `api.py` — added SQLite-backed persistence and agent endpoints
+- `tools/ai_connector_framework.py` — cleaned DB-aware connector and demo (default base_url -> `http://localhost:8100`)
+- `PR_UPDATE_NOTES.md` — this file (updated with current run notes)
 
 How to reproduce locally
 ------------------------
@@ -25,25 +27,34 @@ How to reproduce locally
 2. Start the API (example):
 
 ```bash
-cd c:\workspace
-uvicorn api:app --host 0.0.0.0 --port 8002
+cd C:\workspace
+.venv-py312\Scripts\python -m uvicorn api:app --host 0.0.0.0 --port 8100
 ```
 
 3. In another terminal run the connector demo:
 
 ```bash
-python tools/ai_connector_framework.py
+.venv-py312\Scripts\python tools\ai_connector_framework.py
 ```
 
-4. Check the persistent log:
+4. Verify persisted data (SQLite):
 
 ```bash
-type ensemble_storage\ai_connector_messages.log
+.venv-py312\Scripts\python - <<"PY"
+import sqlite3
+db = sqlite3.connect('agent_messages.db')
+print('messages:', db.execute('SELECT count(*) FROM agent_messages').fetchone())
+print('registry:', db.execute('SELECT count(*) FROM agent_registry').fetchone())
+db.close()
+PY
 ```
 
 Notes
 -----
-- I pushed these changes to branch `feature/ensemble-roadmap`. The PR will update automatically.
-- If you'd prefer the API on a different port (8000/8001), I can switch the default and update tests.
+- I committed and pushed these changes to branch `feature/ensemble-roadmap`.
+- The PR (https://github.com/vortsghost2025/Deliberate-AI-Ensemble/pull/3) can be updated with this summary.
+- I can update the GitHub PR body automatically if you provide a GitHub token with `repo` permissions; otherwise I will paste the suggested PR body here for you to copy.
 
 -- Automated assistant
+
+````
