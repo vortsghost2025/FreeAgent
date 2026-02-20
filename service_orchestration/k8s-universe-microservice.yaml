@@ -1,0 +1,32 @@
+# Kubernetes manifest template for universe microservice
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: universe-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: universe-microservice
+  template:
+    metadata:
+      labels:
+        app: universe-microservice
+    spec:
+      containers:
+      - name: universe-microservice
+        image: <IMAGE_NAME>
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: universe-microservice
+spec:
+  selector:
+    app: universe-microservice
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000

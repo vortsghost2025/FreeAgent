@@ -1,0 +1,7 @@
+# Dockerfile template for universe microservice
+FROM python:3.11-slim
+WORKDIR /app
+COPY . /app
+RUN pip install --no-cache-dir -r requirements.txt || true
+EXPOSE 8000
+CMD ["python", "service_entry.py"]

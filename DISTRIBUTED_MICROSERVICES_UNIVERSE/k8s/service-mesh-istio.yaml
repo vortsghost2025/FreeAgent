@@ -1,0 +1,131 @@
+# ISTIO GATEWAY
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: universe-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+# VIRTUAL SERVICES FOR EACH SERVICE
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: consciousness-service-vs
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - universe-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /consciousness
+    route:
+    - destination:
+        host: consciousness-service
+        port:
+          number: 8000
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: temporal-service-vs
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - universe-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /temporal
+    route:
+    - destination:
+        host: temporal-service
+        port:
+          number: 8000
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: narrative-service-vs
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - universe-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /narrative
+    route:
+    - destination:
+        host: narrative-service
+        port:
+          number: 8000
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: reality-service-vs
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - universe-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /reality
+    route:
+    - destination:
+        host: reality-service
+        port:
+          number: 8000
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: orchestrator-service-vs
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - universe-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /orchestrator
+    route:
+    - destination:
+        host: orchestrator-service
+        port:
+          number: 8000
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: operator-gateway-vs
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - universe-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /operator
+    route:
+    - destination:
+        host: operator-gateway
+        port:
+          number: 8000

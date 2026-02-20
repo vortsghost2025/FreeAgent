@@ -1,0 +1,37 @@
+# VELERO SCHEDULED BACKUP
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: daily-backup
+  namespace: velero
+spec:
+  schedule: "0 2 * * *"
+  template:
+    includedNamespaces:
+    - default
+    - monitoring
+    - logging
+    excludedResources:
+    - nodes
+    - events
+    - events.events.k8s.io
+    snapshotVolumes: false
+    ttl: 720h0m0s
+---
+# VELERO BACKUP POLICY
+apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  name: universe-full-backup
+  namespace: velero
+spec:
+  includedNamespaces:
+  - default
+  - monitoring
+  - logging
+  excludedResources:
+  - nodes
+  - events
+  - events.events.k8s.io
+  snapshotVolumes: false
+  ttl: 168h0m0s

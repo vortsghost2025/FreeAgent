@@ -1,0 +1,51 @@
+# GITHUB REPOSITORY FOR FLUX
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: GitRepository
+metadata:
+  name: universe-infrastructure
+  namespace: flux-system
+spec:
+  interval: 30s
+  url: ssh://git@github.com/yourorg/universe-infrastructure.git
+  ref:
+    branch: main
+---
+# KUSTOMIZATION FOR FLUX
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: universe-services
+  namespace: flux-system
+spec:
+  interval: 5m
+  sourceRef:
+    kind: GitRepository
+    name: universe-infrastructure
+  path: ./k8s
+  prune: true
+  validation: server
+---
+# HELM RELEASE FOR MONITORING
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: prometheus-grafana
+  namespace: flux-system
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+      interval: 1m
+  values:
+    prometheus:
+      enabled: true
+      service:
+        type: LoadBalancer
+    grafana:
+      enabled: true
+      service:
+        type: LoadBalancer
