@@ -47,6 +47,20 @@ def start_monitoring():
 
 @app.post("/stop-monitoring")
 def stop_monitoring():
-    # Not implemented: the manager.run_continuous_monitoring loop reacts to KeyboardInterrupt only.
-    # We'll inform the user to stop the process externally.
-    raise HTTPException(status_code=501, detail="Stop not implemented; terminate process to stop monitoring")
+    global _monitor_thread
+    # Signal the manager to stop; manager will clear its internal flag.
+    stopped = manager.stop_continuous_monitoring()
+
+    if not stopped:
+        # Not running
+        return {"status": "not_running"}
+
+    # If there's a monitor thread, wait briefly for it to exit
+    if _monitor_thread:
+        _monitor_thread.join(timeout=5)
+        if _monitor_thread.is_alive():
+            return {"status": "stop_signaled_but_thread_alive"}
+        else:
+            _monitor_thread = None
+
+    return {"status": "stopped"}

@@ -361,6 +361,8 @@ class PersistentEnsembleManager:
         self.agents = {}
         self.active_agents = []
         self.task_queue = []
+        # Monitoring control flag
+        self._monitoring_running = False
         
         # Initialize the primary persistent agent
         self.primary_agent = PersistentCodingAgent(
@@ -484,26 +486,45 @@ class PersistentEnsembleManager:
     def run_continuous_monitoring(self):
         """Run continuous monitoring and task processing"""
         print("🔍 Starting continuous monitoring...")
-        
         try:
-            while True:
+            self._monitoring_running = True
+            while self._monitoring_running:
                 # Process any queued tasks
                 if self.task_queue:
                     print("\n🔄 Processing task queue...")
                     self.process_task_queue()
-                
+
                 # Print periodic status
                 status = self.get_system_status()
                 print(f"\n📊 System Status (Agents: {status['specialized_agents']['mental_health']['interaction_count']} interactions): "
                       f"Queue: {status['task_queue_length']}, Primary: {status['primary_agent']['interaction_count']} interactions")
-                
+
                 # Sleep for a bit before checking again
-                time.sleep(30)  # Check every 30 seconds
-                
+                # Sleep in small increments to be more responsive to stop requests
+                for _ in range(30):
+                    if not self._monitoring_running:
+                        break
+                    time.sleep(1)
+
         except KeyboardInterrupt:
             print("\n🛑 Continuous monitoring stopped by user")
         except Exception as e:
             print(f"\n❌ Error in continuous monitoring: {e}")
+        finally:
+            self._monitoring_running = False
+
+    def stop_continuous_monitoring(self, timeout: int = 5) -> bool:
+        """Signal the monitoring loop to stop and wait briefly for it to exit.
+
+        Returns True if the flag was set (monitoring was running), False otherwise.
+        """
+        if not self._monitoring_running:
+            return False
+
+        print("🛑 Signaling continuous monitoring to stop...")
+        self._monitoring_running = False
+        # Caller-side thread handling (join) should be performed by the service wrapper
+        return True
 
 def demonstrate_persistent_agent_framework():
     """Demonstrate the persistent agent framework"""
