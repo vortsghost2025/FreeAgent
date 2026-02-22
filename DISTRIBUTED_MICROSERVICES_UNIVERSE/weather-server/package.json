@@ -1,0 +1,29 @@
+{
+  "name": "global-weather-federation",
+  "version": "1.0.0",
+  "description": "14-phase global weather federation system with distributed ingestion, normalization, and governance",
+  "type": "module",
+  "main": "orchestrator.js",
+  "scripts": {
+    "start": "node orchestrator.js",
+    "test": "node test-suite.js",
+    "phase-1": "node phases/phase-1-data-sources.js",
+    "phase-2": "node phases/phase-2-ingestion.js",
+    "demo": "node demo.js"
+  },
+  "keywords": [
+    "weather",
+    "climate",
+    "federated",
+    "distributed",
+    "ingestion",
+    "governance"
+  ],
+  "author": "Weather Federation Team",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "uuid": "^9.0.1"
+  }
+}

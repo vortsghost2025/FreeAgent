@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Health Intelligence Platform — WE4FREE</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --orange: #ff9900; --gold: #ffcc00; --blue: #66ccff;
+  --green: #00cc66; --pink: #ff66cc; --purple: #cc66ff;
+  --red: #ff4444; --teal: #00cccc;
+  --bg: #050508; --bg-mid: #0a0a12; --bg-card: #0d0d18;
+  --text: #cce6ff; --dim: #445566; --dim2: #667788;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Share Tech Mono', 'Courier New', monospace; min-height: 100vh; overflow-x: hidden; }
+
+/* ── LCARS HEADER ── */
+.header { display: flex; align-items: stretch; height: 80px; background: var(--blue); }
+.header-elbow { width: 220px; background: var(--blue); border-radius: 0 0 40px 0; display: flex; align-items: center; padding: 0 24px; flex-shrink: 0; }
+.header-elbow h1 { font-size: 0.95rem; color: #000; font-weight: 700; letter-spacing: 0.08em; line-height: 1.4; }
+.header-bars { flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 8px 0 8px 20px; gap: 4px; }
+.header-bars > div { border-radius: 10px; }
+.hb1 { background: var(--gold);   height: 18px; width: 90%; }
+.hb2 { background: var(--green);  height: 14px; width: 70%; }
+.hb3 { background: var(--pink);   height: 10px; width: 50%; }
+.header-right { padding: 0 24px; display: flex; flex-direction: column; justify-content: center; align-items: flex-end; gap: 2px; }
+.header-right .sub  { font-size: 0.6rem; color: #000; opacity: 0.7; letter-spacing: 0.25em; }
+.header-right .main { font-size: 1.1rem; color: #000; font-weight: 700; letter-spacing: 0.1em; }
+.header-right .ver  { font-size: 0.6rem; color: #000; opacity: 0.5; }
+
+/* ── NAV ── */
+.nav { display: flex; gap: 4px; padding: 10px 16px; background: var(--bg-mid); border-bottom: 2px solid var(--blue); flex-wrap: wrap; align-items: center; }
+.nav a { padding: 6px 16px; border-radius: 4px; font-size: 0.72rem; letter-spacing: 0.1em; font-weight: 700; text-decoration: none; border: 1px solid; transition: opacity 0.15s; }
+.nav a:hover { opacity: 0.75; }
+.nav-blue   { background: var(--blue);   color: #000; border-color: var(--blue); }
+.nav-green  { background: rgba(0,204,102,0.1);   color: var(--green);  border-color: rgba(0,204,102,0.35); }
+.nav-orange { background: rgba(255,153,0,0.1);   color: var(--orange); border-color: rgba(255,153,0,0.35); }
+.nav-pink   { background: rgba(255,102,204,0.1); color: var(--pink);   border-color: rgba(255,102,204,0.35); }
+.nav-dim    { background: rgba(68,85,102,0.1);   color: var(--dim2);   border-color: rgba(68,85,102,0.35); }
+.nav-sep    { flex: 1; }
+.status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--dim); margin-right: 6px; }
+.status-dot.live { background: var(--green); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* ── 3-COLUMN LAYOUT ── */
+.dashboard { display: grid; grid-template-columns: 260px 1fr 280px; gap: 0; min-height: calc(100vh - 140px); }
+
+/* ── LEFT PANEL ── */
+.left-panel { background: var(--bg-mid); border-right: 2px solid var(--blue); padding: 16px 12px; display: flex; flex-direction: column; gap: 12px; }
+
+.lcars-section-label { font-size: 0.6rem; letter-spacing: 0.3em; color: var(--dim2); padding: 4px 0; border-bottom: 1px solid var(--dim); margin-bottom: 6px; }
+
+.stat-block { background: var(--bg-card); border-radius: 4px; border-left: 3px solid var(--blue); padding: 10px 12px; }
+.stat-block.green  { border-color: var(--green); }
+.stat-block.orange { border-color: var(--orange); }
+.stat-block.pink   { border-color: var(--pink); }
+.stat-block.gold   { border-color: var(--gold); }
+.stat-block.red    { border-color: var(--red); }
+.stat-label { font-size: 0.6rem; letter-spacing: 0.15em; color: var(--dim2); margin-bottom: 4px; }
+.stat-value { font-size: 1.5rem; font-weight: 700; letter-spacing: 0.05em; }
+.stat-value.blue   { color: var(--blue); }
+.stat-value.green  { color: var(--green); }
+.stat-value.orange { color: var(--orange); }
+.stat-value.gold   { color: var(--gold); }
+.stat-value.red    { color: var(--red); }
+.stat-sub { font-size: 0.6rem; color: var(--dim2); margin-top: 2px; }
+
+.source-list { display: flex; flex-direction: column; gap: 6px; }
+.source-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: var(--bg-card); border-radius: 4px; font-size: 0.68rem; }
+.source-name { color: var(--text); letter-spacing: 0.05em; }
+.source-badge { padding: 2px 8px; border-radius: 10px; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; }
+.badge-live    { background: rgba(0,204,102,0.2);   color: var(--green);  border: 1px solid rgba(0,204,102,0.4); }
+.badge-polling { background: rgba(255,204,0,0.15);  color: var(--gold);   border: 1px solid rgba(255,204,0,0.4); }
+.badge-cached  { background: rgba(102,204,255,0.1); color: var(--blue);   border: 1px solid rgba(102,204,255,0.3); }
+
+.privacy-meter { background: var(--bg-card); border-radius: 4px; padding: 10px 12px; }
+.meter-label { font-size: 0.6rem; letter-spacing: 0.15em; color: var(--dim2); margin-bottom: 6px; }
+.meter-bar { height: 8px; background: var(--dim); border-radius: 4px; overflow: hidden; }
+.meter-fill { height: 100%; background: var(--green); border-radius: 4px; transition: width 0.5s ease; }
+.meter-text { font-size: 0.62rem; color: var(--dim2); margin-top: 4px; display: flex; justify-content: space-between; }
+
+/* ── CENTER PANEL ── */
+.center-panel { padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+
+.world-map-card { background: var(--bg-card); border-radius: 4px; border-top: 3px solid var(--blue); padding: 14px; }
+.map-title { font-size: 0.7rem; letter-spacing: 0.2em; color: var(--blue); margin-bottom: 12px; }
+.world-map { width: 100%; height: 200px; position: relative; background: #050510; border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.world-svg { width: 100%; height: 100%; opacity: 0.7; }
+.city-dot { position: absolute; width: 8px; height: 8px; border-radius: 50%; transform: translate(-50%, -50%); cursor: pointer; }
+.city-dot.low    { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.city-dot.medium { background: var(--gold);  box-shadow: 0 0 6px var(--gold); }
+.city-dot.high   { background: var(--red);   box-shadow: 0 0 8px var(--red); animation: riskPulse 1.5s infinite; }
+@keyframes riskPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.city-label { position: absolute; font-size: 0.55rem; color: var(--text); transform: translate(-50%, -120%); white-space: nowrap; pointer-events: none; opacity: 0.8; }
+
+.analysis-feed { background: var(--bg-card); border-radius: 4px; border-top: 3px solid var(--green); padding: 14px; }
+.feed-title { font-size: 0.7rem; letter-spacing: 0.2em; color: var(--green); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+.feed-title span { font-size: 0.6rem; color: var(--dim2); }
+.feed-log { font-size: 0.65rem; color: var(--dim2); line-height: 2; max-height: 180px; overflow-y: auto; }
+.feed-log .log-line { border-bottom: 1px solid rgba(255,255,255,0.03); padding: 2px 0; }
+.log-ts { color: var(--dim); margin-right: 8px; }
+.log-src { margin-right: 8px; font-weight: 700; }
+.log-src.WHO   { color: var(--blue); }
+.log-src.CDC   { color: var(--orange); }
+.log-src.NASA  { color: var(--purple); }
+.log-src.NOAA  { color: var(--teal); }
+.log-src.ALERT { color: var(--red); }
+.log-src.SYS   { color: var(--gold); }
+
+/* Indicator grid */
+.indicator-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.indicator-card { background: var(--bg-card); border-radius: 4px; padding: 12px; border-top: 2px solid var(--dim); }
+.indicator-card.active { border-color: var(--blue); }
+.ind-name  { font-size: 0.62rem; letter-spacing: 0.12em; color: var(--dim2); margin-bottom: 6px; }
+.ind-value { font-size: 1.1rem; color: var(--blue); font-weight: 700; }
+.ind-meta  { font-size: 0.58rem; color: var(--dim); margin-top: 3px; }
+.ind-bar   { height: 4px; background: var(--dim); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+.ind-bar-fill { height: 100%; background: var(--blue); border-radius: 2px; transition: width 0.6s; }
+
+/* Climate correlations */
+.corr-card { background: var(--bg-card); border-radius: 4px; border-top: 3px solid var(--purple); padding: 14px; }
+.corr-title { font-size: 0.7rem; letter-spacing: 0.2em; color: var(--purple); margin-bottom: 10px; }
+.corr-table { width: 100%; border-collapse: collapse; font-size: 0.65rem; }
+.corr-table th { text-align: left; color: var(--dim2); font-weight: 400; letter-spacing: 0.1em; padding: 4px 8px; border-bottom: 1px solid var(--dim); }
+.corr-table td { padding: 5px 8px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.corr-r { font-weight: 700; }
+.corr-r.strong  { color: var(--red); }
+.corr-r.moderate { color: var(--gold); }
+.corr-r.weak    { color: var(--green); }
+
+/* ── RIGHT PANEL ── */
+.right-panel { background: var(--bg-mid); border-left: 2px solid var(--blue); padding: 14px 12px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+
+.alerts-section { }
+.alerts-title { font-size: 0.7rem; letter-spacing: 0.2em; color: var(--red); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.alerts-count { background: rgba(255,68,68,0.2); color: var(--red); border: 1px solid rgba(255,68,68,0.4); padding: 2px 8px; border-radius: 10px; font-size: 0.6rem; }
+.alert-item { background: var(--bg-card); border-radius: 4px; padding: 8px 10px; margin-bottom: 6px; border-left: 3px solid; }
+.alert-item.CRITICAL { border-color: var(--red); }
+.alert-item.WARNING  { border-color: var(--gold); }
+.alert-item.INFO     { border-color: var(--blue); }
+.alert-sev  { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.15em; margin-bottom: 3px; }
+.alert-sev.CRITICAL { color: var(--red); }
+.alert-sev.WARNING  { color: var(--gold); }
+.alert-sev.INFO     { color: var(--blue); }
+.alert-title { font-size: 0.65rem; color: var(--text); margin-bottom: 2px; line-height: 1.4; }
+.alert-detail { font-size: 0.58rem; color: var(--dim2); line-height: 1.4; }
+
+.agent-section { }
+.agents-title { font-size: 0.7rem; letter-spacing: 0.2em; color: var(--gold); margin-bottom: 8px; }
+.agent-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: var(--bg-card); border-radius: 4px; margin-bottom: 4px; font-size: 0.65rem; }
+.agent-name { color: var(--text); }
+.agent-state { font-size: 0.58rem; padding: 2px 8px; border-radius: 10px; }
+.agent-state.idle       { background: rgba(68,85,102,0.3);   color: var(--dim2); }
+.agent-state.processing { background: rgba(0,204,102,0.2);   color: var(--green); }
+.agent-state.waiting    { background: rgba(255,204,0,0.15);  color: var(--gold); }
+
+.risk-section { }
+.risk-title { font-size: 0.7rem; letter-spacing: 0.2em; color: var(--orange); margin-bottom: 8px; }
+.risk-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 5px 8px; background: var(--bg-card); border-radius: 4px; margin-bottom: 4px; font-size: 0.62rem; align-items: center; }
+.risk-country { color: var(--text); }
+.risk-score { font-weight: 700; }
+.risk-score.HIGH   { color: var(--red); }
+.risk-score.MEDIUM { color: var(--gold); }
+.risk-score.LOW    { color: var(--green); }
+.risk-bar-mini { height: 3px; background: var(--dim); border-radius: 2px; margin-top: 3px; overflow: hidden; grid-column: 1/-1; }
+.risk-bar-fill { height: 100%; border-radius: 2px; }
+
+/* ── ACTIONS BAR ── */
+.action-bar { display: flex; gap: 8px; padding: 10px 16px; background: var(--bg-mid); border-top: 1px solid var(--dim); flex-wrap: wrap; align-items: center; }
+.action-btn { padding: 8px 18px; border-radius: 4px; font-size: 0.7rem; letter-spacing: 0.1em; font-weight: 700; cursor: pointer; border: none; font-family: inherit; transition: opacity 0.15s; }
+.action-btn:hover { opacity: 0.8; }
+.btn-blue   { background: var(--blue);   color: #000; }
+.btn-green  { background: var(--green);  color: #000; }
+.btn-orange { background: var(--orange); color: #000; }
+.btn-gold   { background: var(--gold);   color: #000; }
+.action-sep { flex: 1; }
+.action-info { font-size: 0.62rem; color: var(--dim2); }
+
+/* ── FOOTER ── */
+.footer { padding: 10px 16px; font-size: 0.6rem; color: var(--dim); letter-spacing: 0.08em; border-top: 1px solid var(--dim); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.footer a { color: var(--dim); text-decoration: none; }
+.footer a:hover { color: var(--blue); }
+
+/* ── LOADING / INIT ── */
+.init-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+.init-title { font-size: 1.2rem; color: var(--blue); letter-spacing: 0.2em; }
+.init-sub   { font-size: 0.7rem; color: var(--dim2); letter-spacing: 0.15em; }
+.init-log   { font-size: 0.62rem; color: var(--dim2); max-width: 400px; text-align: center; line-height: 2; }
+.init-bar   { width: 300px; height: 6px; background: var(--dim); border-radius: 3px; overflow: hidden; }
+.init-bar-fill { height: 100%; background: var(--blue); border-radius: 3px; animation: initProg 4s ease-out forwards; }
+@keyframes initProg { from{width:5%} 50%{width:60%} to{width:95%} }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- INIT OVERLAY -->
+<div class="init-overlay" id="initOverlay">
+  <div class="init-title">GLOBAL HEALTH INTELLIGENCE</div>
+  <div class="init-sub">WHO · CDC · NASA · NOAA COLLABORATIVE SYSTEM</div>
+  <div class="init-bar"><div class="init-bar-fill"></div></div>
+  <div class="init-log" id="initLog">Establishing secure channels...</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-elbow"><h1>WE4FREE<br>HEALTH INTEL</h1></div>
+  <div class="header-bars"><div class="hb1"></div><div class="hb2"></div><div class="hb3"></div></div>
+  <div class="header-right">
+    <span class="sub">GLOBAL SURVEILLANCE</span>
+    <span class="main">HEALTH INTELLIGENCE</span>
+    <span class="ver">WHO · CDC · NASA · NOAA</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <a class="nav-blue" href="health-dashboard.html">🌍 HEALTH INTEL</a>
+  <a class="nav-green" href="genomics-ui.html">🧬 GENOMICS</a>
+  <a class="nav-orange" href="compute-ui.html">⚡ COMPUTE</a>
+  <a class="nav-pink" href="medical-ui.html">🏥 MEDICAL</a>
+  <a class="nav-dim" href="swarm-ui.html">▶ SWARM</a>
+  <div class="nav-sep"></div>
+  <span style="font-size:0.62rem; color:var(--dim2)">
+    <span class="status-dot" id="systemDot"></span>
+    <span id="systemStatus">INITIALIZING</span>
+  </span>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard">
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <div class="lcars-section-label">GLOBAL STATUS</div>
+
+    <div class="stat-block green">
+      <div class="stat-label">COUNTRIES MONITORED</div>
+      <div class="stat-value green" id="statCountries">—</div>
+      <div class="stat-sub">via WHO GHO indicators</div>
+    </div>
+
+    <div class="stat-block blue">
+      <div class="stat-label">HEALTH RECORDS LOADED</div>
+      <div class="stat-value blue" id="statRecords">—</div>
+      <div class="stat-sub">WHO + CDC combined</div>
+    </div>
+
+    <div class="stat-block orange">
+      <div class="stat-label">CLIMATE STATIONS</div>
+      <div class="stat-value orange" id="statCities">—</div>
+      <div class="stat-sub">NASA POWER + NOAA live</div>
+    </div>
+
+    <div class="stat-block red">
+      <div class="stat-label">ACTIVE ALERTS</div>
+      <div class="stat-value red" id="statAlerts">0</div>
+      <div class="stat-sub">anomalies detected</div>
+    </div>
+
+    <div class="lcars-section-label">DATA SOURCES</div>
+    <div class="source-list">
+      <div class="source-row">
+        <span class="source-name">WHO GHO</span>
+        <span class="source-badge badge-polling" id="srcWHO">POLLING</span>
+      </div>
+      <div class="source-row">
+        <span class="source-name">CDC Open</span>
+        <span class="source-badge badge-polling" id="srcCDC">POLLING</span>
+      </div>
+      <div class="source-row">
+        <span class="source-name">NASA POWER</span>
+        <span class="source-badge badge-polling" id="srcNASA">POLLING</span>
+      </div>
+      <div class="source-row">
+        <span class="source-name">NOAA Weather</span>
+        <span class="source-badge badge-polling" id="srcNOAA">POLLING</span>
+      </div>
+    </div>
+
+    <div class="lcars-section-label">PRIVACY BUDGET (ε=1.0)</div>
+    <div class="privacy-meter">
+      <div class="meter-label">DIFFERENTIAL PRIVACY — REMAINING</div>
+      <div class="meter-bar"><div class="meter-fill" id="privacyBar" style="width:100%"></div></div>
+      <div class="meter-text">
+        <span id="privacyPct">100%</span>
+        <span id="privacyQueries">0 queries</span>
+      </div>
+    </div>
+
+    <div class="lcars-section-label">LAST SYNC</div>
+    <div style="font-size:0.58rem; color:var(--dim2); line-height:2;">
+      <div>WHO: <span id="tsWHO" style="color:var(--blue)">—</span></div>
+      <div>CDC: <span id="tsCDC" style="color:var(--orange)">—</span></div>
+      <div>NASA: <span id="tsNASA" style="color:var(--purple)">—</span></div>
+      <div>NOAA: <span id="tsNOAA" style="color:var(--teal)">—</span></div>
+    </div>
+  </div>
+
+  <!-- CENTER PANEL -->
+  <div class="center-panel">
+
+    <!-- World map -->
+    <div class="world-map-card">
+      <div class="map-title">▸ GLOBAL HEALTH + CLIMATE OVERVIEW</div>
+      <div class="world-map" id="worldMap">
+        <!-- Simple SVG world outline + dynamic city dots will be overlaid -->
+        <svg class="world-svg" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+          <!-- Simplified continental outlines -->
+          <rect width="800" height="400" fill="#050510"/>
+          <!-- North America -->
+          <path d="M 80 80 L 200 70 L 230 130 L 220 190 L 170 220 L 130 200 L 90 160 Z" fill="none" stroke="#223" stroke-width="1.5"/>
+          <!-- South America -->
+          <path d="M 160 230 L 200 230 L 215 280 L 210 340 L 185 360 L 165 340 L 155 300 L 150 260 Z" fill="none" stroke="#223" stroke-width="1.5"/>
+          <!-- Europe -->
+          <path d="M 340 60 L 400 55 L 420 90 L 400 120 L 360 125 L 335 100 Z" fill="none" stroke="#223" stroke-width="1.5"/>
+          <!-- Africa -->
+          <path d="M 360 130 L 420 120 L 440 160 L 440 230 L 420 290 L 390 300 L 360 270 L 345 200 L 350 150 Z" fill="none" stroke="#223" stroke-width="1.5"/>
+          <!-- Asia -->
+          <path d="M 430 50 L 620 45 L 660 80 L 650 140 L 600 180 L 540 200 L 480 180 L 440 140 L 430 100 Z" fill="none" stroke="#223" stroke-width="1.5"/>
+          <!-- Australia -->
+          <path d="M 580 240 L 650 235 L 670 270 L 650 310 L 600 315 L 575 285 Z" fill="none" stroke="#223" stroke-width="1.5"/>
+          <!-- Grid lines -->
+          <line x1="0" y1="200" x2="800" y2="200" stroke="#112" stroke-width="0.5" stroke-dasharray="4,4"/>
+          <line x1="400" y1="0" x2="400" y2="400" stroke="#112" stroke-width="0.5" stroke-dasharray="4,4"/>
+        </svg>
+        <!-- Dynamic city markers injected by JS -->
+      </div>
+      <div style="font-size:0.58rem; color:var(--dim); margin-top:6px; display:flex; gap:16px;">
+        <span><span style="color:var(--green)">●</span> LOW RISK</span>
+        <span><span style="color:var(--gold)">●</span> MEDIUM RISK</span>
+        <span><span style="color:var(--red)">●</span> HIGH RISK</span>
+        <span style="margin-left:auto; color:var(--dim)">8 cities · real NASA POWER + WHO data</span>
+      </div>
+    </div>
+
+    <!-- Indicator grid -->
+    <div style="font-size:0.6rem; letter-spacing:0.2em; color:var(--dim2); padding: 2px 0;">WHO GHO INDICATORS — LIVE</div>
+    <div class="indicator-grid" id="indicatorGrid">
+      <!-- Filled by JS -->
+    </div>
+
+    <!-- Analysis feed -->
+    <div class="analysis-feed">
+      <div class="feed-title">▸ REAL-TIME ANALYSIS FEED <span id="feedCount">0 events</span></div>
+      <div class="feed-log" id="analysisLog">
+        <div class="log-line"><span class="log-ts">—</span><span class="log-src SYS">SYS</span> Waiting for data sources...</div>
+      </div>
+    </div>
+
+    <!-- Climate-health correlations -->
+    <div class="corr-card">
+      <div class="corr-title">▸ CLIMATE-HEALTH CORRELATION ENGINE</div>
+      <table class="corr-table">
+        <thead>
+          <tr>
+            <th>PAIR</th>
+            <th>PEARSON r</th>
+            <th>STRENGTH</th>
+            <th>STATUS</th>
+          </tr>
+        </thead>
+        <tbody id="corrTable">
+          <tr><td colspan="4" style="color:var(--dim); padding:8px;">Awaiting NASA + WHO data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+
+    <div class="alerts-section">
+      <div class="alerts-title">⚠ EARLY WARNINGS <span class="alerts-count" id="alertsCount">0</span></div>
+      <div id="alertsList">
+        <div style="font-size:0.62rem; color:var(--dim);">Monitoring for anomalies...</div>
+      </div>
+    </div>
+
+    <div class="agents-section">
+      <div class="agents-title">▸ HEALTH AGENTS</div>
+      <div class="agent-row">
+        <span class="agent-name">Epidemiology Analyzer</span>
+        <span class="agent-state idle" id="agentEpi">IDLE</span>
+      </div>
+      <div class="agent-row">
+        <span class="agent-name">Risk Assessment</span>
+        <span class="agent-state idle" id="agentRisk">IDLE</span>
+      </div>
+      <div class="agent-row">
+        <span class="agent-name">Early Warning</span>
+        <span class="agent-state idle" id="agentWarn">MONITORING</span>
+      </div>
+      <div class="agent-row">
+        <span class="agent-name">Policy Advisor</span>
+        <span class="agent-state waiting" id="agentPolicy">STANDBY</span>
+      </div>
+      <div class="agent-row">
+        <span class="agent-name">WHO Data Bridge</span>
+        <span class="agent-state idle" id="agentWHO">IDLE</span>
+      </div>
+      <div class="agent-row">
+        <span class="agent-name">Climate Correlator</span>
+        <span class="agent-state idle" id="agentClimate">IDLE</span>
+      </div>
+    </div>
+
+    <div class="risk-section">
+      <div class="risk-title">▸ HIGH-RISK COUNTRIES</div>
+      <div id="riskList">
+        <div style="font-size:0.62rem; color:var(--dim);">Loading risk assessment...</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="lcars-section-label">DISEASE BURDEN</div>
+      <div id="burdenPanel" style="font-size:0.62rem; color:var(--dim2); line-height:2;">
+        Awaiting epidemiology analysis...
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ACTION BAR -->
+<div class="action-bar">
+  <button class="action-btn btn-blue"   onclick="runEpidemiologyAnalysis()">🧬 ANALYZE DISEASE BURDEN</button>
+  <button class="action-btn btn-green"  onclick="runRiskAssessment()">⚡ GLOBAL RISK SCAN</button>
+  <button class="action-btn btn-orange" onclick="buildGWASCohort()">🔬 BUILD GWAS COHORT</button>
+  <button class="action-btn btn-gold"   onclick="exportSnapshot()">💾 EXPORT SNAPSHOT</button>
+  <button class="action-btn" style="background:rgba(204,102,255,0.2);color:#cc66ff;border:1px solid rgba(204,102,255,0.4);" onclick="enableMeshCollection()">📡 JOIN MESH</button>
+  <div class="action-sep"></div>
+  <div class="action-info" id="actionInfo">System ready</div>
+</div>
+
+<!-- MESH STATUS BAR -->
+<div id="meshBar" style="display:none;padding:6px 16px;background:rgba(204,102,255,0.08);border-top:1px solid rgba(204,102,255,0.3);font-size:0.62rem;color:var(--dim2);display:flex;gap:16px;align-items:center;">
+  <span style="color:#cc66ff;font-weight:700;">📡 MESH P2P</span>
+  <span>Node: <span id="meshNodeId" style="color:#cc66ff">—</span></span>
+  <span>Peers: <span id="meshPeers" style="color:var(--green)">0</span></span>
+  <span>Mode: <span id="meshMode" style="color:var(--gold)">INITIALIZING</span></span>
+  <span>SW: <span id="meshSW" style="color:var(--dim)">—</span></span>
+  <div style="flex:1"></div>
+  <button onclick="logTestSymptom()" style="background:rgba(0,204,102,0.15);color:var(--green);border:1px solid rgba(0,204,102,0.3);padding:3px 10px;border-radius:3px;font-size:0.6rem;cursor:pointer;font-family:inherit;">LOG SYMPTOM</button>
+  <button onclick="logTestMentalHealth()" style="background:rgba(204,102,255,0.15);color:#cc66ff;border:1px solid rgba(204,102,255,0.3);padding:3px 10px;border-radius:3px;font-size:0.6rem;cursor:pointer;font-family:inherit;">LOG MOOD</button>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>WE4FREE GLOBAL HEALTH INTELLIGENCE · WHO GHO · CDC OPEN DATA · NASA POWER · NOAA NWS · MESH P2P</span>
+  <span>
+    <a href="swarm-index.html">← SWARM HUB</a> ·
+    <a href="http://deliberateensemble.works">MISSION CONTROL</a> ·
+    <a href="genomics-ui.html">GENOMICS</a>
+  </span>
+</div>
+
+<script src="health-intelligence.js"></script>
+<script src="mesh-coordinator.js"></script>
+<script src="mesh-health-signals.js"></script>
+<script>
+'use strict';
+
+// ── UI STATE ──────────────────────────────────────────────────────────────────
+const feedLines = [];
+let corrPairs = [];
+let initialised = false;
+
+function ts() {
+  return new Date().toLocaleTimeString('en-US', { hour12: false });
+}
+
+function addFeed(src, msg, cls = '') {
+  feedLines.unshift({ ts: ts(), src, msg, cls });
+  if (feedLines.length > 80) feedLines.pop();
+  renderFeed();
+}
+
+function renderFeed() {
+  const el = document.getElementById('analysisLog');
+  el.innerHTML = feedLines.map(l =>
+    `<div class="log-line">
+      <span class="log-ts">${l.ts}</span>
+      <span class="log-src ${l.src}">${l.src}</span>${l.msg}
+    </div>`
+  ).join('');
+  document.getElementById('feedCount').textContent = `${feedLines.length} events`;
+}
+
+// ── WORLD MAP CITY POSITIONS (% of 800x400 SVG) ──────────────────────────────
+const CITY_MAP_POS = {
+  'New York':   { x: 19, y: 35 },
+  'London':     { x: 43, y: 22 },
+  'Lagos':      { x: 40, y: 58 },
+  'Mumbai':     { x: 63, y: 50 },
+  'São Paulo':  { x: 23, y: 72 },
+  'Dhaka':      { x: 68, y: 47 },
+  'Cairo':      { x: 47, y: 43 },
+  'Nairobi':    { x: 50, y: 65 },
+};
+
+function renderCityDots(cities, riskData) {
+  const map = document.getElementById('worldMap');
+  // Remove old dots
+  map.querySelectorAll('.city-dot, .city-label').forEach(el => el.remove());
+
+  cities.forEach(city => {
+    const pos = CITY_MAP_POS[city.city];
+    if (!pos) return;
+
+    // Find risk level for this city's region
+    const riskEntry = riskData?.find(r =>
+      (city.city === 'Lagos' || city.city === 'Nairobi' || city.city === 'Cairo') && r.region === 'AFR' ||
+      (city.city === 'Mumbai' || city.city === 'Dhaka') && r.region === 'SEAR' ||
+      (city.city === 'New York' || city.city === 'São Paulo') && r.region === 'AMR' ||
+      city.city === 'London' && r.region === 'EUR'
+    );
+    const level = riskEntry?.riskLevel || 'LOW';
+
+    const dot = document.createElement('div');
+    dot.className = `city-dot ${level.toLowerCase()}`;
+    dot.style.left = pos.x + '%';
+    dot.style.top  = pos.y + '%';
+    dot.title = `${city.city}: ${city.avgTempC?.toFixed(1)}°C, ${city.avgHumidity?.toFixed(1)}% RH`;
+    map.appendChild(dot);
+
+    const lbl = document.createElement('div');
+    lbl.className = 'city-label';
+    lbl.style.left = pos.x + '%';
+    lbl.style.top  = pos.y + '%';
+    lbl.textContent = city.city;
+    map.appendChild(lbl);
+  });
+}
+
+// ── INDICATOR GRID ────────────────────────────────────────────────────────────
+const IND_META = {
+  lifeExpectancy:    { label: 'Life Expectancy',    unit: 'years', color: 'var(--green)',  max: 90 },
+  infantMortality:   { label: 'Infant Mortality',   unit: '/1000', color: 'var(--red)',    max: 120 },
+  maternalMortality: { label: 'Maternal Mortality', unit: '/100k', color: 'var(--pink)',   max: 1000 },
+  malariaIncidence:  { label: 'Malaria Incidence',  unit: '/1000', color: 'var(--gold)',   max: 500 },
+  tbIncidence:       { label: 'TB Incidence',       unit: '/100k', color: 'var(--orange)', max: 700 },
+  hivPrevalence:     { label: 'HIV Prevalence',     unit: '%',     color: 'var(--purple)', max: 30 },
+};
+
+function renderIndicators(indicators) {
+  const grid = document.getElementById('indicatorGrid');
+  const html = Object.entries(IND_META).map(([key, meta]) => {
+    const records = indicators[key] || [];
+    if (!records.length) {
+      return `<div class="indicator-card">
+        <div class="ind-name">${meta.label}</div>
+        <div class="ind-value" style="color:var(--dim)">—</div>
+        <div class="ind-meta">No data</div>
+      </div>`;
+    }
+    const vals = records.map(r => r.value).sort((a, b) => a - b);
+    const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
+    const pct  = Math.min(mean / meta.max * 100, 100);
+    return `<div class="indicator-card active">
+      <div class="ind-name">${meta.label}</div>
+      <div class="ind-value" style="color:${meta.color}">${mean.toFixed(1)} <span style="font-size:0.65rem;color:var(--dim2)">${meta.unit}</span></div>
+      <div class="ind-meta">${records.length} countries · WHO GHO 2019</div>
+      <div class="ind-bar"><div class="ind-bar-fill" style="width:${pct}%;background:${meta.color}"></div></div>
+    </div>`;
+  }).join('');
+  grid.innerHTML = html;
+}
+
+// ── ALERTS PANEL ──────────────────────────────────────────────────────────────
+function renderAlerts(alerts) {
+  const list = document.getElementById('alertsList');
+  document.getElementById('alertsCount').textContent = alerts.length;
+  document.getElementById('statAlerts').textContent = alerts.length;
+  if (!alerts.length) {
+    list.innerHTML = '<div style="font-size:0.62rem; color:var(--dim);">No active alerts</div>';
+    return;
+  }
+  list.innerHTML = alerts.slice(0, 8).map(a =>
+    `<div class="alert-item ${a.severity}">
+      <div class="alert-sev ${a.severity}">${a.severity} · ${a.type?.replace(/_/g,' ')}</div>
+      <div class="alert-title">${a.title}</div>
+      <div class="alert-detail">${a.detail}</div>
+    </div>`
+  ).join('');
+}
+
+// ── RISK TABLE ────────────────────────────────────────────────────────────────
+function renderRiskList(topRisk) {
+  const el = document.getElementById('riskList');
+  if (!topRisk?.length) return;
+  el.innerHTML = topRisk.slice(0, 8).map(r =>
+    `<div class="risk-row">
+      <span class="risk-country">${r.country} <span style="font-size:0.55rem;color:var(--dim2)">${r.region}</span></span>
+      <span class="risk-score ${r.riskLevel}">${(r.healthRisk * 100).toFixed(0)}%</span>
+      <div class="risk-bar-mini"><div class="risk-bar-fill" style="width:${r.healthRisk*100}%;background:${r.riskLevel==='HIGH'?'var(--red)':r.riskLevel==='MEDIUM'?'var(--gold)':'var(--green)'}"></div></div>
+    </div>`
+  ).join('');
+}
+
+// ── CORRELATION TABLE ─────────────────────────────────────────────────────────
+function addCorrelation(label, r) {
+  corrPairs = corrPairs.filter(p => p.label !== label);
+  corrPairs.push({ label, r });
+  const tbody = document.getElementById('corrTable');
+  tbody.innerHTML = corrPairs.map(p => {
+    const abs = Math.abs(p.r);
+    const cls = abs >= 0.8 ? 'strong' : abs >= 0.5 ? 'moderate' : 'weak';
+    const strength = abs >= 0.8 ? 'STRONG' : abs >= 0.5 ? 'MODERATE' : 'WEAK';
+    return `<tr>
+      <td>${p.label}</td>
+      <td class="corr-r ${cls}">${p.r.toFixed(3)}</td>
+      <td style="color:var(--dim2)">${strength}</td>
+      <td style="color:var(--green); font-size:0.58rem">DETECTED</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── SOURCE BADGES ─────────────────────────────────────────────────────────────
+function setSrcLive(id) {
+  const el = document.getElementById(id);
+  el.textContent = 'LIVE';
+  el.className = 'source-badge badge-live';
+}
+function setSrcCached(id) {
+  const el = document.getElementById(id);
+  el.textContent = 'CACHED';
+  el.className = 'source-badge badge-cached';
+}
+
+function fmtTs(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleTimeString('en-US', { hour12: false });
+}
+
+// ── PRIVACY METER ─────────────────────────────────────────────────────────────
+function updatePrivacyMeter(priv) {
+  const pct = Math.min(100, Math.max(0, (priv.remaining / 1.0) * 100));
+  document.getElementById('privacyBar').style.width = pct + '%';
+  document.getElementById('privacyBar').style.background =
+    pct > 60 ? 'var(--green)' : pct > 30 ? 'var(--gold)' : 'var(--red)';
+  document.getElementById('privacyPct').textContent = pct.toFixed(0) + '%';
+  document.getElementById('privacyQueries').textContent = priv.queries + ' queries';
+}
+
+// ── AGENT STATE ───────────────────────────────────────────────────────────────
+function setAgent(id, state) {
+  const el = document.getElementById(id);
+  el.textContent = state;
+  el.className = `agent-state ${state.toLowerCase().replace(/ /g,'_')}`;
+}
+
+// ── UPDATE SNAPSHOT ───────────────────────────────────────────────────────────
+function updateFromSnapshot(snap) {
+  document.getElementById('statRecords').textContent =
+    (snap.who.records + snap.cdc.records).toLocaleString();
+  document.getElementById('statCities').textContent =
+    (snap.nasa.cities + snap.noaa.stations);
+
+  // Source timestamps
+  if (snap.who.lastFetch)  { setSrcLive('srcWHO');  document.getElementById('tsWHO').textContent  = fmtTs(snap.who.lastFetch); }
+  if (snap.cdc.lastFetch)  { setSrcLive('srcCDC');  document.getElementById('tsCDC').textContent  = fmtTs(snap.cdc.lastFetch); }
+  if (snap.nasa.lastFetch) { setSrcLive('srcNASA'); document.getElementById('tsNASA').textContent = fmtTs(snap.nasa.lastFetch); }
+  if (snap.noaa.lastFetch) { setSrcLive('srcNOAA'); document.getElementById('tsNOAA').textContent = fmtTs(snap.noaa.lastFetch); }
+
+  // Privacy
+  if (snap.privacy) updatePrivacyMeter(snap.privacy);
+
+  // Alerts
+  if (snap.alerts?.length) renderAlerts(snap.alerts);
+}
+
+// ── DATA UPDATE HANDLER ───────────────────────────────────────────────────────
+function handleUpdate(update) {
+  const { source, type, data } = update;
+
+  if (source === 'WHO' && type === 'indicators') {
+    addFeed('WHO', ` Loaded ${Object.values(data).reduce((n, a) => n + a.length, 0)} country records across 6 indicators`);
+    setSrcLive('srcWHO');
+    renderIndicators(data);
+
+    // Count unique countries
+    const countries = new Set();
+    Object.values(data).forEach(arr => arr.forEach(r => countries.add(r.country)));
+    document.getElementById('statCountries').textContent = countries.size;
+    setAgent('agentWHO', 'processing');
+    setTimeout(() => setAgent('agentWHO', 'idle'), 2000);
+  }
+
+  if (source === 'CDC' && type === 'chronic') {
+    addFeed('CDC', ` ${data.length} chronic disease records loaded`);
+    setSrcLive('srcCDC');
+  }
+
+  if (source === 'NASA' && type === 'climate') {
+    const live = data.filter(c => c.source === 'NASA_POWER_LIVE').length;
+    addFeed('NASA', ` ${data.length} cities · ${live} live NASA POWER readings`);
+    setSrcLive('srcNASA');
+    setAgent('agentClimate', 'processing');
+
+    // Render city dots on world map
+    const riskData = window._lastRisk?.topRisk;
+    renderCityDots(data, riskData);
+
+    // Show climate data in feed
+    data.slice(0, 3).forEach(c => {
+      if (c.avgTempC != null) {
+        addFeed('NASA', ` ${c.city}: ${c.avgTempC.toFixed(1)}°C, ${c.avgHumidity?.toFixed(1)}% RH`);
+      }
+    });
+    setTimeout(() => setAgent('agentClimate', 'idle'), 2000);
+  }
+
+  if (source === 'NOAA' && type === 'observations') {
+    const stationList = Object.keys(data);
+    addFeed('NOAA', ` ${stationList.length} station observations: ${stationList.join(', ')}`);
+    setSrcLive('srcNOAA');
+  }
+
+  // Refresh snapshot
+  const snap = window.HealthIntelligencePlatform?.getSnapshot();
+  if (snap) updateFromSnapshot(snap);
+}
+
+// ── ALERT HANDLER ─────────────────────────────────────────────────────────────
+function handleAlert(alert) {
+  addFeed('ALERT', ` [${alert.severity}] ${alert.title} — ${alert.detail}`);
+  setAgent('agentWarn', 'processing');
+  setTimeout(() => setAgent('agentWarn', 'monitoring'), 1000);
+
+  const snap = window.HealthIntelligencePlatform?.getSnapshot();
+  if (snap?.alerts) renderAlerts(snap.alerts);
+
+  if (alert.type === 'CLIMATE_HEALTH_CORRELATION') {
+    addCorrelation(alert.title.replace('Climate-Health Correlation Detected: ', ''), alert.correlation);
+  }
+}
+
+// ── ACTION BUTTONS ────────────────────────────────────────────────────────────
+async function runEpidemiologyAnalysis() {
+  if (!initialised) { setInfo('Platform still initializing...'); return; }
+  setInfo('Running epidemiology analysis...');
+  setAgent('agentEpi', 'processing');
+
+  const result = await window.HealthIntelligencePlatform.analyzeDiseaseBurden('infantMortality');
+  if (result?.error) { setInfo('No data yet — wait for WHO load'); setAgent('agentEpi', 'idle'); return; }
+
+  addFeed('SYS', ` Epi analysis: ${result.sampleSize} countries · mean=${result.mean} infant mortality/1000`);
+  const panel = document.getElementById('burdenPanel');
+  panel.innerHTML = `
+    <div>Indicator: <span style="color:var(--blue)">${result.indicator}</span></div>
+    <div>Sample: <span style="color:var(--green)">${result.sampleSize} countries</span></div>
+    <div>Mean: <span style="color:var(--gold)">${result.mean}</span> /1000</div>
+    <div>Std Dev: <span style="color:var(--dim2)">${result.std}</span></div>
+    <div>90th pctile: <span style="color:var(--red)">${result.p90}</span></div>
+    <div style="margin-top:6px;color:var(--dim2)">High burden:</div>
+    ${(result.highBurdenCountries||[]).slice(0,3).map(c =>
+      `<div style="padding-left:8px">• ${c.country}: ${c.value?.toFixed(1)}</div>`
+    ).join('')}
+  `;
+  setAgent('agentEpi', 'idle');
+  setInfo('Epidemiology analysis complete');
+}
+
+async function runRiskAssessment() {
+  if (!initialised) { setInfo('Platform still initializing...'); return; }
+  setInfo('Running global risk assessment...');
+  setAgent('agentRisk', 'processing');
+
+  const result = window.HealthIntelligencePlatform.assessGlobalRisk();
+  if (!result?.totalCountries) { setInfo('No data yet — wait for WHO load'); setAgent('agentRisk', 'idle'); return; }
+
+  window._lastRisk = result;
+  addFeed('SYS', ` Risk scan: ${result.totalCountries} countries · HIGH=${result.highRisk} MEDIUM=${result.mediumRisk} LOW=${result.lowRisk}`);
+  renderRiskList(result.topRisk);
+
+  // Update city dots with new risk data
+  const cities = window.HealthIntelligencePlatform?.orchestrator?.data?.nasa?.cities;
+  if (cities?.length) renderCityDots(cities, result.topRisk);
+
+  setAgent('agentRisk', 'idle');
+  setInfo(`Risk scan: ${result.highRisk} high-risk, ${result.mediumRisk} medium-risk countries`);
+}
+
+function buildGWASCohort() {
+  if (!initialised) { setInfo('Platform still initializing...'); return; }
+  setAgent('agentEpi', 'processing');
+  const cohort = window.HealthIntelligencePlatform.buildCohort('lifeExpectancy');
+  if (!cohort.length) { setInfo('No WHO data yet'); setAgent('agentEpi', 'idle'); return; }
+
+  addFeed('SYS', ` Built GWAS cohort: ${cohort.length} samples from WHO life expectancy data`);
+  addFeed('SYS', ` Sample: ${cohort[0].country} phenotype=${cohort[0].phenotype.toFixed(3)} source=${cohort[0].source}`);
+  setAgent('agentEpi', 'idle');
+
+  // Offer to copy
+  const json = JSON.stringify(cohort.slice(0, 5), null, 2);
+  setInfo(`GWAS cohort: ${cohort.length} samples. Check console for data.`);
+  console.log('[HealthDashboard] GWAS Cohort (first 5):', JSON.parse(json));
+}
+
+function exportSnapshot() {
+  const snap = window.HealthIntelligencePlatform?.getSnapshot();
+  if (!snap) { setInfo('No data to export'); return; }
+  const blob = new Blob([JSON.stringify(snap, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `health-snapshot-${Date.now()}.json`;
+  a.click(); URL.revokeObjectURL(url);
+  setInfo('Snapshot exported as JSON');
+}
+
+function setInfo(msg) {
+  document.getElementById('actionInfo').textContent = msg;
+}
+
+// ── INIT OVERLAY ──────────────────────────────────────────────────────────────
+const initMsgs = [
+  'Establishing WHO GHO connection...',
+  'Initializing privacy protection module (ε=1.0)...',
+  'Connecting NASA POWER climate API...',
+  'Starting early warning engine...',
+  'Wiring NOAA weather stations...',
+  'Launching health agent pool...',
+  'Platform online.',
+];
+
+async function showInitSequence() {
+  const log = document.getElementById('initLog');
+  for (const msg of initMsgs) {
+    log.textContent = msg;
+    await new Promise(r => setTimeout(r, 600));
+  }
+}
+
+// ── MAIN ──────────────────────────────────────────────────────────────────────
+(async function main() {
+  // Run init sequence in parallel with actual init
+  showInitSequence();
+
+  try {
+    // Wire up platform
+    window.HealthIntelligencePlatform.onUpdate(handleUpdate);
+    window.HealthIntelligencePlatform.onAlert(handleAlert);
+
+    addFeed('SYS', ' Health Intelligence Platform starting...');
+    addFeed('SYS', ' Connecting: WHO GHO · CDC Open · NASA POWER · NOAA NWS');
+
+    // Boot
+    await window.HealthIntelligencePlatform.init();
+    initialised = true;
+
+    // Update system status
+    document.getElementById('systemDot').classList.add('live');
+    document.getElementById('systemStatus').textContent = 'ONLINE';
+
+    // Auto-run risk assessment after data loads
+    setTimeout(async () => {
+      addFeed('SYS', ' Auto-running initial risk assessment...');
+      await runRiskAssessment();
+    }, 3000);
+
+  } catch (err) {
+    addFeed('SYS', ` Init error: ${err.message}`);
+    console.error('[HealthDashboard] Init error:', err);
+  } finally {
+    // Hide init overlay
+    await new Promise(r => setTimeout(r, 3500));
+    const overlay = document.getElementById('initOverlay');
+    overlay.style.transition = 'opacity 0.8s';
+    overlay.style.opacity = '0';
+    setTimeout(() => overlay.remove(), 800);
+  }
+
+  // Poll snapshot every 30s for freshness
+  setInterval(() => {
+    const snap = window.HealthIntelligencePlatform?.getSnapshot();
+    if (snap) updateFromSnapshot(snap);
+  }, 30000);
+})();
+
+// ── MESH FUNCTIONS ────────────────────────────────────────────────────────────
+async function enableMeshCollection() {
+  if (!window.MeshCoordinator || !window.MeshHealthPlatform) {
+    setInfo('Mesh scripts not loaded yet...');
+    return;
+  }
+
+  // Grant consent + init
+  await window.MeshHealthPlatform.enableCollection('GLOBAL', ['symptoms', 'mental_health', 'environment']);
+  await window.MeshCoordinator.start();
+  await window.MeshHealthPlatform.init('GLOBAL');
+
+  // Wire mesh heartbeat to UI
+  window.MeshCoordinator.on(({ type, data }) => {
+    if (type === 'mesh:heartbeat') {
+      document.getElementById('meshPeers').textContent = data.peers;
+      document.getElementById('meshMode').textContent  = data.online ? 'ONLINE' : 'OFFLINE-MESH';
+      document.getElementById('meshMode').style.color  = data.online ? 'var(--green)' : 'var(--gold)';
+    }
+    if (type === 'mesh:ready') {
+      document.getElementById('meshNodeId').textContent = data.nodeId.slice(-6);
+      document.getElementById('meshSW').textContent     = 'serviceWorker' in navigator ? 'ACTIVE' : 'N/A';
+      document.getElementById('meshSW').style.color     = 'var(--green)';
+      addFeed('SYS', ` Mesh P2P online — node ${data.nodeId.slice(-6)}`);
+    }
+    if (type === 'mesh:offline') {
+      document.getElementById('meshMode').textContent = 'OFFLINE-MESH';
+      document.getElementById('meshMode').style.color = 'var(--gold)';
+      addFeed('SYS', ' Network offline — running on mesh only');
+    }
+    if (type === 'mesh:health-signal') {
+      addFeed('SYS', ` Mesh signal: ${data.signalType} = ${data.value} from peer ${data.nodeId}`);
+    }
+  });
+
+  // Show mesh bar
+  document.getElementById('meshBar').style.display = 'flex';
+  setInfo('Mesh P2P active — sharing anonymous health signals with peers');
+  addFeed('SYS', ' Mesh P2P enabled — WebRTC peer discovery starting...');
+}
+
+async function logTestSymptom() {
+  if (!window.MeshHealthPlatform || !window.ConsentManager?.hasConsent('symptoms')) {
+    setInfo('Join mesh first (click 📡 JOIN MESH)');
+    return;
+  }
+  const signal = await window.HealthSignalCollector.logSymptoms(['COUGH', 'FATIGUE'], 4);
+  if (signal) {
+    addFeed('SYS', ` Symptom logged: score=${signal.score} category=${signal.category} (noised, anonymous)`);
+    setInfo('Symptom signal logged + shared with mesh peers');
+  }
+}
+
+async function logTestMentalHealth() {
+  if (!window.MeshHealthPlatform || !window.ConsentManager?.hasConsent('mental_health')) {
+    setInfo('Join mesh first (click 📡 JOIN MESH)');
+    return;
+  }
+  const signal = await window.HealthSignalCollector.logMentalHealth('LOW_MOOD', 5);
+  if (signal) {
+    addFeed('SYS', ` Mental health signal: score=${signal.score} (noised, anonymous, local only)`);
+    setInfo('Mental health signal logged + shared with mesh peers');
+  }
+}
+</script>
+</body>
+</html>

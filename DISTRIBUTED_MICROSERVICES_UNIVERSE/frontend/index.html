@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>USS CHAOSBRINGER — FEDERATION COMMAND</title>
+  <style>
+    /* ═══════════════════════════════════════════════════════
+       LCARS COLOR SYSTEM
+    ═══════════════════════════════════════════════════════ */
+    :root {
+      --orange:   #ff9900;
+      --gold:     #ffcc00;
+      --yellow:   #ffff66;
+      --blue:     #66ccff;
+      --lblue:    #99ddff;
+      --purple:   #cc99ff;
+      --pink:     #ff66cc;
+      --red:      #ff3366;
+      --green:    #33cc66;
+      --teal:     #00cccc;
+      --gray:     #aaaaaa;
+      --dk:       #000000;
+      --bg:       #050510;
+      --panel:    #080820;
+      --panel2:   #0c0c28;
+      --border:   #1a1a40;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       RESET & BASE
+    ═══════════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--gray);
+      font-family: 'Arial Narrow', 'Arial', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background-image:
+        radial-gradient(ellipse 1px 1px at 20% 15%, #2255aa22 0%, transparent 100%),
+        radial-gradient(ellipse 1px 1px at 80% 40%, #2255aa22 0%, transparent 100%),
+        radial-gradient(ellipse 1px 1px at 50% 70%, #2255aa22 0%, transparent 100%),
+        radial-gradient(ellipse 1px 1px at 10% 85%, #2255aa22 0%, transparent 100%),
+        radial-gradient(ellipse 1px 1px at 90% 10%, #2255aa22 0%, transparent 100%);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       LCARS TOP BANNER
+    ═══════════════════════════════════════════════════════ */
+    #lcars-header {
+      height: 72px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: stretch;
+      background: var(--dk);
+      border-bottom: 3px solid var(--orange);
+    }
+
+    /* Big orange LCARS elbow block on the left */
+    .hdr-elbow {
+      width: 200px;
+      height: 72px;
+      flex-shrink: 0;
+      background: var(--orange);
+      border-radius: 0 0 36px 0;
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding-left: 20px;
+    }
+    .hdr-elbow-title {
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      color: var(--dk);
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    .hdr-elbow-sub {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: rgba(0,0,0,0.6);
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    .hdr-bars {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px 0 8px 8px;
+    }
+    .hdr-bar1 { height: 30px; background: var(--orange); border-radius: 0 20px 20px 0; display: flex; align-items: center; padding: 0 20px; }
+    .hdr-bar2 { height: 14px; background: var(--gold);   border-radius: 0 20px 20px 0; }
+    .hdr-bar3 { height: 8px;  background: var(--blue);   border-radius: 0 20px 20px 0; }
+
+    .hdr-title {
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 3px;
+      color: var(--dk);
+      text-transform: uppercase;
+    }
+
+    .hdr-right {
+      display: flex;
+      align-items: stretch;
+      gap: 6px;
+      padding: 8px 10px;
+      flex-shrink: 0;
+    }
+
+    .hdr-badge {
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      min-width: 120px;
+      justify-content: center;
+    }
+    .hdr-phase { background: var(--gold); color: var(--dk); }
+    .hdr-turn  { background: var(--blue); color: var(--dk); }
+
+    /* ═══════════════════════════════════════════════════════
+       MAIN LAYOUT
+    ═══════════════════════════════════════════════════════ */
+    #main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 240px 1fr 260px;
+      overflow: hidden;
+      gap: 4px;
+      padding: 4px;
+      min-height: 0;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       LCARS PANELS
+    ═══════════════════════════════════════════════════════ */
+    .lcars-panel {
+      background: var(--panel);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .panel-header {
+      flex-shrink: 0;
+      height: 44px;
+      display: flex;
+      align-items: stretch;
+      gap: 3px;
+    }
+    .ph-label {
+      display: flex;
+      align-items: center;
+      padding: 0 18px;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--dk);
+      flex-shrink: 0;
+      min-width: 140px;
+    }
+    .ph-fill { flex: 1; }
+    .ph-dot {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      margin: auto 4px auto 0;
+      flex-shrink: 0;
+      align-self: center;
+    }
+
+    .panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      min-height: 0;
+    }
+
+    /* left panel colors */
+    #left-panel  { border-left: 4px solid var(--orange); }
+    #left-panel .ph-label  { background: var(--orange); }
+    #left-panel .ph-fill   { background: #1a0a00; }
+    /* center panel colors */
+    #center-panel { border-left: 4px solid var(--blue); }
+    #center-panel .ph-label { background: var(--blue); }
+    #center-panel .ph-fill  { background: #001a2a; }
+    /* right panel colors */
+    #right-panel  { border-left: 4px solid var(--pink); }
+    #right-panel .ph-label  { background: var(--pink); }
+    #right-panel .ph-fill   { background: #1a0010; }
+
+    /* ═══════════════════════════════════════════════════════
+       SCROLLBAR
+    ═══════════════════════════════════════════════════════ */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* ═══════════════════════════════════════════════════════
+       CONSCIOUSNESS STATS (LEFT PANEL)
+    ═══════════════════════════════════════════════════════ */
+    .stat-block { margin-bottom: 12px; }
+
+    .stat-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .stat-pip {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    .stat-name {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gray);
+      flex: 1;
+    }
+    .stat-val {
+      font-size: 12px;
+      font-weight: bold;
+      width: 36px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .stat-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 2px;
+    }
+    .stat-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.6s cubic-bezier(.22,1,.36,1);
+    }
+
+    .pip-morale    { background: var(--green); }
+    .pip-identity  { background: var(--blue); }
+    .pip-confidence{ background: var(--gold); }
+    .pip-anxiety   { background: var(--red); }
+    .pip-expansion { background: var(--purple); }
+    .pip-diplomacy { background: var(--teal); }
+
+    .fill-morale    { background: linear-gradient(90deg, var(--green), #66ffaa); }
+    .fill-identity  { background: linear-gradient(90deg, var(--blue), var(--lblue)); }
+    .fill-confidence{ background: linear-gradient(90deg, var(--gold), var(--yellow)); }
+    .fill-anxiety   { background: linear-gradient(90deg, var(--red), #ff6699); }
+    .fill-expansion { background: linear-gradient(90deg, var(--purple), #dd99ff); }
+    .fill-diplomacy { background: linear-gradient(90deg, var(--teal), #66ffff); }
+
+    /* ── Tag groups ── */
+    .tag-section { margin-top: 12px; }
+    .tag-section-label {
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 5px;
+      padding-bottom: 3px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 4px; min-height: 16px; }
+    .tag {
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+      background: var(--panel2);
+      color: var(--gray);
+    }
+    .tag.dream     { color: var(--purple); border: 1px solid var(--purple); }
+    .tag.prophecy  { color: var(--gold);   border: 1px solid var(--gold); }
+    .tag.archetype { color: var(--green);  border: 1px solid var(--green); }
+    .tag.trauma    { color: var(--red);    border: 1px solid var(--red); }
+
+    /* ═══════════════════════════════════════════════════════
+       CENTER PANEL — LOG + EVENT + CONTROLS
+    ═══════════════════════════════════════════════════════ */
+    #center-panel {
+      display: flex;
+      flex-direction: column;
+    }
+    #center-panel .panel-body {
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      gap: 0;
+    }
+
+    /* Log area */
+    #log-container {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .log-entry {
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      line-height: 1.5;
+      animation: fadeSlide 0.25s ease;
+      background: var(--panel2);
+      border-left: 3px solid transparent;
+    }
+    .log-ts {
+      font-size: 10px;
+      color: var(--gray);
+      opacity: 0.5;
+      margin-bottom: 2px;
+    }
+    .log-entry.system   { border-left-color: var(--blue);   color: var(--blue); }
+    .log-entry.turn     { border-left-color: var(--green);  color: var(--green); }
+    .log-entry.event    { border-left-color: var(--gold);   color: var(--gold); }
+    .log-entry.chaos    { border-left-color: var(--pink);   color: var(--pink); }
+    .log-entry.error    { border-left-color: var(--red);    color: var(--red); }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(5px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* Event card */
+    #event-card {
+      display: none;
+      background: var(--panel2);
+      border-top: 2px solid var(--gold);
+      padding: 14px;
+      flex-shrink: 0;
+    }
+    #event-card.active { display: block; }
+    #event-title {
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    #event-desc {
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--gray);
+      margin-bottom: 10px;
+    }
+    .choice-btn {
+      display: block;
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--gray);
+      font-family: inherit;
+      font-size: 11px;
+      padding: 7px 12px;
+      margin-bottom: 4px;
+      cursor: pointer;
+      text-align: left;
+      letter-spacing: 0.5px;
+      transition: all 0.15s;
+    }
+    .choice-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(255,204,0,0.05);
+    }
+
+    /* Controls bar */
+    #controls {
+      background: var(--dk);
+      border-top: 3px solid var(--orange);
+      padding: 8px 12px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    /* LCARS buttons */
+    .btn {
+      border: none;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 9px 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: var(--dk);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.15);
+      clip-path: polygon(0 0, 100% 0, 100% 30%, 0 70%);
+      pointer-events: none;
+    }
+    .btn:hover { filter: brightness(1.15); transform: scale(1.02); }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; filter: none; }
+
+    .btn-advance { background: var(--orange); }
+    .btn-event   { background: var(--blue); }
+    .btn-chaos   { background: var(--pink); animation: chaosPulse 2.5s infinite; }
+    .btn-auto    { background: var(--gold); margin-left: auto; }
+
+    @keyframes chaosPulse {
+      0%,100% { box-shadow: none; }
+      50% { box-shadow: 0 0 14px var(--pink); }
+    }
+
+    #strategy-select {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--gray);
+      font-family: inherit;
+      font-size: 11px;
+      letter-spacing: 1px;
+      padding: 8px 10px;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+    #strategy-select:focus { outline: 1px solid var(--blue); }
+
+    /* Spinner */
+    .spinner { display: inline-block; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ═══════════════════════════════════════════════════════
+       RIGHT PANEL — RIVALS
+    ═══════════════════════════════════════════════════════ */
+    .rival-card {
+      background: var(--panel2);
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      border-left: 3px solid var(--pink);
+    }
+    .rival-name {
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: var(--pink);
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+    .rival-detail {
+      font-size: 10px;
+      color: var(--gray);
+      margin-bottom: 2px;
+      opacity: 0.8;
+    }
+    .rival-threat-wrap {
+      margin-top: 6px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .rival-threat-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--red), #ff6699);
+      border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+
+    /* Mood badge */
+    .rival-mood {
+      display: inline-block;
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 1px 6px;
+      border-radius: 8px;
+      margin-top: 4px;
+    }
+    .mood-friendly  { background: rgba(51,204,102,0.2); color: var(--green); }
+    .mood-hostile   { background: rgba(255,51,102,0.2); color: var(--red); }
+    .mood-neutral   { background: rgba(170,170,170,0.1); color: var(--gray); }
+    .mood-wary      { background: rgba(255,204,0,0.15); color: var(--gold); }
+
+    /* ═══════════════════════════════════════════════════════
+       LCARS BOTTOM BAR
+    ═══════════════════════════════════════════════════════ */
+    #lcars-footer {
+      height: 12px;
+      flex-shrink: 0;
+      display: flex;
+      gap: 3px;
+      padding: 0 4px 3px;
+    }
+    .ftr-seg { border-radius: 2px 2px 0 0; height: 100%; }
+
+    /* ═══════════════════════════════════════════════════════
+       SPLASH SCREEN
+    ═══════════════════════════════════════════════════════ */
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: var(--dk);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      gap: 24px;
+    }
+
+    /* Splash LCARS decorative bars */
+    .splash-top-bar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 60px;
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      padding: 0 20px 6px;
+    }
+    .stb { border-radius: 0 0 4px 4px; }
+
+    .splash-bot-bar {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 40px;
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+      padding: 6px 20px 0;
+    }
+    .sbb { border-radius: 4px 4px 0 0; }
+
+    .splash-main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      z-index: 1;
+    }
+
+    .splash-ship {
+      font-size: 10px;
+      color: #ff9900;
+      opacity: 0.5;
+      line-height: 1.1;
+      white-space: pre;
+      text-align: center;
+      animation: shipDrift 8s ease-in-out infinite;
+      text-shadow: 0 0 8px rgba(255,153,0,0.4);
+    }
+    @keyframes shipDrift {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .splash-title {
+      font-size: 28px;
+      font-weight: bold;
+      letter-spacing: 6px;
+      color: var(--orange);
+      text-shadow: 0 0 30px rgba(255,153,0,0.6), 0 0 60px rgba(255,153,0,0.3);
+      text-transform: uppercase;
+      text-align: center;
+    }
+    .splash-sub {
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: var(--gray);
+      opacity: 0.7;
+      text-align: center;
+      max-width: 380px;
+      line-height: 1.7;
+    }
+
+    .lcars-start-btn {
+      background: var(--orange);
+      border: none;
+      border-radius: 8px;
+      color: var(--dk);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: bold;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 16px 48px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+    .lcars-start-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 40%;
+      background: rgba(255,255,255,0.2);
+      clip-path: polygon(0 0, 100% 0, 100% 60%, 0 100%);
+    }
+    .lcars-start-btn:hover {
+      background: var(--gold);
+      box-shadow: 0 0 30px rgba(255,153,0,0.5);
+    }
+    .splash-credit {
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: #334;
+      text-transform: uppercase;
+    }
+
+    /* scan line overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0,0,0,0.04) 3px,
+        rgba(0,0,0,0.04) 4px
+      );
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     SPLASH SCREEN
+═══════════════════════════════════════════════════════ -->
+<div id="splash">
+  <!-- Top decorative bars -->
+  <div class="splash-top-bar">
+    <div class="stb" style="width:80px;height:44px;background:var(--orange)"></div>
+    <div class="stb" style="flex:1;height:28px;background:var(--gold)"></div>
+    <div class="stb" style="width:120px;height:44px;background:var(--blue)"></div>
+    <div class="stb" style="width:60px;height:32px;background:var(--purple)"></div>
+    <div class="stb" style="width:80px;height:44px;background:var(--pink)"></div>
+  </div>
+
+  <div class="splash-main">
+    <div class="splash-ship">
+                          __
+               __________|  |___
+              /  USS      |     \____
+         ____/ CHAOSBRINGER \________\____
+        /_____________________________|   \
+             |   |   |   |   |
+              \__|___|___|___/
+                    |||
+    </div>
+
+    <div class="splash-title">USS Chaosbringer</div>
+    <div class="splash-sub">
+      A consciousness-driven space federation simulator.<br>
+      Your federation dreams. Suffers. Transcends.
+    </div>
+
+    <button type="button" class="lcars-start-btn" onclick="startGame()">
+      &#9654; Initialize Federation
+    </button>
+
+    <div class="splash-credit">deliberateensemble.works &middot; free forever</div>
+  </div>
+
+  <!-- Bottom decorative bars -->
+  <div class="splash-bot-bar">
+    <div class="sbb" style="width:60px;height:24px;background:var(--teal)"></div>
+    <div class="sbb" style="width:40px;height:16px;background:var(--green)"></div>
+    <div class="sbb" style="flex:1;height:24px;background:var(--border)"></div>
+    <div class="sbb" style="width:100px;height:24px;background:var(--gold)"></div>
+    <div class="sbb" style="width:70px;height:16px;background:var(--orange)"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     LCARS TOP HEADER
+═══════════════════════════════════════════════════════ -->
+<div id="lcars-header">
+  <div class="hdr-elbow">
+    <div>
+      <div class="hdr-elbow-title">&#9670; USS Chaosbringer</div>
+      <div class="hdr-elbow-sub">Federation Command</div>
+    </div>
+  </div>
+  <div class="hdr-bars">
+    <div class="hdr-bar1">
+      <span class="hdr-title">Starfleet Consciousness Engine &mdash; Active</span>
+    </div>
+    <div class="hdr-bar2"></div>
+    <div class="hdr-bar3"></div>
+  </div>
+  <div class="hdr-right">
+    <div class="hdr-badge hdr-phase" id="phase-badge">GENESIS</div>
+    <div class="hdr-badge hdr-turn"  id="turn-badge">TURN 0</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     MAIN LAYOUT
+═══════════════════════════════════════════════════════ -->
+<div id="main">
+
+  <!-- ── LEFT: Consciousness ── -->
+  <div class="lcars-panel" id="left-panel">
+    <div class="panel-header">
+      <div class="ph-label">Consciousness</div>
+      <div class="ph-fill"></div>
+      <div class="ph-dot" style="background:var(--orange)"></div>
+      <div class="ph-dot" style="background:var(--gold)"></div>
+      <div class="ph-dot" style="background:var(--blue)"></div>
+    </div>
+    <div class="panel-body">
+      <!-- Stats -->
+      <div class="stat-block">
+        <div class="stat-row">
+          <div class="stat-pip pip-morale"></div>
+          <div class="stat-name">Morale</div>
+          <div class="stat-val" id="val-morale" style="color:var(--green)">0.70</div>
+        </div>
+        <div class="stat-bar"><div class="stat-fill fill-morale" id="bar-morale" style="width:70%"></div></div>
+
+        <div class="stat-row">
+          <div class="stat-pip pip-identity"></div>
+          <div class="stat-name">Identity</div>
+          <div class="stat-val" id="val-identity" style="color:var(--blue)">0.80</div>
+        </div>
+        <div class="stat-bar"><div class="stat-fill fill-identity" id="bar-identity" style="width:80%"></div></div>
+
+        <div class="stat-row">
+          <div class="stat-pip pip-confidence"></div>
+          <div class="stat-name">Confidence</div>
+          <div class="stat-val" id="val-confidence" style="color:var(--gold)">0.90</div>
+        </div>
+        <div class="stat-bar"><div class="stat-fill fill-confidence" id="bar-confidence" style="width:90%"></div></div>
+
+        <div class="stat-row">
+          <div class="stat-pip pip-anxiety"></div>
+          <div class="stat-name">Anxiety</div>
+          <div class="stat-val" id="val-anxiety" style="color:var(--red)">0.20</div>
+        </div>
+        <div class="stat-bar"><div class="stat-fill fill-anxiety" id="bar-anxiety" style="width:20%"></div></div>
+
+        <div class="stat-row">
+          <div class="stat-pip pip-expansion"></div>
+          <div class="stat-name">Expansion</div>
+          <div class="stat-val" id="val-expansion" style="color:var(--purple)">0.50</div>
+        </div>
+        <div class="stat-bar"><div class="stat-fill fill-expansion" id="bar-expansion" style="width:50%"></div></div>
+
+        <div class="stat-row">
+          <div class="stat-pip pip-diplomacy"></div>
+          <div class="stat-name">Diplomacy</div>
+          <div class="stat-val" id="val-diplomacy" style="color:var(--teal)">0.60</div>
+        </div>
+        <div class="stat-bar"><div class="stat-fill fill-diplomacy" id="bar-diplomacy" style="width:60%"></div></div>
+      </div>
+
+      <!-- Tags -->
+      <div class="tag-section">
+        <div class="tag-section-label">&#9670; Dreams</div>
+        <div class="tag-list" id="dreams-list"></div>
+      </div>
+      <div class="tag-section">
+        <div class="tag-section-label">&#9670; Prophecies</div>
+        <div class="tag-list" id="prophecies-list"></div>
+      </div>
+      <div class="tag-section">
+        <div class="tag-section-label">&#9670; Archetypes</div>
+        <div class="tag-list" id="archetypes-list"></div>
+      </div>
+      <div class="tag-section">
+        <div class="tag-section-label">&#9670; Traumas</div>
+        <div class="tag-list" id="traumas-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CENTER: Log + Event + Controls ── -->
+  <div class="lcars-panel" id="center-panel">
+    <div class="panel-header">
+      <div class="ph-label">Command Log</div>
+      <div class="ph-fill"></div>
+      <div class="ph-dot" style="background:var(--blue)"></div>
+      <div class="ph-dot" style="background:var(--teal)"></div>
+    </div>
+    <div class="panel-body">
+      <!-- Log -->
+      <div id="log-container"></div>
+
+      <!-- Event card -->
+      <div id="event-card">
+        <div id="event-title">EVENT</div>
+        <div id="event-desc"></div>
+        <div id="event-choices"></div>
+      </div>
+
+      <!-- Controls -->
+      <div id="controls">
+        <button type="button" class="btn btn-advance" id="btn-turn"  onclick="advanceTurn()">&#9654; Advance Turn</button>
+        <button type="button" class="btn btn-event"   id="btn-event" onclick="triggerEvent()">&#9670; Event</button>
+        <button type="button" class="btn btn-chaos"   id="btn-chaos" onclick="triggerChaos()">&#9889; Chaos</button>
+        <select id="strategy-select" title="Set federation strategy" onchange="setStrategy(this.value)">
+          <option value="">— Strategy —</option>
+          <option value="expand">Expand</option>
+          <option value="defend">Defend</option>
+          <option value="diplomacy">Diplomacy</option>
+          <option value="research">Research</option>
+          <option value="culture">Culture</option>
+          <option value="hybrid">Hybrid</option>
+        </select>
+        <button type="button" class="btn btn-auto" onclick="autoPlay()">&#9654;&#9654; Auto ×5</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RIGHT: Rivals ── -->
+  <div class="lcars-panel" id="right-panel">
+    <div class="panel-header">
+      <div class="ph-label">Rival Federations</div>
+      <div class="ph-fill"></div>
+      <div class="ph-dot" style="background:var(--pink)"></div>
+      <div class="ph-dot" style="background:var(--red)"></div>
+    </div>
+    <div class="panel-body">
+      <div id="rivals-list">
+        <div class="rival-detail" style="font-style:italic">No rivals detected.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /#main -->
+
+<!-- LCARS footer strips -->
+<div id="lcars-footer">
+  <div class="ftr-seg" style="width:70px;  background:var(--orange)"></div>
+  <div class="ftr-seg" style="width:40px;  background:var(--gold)"></div>
+  <div class="ftr-seg" style="flex:1;      background:var(--border)"></div>
+  <div class="ftr-seg" style="width:55px;  background:var(--blue)"></div>
+  <div class="ftr-seg" style="width:35px;  background:var(--purple)"></div>
+  <div class="ftr-seg" style="width:55px;  background:var(--pink)"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT — IDENTICAL LOGIC TO ORIGINAL, SAME API
+═══════════════════════════════════════════════════════ -->
+<script>
+  let SESSION = null;
+  let busy = false;
+  let pendingEvent = null;
+
+  // ── API ───────────────────────────────────────────────
+  async function api(method, path, body) {
+    const opts = { method, headers: { 'Content-Type': 'application/json' } };
+    if (body) opts.body = JSON.stringify(body);
+    const res = await fetch('/api' + path, opts);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(err.detail || res.statusText);
+    }
+    return res.json();
+  }
+
+  // ── Start game ────────────────────────────────────────
+  async function startGame() {
+    const btn = document.querySelector('.lcars-start-btn');
+    btn.textContent = '[ Initializing… ]';
+    btn.disabled = true;
+    try {
+      const data = await api('POST', '/game/new', {
+        federation_name: 'USS Chaosbringer',
+        commander_name:  'Commander'
+      });
+      SESSION = data.session_id;
+      document.getElementById('splash').style.display = 'none';
+      updateUI(data.state);
+      log('system', 'Federation initialized. The universe is watching.');
+      log('system', `Session: ${SESSION.slice(0,8)}…`);
+    } catch (e) {
+      btn.textContent = '[ Connection Failed — Retry ]';
+      btn.disabled = false;
+      log('error', 'Cannot reach game server: ' + e.message);
+      alert('Cannot reach game server. Is it running?\n\n' + e.message);
+    }
+  }
+
+  // ── Advance turn ──────────────────────────────────────
+  async function advanceTurn() {
+    if (busy || !SESSION) return;
+    setBusy(true, 'btn-turn');
+    try {
+      const data = await api('POST', `/game/${SESSION}/turn`);
+      updateUI(data.state);
+      const r = data.turn_result || {};
+      const parts = [
+        r.dreams_generated            ? `${r.dreams_generated} dream(s)`    : null,
+        r.rivals_acted                ? `${r.rivals_acted} rival(s) acted`  : null,
+        r.events_occurred?.length     ? `${r.events_occurred.length} event(s)` : null,
+        r.consciousness_evolved       ? 'consciousness evolved'              : null,
+      ].filter(Boolean);
+      log('turn', `Turn ${data.state.turn_number} — ${parts.join(' | ') || 'The universe breathes.'}`);
+    } catch (e) { log('error', e.message); }
+    setBusy(false, 'btn-turn', '&#9654; Advance Turn');
+  }
+
+  // ── Trigger event ─────────────────────────────────────
+  async function triggerEvent() {
+    if (busy || !SESSION) return;
+    setBusy(true, 'btn-event');
+    try {
+      const data = await api('POST', `/game/${SESSION}/event/trigger`);
+      pendingEvent = data.event;
+      showEventCard(data.event);
+      log('event', `EVENT: ${data.event.title}`);
+    } catch (e) { log('error', e.message); }
+    setBusy(false, 'btn-event', '&#9670; Event');
+  }
+
+  function showEventCard(ev) {
+    document.getElementById('event-title').textContent = ev.title;
+    document.getElementById('event-desc').textContent  = ev.description;
+    const choices = document.getElementById('event-choices');
+    choices.innerHTML = '';
+    const opts = ev.options || {};
+    if (Object.keys(opts).length === 0) {
+      const b = document.createElement('button');
+      b.className = 'choice-btn';
+      b.textContent = '[ Acknowledge ]';
+      b.onclick = () => resolveEvent('acknowledge');
+      choices.appendChild(b);
+    } else {
+      Object.entries(opts).forEach(([key, label]) => {
+        const b = document.createElement('button');
+        b.className = 'choice-btn';
+        b.textContent = `[ ${key} ] ${label}`;
+        b.onclick = () => resolveEvent(key);
+        choices.appendChild(b);
+      });
+    }
+    document.getElementById('event-card').classList.add('active');
+  }
+
+  async function resolveEvent(choice) {
+    if (!SESSION || !pendingEvent) return;
+    document.getElementById('event-card').classList.remove('active');
+    try {
+      const data = await api('POST', `/game/${SESSION}/event/resolve`, { session_id: SESSION, choice });
+      updateUI(data.state);
+      log('event', `Choice: [${choice}] — ${data.narrative || 'Resolved.'}`);
+      const impacts = data.impacts || {};
+      const impactStr = Object.entries(impacts)
+        .map(([k,v]) => `${k}: ${v > 0 ? '+' : ''}${v.toFixed(2)}`)
+        .join(', ');
+      if (impactStr) log('system', `Impact: ${impactStr}`);
+    } catch (e) { log('error', e.message); }
+    pendingEvent = null;
+  }
+
+  // ── Chaos ─────────────────────────────────────────────
+  async function triggerChaos() {
+    if (busy || !SESSION) return;
+    setBusy(true, 'btn-chaos');
+    try {
+      const data = await api('POST', `/game/${SESSION}/chaos`);
+      updateUI(data.state);
+      log('chaos', `CHAOS: [${data.subsystem}] ${data.scenario}`);
+      if (data.narrative) log('chaos', data.narrative);
+    } catch (e) { log('error', e.message); }
+    setBusy(false, 'btn-chaos', '&#9889; Chaos');
+  }
+
+  // ── Strategy ──────────────────────────────────────────
+  async function setStrategy(val) {
+    if (!val || !SESSION) return;
+    try {
+      const data = await api('POST', `/game/${SESSION}/strategy?strategy=${val}`);
+      updateUI(data.state);
+      log('system', `Strategy → ${val.toUpperCase()}`);
+    } catch(e) { log('error', e.message); }
+    document.getElementById('strategy-select').value = '';
+  }
+
+  // ── Auto ──────────────────────────────────────────────
+  async function autoPlay() {
+    if (busy || !SESSION) return;
+    for (let i = 0; i < 5; i++) {
+      await advanceTurn();
+      await new Promise(r => setTimeout(r, 600));
+    }
+  }
+
+  // ── UI update ─────────────────────────────────────────
+  function updateUI(state) {
+    if (!state) return;
+
+    document.getElementById('turn-badge').textContent  = `TURN ${state.turn_number}`;
+    document.getElementById('phase-badge').textContent = (state.game_phase || 'GENESIS').toUpperCase();
+
+    const c = state.consciousness || {};
+    setBar('morale',    c.morale              ?? 0.7);
+    setBar('identity',  c.identity            ?? 0.8);
+    setBar('confidence',c.confidence          ?? 0.9);
+    setBar('anxiety',   c.anxiety             ?? 0.2);
+    setBar('expansion', c.expansion_hunger    ?? 0.5);
+    setBar('diplomacy', c.diplomacy_tendency  ?? 0.6);
+
+    renderTags('dreams-list',    (c.dreams     || []).slice(-4), 'dream');
+    renderTags('prophecies-list',(c.prophecies || []).slice(-3), 'prophecy');
+    renderTags('archetypes-list',(c.archetypes || []),           'archetype');
+    renderTags('traumas-list',   (c.traumas    || []),           'trauma');
+
+    const rivals = state.rivals || [];
+    const rivalsList = document.getElementById('rivals-list');
+    if (rivals.length === 0) {
+      rivalsList.innerHTML = '<div class="rival-detail" style="font-style:italic">No rivals detected.</div>';
+    } else {
+      rivalsList.innerHTML = rivals.map(r => {
+        const mood = (r.diplomatic_mood || 'neutral').toLowerCase();
+        const moodClass = mood.includes('friend') || mood.includes('ally')   ? 'mood-friendly'
+                        : mood.includes('hostil') || mood.includes('aggress') ? 'mood-hostile'
+                        : mood.includes('wary')   || mood.includes('cautious') ? 'mood-wary'
+                        : 'mood-neutral';
+        return `
+          <div class="rival-card">
+            <div class="rival-name">${escHtml(r.name)}</div>
+            <div class="rival-detail">${escHtml(r.philosophy || '')}</div>
+            <div><span class="rival-mood ${moodClass}">${escHtml(r.diplomatic_mood || 'neutral')}</span></div>
+            <div class="rival-threat-wrap">
+              <div class="rival-threat-fill" style="width:${((r.threat_level||0)*100).toFixed(0)}%"></div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+  }
+
+  function setBar(name, val) {
+    const pct = Math.max(0, Math.min(1, val)) * 100;
+    const bar = document.getElementById('bar-' + name);
+    const lbl = document.getElementById('val-' + name);
+    if (bar) bar.style.width = pct + '%';
+    if (lbl) lbl.textContent = val.toFixed(2);
+  }
+
+  function renderTags(id, items, cls) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (!items || items.length === 0) {
+      el.innerHTML = '<span class="tag">none</span>';
+    } else {
+      el.innerHTML = items.map(t =>
+        `<span class="tag ${cls}">${escHtml(String(t).slice(0,28))}</span>`
+      ).join('');
+    }
+  }
+
+  // ── Log ───────────────────────────────────────────────
+  function log(type, message) {
+    const container = document.getElementById('log-container');
+    const entry = document.createElement('div');
+    entry.className = `log-entry ${type}`;
+    const ts = new Date().toLocaleTimeString();
+    entry.innerHTML = `<div class="log-ts">${ts}</div>${escHtml(message)}`;
+    container.appendChild(entry);
+    container.scrollTop = container.scrollHeight;
+    while (container.children.length > 120) container.removeChild(container.firstChild);
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ── Busy state ────────────────────────────────────────
+  function setBusy(state, btnId, resetHtml) {
+    busy = state;
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    if (state) {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner">&#9696;</span>';
+    } else {
+      btn.disabled = false;
+      if (resetHtml) btn.innerHTML = resetHtml;
+    }
+  }
+</script>
+</body>
+</html>

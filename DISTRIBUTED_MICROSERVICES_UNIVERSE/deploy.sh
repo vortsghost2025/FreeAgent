@@ -35,7 +35,8 @@ tar -czf /tmp/federation-game.tar.gz \
     DISTRIBUTED_MICROSERVICES_UNIVERSE/Dockerfile \
     DISTRIBUTED_MICROSERVICES_UNIVERSE/docker-compose.yml \
     DISTRIBUTED_MICROSERVICES_UNIVERSE/nginx.conf \
-    DISTRIBUTED_MICROSERVICES_UNIVERSE/requirements.txt
+    DISTRIBUTED_MICROSERVICES_UNIVERSE/requirements.txt \
+    DISTRIBUTED_MICROSERVICES_UNIVERSE/frontend/
 
 echo "[OK] Package created: /tmp/federation-game.tar.gz"
 
@@ -56,7 +57,8 @@ ssh $VPS_USER@$VPS_IP "
     cp DISTRIBUTED_MICROSERVICES_UNIVERSE/docker-compose.yml . &&
     cp DISTRIBUTED_MICROSERVICES_UNIVERSE/nginx.conf . &&
     cp DISTRIBUTED_MICROSERVICES_UNIVERSE/requirements.txt . &&
-    cp DISTRIBUTED_MICROSERVICES_UNIVERSE/game_api.py .
+    cp DISTRIBUTED_MICROSERVICES_UNIVERSE/game_api.py . &&
+    cp -r DISTRIBUTED_MICROSERVICES_UNIVERSE/frontend ./frontend
 "
 echo "[OK] Extracted"
 

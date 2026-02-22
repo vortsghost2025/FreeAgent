@@ -8,6 +8,84 @@
  * - Mitigation strategy comparison
  */
 
+// ============================================================================
+// NOAA REAL DATA BRIDGE
+// Fetches live observations from api.weather.gov (no API key required)
+// Falls back to synthetic data if API is unavailable
+// ============================================================================
+
+const NOAA_STATIONS = [
+  { id: 'KORD', name: 'Chicago O\'Hare',    lat: 41.98, lon: -87.90, region: 'Great Lakes' },
+  { id: 'KLAX', name: 'Los Angeles',         lat: 33.94, lon: -118.40, region: 'West Coast' },
+  { id: 'KJFK', name: 'New York JFK',        lat: 40.63, lon: -73.78, region: 'Northeast' },
+  { id: 'KIAH', name: 'Houston Intercontinental', lat: 29.98, lon: -95.34, region: 'Gulf Coast' },
+  { id: 'KSEA', name: 'Seattle-Tacoma',      lat: 47.44, lon: -122.31, region: 'Pacific Northwest' },
+  { id: 'KDEN', name: 'Denver',              lat: 39.86, lon: -104.67, region: 'Rocky Mountain' },
+  { id: 'KMIA', name: 'Miami',               lat: 25.79, lon: -80.32, region: 'Southeast' },
+  { id: 'KBOS', name: 'Boston Logan',        lat: 42.36, lon: -71.01, region: 'New England' },
+];
+
+async function fetchNOAAObservation(stationId) {
+  try {
+    const r = await fetch(
+      `https://api.weather.gov/stations/${stationId}/observations/latest`,
+      { headers: { 'User-Agent': 'WE4FREE-ClimateSwarm/1.0' } }
+    );
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const d = await r.json();
+    const p = d.properties;
+    return {
+      stationId,
+      temperature: p.temperature?.value,          // °C
+      dewpoint:    p.dewpoint?.value,
+      windSpeed:   p.windSpeed?.value,             // m/s
+      windDir:     p.windDirection?.value,         // degrees
+      pressure:    p.seaLevelPressure?.value,      // Pa
+      humidity:    p.relativeHumidity?.value,      // %
+      visibility:  p.visibility?.value,            // m
+      timestamp:   p.timestamp,
+      description: p.textDescription || '',
+      source:      'NOAA_LIVE',
+    };
+  } catch (e) {
+    console.warn(`[NOAA] ${stationId} fetch failed: ${e.message} — using synthetic fallback`);
+    return null;
+  }
+}
+
+// Cache observations to avoid hammering NOAA (30min TTL)
+const _noaaCache = { data: null, ts: 0 };
+
+async function fetchAllNOAAObservations() {
+  const now = Date.now();
+  if (_noaaCache.data && (now - _noaaCache.ts) < 30 * 60 * 1000) {
+    console.log('[NOAA] Using cached observations (TTL 30min)');
+    return _noaaCache.data;
+  }
+
+  console.log('[NOAA] Fetching live observations from api.weather.gov...');
+  const results = await Promise.allSettled(
+    NOAA_STATIONS.map(s => fetchNOAAObservation(s.id))
+  );
+
+  const observations = {};
+  results.forEach((r, i) => {
+    const station = NOAA_STATIONS[i];
+    const obs = r.status === 'fulfilled' ? r.value : null;
+    observations[station.id] = {
+      ...station,
+      ...(obs || { temperature: 15 + (i * 3 % 20), windSpeed: 5, humidity: 60, source: 'SYNTHETIC' }),
+    };
+  });
+
+  const liveCount = Object.values(observations).filter(o => o.source === 'NOAA_LIVE').length;
+  console.log(`[NOAA] Got ${liveCount}/${NOAA_STATIONS.length} live observations`);
+
+  _noaaCache.data = observations;
+  _noaaCache.ts = now;
+  return observations;
+}
+
 class ClimateWorkflowOrchestrator {
   constructor(taskQueue, distributedCompute, swarmCoordinator) {
     this.taskQueue = taskQueue;
@@ -15,8 +93,27 @@ class ClimateWorkflowOrchestrator {
     this.swarmCoordinator = swarmCoordinator;
     this.workflows = new Map();
     this.results = new Map();
+    this.noaaObservations = null; // Populated on first workflow run
 
-    console.log('🌍 Climate Workflow Orchestrator initialized');
+    console.log('🌍 Climate Workflow Orchestrator initialized (NOAA real-data bridge active)');
+  }
+
+  // Fetch and cache NOAA data for use across all workflows
+  async ensureNOAAData() {
+    if (!this.noaaObservations) {
+      this.noaaObservations = await fetchAllNOAAObservations();
+    }
+    return this.noaaObservations;
+  }
+
+  // Get real temperature baseline for a region (falls back to synthetic)
+  getRealBaseline(region) {
+    const obs = this.noaaObservations || {};
+    const station = NOAA_STATIONS.find(s => s.region === region);
+    if (station && obs[station.id]?.temperature != null) {
+      return obs[station.id].temperature; // real °C from NOAA
+    }
+    return 12 + Math.random() * 10; // synthetic fallback
   }
 
   // ============================================================================
@@ -154,17 +251,29 @@ class ClimateWorkflowOrchestrator {
     console.log(`  ${scenarios.length} scenarios, ${regions.length} regions (${startYear}-${endYear})`);
 
     try {
-      // Create scenario-region combinations
+      // Fetch real NOAA baselines before running map/reduce
+      await this.ensureNOAAData();
+
+      // Build real baselines per region from NOAA observations
+      const regionBaselines = {};
+      for (const region of regions) {
+        regionBaselines[region] = this.getRealBaseline(region);
+      }
+
+      // Create scenario-region combinations with real baselines embedded
       const combinations = [];
       for (const scenario of scenarios) {
         for (const region of regions) {
-          combinations.push({ scenario, region, startYear, endYear });
+          combinations.push({ scenario, region, startYear, endYear,
+            realBaseline: regionBaselines[region] });
         }
       }
 
       // Map function: Project climate for each scenario-region pair
       const mapFn = (data) => {
-        const baseline = 15 + (Math.random() - 0.5) * 10; // 10-20°C
+        // Use real NOAA baseline if available, otherwise synthetic
+        const baseline = (data.realBaseline != null) ? data.realBaseline
+          : 15 + (Math.random() - 0.5) * 10; // 10-20°C
         const warming = {
           'RCP2.6': 1.5,
           'RCP4.5': 2.5,

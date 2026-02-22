@@ -3,35 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deliberate Federation - Game Core</title>
+    <title>USS CHAOSBRINGER - FEDERATION GAME</title>
     <link rel="stylesheet" href="game.css">
 </head>
 <body>
-    <h1>Deliberate Federation: Game Core</h1>
-
-    <div id="game-ui">
-        <div id="agent-icons" style="display:flex;gap:8px;margin-bottom:8px;"></div>
-
-        <div id="player-status">
-            <div id="energy-bar" class="fx-bar"><span id="energy"></span> Energy</div>
-            <div id="shard-panel" class="fx-bar"><span id="shards"></span> Shards</div>
-        </div>
-
-        <div id="actions">
-            <button onclick="gameAction('explore')">Explore</button>
-            <button onclick="gameAction('rest')">Rest</button>
-            <button onclick="gameAction('unlockLore')">Unlock Lore</button>
-        </div>
-
-        <div id="event-log" class="fx-panel"></div>
-        <div id="cooldown-bars" class="fx-bar"></div>
-        <div id="tick-indicator" class="fx-tick"></div>
-
-        <button onclick="saveGame()">Save Game</button>
-        <button onclick="loadGame()">Load Game</button>
+    <!-- LCARS Top Banner -->
+    <div class="lcars-banner">
+        <div class="lcars-elbow-br"></div>
+        <div class="lcars-bar horizontal top"></div>
+        <div class="lcars-title">USS CHAOSBRINGER - FEDERATION GAME</div>
     </div>
+
+    <!-- Main Content Container -->
+    <div class="lcars-main-container">
+        <!-- Left Panel: Game Status -->
+        <div class="lcars-panel left">
+            <div class="lcars-elbow-tr"></div>
+            
+            <div class="lcars-tab orange" style="top: 20px; left: 0;">
+                <div class="lcars-tab-label">CONSCIOUSNESS</div>
+            </div>
+            
+            <div class="lcars-panel-content">
+                <div id="player-status">
+                    <div class="lcars-bar horizontal" style="margin-bottom: 20px;">
+                        <div class="lcars-element-label">MORALE</div>
+                        <div class="lcars-element right" style="width: calc(100% - 120px);">
+                            <div class="lcars-element-value" id="morale">N/A</div>
+                            <div class="lcars-progress-bar">
+                                <div class="lcars-progress-fill" id="morale-bar" style="width: 0%; background-color: #ff9900;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lcars-bar horizontal" style="margin-bottom: 20px;">
+                        <div class="lcars-element-label">IDENTITY</div>
+                        <div class="lcars-element right" style="width: calc(100% - 120px);">
+                            <div class="lcars-element-value" id="identity">N/A</div>
+                            <div class="lcars-progress-bar">
+                                <div class="lcars-progress-fill" id="identity-bar" style="width: 0%; background-color: #ff6600;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lcars-bar horizontal" style="margin-bottom: 20px;">
+                        <div class="lcars-element-label">CONFIDENCE</div>
+                        <div class="lcars-element right" style="width: calc(100% - 120px);">
+                            <div class="lcars-element-value" id="confidence">N/A</div>
+                            <div class="lcars-progress-bar">
+                                <div class="lcars-progress-fill" id="confidence-bar" style="width: 0%; background-color: #66ccff;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lcars-bar horizontal" style="margin-bottom: 20px;">
+                        <div class="lcars-element-label">ANXIETY</div>
+                        <div class="lcars-element right" style="width: calc(100% - 120px);">
+                            <div class="lcars-element-value" id="anxiety">N/A</div>
+                            <div class="lcars-progress-bar">
+                                <div class="lcars-progress-fill" id="anxiety-bar" style="width: 0%; background-color: #cc0066;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lcars-bar horizontal" style="margin-bottom: 20px;">
+                        <div class="lcars-element-label">EXPANSION</div>
+                        <div class="lcars-element right" style="width: calc(100% - 120px);">
+                            <div class="lcars-element-value" id="expansion">N/A</div>
+                            <div class="lcars-progress-bar">
+                                <div class="lcars-progress-fill" id="expansion-bar" style="width: 0%; background-color: #00cc66;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lcars-bar horizontal" style="margin-bottom: 20px;">
+                        <div class="lcars-element-label">DIPLOMACY</div>
+                        <div class="lcars-element right" style="width: calc(100% - 120px);">
+                            <div class="lcars-element-value" id="diplomacy">N/A</div>
+                            <div class="lcars-progress-bar">
+                                <div class="lcars-progress-fill" id="diplomacy-bar" style="width: 0%; background-color: #ff3399;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="agent-icons" class="lcars-agent-icons"></div>
+            </div>
+        </div>
+
+        <!-- Center Panel: Main Game Area -->
+        <div class="lcars-panel center">
+            <div class="lcars-elbow-tl"></div>
+            <div class="lcars-elbow-tr"></div>
+            
+            <div class="lcars-tab gold" style="top: 20px; right: 0;">
+                <div class="lcars-tab-label">GAME STATUS</div>
+            </div>
+            
+            <div class="lcars-panel-content">
+                <div id="game-area">
+                    <div class="lcars-row">
+                        <div class="lcars-element left large orange">
+                            <div class="lcars-element-label">PHASE</div>
+                            <div class="lcars-element-value" id="phase">GENESIS</div>
+                        </div>
+                        
+                        <div class="lcars-element right">
+                            <div class="lcars-element-label">TICK</div>
+                            <div class="lcars-element-value" id="tick">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="lcars-row">
+                        <div class="lcars-element left">
+                            <div class="lcars-element-label">ENERGY</div>
+                            <div class="lcars-element-value" id="energy">0</div>
+                        </div>
+                        
+                        <div class="lcars-element right">
+                            <div class="lcars-element-label">SHARDS</div>
+                            <div class="lcars-element-value" id="shards">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="lcars-row">
+                        <div class="lcars-element left">
+                            <div class="lcars-element-label">ZONE</div>
+                            <div class="lcars-element-value" id="zone">FEDERATION CORE</div>
+                        </div>
+                        
+                        <div class="lcars-element right">
+                            <div class="lcars-element-label">EVENTS</div>
+                            <div class="lcars-element-value" id="events">0</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="actions" class="lcars-actions">
+                    <button class="lcars-button orange" onclick="gameAction('explore')">EXPLORE</button>
+                    <button class="lcars-button blue" onclick="gameAction('rest')">REST</button>
+                    <button class="lcars-button gold" onclick="gameAction('unlockLore')">UNLOCK LORE</button>
+                </div>
+                
+                <div id="cooldown-bars" class="lcars-cooldown-container"></div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Events Log and Map -->
+        <div class="lcars-panel right">
+            <div class="lcars-elbow-tl"></div>
+            
+            <div class="lcars-tab pink" style="top: 20px; left: 0;">
+                <div class="lcars-tab-label">EVENT LOG</div>
+            </div>
+            
+            <div class="lcars-panel-content">
+                <div id="event-log" class="lcars-event-log"></div>
+                
+                <div id="territory-map" class="lcars-territory-map">
+                    <canvas id="hexGridCanvas" width="300" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Elements -->
+    <div class="lcars-footer">
+        <div class="lcars-bar horizontal bottom"></div>
+        <div class="lcars-elbow-bl"></div>
+        
+        <div class="lcars-controls">
+            <button class="lcars-button small red" onclick="saveGame()">SAVE</button>
+            <button class="lcars-button small blue" onclick="loadGame()">LOAD</button>
+        </div>
+    </div>
+
+    <!-- Audio Controls -->
+    <audio id="commChime" preload="auto">
+        <source src="assets/audio/comm-chime.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="alertRed" preload="auto">
+        <source src="assets/audio/alert-red.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="warpEngage" preload="auto">
+        <source src="assets/audio/warp-engage.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- Correct path to game.js -->
     <script type="module" src="/game/game.js?v=5000"></script>
+    <script type="module" src="/game/LcarsSystem.js"></script>
 </body>
 </html>

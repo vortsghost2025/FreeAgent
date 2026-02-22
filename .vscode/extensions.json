@@ -1,5 +1,7 @@
 {
     "recommendations": [
-        "andrepimenta.claude-code-chat"
+        "andrepimenta.claude-code-chat",
+        "anthropic.claude-code",
+        "codeflow-studio.claude-code-extension"
     ]
 }

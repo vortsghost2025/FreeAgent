@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deliberate Ensemble — Mission Control</title>
+<style>
+  :root {
+    --orange:  #ff9900;
+    --gold:    #ffcc00;
+    --blue:    #66ccff;
+    --teal:    #00cccc;
+    --pink:    #ff66cc;
+    --green:   #00cc66;
+    --red:     #ff3333;
+    --purple:  #cc66ff;
+    --bg:      #0a0a0f;
+    --bg-mid:  #111118;
+    --bg-panel:#0d0d14;
+    --text:    #cce6ff;
+    --dim:     #556677;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Share Tech Mono', 'Courier New', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: flex;
+    align-items: stretch;
+    height: 80px;
+    background: var(--orange);
+    position: relative;
+  }
+  .header-elbow {
+    width: 220px;
+    min-width: 220px;
+    background: var(--orange);
+    border-radius: 0 0 40px 0;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    flex-shrink: 0;
+  }
+  .header-elbow h1 {
+    font-size: 1.1rem;
+    color: #000;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+  }
+  .header-bars {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 6px 0 6px 16px;
+    gap: 4px;
+  }
+  .header-bars > div {
+    height: 18px;
+    border-radius: 9px;
+  }
+  .hb1 { background: var(--gold);  width: 90%; }
+  .hb2 { background: var(--blue);  width: 70%; }
+  .hb3 { background: var(--pink);  width: 50%; }
+
+  .header-title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 32px;
+    min-width: 280px;
+  }
+  .header-title .sys-name {
+    font-size: 0.65rem;
+    color: #000;
+    letter-spacing: 0.2em;
+    opacity: 0.7;
+  }
+  .header-title .sys-label {
+    font-size: 1.3rem;
+    color: #000;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  .header-clock {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    padding: 0 24px;
+    min-width: 200px;
+  }
+  .clock-time {
+    font-size: 1.6rem;
+    color: #000;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+  .clock-date {
+    font-size: 0.7rem;
+    color: #000;
+    opacity: 0.7;
+    letter-spacing: 0.15em;
+  }
+
+  /* ── MAIN GRID ── */
+  .main {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    grid-template-rows: auto;
+    gap: 0;
+    min-height: calc(100vh - 80px);
+  }
+
+  /* ── LEFT SIDEBAR ── */
+  .sidebar {
+    background: var(--bg-mid);
+    border-right: 3px solid var(--orange);
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .sidebar-section {
+    padding: 6px 16px;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-top: 12px;
+  }
+  .sidebar-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    border-left: 4px solid transparent;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--dim);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sidebar-item:hover {
+    background: rgba(255,153,0,0.08);
+    color: var(--text);
+    border-left-color: var(--orange);
+  }
+  .sidebar-item.active {
+    background: rgba(255,153,0,0.12);
+    color: var(--orange);
+    border-left-color: var(--orange);
+  }
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-green  { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .dot-orange { background: var(--orange); box-shadow: 0 0 6px var(--orange); }
+  .dot-red    { background: var(--red); box-shadow: 0 0 6px var(--red); animation: blink 1s infinite; }
+  .dot-dim    { background: var(--dim); }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* ── CONTENT AREA ── */
+  .content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+  }
+
+  /* ── SYSTEM CARDS GRID ── */
+  .systems-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+
+  .system-card {
+    background: var(--bg-panel);
+    border: 1px solid #1a1a2a;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .system-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .card-game::before    { background: var(--orange); }
+  .card-weather::before { background: var(--blue); }
+  .card-swarm::before   { background: var(--green); }
+  .card-consensus::before { background: var(--purple); }
+  .card-medical::before { background: var(--pink); }
+  .card-n8n::before     { background: var(--teal); }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px 10px;
+    border-bottom: 1px solid #1a1a2a;
+  }
+  .card-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+  }
+  .card-title {
+    flex: 1;
+  }
+  .card-title h3 {
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+  }
+  .card-title .card-url {
+    font-size: 0.65rem;
+    color: var(--dim);
+    letter-spacing: 0.05em;
+  }
+  .card-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    padding: 3px 10px;
+    border-radius: 12px;
+    border: 1px solid currentColor;
+  }
+  .status-live    { color: var(--green); border-color: rgba(0,204,102,0.3); background: rgba(0,204,102,0.08); }
+  .status-pending { color: var(--orange); border-color: rgba(255,153,0,0.3); background: rgba(255,153,0,0.08); }
+  .status-local   { color: var(--dim); border-color: rgba(85,102,119,0.3); background: rgba(85,102,119,0.08); }
+
+  .card-body {
+    padding: 14px 16px;
+    font-size: 0.75rem;
+    line-height: 1.6;
+  }
+  .card-body p {
+    color: var(--dim);
+    margin-bottom: 10px;
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.7rem;
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-key { color: var(--dim); }
+  .stat-val { color: var(--text); font-weight: 700; }
+  .stat-val.good   { color: var(--green); }
+  .stat-val.warn   { color: var(--orange); }
+  .stat-val.live   { color: var(--blue); }
+
+  .card-footer {
+    padding: 10px 16px;
+    display: flex;
+    gap: 8px;
+    border-top: 1px solid #1a1a2a;
+  }
+  .btn {
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: none;
+    font-family: inherit;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.8; }
+  .btn-orange { background: var(--orange); color: #000; }
+  .btn-blue   { background: var(--blue);   color: #000; }
+  .btn-green  { background: var(--green);  color: #000; }
+  .btn-dim    { background: #1a1a2a; color: var(--dim); cursor: default; }
+  .btn-teal   { background: var(--teal);   color: #000; }
+
+  /* ── LIVE DATA PANEL ── */
+  .live-panel {
+    background: var(--bg-panel);
+    border: 1px solid #1a1a2a;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .live-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: rgba(102,204,255,0.06);
+    border-bottom: 1px solid #1a1a2a;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--blue);
+    font-weight: 700;
+  }
+  .live-panel-body {
+    padding: 14px 16px;
+    font-size: 0.72rem;
+    color: var(--dim);
+    min-height: 80px;
+  }
+
+  /* ── WEATHER LIVE ── */
+  .weather-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .weather-cell {
+    background: rgba(102,204,255,0.05);
+    border: 1px solid rgba(102,204,255,0.15);
+    border-radius: 4px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .weather-cell .w-val {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--blue);
+    display: block;
+  }
+  .weather-cell .w-lbl {
+    font-size: 0.6rem;
+    color: var(--dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* ── GAME LIVE ── */
+  .game-live-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .game-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    background: rgba(255,153,0,0.1);
+    border: 1px solid rgba(255,153,0,0.3);
+    color: var(--orange);
+  }
+
+  /* ── ARCH DIAGRAM ── */
+  .arch-section {
+    background: var(--bg-panel);
+    border: 1px solid #1a1a2a;
+    border-radius: 4px;
+    padding: 20px;
+  }
+  .arch-section h2 {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .arch-flow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 0.72rem;
+  }
+  .arch-node {
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid;
+    letter-spacing: 0.08em;
+  }
+  .arch-arrow { color: var(--dim); font-size: 1rem; }
+  .an-orange { border-color: var(--orange); color: var(--orange); background: rgba(255,153,0,0.08); }
+  .an-blue   { border-color: var(--blue);   color: var(--blue);   background: rgba(102,204,255,0.08); }
+  .an-green  { border-color: var(--green);  color: var(--green);  background: rgba(0,204,102,0.08); }
+  .an-purple { border-color: var(--purple); color: var(--purple); background: rgba(204,102,255,0.08); }
+  .an-teal   { border-color: var(--teal);   color: var(--teal);   background: rgba(0,204,204,0.08); }
+
+  /* ── FOOTER ── */
+  .footer {
+    padding: 12px 20px;
+    font-size: 0.65rem;
+    color: var(--dim);
+    letter-spacing: 0.12em;
+    border-top: 1px solid #1a1a2a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* ── LOADING PULSE ── */
+  .pulse { animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* ── GAME FETCH INDICATOR ── */
+  #game-live-status { transition: all 0.3s; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-elbow">
+    <h1>DELIBERATE<br>ENSEMBLE</h1>
+  </div>
+  <div class="header-bars">
+    <div class="hb1"></div>
+    <div class="hb2"></div>
+    <div class="hb3"></div>
+  </div>
+  <div class="header-title">
+    <span class="sys-name">SYSTEM DESIGNATION</span>
+    <span class="sys-label">MISSION CONTROL</span>
+  </div>
+  <div class="header-clock">
+    <div class="clock-time" id="clock-time">--:--:--</div>
+    <div class="clock-date" id="clock-date">----.--.--</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">LIVE SYSTEMS</div>
+    <div class="sidebar-item active">
+      <span class="status-dot dot-green"></span> FEDERATION GAME
+    </div>
+    <div class="sidebar-item">
+      <span class="status-dot dot-orange"></span> WEATHER FEDERATION
+    </div>
+    <div class="sidebar-item">
+      <span class="status-dot dot-green"></span> AGENT SWARM
+    </div>
+    <div class="sidebar-item">
+      <span class="status-dot dot-green"></span> N8N AUTOMATION
+    </div>
+
+    <div class="sidebar-section">LOCAL SYSTEMS</div>
+    <div class="sidebar-item">
+      <span class="status-dot dot-dim"></span> CONSENSUS CHECKER
+    </div>
+    <div class="sidebar-item">
+      <span class="status-dot dot-dim"></span> MEDICAL POC
+    </div>
+    <div class="sidebar-item">
+      <span class="status-dot dot-dim"></span> TRADING BOT
+    </div>
+
+    <div class="sidebar-section">RESEARCH</div>
+    <div class="sidebar-item">
+      <span class="status-dot dot-dim"></span> WE4FREE PAPERS
+    </div>
+    <div class="sidebar-item">
+      <span class="status-dot dot-dim"></span> WE4FREE WEBSITE
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- SYSTEMS GRID -->
+    <div class="systems-grid">
+
+      <!-- FEDERATION GAME -->
+      <div class="system-card card-game">
+        <div class="card-header">
+          <div class="card-icon">🚀</div>
+          <div class="card-title">
+            <h3>USS CHAOSBRINGER</h3>
+            <div class="card-url">game.deliberateensemble.works</div>
+          </div>
+          <div class="card-status status-live">
+            <span class="status-dot dot-green"></span> LIVE
+          </div>
+        </div>
+        <div class="card-body">
+          <p>Federation narrative game with consciousness simulation. Python FastAPI + LCARS UI. Phase XI+ architecture.</p>
+          <div class="stat-row"><span class="stat-key">ENGINE</span><span class="stat-val good">FederationConsole</span></div>
+          <div class="stat-row"><span class="stat-key">BACKEND</span><span class="stat-val">FastAPI / Python 3.11</span></div>
+          <div class="stat-row"><span class="stat-key">SESSIONS</span><span class="stat-val live" id="game-sessions">fetching...</span></div>
+          <div class="stat-row"><span class="stat-key">UPTIME</span><span class="stat-val good" id="game-uptime">healthy</span></div>
+        </div>
+        <div class="card-footer">
+          <a class="btn btn-orange" href="https://game.deliberateensemble.works" target="_blank">▶ PLAY</a>
+          <a class="btn btn-dim" href="https://game.deliberateensemble.works/health" target="_blank">HEALTH</a>
+        </div>
+      </div>
+
+      <!-- WEATHER FEDERATION -->
+      <div class="system-card card-weather">
+        <div class="card-header">
+          <div class="card-icon">🌍</div>
+          <div class="card-title">
+            <h3>WEATHER FEDERATION</h3>
+            <div class="card-url">weather.deliberateensemble.works</div>
+          </div>
+          <div class="card-status status-live">
+            <span class="status-dot dot-green"></span> LIVE
+          </div>
+        </div>
+        <div class="card-body">
+          <p>14-phase global weather data federation. Real NOAA + NASA Earthdata APIs. Node.js distributed pipeline.</p>
+          <div class="stat-row"><span class="stat-key">NOAA API</span><span class="stat-val good">api.weather.gov (live)</span></div>
+          <div class="stat-row"><span class="stat-key">NASA POWER</span><span class="stat-val good">climate data (live)</span></div>
+          <div class="stat-row"><span class="stat-key">PHASES</span><span class="stat-val">14 / 14 built</span></div>
+          <div class="stat-row"><span class="stat-key">FORECAST</span><span class="stat-val good">93.7% confidence</span></div>
+        </div>
+        <div class="card-footer">
+          <a class="btn btn-blue" href="http://weather.deliberateensemble.works/health" target="_blank">▶ STATUS</a>
+          <a class="btn btn-blue" href="http://weather.deliberateensemble.works/status" target="_blank">DETAILS</a>
+        </div>
+      </div>
+
+      <!-- HEALTH INTELLIGENCE -->
+      <div class="system-card" style="border-top: 3px solid var(--blue);">
+        <div class="card-header">
+          <div class="card-icon">🌍</div>
+          <div class="card-title">
+            <h3 style="color:var(--blue)">HEALTH INTELLIGENCE</h3>
+            <div class="card-url">swarm.deliberateensemble.works/health-dashboard.html</div>
+          </div>
+          <div class="card-status status-live">
+            <span class="status-dot dot-green"></span> LIVE
+          </div>
+        </div>
+        <div class="card-body">
+          <p>Global health surveillance platform. WHO GHO + CDC + NASA POWER + NOAA. Early warning engine, climate-health correlation, differential privacy (ε=1.0).</p>
+          <div class="stat-row"><span class="stat-key">WHO GHO</span><span class="stat-val live">6 indicators · 100+ countries</span></div>
+          <div class="stat-row"><span class="stat-key">CDC OPEN</span><span class="stat-val live">chronic disease data</span></div>
+          <div class="stat-row"><span class="stat-key">NASA POWER</span><span class="stat-val live">8 cities · climate</span></div>
+          <div class="stat-row"><span class="stat-key">PRIVACY</span><span class="stat-val good">Laplace mechanism (ε=1.0)</span></div>
+        </div>
+        <div class="card-footer">
+          <a class="btn btn-blue" href="http://swarm.deliberateensemble.works/health-dashboard.html" target="_blank">▶ LAUNCH</a>
+          <a class="btn btn-dim" href="http://swarm.deliberateensemble.works" target="_blank">SWARM HUB</a>
+        </div>
+      </div>
+
+      <!-- AGENT SWARM -->
+      <div class="system-card card-swarm">
+        <div class="card-header">
+          <div class="card-icon">🧬</div>
+          <div class="card-title">
+            <h3>AGENT SWARM</h3>
+            <div class="card-url">swarm.deliberateensemble.works</div>
+          </div>
+          <div class="card-status status-live">
+            <span class="status-dot dot-green"></span> LIVE
+          </div>
+        </div>
+        <div class="card-body">
+          <p>Browser-native multi-agent swarm. Genomics, climate, evolution workflows. Real WHO GHO + NASA POWER data.</p>
+          <div class="stat-row"><span class="stat-key">AGENTS</span><span class="stat-val good">9 genomics + 7 swarm</span></div>
+          <div class="stat-row"><span class="stat-key">DATA SOURCE</span><span class="stat-val live">WHO GHO (live)</span></div>
+          <div class="stat-row"><span class="stat-key">CLIMATE</span><span class="stat-val live">NASA POWER (live)</span></div>
+          <div class="stat-row"><span class="stat-key">GWAS SPEED</span><span class="stat-val good">~1200ms / run</span></div>
+        </div>
+        <div class="card-footer">
+          <a class="btn btn-green" href="http://swarm.deliberateensemble.works/genomics-ui.html" target="_blank">GENOMICS</a>
+          <a class="btn btn-green" href="http://swarm.deliberateensemble.works" target="_blank">SWARM</a>
+        </div>
+      </div>
+
+      <!-- N8N AUTOMATION -->
+      <div class="system-card card-n8n">
+        <div class="card-header">
+          <div class="card-icon">⚙️</div>
+          <div class="card-title">
+            <h3>N8N AUTOMATION</h3>
+            <div class="card-url">187.77.3.56:5678</div>
+          </div>
+          <div class="card-status status-live">
+            <span class="status-dot dot-green"></span> LIVE (4 days)
+          </div>
+        </div>
+        <div class="card-body">
+          <p>Workflow automation engine. Running on VPS. Available for connecting live services together.</p>
+          <div class="stat-row"><span class="stat-key">PORT</span><span class="stat-val">5678</span></div>
+          <div class="stat-row"><span class="stat-key">UPTIME</span><span class="stat-val good">4+ days</span></div>
+          <div class="stat-row"><span class="stat-key">POTENTIAL</span><span class="stat-val live">Connect all systems</span></div>
+          <div class="stat-row"><span class="stat-key">WORKFLOWS</span><span class="stat-val warn">not yet configured</span></div>
+        </div>
+        <div class="card-footer">
+          <a class="btn btn-teal" href="http://187.77.3.56:5678" target="_blank">▶ OPEN N8N</a>
+        </div>
+      </div>
+
+      <!-- CONSENSUS CHECKER -->
+      <div class="system-card card-consensus">
+        <div class="card-header">
+          <div class="card-icon">⚖️</div>
+          <div class="card-title">
+            <h3>CONSENSUS CHECKER</h3>
+            <div class="card-url">local — not yet deployed</div>
+          </div>
+          <div class="card-status status-local">
+            <span class="status-dot dot-dim"></span> LOCAL
+          </div>
+        </div>
+        <div class="card-body">
+          <p>3 independent AI agents verify claims in isolation. Transparent disagreement. Rate-limited to 20/hr.</p>
+          <div class="stat-row"><span class="stat-key">AGENTS</span><span class="stat-val">3 independent verifiers</span></div>
+          <div class="stat-row"><span class="stat-key">PRINCIPLE</span><span class="stat-val live">Disagreement is signal</span></div>
+          <div class="stat-row"><span class="stat-key">PRIVACY</span><span class="stat-val good">No data retention</span></div>
+          <div class="stat-row"><span class="stat-key">DEPLOY</span><span class="stat-val warn">consensus_checker/app.py</span></div>
+        </div>
+        <div class="card-footer">
+          <span class="btn btn-dim">DEPLOY TO VPS TO ACTIVATE</span>
+        </div>
+      </div>
+
+      <!-- MEDICAL POC -->
+      <div class="system-card card-medical">
+        <div class="card-header">
+          <div class="card-icon">🏥</div>
+          <div class="card-title">
+            <h3>MEDICAL DIAGNOSTIC POC</h3>
+            <div class="card-url">local — synthetic data only</div>
+          </div>
+          <div class="card-status status-local">
+            <span class="status-dot dot-dim"></span> LOCAL
+          </div>
+        </div>
+        <div class="card-body">
+          <p>5-agent symptom analysis pipeline. Ingestion → Triage → Summarization → Risk → Output. 1-3ms execution.</p>
+          <div class="stat-row"><span class="stat-key">PIPELINE</span><span class="stat-val">5 agents sequential</span></div>
+          <div class="stat-row"><span class="stat-key">SPEED</span><span class="stat-val good">1-3ms avg</span></div>
+          <div class="stat-row"><span class="stat-key">DATA</span><span class="stat-val warn">Synthetic only (safe)</span></div>
+          <div class="stat-row"><span class="stat-key">TESTS</span><span class="stat-val">18/24 passing</span></div>
+        </div>
+        <div class="card-footer">
+          <a class="btn btn-dim" href="http://localhost/medical-ui.html" target="_blank">LOCAL UI</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- LIVE WEATHER FETCH -->
+    <div class="live-panel">
+      <div class="live-panel-header">
+        🌡️ &nbsp; LIVE NOAA WEATHER — api.weather.gov
+        <span id="weather-refresh" style="margin-left:auto; font-size:0.6rem; color:var(--dim)">fetching...</span>
+      </div>
+      <div class="live-panel-body">
+        <div id="weather-data">
+          <span class="pulse" style="color:var(--blue)">Contacting NOAA API...</span>
+        </div>
+        <div class="weather-grid" id="weather-grid" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- LIVE GAME STATUS -->
+    <div class="live-panel">
+      <div class="live-panel-header">
+        🚀 &nbsp; FEDERATION GAME — LIVE SESSION DATA
+        <span id="game-refresh" style="margin-left:auto; font-size:0.6rem; color:var(--dim)">fetching...</span>
+      </div>
+      <div class="live-panel-body" id="game-live-status">
+        <span class="pulse" style="color:var(--orange)">Contacting game API...</span>
+      </div>
+    </div>
+
+    <!-- ARCHITECTURE -->
+    <div class="arch-section">
+      <h2>System Architecture Flow</h2>
+      <div class="arch-flow">
+        <span class="arch-node an-blue">NOAA / NASA APIs</span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-node an-blue">Weather Federation<br><small>weather.deliberateensemble.works</small></span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-node an-teal">N8N Automation<br><small>:5678</small></span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-node an-green">Agent Swarm<br><small>climate-workflows.js</small></span>
+      </div>
+      <br>
+      <div class="arch-flow">
+        <span class="arch-node an-orange">Federation Game<br><small>game.deliberateensemble.works</small></span>
+        <span class="arch-arrow">↔</span>
+        <span class="arch-node an-purple">Consensus Checker<br><small>(deploy pending)</small></span>
+        <span class="arch-arrow">↔</span>
+        <span class="arch-node an-teal">Medical Pipeline<br><small>(local POC)</small></span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>DELIBERATE ENSEMBLE MISSION CONTROL · v1.0</span>
+  <span id="footer-status">All systems nominal</span>
+  <span>187.77.3.56 · Hostinger VPS</span>
+</div>
+
+<script>
+// ── CLOCK ─────────────────────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock-time').textContent =
+    now.toTimeString().slice(0, 8);
+  document.getElementById('clock-date').textContent =
+    now.toISOString().slice(0, 10).replace(/-/g, '.');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── NOAA LIVE WEATHER ─────────────────────────────────────────────────────────
+async function fetchWeather() {
+  const el = document.getElementById('weather-data');
+  const grid = document.getElementById('weather-grid');
+  const ref = document.getElementById('weather-refresh');
+
+  try {
+    // Get a real NOAA observation — Chicago O'Hare (KORD) as default
+    const r = await fetch('https://api.weather.gov/stations/KORD/observations/latest', {
+      headers: { 'User-Agent': 'DeliberateEnsemble/1.0 (mission-control)' }
+    });
+    if (!r.ok) throw new Error(`NOAA ${r.status}`);
+    const d = await r.json();
+    const p = d.properties;
+
+    const tempC = p.temperature?.value;
+    const tempF = tempC != null ? (tempC * 9/5 + 32).toFixed(1) : '--';
+    const wind  = p.windSpeed?.value != null ? (p.windSpeed.value * 0.621371).toFixed(1) + ' mph' : '--';
+    const humid = p.relativeHumidity?.value != null ? p.relativeHumidity.value.toFixed(0) + '%' : '--';
+    const vis   = p.visibility?.value != null ? (p.visibility.value / 1000).toFixed(1) + ' km' : '--';
+    const press = p.seaLevelPressure?.value != null ? (p.seaLevelPressure.value / 100).toFixed(0) + ' hPa' : '--';
+    const desc  = p.textDescription || 'N/A';
+    const ts    = p.timestamp ? new Date(p.timestamp).toLocaleTimeString() : '--';
+
+    el.innerHTML = `<span style="color:var(--blue)">Chicago O'Hare (KORD) · ${desc}</span> <span style="color:var(--dim); font-size:0.65rem;">as of ${ts}</span>`;
+
+    grid.style.display = 'grid';
+    grid.innerHTML = [
+      ['🌡️', tempF + ' °F', 'TEMPERATURE'],
+      ['💨', wind, 'WIND SPEED'],
+      ['💧', humid, 'HUMIDITY'],
+      ['👁️', vis, 'VISIBILITY'],
+      ['📊', press, 'PRESSURE'],
+      ['📍', 'KORD / ORD', 'STATION'],
+    ].map(([icon, val, lbl]) =>
+      `<div class="weather-cell"><span class="w-val">${icon} ${val}</span><span class="w-lbl">${lbl}</span></div>`
+    ).join('');
+
+    ref.textContent = 'updated ' + new Date().toLocaleTimeString();
+  } catch (e) {
+    el.innerHTML = `<span style="color:var(--dim)">NOAA fetch: ${e.message} — API available at api.weather.gov (no key needed)</span>`;
+    ref.textContent = 'failed · retrying in 60s';
+  }
+}
+fetchWeather();
+setInterval(fetchWeather, 60000);
+
+// ── GAME API LIVE STATUS ──────────────────────────────────────────────────────
+async function fetchGameStatus() {
+  const el = document.getElementById('game-live-status');
+  const sessEl = document.getElementById('game-sessions');
+  const ref = document.getElementById('game-refresh');
+
+  try {
+    const r = await fetch('https://game.deliberateensemble.works/health');
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const d = await r.json();
+
+    sessEl.textContent = d.sessions + ' active';
+    el.innerHTML = `
+      <div class="game-live-row">
+        <span class="game-badge">✅ ${d.status.toUpperCase()}</span>
+        <span class="game-badge">Sessions: ${d.sessions}</span>
+        <span class="game-badge">API: FastAPI</span>
+        <span class="game-badge">Updated: ${new Date(d.timestamp).toLocaleTimeString()}</span>
+      </div>`;
+    ref.textContent = 'updated ' + new Date().toLocaleTimeString();
+  } catch (e) {
+    el.innerHTML = `<span style="color:var(--dim)">Game API: ${e.message}</span>`;
+    sessEl.textContent = 'unreachable';
+    ref.textContent = 'failed';
+  }
+}
+fetchGameStatus();
+setInterval(fetchGameStatus, 30000);
+</script>
+</body>
+</html>

@@ -12,7 +12,7 @@ from typing import Dict, Any, Optional
 from datetime import datetime
 
 # Add game engine to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "uss-chaosbringer"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "uss-chaosbringer"))
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -86,7 +86,7 @@ def console_to_dict(console: FederationConsole) -> Dict[str, Any]:
                 "name": r.name,
                 "philosophy": r.philosophy.value if hasattr(r.philosophy, "value") else str(r.philosophy),
                 "threat_level": round(r.threat_level, 3),
-                "diplomatic_mood": r.diplomatic_mood,
+                "diplomatic_mood": r.diplomatic_style.value if hasattr(r.diplomatic_style, "value") else str(r.diplomatic_style),
             }
             for r in (console.rivals or [])
         ],
@@ -233,6 +233,9 @@ def list_sessions():
 
 
 # Serve frontend static files if present
+# StaticFiles with html=True automatically serves index.html for directories:
+#   /              → frontend/index.html      (the game)
+#   /mission-control/ → frontend/mission-control/index.html
 frontend_path = os.path.join(os.path.dirname(__file__), "frontend")
 if os.path.exists(frontend_path):
     app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
