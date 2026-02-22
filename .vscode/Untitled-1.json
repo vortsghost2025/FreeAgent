@@ -1,0 +1,9 @@
+{
+  "host": "ftp.deliberatefederation.cloud",
+  "username": "federationftp",
+  "password": "134679Rosebud!",
+  "protocol": "ftp",
+  "port": 21,
+  "uploadOnSave": false,
+  "remotePath": "/public_html"
+}

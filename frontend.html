@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Trading Bot Frontend</title>
+  </head>
+  <body>
+    <h1>Trading Bot Status</h1>
+    <button onclick="checkStatus()">Check Backend Status</button>
+    <div id="result"></div>
+    <script>
+      function checkStatus() {
+        fetch('http://localhost:8000/status')
+          .then(res => res.json())
+          .then(data => document.getElementById('result').innerText = data.status)
+          .catch(err => document.getElementById('result').innerText = 'Error: ' + err);
+      }
+    </script>
+  </body>
+</html>

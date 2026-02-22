@@ -1,0 +1,23 @@
+Metadata-Version: 2.1
+Name: python-kucoin
+Version: 2.2.0
+Summary: Kucoin REST API v3 python implementation
+Home-page: https://github.com/sammchardy/python-kucoin
+Author: Sam McHardy
+Author-email: 
+License: MIT
+Keywords: kucoin exchange rest api bitcoin ethereum btc eth kcs
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+License-File: LICENSE
+Requires-Dist: requests
+Requires-Dist: aiohttp
+Requires-Dist: websockets
+

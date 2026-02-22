@@ -1,0 +1,55 @@
+[
+  {
+    "id": "energy-regen-1",
+    "type": "upgrade",
+    "name": "Energy Regen I",
+    "desc": "+1 energy regen per tick",
+    "unlock": { "energy": 100 },
+    "cost": { "shards": 10 },
+    "effect": { "energyRegen": 1 }
+  },
+  {
+    "id": "shard-mastery",
+    "type": "upgrade",
+    "name": "Shard Mastery",
+    "desc": "Double shard gain",
+    "unlock": { "shards": 50 },
+    "cost": { "shards": 25 },
+    "effect": { "shardMultiplier": 2 }
+  },
+  {
+    "id": "reach-shadow-domain",
+    "type": "milestone",
+    "name": "Enter Shadow Domain",
+    "desc": "You have entered the Shadow Domain.",
+    "unlock": { "zone": "Shadow Domain" }
+  },
+  {
+    "id": "tick-500",
+    "type": "milestone",
+    "name": "500 Ticks",
+    "desc": "Survive 500 ticks.",
+    "unlock": { "tick": 500 }
+  },
+  {
+    "id": "creature-codex",
+    "type": "lore",
+    "name": "Creature Codex",
+    "desc": "Unlock the Creature Codex.",
+    "unlock": { "shards": 20 }
+  },
+  {
+    "id": "the-breach",
+    "type": "lore",
+    "name": "The Breach",
+    "desc": "Unlock The Breach.",
+    "unlock": { "zone": "The Breach" }
+  },
+  {
+    "id": "spreadseer",
+    "type": "agent",
+    "name": "Spreadseer",
+    "desc": "Awaken the Spreadseer.",
+    "unlock": { "shards": 30 }
+  }
+]

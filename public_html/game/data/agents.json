@@ -1,0 +1,73 @@
+[
+  {
+    "id": "spreadseer",
+    "name": "Spreadseer",
+    "desc": "Amplifies anomalies and boosts event rate. Stronger in The Breach.",
+    "unlock": { "shards": 30 },
+    "passive": { "eventRate": 0.1 },
+    "active": { "type": "triggerEvent", "cooldown": 10, "zoneAffinity": { "The Breach": 0.5 } },
+    "zoneAffinity": { "The Breach": 2 },
+    "sounds": { "passive": "spreadseer_passive", "active": "spreadseer_active", "rare": "spreadseer_rare" }
+  },
+  {
+    "id": "ledger-titan",
+    "name": "Ledger Titan",
+    "desc": "Stabilizes the loop and boosts energy regen. Stronger in Federation Core.",
+    "unlock": { "milestone": "tick-500" },
+    "passive": { "energyRegen": 0.2 },
+    "active": { "type": "stabilizeLoop", "cooldown": 15, "zoneAffinity": { "Federation Core": 0.5 } },
+    "zoneAffinity": { "Federation Core": 2 },
+    "sounds": { "passive": "titan_pulse", "active": "titan_slam", "rare": "titan_rare" }
+  },
+  {
+    "id": "slippage-warden",
+    "name": "Slippage Warden",
+    "desc": "Prevents resource decay and protects against negative events.",
+    "unlock": { "shards": 50 },
+    "passive": { "resourceDecay": -0.1 },
+    "active": { "type": "protectResources", "cooldown": 20 },
+    "zoneAffinity": {},
+    "sounds": { "passive": "warden_static", "active": "warden_distort", "rare": "warden_rare" }
+  },
+  {
+    "id": "latency-dragonfly",
+    "name": "Latency Dragonfly",
+    "desc": "Speeds up cooldowns and increases tick efficiency.",
+    "unlock": { "zone": "The Breach" },
+    "passive": { "cooldownReduction": 0.2 },
+    "active": { "type": "speedUpTicks", "cooldown": 12 },
+    "zoneAffinity": { "The Breach": 1.5 },
+    "sounds": { "passive": "dragonfly_tick", "active": "dragonfly_burst", "rare": "dragonfly_rare" }
+  },
+
+  {
+    "id": "fractal-weaver",
+    "name": "Fractal Weaver",
+    "desc": "Weaves energy from the Lattice, boosting energy regen and event rate.",
+    "unlock": { "zone": "The Lattice", "shards": 75 },
+    "passive": { "energyRegen": 0.3, "eventRate": 0.05 },
+    "active": { "type": "stabilizeLoop", "cooldown": 14, "zoneAffinity": { "The Lattice": 0.5 } },
+    "zoneAffinity": { "The Lattice": 2 },
+    "sounds": { "passive": "weaver_hum", "active": "weaver_cast", "rare": "weaver_rare" }
+  },
+  {
+    "id": "null-shepherd",
+    "name": "Null Shepherd",
+    "desc": "Guides through the Null Expanse, greatly increasing shard rate but lowering energy regen.",
+    "unlock": { "zone": "Null Expanse", "shards": 120 },
+    "passive": { "shardRate": 0.5, "energyRegen": -0.2 },
+    "active": { "type": "triggerEvent", "cooldown": 18, "zoneAffinity": { "Null Expanse": 0.4 } },
+    "zoneAffinity": { "Null Expanse": 2.5 },
+    "sounds": { "passive": "shepherd_void", "active": "shepherd_call", "rare": "shepherd_rare" }
+  },
+  {
+    "id": "prism-oracle",
+    "name": "Prism Oracle",
+    "desc": "Refracts reality at the Prism Verge, granting powerful but unpredictable effects.",
+    "unlock": { "zone": "Prism Verge", "shards": 200 },
+    "passive": { "eventRate": 0.15 },
+    "active": { "type": "triggerEvent", "cooldown": 16, "zoneAffinity": { "Prism Verge": 0.3 } },
+    "zoneAffinity": { "Prism Verge": 3 },
+    "sounds": { "passive": "oracle_chime", "active": "oracle_refract", "rare": "oracle_rare" }
+  }
+]

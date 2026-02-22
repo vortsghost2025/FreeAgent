@@ -1,0 +1,50 @@
+name: Update PR body from PR_UPDATE_NOTES
+
+on:
+  push:
+    branches:
+      - feature/ensemble-roadmap
+
+jobs:
+  update-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update PR body from PR_UPDATE_NOTES.md
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const core = require('@actions/core');
+            const branch = process.env.GITHUB_REF.replace('refs/heads/','');
+            let body = '';
+            try {
+              body = fs.readFileSync('PR_UPDATE_NOTES.md','utf8');
+            } catch (e) {
+              core.info('PR_UPDATE_NOTES.md not found; skipping update');
+              return;
+            }
+
+            // Find open PRs with this head branch
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: `${context.repo.owner}:${branch}`,
+              state: 'open'
+            });
+
+            if (!prs || prs.length === 0) {
+              core.info(`No open PR found for branch ${branch}`);
+              return;
+            }
+
+            const pr = prs[0];
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              body: body
+            });
+            core.info(`Updated PR #${pr.number}`);

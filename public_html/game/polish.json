@@ -1,0 +1,280 @@
+{
+  "zones": {
+    "federation_core": {
+      "tint": "#4da6ff",
+      "fx": ["soft_glow"],
+      "transition": "fade_300",
+      "ambientSound": "zone_core_ambience"
+    },
+    "shadow_domain": {
+      "tint": "#5a2a82",
+      "fx": ["drifting_shadows", "vignette_soft"],
+      "transition": "dark_fade_400",
+      "ambientSound": "zone_shadow_ambience"
+    },
+    "the_breach": {
+      "tint": "#00e0e0",
+      "fx": ["glitch_flicker", "chromatic_pulse"],
+      "transition": "glitch_pulse_250",
+      "ambientSound": "zone_breach_ambience"
+    },
+    "the_prophecy": {
+      "tint": "#ffd86b",
+      "fx": ["floating_glyphs", "soft_bloom"],
+      "transition": "bloom_fade_500",
+      "ambientSound": "zone_prophecy_ambience"
+    },
+    "the_lattice": {
+      "tint": "#aaffcc",
+      "fx": ["fractal_web", "lattice_glow"],
+      "transition": "lattice_fade_400",
+      "ambientSound": "zone_lattice_ambience"
+    },
+    "null_expanse": {
+      "tint": "#222233",
+      "fx": ["void_ripple", "time_unravel"],
+      "transition": "null_fade_600",
+      "ambientSound": "zone_null_ambience"
+    },
+    "prism_verge": {
+      "tint": "#e0e0ff",
+      "fx": ["prism_shards", "refract_pulse"],
+      "transition": "prism_fade_350",
+      "ambientSound": "zone_prism_ambience"
+    }
+  },
+  "agents": {
+    "spreadseer": {
+      "logStyle": {
+        "color": "#b57cff",
+        "fontStyle": "italic",
+        "borderRare": "gold_glow",
+        "icon": "spreadseer.png"
+      },
+      "fx": {
+        "passive": ["soft_ripple"],
+        "active": ["ripple_burst"],
+        "rare": ["ui_pulse_rare", "icon_glow_gold", "log_border_gold"]
+      },
+      "zoneFX": {
+        "shadow_domain": ["shadow_ripple"],
+        "the_breach": ["void_distortion"],
+        "the_prophecy": ["glyph_flash"]
+      },
+      "sounds": {
+        "passive": "spreadseer_whisper",
+        "active": "spreadseer_active",
+        "rare": "spreadseer_rare"
+      }
+    },
+    "ledger_titan": {
+      "logStyle": {
+        "color": "#4da6ff",
+        "fontStyle": "bold",
+        "borderRare": "gold_glow",
+        "icon": "titan.png"
+      },
+      "fx": {
+        "passive": ["energy_glow"],
+        "active": ["stabilizing_pulse"],
+        "rare": ["ui_pulse_rare", "icon_glow_gold", "log_border_gold"]
+      },
+      "zoneFX": {
+        "federation_core": ["stability_aura"]
+      },
+      "sounds": {
+        "passive": "titan_hum",
+        "active": "titan_slam",
+        "rare": "titan_rare"
+      }
+    },
+    "slippage_warden": {
+      "logStyle": {
+        "color": "#ff4d4d",
+        "fontStyle": "glitch",
+        "borderRare": "gold_glow",
+        "icon": "warden.png"
+      },
+      "fx": {
+        "passive": ["static_haze"],
+        "active": ["distortion_wave"],
+        "rare": ["ui_pulse_rare", "icon_glow_gold", "log_border_gold"]
+      },
+      "zoneFX": {
+        "the_breach": ["glitch_flicker"]
+      },
+      "sounds": {
+        "passive": "warden_static_low",
+        "active": "warden_distort",
+        "rare": "warden_rare"
+      }
+    },
+    "latency_dragonfly": {
+      "logStyle": {
+        "color": "#00e0e0",
+        "fontStyle": "flicker",
+        "borderRare": "gold_glow",
+        "icon": "dragonfly.png"
+      },
+      "fx": {
+        "passive": ["cooldown_shimmer"],
+        "active": ["speed_burst"],
+        "rare": ["ui_pulse_rare", "icon_glow_gold", "log_border_gold"]
+      },
+      "zoneFX": {
+        "the_prophecy": ["glyph_trail"]
+      },
+      "sounds": {
+        "passive": "dragonfly_chirp",
+        "active": "dragonfly_burst",
+        "rare": "dragonfly_rare"
+      }
+    },
+    "fractal_weaver": {
+      "logStyle": {
+        "color": "#aaffcc",
+        "fontStyle": "oblique",
+        "borderRare": "lattice_glow",
+        "icon": "weaver.png"
+      },
+      "fx": {
+        "passive": ["fractal_web"],
+        "active": ["lattice_pulse"],
+        "rare": ["ui_pulse_rare", "icon_glow_gold", "log_border_gold", "lattice_glow"]
+      },
+      "zoneFX": {
+        "the_lattice": ["lattice_glow"]
+      },
+      "sounds": {
+        "passive": "weaver_hum",
+        "active": "weaver_cast",
+        "rare": "weaver_rare"
+      }
+    },
+    "null_shepherd": {
+      "logStyle": {
+        "color": "#222233",
+        "fontStyle": "normal",
+        "borderRare": "void_ripple",
+        "icon": "shepherd.png"
+      },
+      "fx": {
+        "passive": ["void_ripple"],
+        "active": ["time_unravel"],
+        "rare": ["ui_pulse_rare", "icon_glow_gold", "log_border_gold", "void_ripple"]
+      },
+      "zoneFX": {
+        "null_expanse": ["time_unravel"]
+      },
+      "sounds": {
+        "passive": "shepherd_void",
+        "active": "shepherd_call",
+        "rare": "shepherd_rare"
+      }
+    },
+    "prism_oracle": {
+      "logStyle": {
+        "color": "#e0e0ff",
+        "fontStyle": "bold italic",
+        "borderRare": "prism_shards",
+        "icon": "oracle.png"
+      },
+      "fx": {
+        "passive": ["prism_shards"],
+        "active": ["refract_pulse"],
+        "rare": ["ui_pulse_rare", "icon_glow_gold", "log_border_gold", "prism_shards"]
+      },
+      "zoneFX": {
+        "prism_verge": ["refract_pulse"]
+      },
+      "sounds": {
+        "passive": "oracle_chime",
+        "active": "oracle_refract",
+        "rare": "oracle_rare"
+      }
+    }
+  },
+  "events": {
+    "raritySounds": {
+      "common": "event_common",
+      "uncommon": "event_uncommon",
+      "rare": "event_rare",
+      "epic": "event_epic",
+      "mythic": "event_mythic"
+    },
+    "rarityWeights": {
+      "common": 0.8,
+      "uncommon": 0.15,
+      "rare": 0.04,
+      "epic": 0.009,
+      "mythic": 0.001
+    },
+    "rarityFX": {
+      "rare": ["log_border_gold", "ui_pulse_rare"],
+      "epic": ["log_border_gold", "ui_pulse_rare", "screen_pulse_soft"],
+      "mythic": ["log_border_gold", "ui_pulse_rare", "screen_pulse_strong", "cosmic_swell"]
+    }
+  },
+  "ui": {
+    "log": {
+      "defaultColor": "#ffffff",
+      "defaultStyle": "normal",
+      "addSound": "ui_log_pop"
+    },
+    "cooldowns": {
+      "animation": "ease_out",
+      "nearReadyColor": "#ffffff",
+      "readyFX": ["cooldown_pulse"],
+      "readySound": "cooldown_ready"
+    },
+    "resources": {
+      "shards": {
+        "gainFX": ["shard_gain_pulse"],
+        "maxFX": ["shard_max_flash"],
+        "maxSound": "shards_max"
+      },
+      "energy": {
+        "gainFX": ["energy_gain_pulse"],
+        "lowFX": ["energy_low_flash"],
+        "lowSound": "energy_low",
+        "maxSound": "energy_max"
+      }
+    },
+    "milestones": {
+      "tickInterval": 100,
+      "sound": "tick_milestone",
+      "fx": ["tick_milestone_pulse"]
+    },
+    "interactions": {
+      "buttonClickSound": "ui_click",
+      "zoneChangeSound": "ui_zone_transition"
+    }
+  },
+  "audio": {
+    "volumes": {
+      "sfx": 0.4,
+      "ambient": 0.25,
+      "ui": 0.4
+    },
+    "rateLimits": {
+      "agentPassiveTicks": 12
+    }
+  },
+  "pacing": {
+    "eventRateCurve": {
+      "base": 1.0,
+      "perTick": 0.0005,
+      "max": 3.0
+    },
+    "shardRateCurve": {
+      "base": 1.0,
+      "perProgress": 0.02,
+      "max": 4.0
+    },
+    "agentCooldownCurve": {
+      "base": 1.0,
+      "perProgress": -0.01,
+      "min": 0.4
+    }
+  }
+}

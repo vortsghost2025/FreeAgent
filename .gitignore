@@ -16,3 +16,4 @@ workspace_private/
 /AGENT_COORDINATION/agent-b-report.md
 /AGENT_COORDINATION/agent-c-review.md
 /AGENT_COORDINATION/phase-8-spec-review.md
+node_modules

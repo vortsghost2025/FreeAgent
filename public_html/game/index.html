@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deliberate Federation - Game Core</title>
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+    <h1>Deliberate Federation: Game Core</h1>
+
+    <div id="game-ui">
+        <div id="agent-icons" style="display:flex;gap:8px;margin-bottom:8px;"></div>
+
+        <div id="player-status">
+            <div id="energy-bar" class="fx-bar"><span id="energy"></span> Energy</div>
+            <div id="shard-panel" class="fx-bar"><span id="shards"></span> Shards</div>
+        </div>
+
+        <div id="actions">
+            <button onclick="gameAction('explore')">Explore</button>
+            <button onclick="gameAction('rest')">Rest</button>
+            <button onclick="gameAction('unlockLore')">Unlock Lore</button>
+        </div>
+
+        <div id="event-log" class="fx-panel"></div>
+        <div id="cooldown-bars" class="fx-bar"></div>
+        <div id="tick-indicator" class="fx-tick"></div>
+
+        <button onclick="saveGame()">Save Game</button>
+        <button onclick="loadGame()">Load Game</button>
+    </div>
+
+    <!-- Correct path to game.js -->
+    <script type="module" src="/game/game.js?v=5000"></script>
+</body>
+</html>

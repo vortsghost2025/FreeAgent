@@ -42,7 +42,8 @@ def init_db():
             content TEXT,
             timestamp TEXT,
             metadata TEXT,
-            processed_at TEXT DEFAULT CURRENT_TIMESTAMP
+            processed INTEGER DEFAULT 0,
+            processed_at TEXT
         )
     ''')
     
@@ -61,6 +62,25 @@ def init_db():
     
     conn.commit()
     conn.close()
+
+    # Ensure migrations for older DBs: add `processed` and `processed_at` columns if missing
+    try:
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        cursor.execute("PRAGMA table_info(agent_messages)")
+        cols = [r[1] for r in cursor.fetchall()]
+        if 'processed' not in cols:
+            cursor.execute("ALTER TABLE agent_messages ADD COLUMN processed INTEGER DEFAULT 0")
+        if 'processed_at' not in cols:
+            cursor.execute("ALTER TABLE agent_messages ADD COLUMN processed_at TEXT")
+        conn.commit()
+    except Exception:
+        pass
+    finally:
+        try:
+            conn.close()
+        except Exception:
+            pass
 
 # Initialize database
 init_db()
@@ -341,15 +361,17 @@ async def receive_message(agent_id: str, message: AgentMessage):
     try:
         # Insert the message into the database
         cursor.execute("""
-            INSERT INTO agent_messages (message_id, sender, receiver, content, timestamp, metadata)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO agent_messages (message_id, sender, receiver, content, timestamp, metadata, processed, processed_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             f"msg_{len(str(message.dict()))}_{int(datetime.now().timestamp())}",  # Generate a simple ID
             message.sender,
             agent_id,
             message.message,
             message.timestamp,
-            json.dumps(message.metadata)
+            json.dumps(message.metadata),
+            0,
+            None
         ))
         conn.commit()
     except sqlite3.IntegrityError:
@@ -419,19 +441,27 @@ async def register_agent(agent_id: str, request: Request):
 
 # Messages endpoint for retrieving message history
 @app.get("/agents/{agent_id}/messages", tags=["Agents"])
-async def get_agent_messages(agent_id: str):
-    """Get all messages sent to a specific agent"""
+async def get_agent_messages(agent_id: str, unprocessed: bool = False):
+    """Get messages sent to a specific agent. Set `unprocessed=true` to only return unprocessed messages."""
     conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
-    cursor.execute("""
-        SELECT message_id, sender, content, timestamp, metadata
-        FROM agent_messages
-        WHERE receiver = ?
-        ORDER BY timestamp DESC
-    """, (agent_id,))
+    if unprocessed:
+        cursor.execute("""
+            SELECT message_id, sender, content, timestamp, metadata, processed, processed_at
+            FROM agent_messages
+            WHERE receiver = ? AND (processed = 0 OR processed IS NULL)
+            ORDER BY timestamp DESC
+        """, (agent_id,))
+    else:
+        cursor.execute("""
+            SELECT message_id, sender, content, timestamp, metadata, processed, processed_at
+            FROM agent_messages
+            WHERE receiver = ?
+            ORDER BY timestamp DESC
+        """, (agent_id,))
     messages = cursor.fetchall()
     conn.close()
-    
+
     return {
         "agent_id": agent_id,
         "messages": [
@@ -440,7 +470,9 @@ async def get_agent_messages(agent_id: str):
                 "sender": msg[1],
                 "content": msg[2],
                 "timestamp": msg[3],
-                "metadata": json.loads(msg[4]) if msg[4] else {}
+                "metadata": json.loads(msg[4]) if msg[4] else {},
+                "processed": bool(msg[5]) if msg[5] is not None else False,
+                "processed_at": msg[6]
             }
             for msg in messages
         ]
@@ -469,11 +501,66 @@ async def get_all_messages():
                 "receiver": msg[2],
                 "content": msg[3],
                 "timestamp": msg[4],
-                "metadata": json.loads(msg[5]) if msg[5] else {}
+                "metadata": json.loads(msg[5]) if msg[5] else {},
+                "processed": False,
+                "processed_at": None
             }
             for msg in messages
         ]
     }
+
+
+@app.get("/messages/unprocessed", tags=["Messages"])
+async def get_unprocessed_messages(limit: int = 100):
+    """Return unprocessed messages across all agents"""
+    conn = sqlite3.connect(DATABASE_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT message_id, sender, receiver, content, timestamp, metadata, processed, processed_at
+        FROM agent_messages
+        WHERE processed = 0 OR processed IS NULL
+        ORDER BY timestamp DESC
+        LIMIT ?
+    """, (limit,))
+    rows = cursor.fetchall()
+    conn.close()
+
+    return {
+        "messages": [
+            {
+                "id": r[0],
+                "sender": r[1],
+                "receiver": r[2],
+                "content": r[3],
+                "timestamp": r[4],
+                "metadata": json.loads(r[5]) if r[5] else {},
+                "processed": bool(r[6]) if r[6] is not None else False,
+                "processed_at": r[7]
+            }
+            for r in rows
+        ]
+    }
+
+
+@app.post("/messages/{message_id}/mark_processed", tags=["Messages"])
+async def mark_message_processed(message_id: str):
+    """Mark a specific message as processed."""
+    conn = sqlite3.connect(DATABASE_PATH)
+    cursor = conn.cursor()
+    now = str(datetime.now())
+    cursor.execute("""
+        UPDATE agent_messages
+        SET processed = 1, processed_at = ?
+        WHERE message_id = ?
+    """, (now, message_id))
+    conn.commit()
+    changed = cursor.rowcount
+    conn.close()
+
+    if changed:
+        return {"status": "marked", "message_id": message_id, "processed_at": now}
+    else:
+        raise HTTPException(status_code=404, detail=f"Message '{message_id}' not found")
 
 if __name__ == "__main__":
     import uvicorn

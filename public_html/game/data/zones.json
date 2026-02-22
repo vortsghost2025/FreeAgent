@@ -1,0 +1,26 @@
+[
+  { "id": "federation-core", "name": "Federation Core", "description": "The heart of the Federation.", "unlock": { "tick": 0 },
+    "modifiers": { "energyRegen": 1.0, "shardRate": 1.0, "eventRate": 1.0, "agentCooldown": 1.0 },
+    "ambientSound": "zone_core_ambience" },
+  { "id": "shadow-domain", "name": "Shadow Domain", "description": "A mysterious region at the edge of reality.", "unlock": { "tick": 200, "shards": 10 },
+    "modifiers": { "energyRegen": 0.8, "shardRate": 1.5, "eventRate": 1.2, "agentCooldown": 1.1 },
+    "ambientSound": "zone_shadow_ambience" },
+  { "id": "the-breach", "name": "The Breach", "description": "A rift in the cosmic order.", "unlock": { "tick": 500 },
+    "modifiers": { "energyRegen": 0.5, "shardRate": 2.0, "eventRate": 2.5, "agentCooldown": 1.3 },
+    "ambientSound": "zone_breach_ambience" },
+  { "id": "the-prophecy", "name": "The Prophecy", "description": "A hidden truth awaits.", "unlock": { "tick": 1000 },
+    "modifiers": { "energyRegen": 1.2, "shardRate": 1.2, "eventRate": 3.0, "agentCooldown": 1.0 },
+    "ambientSound": "zone_prophecy_ambience" },
+
+  { "id": "the-lattice", "name": "The Lattice", "description": "A fractal web of possibility.", "unlock": { "tick": 1500, "shards": 25 },
+    "modifiers": { "energyRegen": 1.4, "shardRate": 1.0, "eventRate": 2.0, "agentCooldown": 0.9 },
+    "ambientSound": "zone_lattice_ambience" },
+
+  { "id": "null-expanse", "name": "The Null Expanse", "description": "A void where time unravels.", "unlock": { "tick": 2000, "shards": 40 },
+    "modifiers": { "energyRegen": 0.6, "shardRate": 2.5, "eventRate": 4.0, "agentCooldown": 1.5 },
+    "ambientSound": "zone_null_ambience" },
+
+  { "id": "prism-verge", "name": "The Prism Verge", "description": "A boundary of refracted realities.", "unlock": { "tick": 2500, "shards": 60 },
+    "modifiers": { "energyRegen": 1.0, "shardRate": 1.8, "eventRate": 2.2, "agentCooldown": 0.8 },
+    "ambientSound": "zone_prism_ambience" }
+]

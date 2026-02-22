@@ -1,0 +1,41 @@
+%% Parallel Polish Layer Interaction Map
+
+flowchart TD
+  GameLoop --> AgentSystem
+  GameLoop --> EventSystem
+  GameLoop --> ZoneSystem
+  GameLoop --> ResourceSystem
+  GameLoop --> ProgressionSystem
+  GameLoop --> UISystem
+  GameLoop --> PersistenceSystem
+
+  AgentSystem -->|passive/active/rare| UISystem
+  AgentSystem -->|zone affinity| UISystem
+  AgentSystem -->|log| UISystem
+  EventSystem -->|event rarity| UISystem
+  EventSystem -->|event FX| UISystem
+  ZoneSystem -->|ambient audio| UISystem
+  ZoneSystem -->|zone overlays| UISystem
+  ResourceSystem -->|resource FX| UISystem
+  ProgressionSystem -->|milestone FX| UISystem
+  UISystem -->|UI FX| User
+  UISystem -->|audio| User
+  UISystem -->|visual overlays| User
+  UISystem -->|log styling| User
+  UISystem -->|resource/cooldown anim| User
+  UISystem -->|threshold cues| User
+  UISystem -->|zone overlays| User
+  UISystem -->|agent overlays| User
+  PersistenceSystem -->|save/load| GameState
+
+  subgraph Parallel Polish Layers
+    UISystem
+    AgentSystem
+    EventSystem
+    ZoneSystem
+    ResourceSystem
+    ProgressionSystem
+  end
+
+  classDef polish fill:#ffe4b5,stroke:#b8860b,stroke-width:2px;
+  class UISystem,AgentSystem,EventSystem,ZoneSystem,ResourceSystem,ProgressionSystem polish;
