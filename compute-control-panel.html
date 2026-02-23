@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💻 Compute Control Panel</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #1a1a2f;
+      color: #cce6ff;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .header {
+      background: #007bff;
+      color: #fff;
+      padding: 15px 20px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    .card {
+      background: rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .status.connected { background: #4ade80; color: #fff; }
+    .status.disconnected { background: #dc3545; color: #fff; }
+    .status.warning { background: #ffc107; color: #000; }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      background: #007bff;
+      color: #fff;
+      margin-left: 10px;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+    .btn-danger { background: #dc3545; color: #fff; }
+    .btn-success { background: #4ade80; color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>💻 Compute Control Panel</h1>
+    <p>Control Phase 7 Autonomous Mode Routing</p>
+  </div>
+
+  <div class="card">
+    <h2>📊 Compute Engine Status</h2>
+    <div style="margin-bottom: 20px;">
+      <p><strong>Phase 7 Routing:</strong> <span class="status disconnected" id="phase7-routing-status">Disabled</span></p>
+      <p><strong>Current Engine:</strong> <span id="current-engine">Shared (All Projects)</span></p>
+    </div>
+    <div style="text-align: center; margin-top: 20px;">
+      <button class="btn btn-success" onclick="enablePhase7Routing()">Enable Phase 7 Routing</button>
+      <button class="btn btn-danger" onclick="disableAutonomousMode()">Disable Autonomous Mode</button>
+    </div>
+  </div>
+
+  <!-- Load existing swarm infrastructure -->
+  <script src="distributed-compute.js?v=4.0.0"></script>
+  <script src="distributed-compute-evolution.js?v=4.0.0"></script>
+  <script src="swarm-coordinator.js?v=4.0.0"></script>
+  <script src="agent-roles.js?v=4.0.0"></script>
+  <script src="task-queue.js?v=4.0.0"></script>
+  <script src="gossip-state.js?v=4.0.0"></script>
+  <script src="swarm-registry.js?v=4.0.0"></script>
+  <script src="self-healing.js?v=4.0.0"></script>
+  <script src="meta-agent.js?v=4.0.0"></script>
+
+  <script>
+    let routingEnabled = false;
+    let phase7Routing = false;
+
+    function enablePhase7Routing() {
+      routingEnabled = true;
+      phase7Routing = true;
+
+      // Override compute for Phase 7
+      if (window.DistributedComputeEvolution) {
+        const originalSubmit = window.DistributedComputeEvolution.prototype.submitMapReduce;
+        window.DistributedComputeEvolution.prototype.submitMapReduce = async function(input, mapFn, reduceFn, options) {
+          console.log('[Phase7Router] Phase 7 autonomous job - routing to isolated compute');
+          return await new window.DistributedComputeEvolution(null, null).execute(payload);
+        };
+      }
+
+      document.getElementById('phase7-routing-status').textContent = 'Enabled';
+      document.getElementById('phase7-routing-status').className = 'status connected';
+      document.getElementById('current-engine').textContent = 'Phase 7 (Isolated)';
+
+      // Send message to swarm coordinator if running
+      if (window.swarmCoordinator) {
+        console.log('[Phase7Router] Enabling Phase 7 routing in swarm coordinator');
+      }
+    }
+
+    function disableAutonomousMode() {
+      // This would disable autonomous mode in phase 7 dashboard
+      // Implementation depends on how autonomous mode is currently triggered
+      console.log('[Phase7Router] Autonomous mode disable requested');
+
+      // For now, just log
+      console.log('[Phase7Router] Note: Disabling autonomous mode requires updating Phase 7 dashboard implementation');
+    }
+
+    window.onload = function() {
+      console.log('[UI] Compute Control Panel loaded');
+      console.log('[UI] Current routing:', routingEnabled ? 'Phase 7' : 'Shared');
+      console.log('[UI] Ready to control Phase 7 autonomous mode');
+    }
+  </script>
+</body>
+</html>

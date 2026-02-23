@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr">
+<!--<![endif]-->
+<head><meta charset="utf-8" /><meta content="width=device-width,initial-scale=1" name="viewport" />
+    <!-- Meta data -->
+     
+    <title>
+	Find Healthcare
+</title>
+    <!--<meta name="description" content="Find Healthcare" />-->
+
+    <meta name="author" content="Alberta Health Services" /><meta name="rating" content="general" /><meta name="copyright" content="Copyright © Alberta Health Services" /><meta name="theme-color" content="#ffffff" /><meta name="robots" content="index,follow" />
+    <!-- Meta data-->
+
+    <!--[if gte IE 9 | !IE ]><!-->
+    <link href="assets/favicon.ico" rel="icon" type="image/x-icon" /><link rel="stylesheet" href="css/theme.min.css" />
+    <!--<![endif]-->
+
+    <script src="https://kit.fontawesome.com/0e3d55a771.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/custom.css" />
+  
+    <noscript>
+        <link rel="stylesheet" href="css/noscript.min.css" />
+    </noscript>
+
+    <link rel="stylesheet" href="css/leaflet.css" /><link rel="stylesheet" href="css/MarkerCluster.css" /><link rel="stylesheet" href="css/MarkerCluster.Default.css" />
+
+   <script src="js/leaflet.js"></script>
+
+    <script src="js/leaflet.markercluster.js"></script>
+
+    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+    <link href="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css" rel="stylesheet" type="text/css" /><link rel="stylesheet" href="css/leaflet-gesture-handling.min.css" type="text/css" />
+    <script src="js/leaflet-gesture-handling.min.js"></script>
+    <script src="js/leaflet-gesture-handling.min.js.map"></script>
+    <script src="js/LeafMap.js"></script>
+    
+    
+    <meta name="description" content="Find Healthcare" />
+    
+    
+</head>
+<body vocab="https://schema.org/" id="ref_default" typeof="WebPage">
+<script src="/gha/gha-loader.min.js" defer data-gha-html="/gha/gha.html" data-gha-css="/gha/gha.css" data-gha-js="/gha/gha.js"></script>
+    <input id="ShowGA" type="hidden" value="YES" />                               
+    
+        <!-- Global site tag (gtag.js) - Google Analytics Start-->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-147992581-10" ></script>
+        <script>
+	        window.dataLayer = window.dataLayer || [];
+	        function gtag(){dataLayer.push(arguments);}
+	        gtag('js', new Date());		
+	        gtag('config', 'UA-147992581-10');
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics End-->
+    
+
+    <div id="top_banner" class="container-fluid">
+        <div class="">
+            <!-- HEADER BAR LINK -->
+            <div class="hcl_default col-sm-12 col-md-4">
+                <a class="default_logo" href="https://www.albertahealthservices.ca">
+                    <img id="ahs_logo" src="assets/comm-vis-logo-ahs-reverse.png" />
+                </a>
+                <a class="default_logo" href="https://MyHealth.Alberta.ca">
+                    <img id="mha_logo" src="assets/myhealthalberta_logo.png" />
+                </a>
+            </div>
+            <div class="hcl_default col-sm-12 col-md-8">
+                <span>This website is part of the AlbertaHealthServices.ca & MyHealth.Alberta.ca family of health websites. <a href="http://www.albertahealthservices.ca/about/">Learn more</a></span>
+            </div>
+            <a href="http://www.albertahealthservices.ca" class="hcl_ahs banner_link"><span class="glyphicon glyphicon-chevron-left"></span> Back to Albertahealthservices.ca</a>
+            <a href="https://myhealth.alberta.ca" class="hcl_mha banner_link"><span class="glyphicon glyphicon-chevron-left"></span> Back to MyHealth.Alberta.ca</a>
+        </div>
+    </div>
+    <div id="social_bar" class="container">
+        <div class="col-sm-12 col-md-8">
+            <div class="col-sm-6 hcl_ahs">
+                <img class="img-responsive" src="https://www.albertahealthservices.ca/images/Logos/ahs.png" />
+            </div>
+            <div class="col-sm-6 hcl_mha">
+                <img class="img-responsive" src="https://myhealth.alberta.ca/_layouts/15/PHP.MHA/images/logos/mha.png" />
+            </div>
+            <div class="col-sm-12">
+                <a id="page_title" href="Default.aspx">
+                    <h2>Find Healthcare</h2>
+                </a>
+            </div>
+        </div>
+        <div id="social_icons" class="hidden-sm hidden-xs col-md-4">
+            <div class="pull-right">
+                <a href="http://www.albertahealthservices.ca/about/socialmedia.aspx#twitter" target="_blank"><span class="fa-stack"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-twitter fa-stack-1x fa-inverse"></i></span></a>
+                <a href="http://www.albertahealthservices.ca/about/socialmedia.aspx#facebook" target="_blank"><span class="fa-stack"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-facebook fa-stack-1x fa-inverse"></i></span></a>
+                <!--<a href="#mail"><span class="fa-stack"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-envelope fa-stack-1x fa-inverse"></i></span></a>
+                <a href="#plus"><span class="fa-stack"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-plus fa-stack-1x fa-inverse"></i></span></a>-->
+                <a href="#print" id="printButton"><span class="fa-stack"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-print fa-stack-1x fa-inverse"></i></span></a>
+                <a id="fontup" class="font_change" href="#"><strong>A</strong>+</a>
+                <a id="fontdown" class="font_change" href="#"><strong>A</strong>-</a>
+            </div>
+        </div>
+    </div>
+    <form method="post" action="./Default.aspx" id="form">
+<div class="aspNetHidden">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="iS/buQTALufWlgpD6zHgtpWfsQ+vwzaKhRXkuZ2XAmYLz0nlt/QLVIk6FhSz7WQCiy00EthGwgcHbwpDOD6H27CDFc8=" />
+</div>
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="FF06DE41" />
+</div>
+        <div>
+            <main role="main" property="mainContentOfPage">
+                
+    <div id="hcl_home_banner" class="container-fluid">
+        <div class="col-sm-12">
+            <div class="hidden-xs col-md-2"></div>
+            <div class="col-xs-6 col-md-4">
+                <a href="search.aspx?type=facility#icon_banner">
+                    <div class="hcl_home_banner_hitbox">
+                        <i class="fa fa-hospital-o"></i>
+                        <span>Hospitals & Facilities</span>
+                    </div>
+                </a>
+            </div>
+            <div class="col-xs-6 col-md-4">
+                <a href="search.aspx?type=service#icon_banner">
+                    <div class="hcl_home_banner_hitbox">
+                        <i class="fa fa-stethoscope"></i>
+                        <span>Programs & Services</span>
+                    </div>
+                </a>
+            </div>
+            <div class="hidden-xs col-md-2"></div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="col-sm-12">
+            <div id="find_a_doctor">
+                <a class="hcl_button" href="http://www.albertahealthservices.ca/info/Page13253.aspx">Find a Doctor&nbsp;<i class="fa fa-question-circle"></i></a>
+            </div>
+        </div>
+    </div>
+
+            </main>
+        </div>
+    </form>
+    <!--[if gte IE 9 | !IE ]><!-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="js/wet-boew.min.js"></script>
+    <script src="js/cookie.js"></script>
+    <!--<![endif]-->
+    <!--[if lt IE 9]>
+		<script src="js/ie8-wet-boew2.min.js"></script>
+
+		<![endif]-->
+    <script src="js/custom.js"></script>
+    
+
+    <!-- START OF SmartSource Data Collector TAG v10.4.23 -->
+    <!-- Copyright (c) 2016 Webtrends Inc.  All rights reserved. -->
+    
+   
+</body>
+</html>

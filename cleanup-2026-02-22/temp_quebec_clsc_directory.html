@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<!-- M├ëTAS -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Minist├¿re de la Sant├⌐ et des Services sociaux">
+
+
+	<meta name="description" content="Finding a resource in health and social services.">
+
+	<title>Find a CLSC - R├⌐pertoire des ressources en sant├⌐ et services sociaux</title>
+
+	
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600,600i,700,700i%7CRoboto:400,400i,500,500i,700,700i,900,900i%7CLato:400,400i,500,500i,700,700i,900,900i%7CMerriweather:300,300i,400,400i,700,700i,900" media="all">
+
+<link rel="shortcut icon" href="/favicon.ico">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	
+	<link type="text/css" rel="stylesheet" href="/css/styles.css">
+	<link type="text/css" rel="stylesheet" href="/css/rrss.css">
+<link type="text/css" rel="stylesheet" href="/css/piv.css">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZH657DVG4Y"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-ZH657DVG4Y');
+      
+      function trackEvent(category, action, opt_label, opt_value, lien) {
+		gtag('event', action, { 'send_to': 'UA-10892818-13',
+		  'event_category': category,
+		  'event_label': opt_label,
+		  'event_value': opt_value
+		});
+		  
+		gtag('event', category, { 'send_to': 'G-ZH657DVG4Y',
+		  'event_action': action,
+		  'event_label': opt_label,
+		  'event_value': opt_value
+		});
+
+	  }
+      
+      	  
+	 /* Suivi de tous les liens externe */
+      function _gaLt(event){
+			var el = event.srcElement || event.target;
+		
+			/* Loop up the DOM tree through parent elements if clicked element is not a link (eg: an image inside a link) */
+			while(el && (typeof el.tagName == 'undefined' || el.tagName.toLowerCase() != 'a' || !el.href)){
+				el = el.parentNode;
+			}
+		
+			if(el && el.href){
+				/* link */
+				var link = el.href;
+				if(link.indexOf(location.host) == -1 && !link.match(/^javascript\:/i) && !document.location.pathname.match(/repertoire-ressources/i)){ /* external link */
+					/* HitCallback function to either open link in either same or new window */
+					var hitBack = function(link, target){
+						target ? window.open(link, target) : window.location.href = link;
+					};
+					/* Is target set and not _(self|parent|top)? */
+					var target = (el.target && !el.target.match(/^_(self|parent|top)$/i)) ? el.target : false;
+					/* send event with callback */
+						
+						gtag('event', link, { 'send_to': 'UA-10892818-13',
+						  'event_category': "Lien externe",
+						  'event_label': document.location.pathname + document.location.search,
+						  'event_callback': hitBack(link, target)
+						});
+						
+						gtag('event', 'click', { 'send_to': 'G-ZH657DVG4Y',
+						  'link_url': link,
+			  			  'page_location': document.location.pathname + document.location.search
+						});
+					
+		
+					/* Prevent standard click */
+					event.preventDefault ? event.preventDefault() : event.returnValue = !1;
+				}
+		
+			}
+		}
+		
+		/* Attach the event to all clicks in the document after page has loaded */
+		var w = window;
+		w.addEventListener ? w.addEventListener("load",function(){document.body.addEventListener("click",_gaLt,!1)},!1)
+		 : w.attachEvent && w.attachEvent("onload",function(){document.body.attachEvent("onclick",_gaLt)});
+      
+</script>
+
+
+
+</head>
+
+<body>
+	<!-- D├ëBUT DU PIV -->
+	<div class="contenu-fluide piv">
+	<div class="contenu-fixe">
+		<div class="ligne">
+			<div class="d-flex align-items-center">
+				<a href="#contenu" class="visuallyHidden" tabindex="1">Passer au contenu</a>
+			</div>
+		</div>
+		<div class="ligne" id="entetePiv">
+			<div class="d-flex align-items-center zone1">
+				
+					<a tabindex="5" href="https://www.quebec.ca/en/" target="_blank"><img id="pivImage" alt="Logo du gouvernement du Qu├⌐bec." src="/img/piv/QUEBEC_blanc.svg" width="256" height="72"></a>			</div>
+			<div class="d-flex align-items-center zone2" lang="fr">
+				<div class="identite desktop">
+					
+							<a tabindex="5" href="/en/repertoire-ressources/">R├⌐pertoire des ressources en sant├⌐ et services sociaux</a>				</div>
+			</div>
+			<div class="d-flex justify-content-end align-items-center zone3">
+				<div class="zoneMenu">
+					<div class="toggle_btn">
+						<span></span>
+					</div>
+					<div class="menu_mobile nav">
+						<div class="menu_mobile--site mobile">
+							<!--Ajoutez votre menu. Vous pouvez le personnalisez par css.-->
+							<!--Recherchez dans le css: .menu_mobile--site -->
+							<!--
+							<a href="#">Accueil</a>
+							<a href="#">Page 1</a>
+							<a href="#">Page 2</a>
+							<a href="#">Page 3</a>
+-->
+						</div>
+						<div class="menu_mobile--piv">
+							
+								<a href="/repertoire-ressources/clsc/" title="Fran├ºais">Fran├ºais</a>
+								<a href="https://www.quebec.ca/en/government/departments-agencies/sante-services-sociaux/coordonnees-structure/contact-us" target="_blank" tabindex="25">Contact Us</a>						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="" id="entetePiv--titreMobile">
+			<div class="titreM mobile">
+				<p>R├⌐pertoire des ressources en sant├⌐ et services sociaux</p>
+			</div>
+		</div>
+
+	</div>
+</div>	<!-- FIN DU PIV -->
+	<main id="contenu">
+		<div class="bandeau avis avis-bleu">
+			<div class="container">
+				<div class="row">
+					<div class="rangee__bloc">
+						<p>The <em>Charter of the French language</em> and its regulations govern the <a href="https://www.quebec.ca/en/gouvernement/politiques-orientations/langue-francaise/modernization-charter-french-language#c214034" target="_blank">consultation of English-language content&nbsp;<img src="/img/icones/lien-externe.svg" alt="This hyperlink will open in a new window."></a>.ΓÇë</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="rangee">
+			<div class="rangee__bloc">
+				<div id="fil-ariane">
+					<nav aria-label="breadcrumb">
+						<ol class="fil-ariane">
+							
+								<li class="fil-ariane-item"> <a href="/en/repertoire-ressources/">Finding a resource</a>&nbsp;&nbsp;</li>
+								<li class="fil-ariane-item page-active">CLSC&nbsp;&nbsp;</li>						</ol>
+					</nav>
+				</div>
+			</div>
+					</div>
+
+
+		<div class="rangee">
+			<div class="rangee__bloc col-md-9">
+				<h1 class="titre titre-accueil decoration">
+					Find a CLSC				</h1>
+			</div>
+		</div>
+
+		<!-- Avis important -->
+
+		
+						
+													
+							<div id="recherche-RRSS" class="rangee col-md-12">
+								<div class="rangee__bloc col-md-9 espaceUneColonne">
+									<!-- R├⌐sum├⌐ de la th├⌐matique -->
+									
+				<div id="texte-resume"><p>Local community services centres (CLSC) provide&nbsp;:</p>
+
+<ul>
+	<li>General health and social services</li>
+	<li>Preventive or medical services for the population in their territory</li>
+	<li>Rehabilitation or reintegration services</li>
+	<li>Public health activities</li>
+</ul>
+
+				</div>
+									<div class="filtres">
+										<form id="formFiltres" action="/en/repertoire-ressources/resultats-recherche/" method="get" name="f_code">
+
+											<input type="hidden" name="theme" id="theme" value="clsc" />
+											
+
+
+											<!-- Date pour la recherche -->
+											
+																								<!-- Territoire de recherche -->
+												<fieldset>
+
+													
+
+													
+													<div id="territoire_recherche" class="">
+														<div class="">
+
+															<!-- Code postal -->
+															<div class="row">
+																<div class="form-group">
+																	
+																	<label for="ch_code">Enter a postal code</label>
+																	<br />
+																	<input id="ch_code" name="ch_code" class="champs cp " type="text" size="7" maxlength="7"  /><br />
+
+																	<span class="champs--indication help-block">Example: G1G 1G1</span>
+
+																	<div class="function-item" id="get-current-position">
+																		<a href="javascript:void(0)" onclick="getLocation()">Find my location</a>
+																	</div>
+																	<span id="message_geo"></span>
+																</div>
+															</div>
+
+
+																															<!-- Rayon de recherche -->
+																<div class="row">
+																	<div class="form-group">
+																		<fieldset>
+																			<legend>Select a search radius</legend>
+																			<div class="flex-radio">
+																				<div class="flex-row radio"><input id="radioBtnRay0" name="ch_rayon" type="radio" value="0" checked="checked"/><label for="radioBtnRay0">5&nbsp;km </label></div>
+<div class="flex-row radio"><input id="radioBtnRay1" name="ch_rayon" type="radio" value="1"/><label for="radioBtnRay1">10&nbsp;km </label></div>
+<div class="flex-row radio"><input id="radioBtnRay2" name="ch_rayon" type="radio" value="2"/><label for="radioBtnRay2">20&nbsp;km </label></div>
+<div class="flex-row radio"><input id="radioBtnRay3" name="ch_rayon" type="radio" value="3"/><label for="radioBtnRay3">30&nbsp;km </label></div>
+<div class="flex-row radio"><input id="radioBtnRay4" name="ch_rayon" type="radio" value="4"/><label for="radioBtnRay4">50&nbsp;km </label></div>
+																			</div>
+																		</fieldset>
+
+																	</div>
+																</div>
+															
+															<!-- R├⌐gion -->
+																															<div class="filtres__groupe">
+																	<label for="ch_choixReg">Select a region</label>
+																	<br />
+																	<select class="champs" name="ch_choixReg" id="ch_choixReg">
+																																					<option value="0">Whole province of Qu├⌐bec</option>
+																		
+																		<option value="1" >Bas-Saint-Laurent (01)</option>
+<option value="2" >Saguenay - Lac-Saint-Jean (02)</option>
+<option value="3" >Capitale-Nationale (03)</option>
+<option value="4" >Mauricie-et-du-Centre-du-Qu├⌐bec (04)</option>
+<option value="5" >Estrie (05)</option>
+<option value="6" >Montr├⌐al (06)</option>
+<option value="7" >Outaouais (07)</option>
+<option value="8" >Abitibi-T├⌐miscamingue (08)</option>
+<option value="9" >C├┤te-Nord (09)</option>
+<option value="10" >Nord-du-Qu├⌐bec (10)</option>
+<option value="11" >Gasp├⌐sie - ├Äles-de-la-Madeleine (11)</option>
+<option value="12" >Chaudi├¿re-Appalaches (12)</option>
+<option value="13" >Laval (13)</option>
+<option value="14" >Lanaudi├¿re (14)</option>
+<option value="15" >Laurentides (15)</option>
+<option value="16" >Mont├⌐r├⌐gie (16)</option>
+<option value="17" >Nunavik (17)</option>
+<option value="18" >Terres-Cries-de-la-Baie-James (18)</option>
+																	</select>
+																</div>
+																													</div>
+													</div> <!-- Fin territoire recherche-->
+
+													
+												</fieldset>
+												<div class="filtres__bouton">
+													<button class="bouton bouton-primaire" name="bt_rechType" id="bt_rechType" type="submit">Start search</button>
+
+												</div>
+
+										</form>
+
+									</div>
+																	</div>
+
+							</div>
+
+						
+
+
+
+	</main>
+
+	<!--FIN contenu-->
+	<!--FIN page-->
+	<!--FIN conteneur-->
+
+
+
+	<footer role="contentinfo" id="piv_piedPage">
+	<div class="footerSite">
+		<!--Vous pouvez mettre votre propre footer ICI-->
+	</div>
+	<div class="pivFooter" class="clearfix">
+		<div class="contenu contenu-fixe">
+			<div id="personnaliser">
+				<!-- Zone personnalisable. Exemple: lien de pied de page -->
+				<ul id="navFooter">
+					
+						<li>
+							<a href="https://www.quebec.ca/en/accessibility/" target="_blank">Accessibility&nbsp;<img src="/img/icones/lien-externe.svg" alt="This hyperlink will open in a new window."></a>
+						</li>
+
+						<li>
+							<a href="https://sante.quebec/confidentialite/" target="_blank">Privacy policy&nbsp;<img src="/img/icones/lien-externe.svg" alt="This hyperlink will open in a new window."></a>
+						</li>
+
+						<li class="last">
+							<a href="https://www.quebec.ca/en/gouvernement/politiques-orientations/langue-francaise/modernization-charter-french-language#c214034" target="_blank">Who can view this page?&nbsp;<img src="/img/icones/lien-externe.svg" alt="This hyperlink will open in a new window."></a>
+						</li>
+									</ul>
+				<!-- Fin de Zone personnalisable. -->
+			</div>
+			<div id="logo">
+
+			</div>
+			<div id="credits">
+				<small><a href="https://www.quebec.ca/droit-auteur" target="_blank">┬⌐ Gouvernement du Qu├⌐bec, 2026</a></small>
+			</div>
+		</div>
+	</div>
+
+</footer>
+<!--Script Menu Mobile-->
+<script>
+	var btn = document.querySelector('.toggle_btn');
+	var nav = document.querySelector('.nav');
+
+	btn.onclick = function() {
+		nav.classList.toggle('nav_open');
+		btn.classList.toggle('toggle_btn_open');
+	}
+</script>
+
+<!--[if IE]>
+     <script>
+            var btn = document.querySelector('.toggle_btn');
+            var nav = document.querySelector('.nav');
+    
+            btn.onclick = function() {
+                if (nav.hasClass('nav_open')) {
+                    nav.removeClass('nav_open');
+                    btn.removeClass('toggle_btn_open');
+                } else {
+                    nav.addClass('nav_open');
+                    btn.addClass('toggle_btn_open');
+                }             
+            }
+    </script>
+    <![endif]-->
+<!-- Fin Pied de page -->
+
+<!-- Script pour la gestion du formulaire -->
+<script src="/scripts/gestion_form.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="/scripts/ga-event.js"></script>
+
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+	<!-- FIN PIV -->
+
+		<script type="text/javascript">
+			var langueGeo = "en";
+			var pathGeo = "/";
+		</script><script type="text/javascript" src="/scripts/geolocalisation.js"></script>	<script type="text/javascript">
+		// JavaScript pour le bouton de recherche
+		if (document.getElementById("bt_rechCode")) {
+			const boutonChercher = document.getElementById("bt_rechCode");
+			boutonChercher.addEventListener("click", () => {
+				// Add the loading animation CSS class
+				boutonChercher.innerHTML = "<img scr='/img/icone-telecharg.gif'/>Searching";
+
+			});
+		}
+		if (document.getElementById("bt_rechType")) {
+			const boutonChercher = document.getElementById("bt_rechType");
+			boutonChercher.addEventListener("click", () => {
+				// Add the loading animation CSS class
+				boutonChercher.innerHTML = "<img scr='/img/icone-telecharg.gif'/>Searching";
+
+			});
+		}
+	</script>
+</body>
+
+</html>
