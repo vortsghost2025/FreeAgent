@@ -697,9 +697,15 @@
         <div class="section-title">Quick Actions</div>
         <div class="agent-item" onclick="selectAllAgents()">
           <div class="agent-name">✅ Select All Agents</div>
+          <div class="agent-role">Enable all available agents</div>
+        </div>
+        <div class="agent-item" onclick="deselectAllAgents()">
+          <div class="agent-name">❌ Deselect All</div>
+          <div class="agent-role">Clear agent selection</div>
         </div>
       </div>
     </div>
+  </div>
 
     <script>
       // System definitions
@@ -710,7 +716,9 @@
               infoTitle: 'Federation Core',
               infoDesc: 'Medical AI Federation with routing, health checks, and cost tracking. Best for production workloads.',
               agents: [
-                { id: 'medical_pipeline', name: 'Medical Pipeline', role: 'Structural Processing', provider: 'federation' }
+                { id: 'medical_pipeline', name: 'Medical Pipeline', role: 'Structural Processing', provider: 'federation' },
+                { id: 'coding_ensemble', name: 'Coding Ensemble', role: 'Code Generation', provider: 'federation' },
+                { id: 'plugins', name: 'Plugin System', role: 'Extensible Modules', provider: 'federation' }
               ]
             },
           
@@ -718,16 +726,16 @@
               title: '⚡ Simple Ensemble',
               desc: 'Fast 8-Agent Local System',
               infoTitle: 'Simple Ensemble',
-              infoDesc: 'Fast local 8‑agent ensemble for quick tasks.',
+              infoDesc: 'Lightweight 8-agent system using Ollama. Zero cost, local-only. Fastest for development.',
               agents: [
-                { id: 'code', name: 'Code Agent', role: 'Coding', provider: 'simple_ensemble' },
-                { id: 'reasoning', name: 'Reasoning Agent', role: 'Logic + Planning', provider: 'simple_ensemble' },
-                { id: 'nlp', name: 'NLP Agent', role: 'Language Understanding', provider: 'simple_ensemble' },
-                { id: 'vision', name: 'Vision Agent', role: 'Image Analysis', provider: 'simple_ensemble' },
-                { id: 'math', name: 'Math Agent', role: 'Computation', provider: 'simple_ensemble' },
-                { id: 'search', name: 'Search Agent', role: 'Web Search', provider: 'simple_ensemble' },
-                { id: 'tools', name: 'Tools Agent', role: 'Utility Functions', provider: 'simple_ensemble' },
-                { id: 'summarizer', name: 'Summarizer', role: 'Compression', provider: 'simple_ensemble' }
+                { id: 'code_generation', name: 'Code Generation', role: 'Code Expert', provider: 'ollama', model: 'llama3.2' },
+                { id: 'data_engineering', name: 'Data Engineering', role: 'Data Expert', provider: 'together', model: 'mistral-large' },
+                { id: 'clinical_analysis', name: 'Clinical Analysis', role: 'Medical Expert', provider: 'groq', model: 'llama3-70b' },
+                { id: 'testing', name: 'Testing', role: 'QA Expert', provider: 'ollama', model: 'llama3.2' },
+                { id: 'security', name: 'Security', role: 'Security Expert', provider: 'together', model: 'mistral-large' },
+                { id: 'api_integration', name: 'API Integration', role: 'API Expert', provider: 'groq', model: 'llama3-70b' },
+                { id: 'database', name: 'Database', role: 'DB Expert', provider: 'ollama', model: 'llama3.2' },
+                { id: 'devops', name: 'DevOps', role: 'Ops Expert', provider: 'together', model: 'mistral-large' }
               ]
             },
           
@@ -1108,6 +1116,22 @@
     // Show typing indicator
     function showTypingIndicator() {
       const chatContainer = document.getElementById('chatContainer');
+      const typingEl = document.createElement('div');
+      typingEl.id = 'typingIndicator';
+      typingEl.className = 'message ai';
+      typingEl.innerHTML = `
+        <div class="message-content">
+          <div class="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>
+      `;
+      chatContainer.appendChild(typingEl);
+      scrollToBottom();
+    }
+
     // Remove typing indicator
     function removeTypingIndicator() {
       const typingEl = document.getElementById('typingIndicator');
