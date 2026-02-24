@@ -1,0 +1,15 @@
+{
+  "agent": "code",
+  "state": {
+    "status": "idle",
+    "capabilities": [
+      "write_code",
+      "refactor",
+      "debug"
+    ],
+    "recent_messages": [],
+    "patterns": [],
+    "embeddings": [],
+    "last_updated": null
+  }
+}

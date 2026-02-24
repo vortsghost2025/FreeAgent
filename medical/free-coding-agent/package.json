@@ -1,0 +1,63 @@
+{
+  "name": "free-coding-agent",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "FREE Multi-AI Ensemble - $0/month distributed AI coding system with 8 agents",
+  "main": "src/index.js",
+  "bin": {
+    "fca": "./bin/cli.js",
+    "coding-agent": "./bin/cli.js",
+    "distributed": "./bin/distributed-cli.js"
+  },
+  "scripts": {
+    "start": "node bin/cli.js",
+    "web": "node bin/web.js",
+    "ensemble": "node bin/ensemble-cli.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "agentkeepalive": "^4.2.1",
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0",
+    "cross-spawn": "^7.0.3",
+    "express": "^4.18.2",
+    "glob": "^10.3.10",
+    "ink": "^4.4.1",
+    "inquirer": "^9.2.15",
+    "lowdb": "^7.0.1",
+    "marked": "^5.0.0",
+    "marked-terminal": "^5.2.0",
+    "node-fetch": "^3.3.2",
+    "ora": "^8.0.1",
+    "uuid": "^9.0.0",
+    "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "keywords": [
+    "coding-agent",
+    "ai",
+    "llm",
+    "ollama",
+    "groq",
+    "openrouter",
+    "huggingface",
+    "free",
+    "ensemble",
+    "multi-agent",
+    "distributed",
+    "medical-coding",
+    "code-assistant"
+  ],
+  "author": "Sean",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vortsghost2025/free-coding-agent"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "ensemble": {
+    "defaultAgents": ["code_generation", "data_engineering"],
+    "maxParallelAgents": 8,
+    "collaborationMode": "parallel",
+    "timeout": 60000,
+    "autoFixErrors": true,
+    "terminalEnabled": true
+  },
+  "agents": {
+    "code_generation": {
+      "id": "AG1",
+      "role": "code_generation",
+      "provider": "ollama",
+      "model": "llama3.2"
+    },
+    "data_engineering": {
+      "id": "AG2",
+      "role": "data_engineering",
+      "provider": "together",
+      "model": "mistral-large"
+    },
+    "clinical_analysis": {
+      "id": "AG3",
+      "role": "clinical_analysis",
+      "provider": "groq",
+      "model": "llama3-70b"
+    },
+    "testing": {
+      "id": "AG4",
+      "role": "testing",
+      "provider": "ollama",
+      "model": "llama3.2"
+    },
+    "security": {
+      "id": "AG5",
+      "role": "security",
+      "provider": "together",
+      "model": "mistral-large"
+    },
+    "api_integration": {
+      "id": "AG6",
+      "role": "api_integration",
+      "provider": "groq",
+      "model": "llama3-70b"
+    },
+    "database": {
+      "id": "AG7",
+      "role": "database",
+      "provider": "ollama",
+      "model": "llama3.2"
+    },
+    "devops": {
+      "id": "AG8",
+      "role": "devops",
+      "provider": "together",
+      "model": "mistral-large"
+    }
+  },
+  "terminal": {
+    "defaultShell": "auto",
+    "workingDir": "./",
+    "timeout": 30000,
+    "allowDangerousCommands": false
+  },
+  "errorFixing": {
+    "enabled": true,
+    "autoApply": false,
+    "fixIndentation": true,
+    "fixSyntax": true,
+    "fixImports": true,
+    "installMissingDeps": true
+  },
+  "memory": {
+    "type": "sqlite",
+    "path": "./ensemble-memory.db",
+    "retentionDays": 90,
+    "maxConversations": 1000,
+    "storeFixedPatterns": true
+  },
+  "swarm": {
+    "enabled": true,
+    "coordinatorId": "medical-ensemble-8",
+    "loadBalancingStrategy": "least_loaded",
+    "maxAgents": 8
+  }
+}

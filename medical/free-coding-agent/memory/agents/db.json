@@ -1,0 +1,15 @@
+{
+  "agent": "database",
+  "state": {
+    "status": "idle",
+    "capabilities": [
+      "sql_generation",
+      "schema_migration",
+      "query_optimization"
+    ],
+    "recent_messages": [],
+    "patterns": [],
+    "embeddings": [],
+    "last_updated": null
+  }
+}

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Mega Cockpit Test</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0a0e1a;
+      color: #e8eaed;
+      padding: 40px;
+      margin: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #4285f4;
+      margin-bottom: 20px;
+    }
+    .test-section {
+      background: #1a2133;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .test-section h2 {
+      margin-top: 0;
+      color: #58a6ff;
+    }
+    .status {
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .status.success {
+      background: #22c55e;
+      color: white;
+    }
+    .status.error {
+      background: #ef4444;
+      color: white;
+    }
+    .status.pending {
+      background: #f59e0b;
+      color: white;
+    }
+    button {
+      background: #4285f4;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #669df6;
+    }
+    button:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #2d3748;
+      border-radius: 4px;
+      background: #0d1117;
+      color: #e8eaed;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧪 Mega Cockpit Test Page</h1>
+
+    <div class="test-section">
+      <h2>1. DOM Elements Test</h2>
+      <div id="dom-status" class="status pending">Checking...</div>
+    </div>
+
+    <div class="test-section">
+      <h2>2. WebSocket Test</h2>
+      <div id="ws-status" class="status pending">Not connected</div>
+      <button id="connect-ws" onclick="testWebSocket()">Connect WebSocket</button>
+    </div>
+
+    <div class="test-section">
+      <h2>3. API Test</h2>
+      <div id="api-status" class="status pending">Not tested</div>
+      <button id="test-api" onclick="testAPI()">Test API</button>
+    </div>
+
+    <div class="test-section">
+      <h2>4. Agent Selection Test</h2>
+      <div id="agent-status" class="status pending">Not tested</div>
+      <button id="test-agents" onclick="testAgents()">Test Agents</button>
+    </div>
+
+    <div class="test-section">
+      <h2>5. System Switch Test</h2>
+      <div id="system-status" class="status pending">Not tested</div>
+      <button id="test-system" onclick="testSystemSwitch()">Test System Switch</button>
+    </div>
+
+    <div class="test-section">
+      <h2>Console Output</h2>
+      <pre id="console-output" style="background: #0d1117; padding: 10px; border-radius: 4px; overflow: auto; max-height: 200px;"></pre>
+    </div>
+  </div>
+
+  <script>
+    let consoleOutput = document.getElementById('console-output');
+
+    function log(msg) {
+      const timestamp = new Date().toISOString();
+      consoleOutput.textContent += `[${timestamp}] ${msg}\n`;
+      consoleOutput.scrollTop = consoleOutput.scrollHeight;
+      console.log(msg);
+    }
+
+    function updateStatus(id, status, message) {
+      const el = document.getElementById(id);
+      el.className = `status ${status}`;
+      el.textContent = message;
+    }
+
+    // Test 1: DOM Elements
+    window.addEventListener('DOMContentLoaded', () => {
+      log('📄 DOM Content Loaded');
+
+      const requiredElements = [
+        'dom-status',
+        'ws-status',
+        'api-status',
+        'agent-status',
+        'system-status',
+        'console-output',
+        'connect-ws',
+        'test-api',
+        'test-agents',
+        'test-system'
+      ];
+
+      let missing = [];
+      let found = [];
+
+      requiredElements.forEach(id => {
+        if (document.getElementById(id)) {
+          found.push(id);
+        } else {
+          missing.push(id);
+        }
+      });
+
+      if (missing.length === 0) {
+        updateStatus('dom-status', 'success', `✅ All ${found.length} DOM elements found`);
+        log('✅ All DOM elements present');
+      } else {
+        updateStatus('dom-status', 'error', `❌ Missing: ${missing.join(', ')}`);
+        log(`❌ Missing elements: ${missing.join(', ')}`);
+      }
+    });
+
+    // Test 2: WebSocket
+    function testWebSocket() {
+      const btn = document.getElementById('connect-ws');
+      btn.disabled = true;
+      btn.textContent = 'Connecting...';
+
+      log('🔌 Testing WebSocket connection...');
+
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}`;
+
+      try {
+        const ws = new WebSocket(wsUrl);
+
+        ws.onopen = () => {
+          updateStatus('ws-status', 'success', '✅ WebSocket connected');
+          log('✅ WebSocket connected successfully');
+          ws.close();
+        };
+
+        ws.onerror = (error) => {
+          updateStatus('ws-status', 'error', '❌ WebSocket error');
+          log(`❌ WebSocket error: ${error}`);
+          btn.disabled = false;
+          btn.textContent = 'Connect WebSocket';
+        };
+
+        ws.onclose = () => {
+          log('🔌 WebSocket closed');
+        };
+
+        setTimeout(() => {
+          if (ws.readyState !== WebSocket.OPEN) {
+            updateStatus('ws-status', 'error', '❌ Connection timeout');
+            log('❌ WebSocket connection timeout');
+            btn.disabled = false;
+            btn.textContent = 'Connect WebSocket';
+            ws.close();
+          }
+        }, 5000);
+
+      } catch (error) {
+        updateStatus('ws-status', 'error', `❌ ${error.message}`);
+        log(`❌ WebSocket init error: ${error.message}`);
+        btn.disabled = false;
+        btn.textContent = 'Connect WebSocket';
+      }
+    }
+
+    // Test 3: API
+    async function testAPI() {
+      const btn = document.getElementById('test-api');
+      btn.disabled = true;
+      btn.textContent = 'Testing...';
+
+      log('📡 Testing API endpoint...');
+
+      try {
+        const response = await fetch('/api/status', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          updateStatus('api-status', 'success', '✅ API responding');
+          log(`✅ API response received: ${JSON.stringify(data).substring(0, 100)}...`);
+        } else {
+          throw new Error(`HTTP ${response.status}`);
+        }
+      } catch (error) {
+        updateStatus('api-status', 'error', `❌ ${error.message}`);
+        log(`❌ API error: ${error.message}`);
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Test API';
+    }
+
+    // Test 4: Agents
+    async function testAgents() {
+      const btn = document.getElementById('test-agents');
+      btn.disabled = true;
+      btn.textContent = 'Testing...';
+
+      log('🤖 Testing agent endpoint...');
+
+      try {
+        const response = await fetch('/api/ensemble/agents', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          updateStatus('agent-status', 'success', `✅ ${data.length} agents available`);
+          log(`✅ Agents: ${data.join(', ')}`);
+        } else {
+          throw new Error(`HTTP ${response.status}`);
+        }
+      } catch (error) {
+        updateStatus('agent-status', 'error', `❌ ${error.message}`);
+        log(`❌ Agent error: ${error.message}`);
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Test Agents';
+    }
+
+    // Test 5: System Switch
+    function testSystemSwitch() {
+      const btn = document.getElementById('test-system');
+      btn.disabled = true;
+      btn.textContent = 'Testing...';
+
+      log('🔄 Testing system switch...');
+
+      try {
+        const systems = ['federation', 'simple', 'distributed'];
+        let current = 0;
+
+        const interval = setInterval(() => {
+          log(`📌 Switching to: ${systems[current]}`);
+          current = (current + 1) % systems.length;
+
+          if (current === 0) {
+            clearInterval(interval);
+            updateStatus('system-status', 'success', '✅ System switch test complete');
+            log('✅ System switch test complete');
+            btn.disabled = false;
+            btn.textContent = 'Test System Switch';
+          }
+        }, 1000);
+
+      } catch (error) {
+        updateStatus('system-status', 'error', `❌ ${error.message}`);
+        log(`❌ System switch error: ${error.message}`);
+        btn.disabled = false;
+        btn.textContent = 'Test System Switch';
+      }
+    }
+
+    log('✅ Test page loaded - ready to run tests');
+  </script>
+</body>
+</html>

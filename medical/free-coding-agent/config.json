@@ -1,0 +1,20 @@
+{
+  "models": {
+    "default": "llama3.2",
+    "code": "deepseek-coder",
+    "embedding": "bge-small"
+  },
+  "paths": {
+    "memory": "memory",
+    "agents": "memory/agents",
+    "tasks": "memory/tasks",
+    "conversations": "memory/conversations"
+  },
+  "routing": {
+    "mode": "auto",
+    "fallback": "websocket"
+  },
+  "server": {
+    "port": 8888
+  }
+}

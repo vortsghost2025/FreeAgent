@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎮 Command Center Cockpit - FREE AI Ensemble</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg-primary: #0a0a1a;
+        --bg-secondary: #12122a;
+        --bg-card: #1a1a3a;
+        --accent-cyan: #00d9ff;
+        --accent-green: #00ff88;
+        --accent-yellow: #ffcc00;
+        --accent-red: #ff4466;
+        --accent-purple: #aa66ff;
+        --text-primary: #ffffff;
+        --text-secondary: #8888aa;
+        --border-color: #2a2a4a;
+      }
+
+      body {
+        font-family:
+          "Segoe UI",
+          -apple-system,
+          BlinkMacSystemFont,
+          Roboto,
+          sans-serif;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Header */
+      .header {
+        background: linear-gradient(
+          135deg,
+          var(--bg-secondary) 0%,
+          var(--bg-primary) 100%
+        );
+        border-bottom: 1px solid var(--border-color);
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header h1 {
+        font-size: 1.5rem;
+        color: var(--accent-cyan);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .header h1 span {
+        font-size: 1.8rem;
+      }
+
+      .cost-display {
+        background: linear-gradient(135deg, #00ff8820, #00ff8810);
+        border: 1px solid var(--accent-green);
+        border-radius: 8px;
+        padding: 10px 20px;
+        text-align: center;
+      }
+
+      .cost-display .amount {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--accent-green);
+      }
+
+      .cost-display .label {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+      }
+
+      .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .status-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--accent-green);
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      /* Main Layout */
+      .main-container {
+        display: grid;
+        grid-template-columns: 280px 1fr 300px;
+        gap: 20px;
+        padding: 20px;
+        height: calc(100vh - 80px);
+      }
+
+      /* Left Panel - Agent Grid */
+      .agent-panel {
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        padding: 15px;
+        overflow-y: auto;
+      }
+
+      .panel-title {
+        font-size: 0.9rem;
+        color: var(--accent-cyan);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .agent-card {
+        background: var(--bg-card);
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+        border-left: 3px solid var(--accent-cyan);
+        transition: all 0.3s;
+      }
+
+      .agent-card:hover {
+        transform: translateX(5px);
+        border-left-color: var(--accent-green);
+      }
+
+      .agent-card.healthy {
+        border-left-color: var(--accent-green);
+      }
+
+      .agent-card.degraded {
+        border-left-color: var(--accent-yellow);
+      }
+
+      .agent-card.unhealthy {
+        border-left-color: var(--accent-red);
+      }
+
+      .agent-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .agent-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .agent-status {
+        font-size: 0.7rem;
+        padding: 2px 8px;
+        border-radius: 10px;
+        background: var(--accent-green);
+        color: var(--bg-primary);
+      }
+
+      .agent-status.degraded {
+        background: var(--accent-yellow);
+      }
+
+      .agent-status.unhealthy {
+        background: var(--accent-red);
+      }
+
+      .agent-details {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+      }
+
+      .agent-details span {
+        display: block;
+        margin-top: 4px;
+      }
+
+      /* Center Panel - Main Content */
+      .center-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      /* Task Input */
+      .task-input-container {
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .task-input {
+        width: 100%;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 15px;
+        color: var(--text-primary);
+        font-size: 1rem;
+        resize: none;
+        min-height: 100px;
+      }
+
+      .task-input:focus {
+        outline: none;
+        border-color: var(--accent-cyan);
+      }
+
+      .task-controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+
+      .btn-primary {
+        background: var(--accent-cyan);
+        color: var(--bg-primary);
+      }
+
+      .btn-primary:hover {
+        background: #00b8dd;
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background: var(--bg-card);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+      }
+
+      /* Metrics Grid */
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+      }
+
+      .metric-card {
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .metric-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--accent-cyan);
+      }
+
+      .metric-label {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-top: 5px;
+      }
+
+      /* Log Stream */
+      .log-container {
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        padding: 15px;
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .log-stream {
+        flex: 1;
+        overflow-y: auto;
+        font-family: "Consolas", "Monaco", monospace;
+        font-size: 0.8rem;
+        background: var(--bg-primary);
+        border-radius: 8px;
+        padding: 10px;
+      }
+
+      .log-entry {
+        padding: 4px 0;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .log-entry.info {
+        color: var(--accent-cyan);
+      }
+      .log-entry.success {
+        color: var(--accent-green);
+      }
+      .log-entry.warning {
+        color: var(--accent-yellow);
+      }
+      .log-entry.error {
+        color: var(--accent-red);
+      }
+
+      .log-time {
+        color: var(--text-secondary);
+        margin-right: 10px;
+      }
+
+      /* Right Panel - Stats & Alerts */
+      .right-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      /* Provider Status */
+      .provider-list {
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        padding: 15px;
+      }
+
+      .provider-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background: var(--bg-card);
+        border-radius: 6px;
+        margin-bottom: 8px;
+      }
+
+      .provider-name {
+        font-size: 0.85rem;
+      }
+
+      .provider-status {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .provider-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+
+      .provider-dot.active {
+        background: var(--accent-green);
+      }
+      .provider-dot.limited {
+        background: var(--accent-yellow);
+      }
+      .provider-dot.offline {
+        background: var(--accent-red);
+      }
+
+      /* Savings Display */
+      .savings-card {
+        background: linear-gradient(
+          135deg,
+          var(--bg-secondary),
+          var(--bg-card)
+        );
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid var(--accent-purple);
+      }
+
+      .savings-amount {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--accent-purple);
+      }
+
+      .savings-comparison {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-top: 10px;
+      }
+
+      /* Alerts */
+      .alerts-container {
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        padding: 15px;
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      .alert-item {
+        padding: 10px;
+        background: var(--bg-card);
+        border-radius: 6px;
+        margin-bottom: 8px;
+        border-left: 3px solid var(--accent-yellow);
+      }
+
+      .alert-item.error {
+        border-left-color: var(--accent-red);
+      }
+
+      .alert-item.info {
+        border-left-color: var(--accent-cyan);
+      }
+
+      .alert-time {
+        font-size: 0.7rem;
+        color: var(--text-secondary);
+      }
+
+      .alert-message {
+        font-size: 0.85rem;
+        margin-top: 5px;
+      }
+
+      /* Network Topology */
+      .topology-container {
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        padding: 15px;
+      }
+
+      .topology-visual {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 150px;
+        position: relative;
+      }
+
+      .topology-node {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--bg-card);
+        border: 2px solid var(--accent-cyan);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        position: absolute;
+      }
+
+      .topology-node.center {
+        width: 80px;
+        height: 80px;
+        background: var(--accent-cyan);
+        color: var(--bg-primary);
+        font-size: 2rem;
+      }
+
+      .topology-node.local {
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .topology-node.vps1 {
+        top: 50%;
+        left: 10px;
+        transform: translateY(-50%);
+      }
+      .topology-node.vps2 {
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+      }
+      .topology-node.cloud {
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      /* Responsive */
+      @media (max-width: 1200px) {
+        .main-container {
+          grid-template-columns: 1fr;
+        }
+
+        .metrics-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <h1><span>🎮</span> Command Center Cockpit</h1>
+
+      <div class="cost-display">
+        <div class="amount" id="total-cost">$0.00</div>
+        <div class="label">Total Cost (Always FREE!)</div>
+      </div>
+
+      <div class="status-indicator">
+        <div class="status-dot" id="connection-status"></div>
+        <span id="connection-text">Connected</span>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+      <!-- Left Panel - Agents -->
+      <div class="agent-panel">
+        <div class="panel-title">🤖 8-Agent Ensemble</div>
+        <div id="agent-grid">
+          <!-- Agent cards will be populated here -->
+          <div class="agent-card healthy">
+            <div class="agent-header">
+              <span class="agent-name">AG1: CodeGen</span>
+              <span class="agent-status">Online</span>
+            </div>
+            <div class="agent-details">
+              <span>📍 Local Ollama</span>
+              <span>🧠 llama3.2:8b</span>
+              <span>⚡ 45ms latency</span>
+            </div>
+          </div>
+
+          <div class="agent-card healthy">
+            <div class="agent-header">
+              <span class="agent-name">AG2: DataEng</span>
+              <span class="agent-status">Online</span>
+            </div>
+            <div class="agent-details">
+              <span>📍 Oracle VPS</span>
+              <span>🧠 mistral:7b</span>
+              <span>⚡ 120ms latency</span>
+            </div>
+          </div>
+
+          <div class="agent-card healthy">
+            <div class="agent-header">
+              <span class="agent-name">AG3: Clinical</span>
+              <span class="agent-status">Online</span>
+            </div>
+            <div class="agent-details">
+              <span>📍 Hostinger VPS</span>
+              <span>🧠 meditron:7b</span>
+              <span>⚡ 150ms latency</span>
+            </div>
+          </div>
+
+          <div class="agent-card healthy">
+            <div class="agent-header">
+              <span class="agent-name">AG4: Testing</span>
+              <span class="agent-status">Online</span>
+            </div>
+            <div class="agent-details">
+              <span>📍 Local Ollama</span>
+              <span>🧠 phi3:3.8b</span>
+              <span>⚡ 30ms latency</span>
+            </div>
+          </div>
+
+          <div class="agent-card healthy">
+            <div class="agent-header">
+              <span class="agent-name">AG5: Security</span>
+              <span class="agent-status">Online</span>
+            </div>
+            <div class="agent-details">
+              <span>📍 Alibaba ECS</span>
+              <span>🧠 codellama:7b</span>
+              <span>⚡ 180ms latency</span>
+            </div>
+          </div>
+
+          <div class="agent-card degraded">
+            <div class="agent-header">
+              <span class="agent-name">AG6: API</span>
+              <span class="agent-status degraded">Limited</span>
+            </div>
+            <div class="agent-details">
+              <span>📍 Groq Free</span>
+              <span>🧠 llama-3.3-70b</span>
+              <span>⚡ 200ms latency</span>
+            </div>
+          </div>
+
+          <div class="agent-card healthy">
+            <div class="agent-header">
+              <span class="agent-name">AG7: Database</span>
+              <span class="agent-status">Online</span>
+            </div>
+            <div class="agent-details">
+              <span>📍 Local Ollama</span>
+              <span>🧠 deepseek-coder:6.7b</span>
+              <span>⚡ 50ms latency</span>
+            </div>
+          </div>
+
+          <div class="agent-card healthy">
+            <div class="agent-header">
+              <span class="agent-name">AG8: DevOps</span>
+              <span class="agent-status">Online</span>
+            </div>
+            <div class="agent-details">
+              <span>📍 Oracle VPS</span>
+              <span>🧠 llama3.2:8b</span>
+              <span>⚡ 130ms latency</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Panel -->
+      <div class="center-panel">
+        <!-- Task Input -->
+        <div class="task-input-container">
+          <div class="panel-title">📝 Submit Task</div>
+          <textarea
+            class="task-input"
+            id="task-input"
+            placeholder="Enter your task here... (e.g., 'Build a REST API for patient data with CDC/WHO compliance')"
+          ></textarea>
+          <div class="task-controls">
+            <button class="btn btn-primary" onclick="submitTask()">
+              🚀 Execute with All Agents
+            </button>
+            <button class="btn btn-secondary" onclick="clearTask()">
+              Clear
+            </button>
+            <select id="agent-select" class="btn btn-secondary">
+              <option value="all">All Agents</option>
+              <option value="code">Code Generation</option>
+              <option value="clinical">Clinical Analysis</option>
+              <option value="security">Security Review</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-value" id="active-agents">8</div>
+            <div class="metric-label">Active Agents</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value" id="tasks-completed">0</div>
+            <div class="metric-label">Tasks Completed</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value" id="avg-latency">85ms</div>
+            <div class="metric-label">Avg Latency</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value" id="tokens-generated">0</div>
+            <div class="metric-label">Tokens Generated</div>
+          </div>
+        </div>
+
+        <!-- Log Stream -->
+        <div class="log-container">
+          <div class="panel-title">📜 Live Log Stream</div>
+          <div class="log-stream" id="log-stream">
+            <div class="log-entry info">
+              <span class="log-time">00:00:00</span>
+              <span>🚀 Command Center initialized</span>
+            </div>
+            <div class="log-entry success">
+              <span class="log-time">00:00:01</span>
+              <span>✅ All 8 agents connected</span>
+            </div>
+            <div class="log-entry info">
+              <span class="log-time">00:00:02</span>
+              <span>📡 WebSocket connection established</span>
+            </div>
+            <div class="log-entry success">
+              <span class="log-time">00:00:03</span>
+              <span>💰 Cost tracker: $0.00 (All FREE!)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel -->
+      <div class="right-panel">
+        <!-- Provider Status -->
+        <div class="provider-list">
+          <div class="panel-title">🔌 Provider Status</div>
+
+          <div class="provider-item">
+            <span class="provider-name">Ollama Local</span>
+            <div class="provider-status">
+              <div class="provider-dot active"></div>
+              <span>Active</span>
+            </div>
+          </div>
+
+          <div class="provider-item">
+            <span class="provider-name">Groq Free</span>
+            <div class="provider-status">
+              <div class="provider-dot active"></div>
+              <span>12,400/14,400</span>
+            </div>
+          </div>
+
+          <div class="provider-item">
+            <span class="provider-name">OpenRouter</span>
+            <div class="provider-status">
+              <div class="provider-dot active"></div>
+              <span>Active</span>
+            </div>
+          </div>
+
+          <div class="provider-item">
+            <span class="provider-name">HuggingFace</span>
+            <div class="provider-status">
+              <div class="provider-dot active"></div>
+              <span>Active</span>
+            </div>
+          </div>
+
+          <div class="provider-item">
+            <span class="provider-name">Cloudflare AI</span>
+            <div class="provider-status">
+              <div class="provider-dot limited"></div>
+              <span>8,500/10,000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Savings Display -->
+        <div class="savings-card">
+          <div class="panel-title">💎 Your Savings</div>
+          <div class="savings-amount" id="total-savings">$0.00</div>
+          <div class="savings-comparison">
+            <div>vs Claude Code: <strong>$20/mo saved</strong></div>
+            <div>vs GitHub Copilot: <strong>$19/mo saved</strong></div>
+            <div>vs OpenAI: <strong>$20/mo saved</strong></div>
+          </div>
+        </div>
+
+        <!-- Network Topology -->
+        <div class="topology-container">
+          <div class="panel-title">🌐 Network Topology</div>
+          <div class="topology-visual">
+            <div class="topology-node center">👤</div>
+            <div class="topology-node local">💻</div>
+            <div class="topology-node vps1">☁️</div>
+            <div class="topology-node vps2">☁️</div>
+            <div class="topology-node cloud">🌍</div>
+          </div>
+        </div>
+
+        <!-- Alerts -->
+        <div class="alerts-container">
+          <div class="panel-title">🚨 Alerts</div>
+          <div id="alerts-list">
+            <div class="alert-item info">
+              <div class="alert-time">Just now</div>
+              <div class="alert-message">System operating normally</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // WebSocket connection
+      let ws = null;
+      let reconnectAttempts = 0;
+      const maxReconnectAttempts = 5;
+
+      // Connect to WebSocket server
+      function connectWebSocket() {
+        const wsUrl = `ws://${window.location.hostname}:3001`;
+
+        try {
+          ws = new WebSocket(wsUrl);
+
+          ws.onopen = () => {
+            console.log("WebSocket connected");
+            document.getElementById("connection-status").style.background =
+              "#00ff88";
+            document.getElementById("connection-text").textContent =
+              "Connected";
+            reconnectAttempts = 0;
+            addLog("success", "📡 Connected to Command Center");
+          };
+
+          ws.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            handleMessage(message);
+          };
+
+          ws.onclose = () => {
+            console.log("WebSocket disconnected");
+            document.getElementById("connection-status").style.background =
+              "#ff4466";
+            document.getElementById("connection-text").textContent =
+              "Disconnected";
+            addLog("error", "📡 Disconnected from Command Center");
+
+            // Attempt reconnection
+            if (reconnectAttempts < maxReconnectAttempts) {
+              reconnectAttempts++;
+              setTimeout(connectWebSocket, 2000 * reconnectAttempts);
+            }
+          };
+
+          ws.onerror = (error) => {
+            console.error("WebSocket error:", error);
+          };
+        } catch (error) {
+          console.error("Failed to connect:", error);
+        }
+      }
+
+      // Handle incoming messages
+      function handleMessage(message) {
+        switch (message.type) {
+          case "agent_status":
+            updateAgentStatus(message.data);
+            break;
+          case "metrics_update":
+            updateMetrics(message.data);
+            break;
+          case "log_entry":
+            addLog(message.data.level, message.data.message);
+            break;
+          case "alert":
+            addAlert(message.data);
+            break;
+          case "cost_update":
+            updateCost(message.data);
+            break;
+          case "system_status":
+            updateSystemStatus(message.data);
+            break;
+        }
+      }
+
+      // Update agent status
+      function updateAgentStatus(data) {
+        // Update agent cards based on data
+        console.log("Agent status update:", data);
+      }
+
+      // Update metrics
+      function updateMetrics(data) {
+        if (data.loadBalancer) {
+          document.getElementById("tasks-completed").textContent =
+            data.loadBalancer.totalRequests || 0;
+        }
+      }
+
+      // Update cost display
+      function updateCost(data) {
+        document.getElementById("total-cost").textContent =
+          "$" + (data.totalCost || 0).toFixed(2);
+        document.getElementById("total-savings").textContent =
+          "$" + (data.savings?.total || 0).toFixed(2);
+      }
+
+      // Update system status
+      function updateSystemStatus(data) {
+        if (data.agents) {
+          const healthyCount = Object.values(data.agents).filter(
+            (a) => a.status === "healthy",
+          ).length;
+          document.getElementById("active-agents").textContent = healthyCount;
+        }
+      }
+
+      // Add log entry
+      function addLog(level, message) {
+        const logStream = document.getElementById("log-stream");
+        const time = new Date().toLocaleTimeString();
+
+        const entry = document.createElement("div");
+        entry.className = `log-entry ${level}`;
+        entry.innerHTML = `<span class="log-time">${time}</span><span>${message}</span>`;
+
+        logStream.appendChild(entry);
+        logStream.scrollTop = logStream.scrollHeight;
+
+        // Keep only last 100 entries
+        while (logStream.children.length > 100) {
+          logStream.removeChild(logStream.firstChild);
+        }
+      }
+
+      // Add alert
+      function addAlert(data) {
+        const alertsList = document.getElementById("alerts-list");
+        const time = new Date().toLocaleTimeString();
+
+        const alert = document.createElement("div");
+        alert.className = `alert-item ${data.severity}`;
+        alert.innerHTML = `
+        <div class="alert-time">${time}</div>
+        <div class="alert-message">${data.message}</div>
+      `;
+
+        alertsList.insertBefore(alert, alertsList.firstChild);
+
+        // Keep only last 10 alerts
+        while (alertsList.children.length > 10) {
+          alertsList.removeChild(alertsList.lastChild);
+        }
+      }
+
+      // Submit task
+      function submitTask() {
+        const taskInput = document.getElementById("task-input");
+        const agentSelect = document.getElementById("agent-select");
+        const task = taskInput.value.trim();
+
+        if (!task) {
+          addLog("warning", "⚠️ Please enter a task");
+          return;
+        }
+
+        addLog("info", `🚀 Submitting task: "${task.substring(0, 50)}..."`);
+
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(
+            JSON.stringify({
+              type: "submit_task",
+              data: {
+                task,
+                agents: agentSelect.value,
+                timestamp: Date.now(),
+              },
+            }),
+          );
+        }
+
+        // Also send via HTTP API
+        fetch("/api/task", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ task, capability: agentSelect.value }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            addLog("success", "✅ Task submitted successfully");
+          })
+          .catch((error) => {
+            addLog("error", "❌ Failed to submit task: " + error.message);
+          });
+      }
+
+      // Clear task input
+      function clearTask() {
+        document.getElementById("task-input").value = "";
+      }
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", () => {
+        connectWebSocket();
+
+        // Fetch initial status
+        fetch("/api/status")
+          .then((response) => response.json())
+          .then((data) => {
+            updateSystemStatus(data);
+            addLog("info", "📊 Initial status loaded");
+          })
+          .catch((error) => {
+            addLog("warning", "⚠️ Running in demo mode (server not connected)");
+          });
+
+        // Periodic status update
+        setInterval(() => {
+          fetch("/api/metrics")
+            .then((response) => response.json())
+            .then((data) => updateMetrics(data))
+            .catch(() => {});
+        }, 5000);
+      });
+
+      // Keyboard shortcut
+      document.addEventListener("keydown", (e) => {
+        if (e.ctrlKey && e.key === "Enter") {
+          submitTask();
+        }
+      });
+    </script>
+  </body>
+</html>

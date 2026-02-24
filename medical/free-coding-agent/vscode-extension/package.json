@@ -1,0 +1,87 @@
+{
+  "name": "free-coding-agent",
+  "displayName": "Free Coding Agent",
+  "description": "AI coding assistant with multiple LLM backends",
+  "version": "1.0.0",
+  "publisher": "free-coding-agent",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "freeCodingAgent.chat",
+        "title": "Free Coding Agent: Open Chat"
+      },
+      {
+        "command": "freeCodingAgent.explain",
+        "title": "Free Coding Agent: Explain Selection"
+      },
+      {
+        "command": "freeCodingAgent.fix",
+        "title": "Free Coding Agent: Fix Code"
+      },
+      {
+        "command": "freeCodingAgent.refactor",
+        "title": "Free Coding Agent: Refactor Selection"
+      }
+    ],
+    "configuration": {
+      "title": "Free Coding Agent",
+      "properties": {
+        "freeCodingAgent.provider": {
+          "type": "string",
+          "default": "ollama",
+          "enum": ["ollama", "groq", "together"],
+          "description": "LLM provider to use"
+        },
+        "freeCodingAgent.model": {
+          "type": "string",
+          "default": "llama3.2",
+          "description": "Model to use"
+        },
+        "freeCodingAgent.ollamaUrl": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "Ollama server URL"
+        },
+        "freeCodingAgent.groqApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Groq API Key"
+        },
+        "freeCodingAgent.togetherApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Together AI API Key"
+        }
+      }
+    },
+    "keybindings": [
+      {
+        "command": "freeCodingAgent.chat",
+        "key": "ctrl+shift+a",
+        "mac": "cmd+shift+a"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.0"
+  }
+}

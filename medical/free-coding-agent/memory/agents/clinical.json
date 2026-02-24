@@ -1,0 +1,15 @@
+{
+  "agent": "clinical",
+  "state": {
+    "status": "idle",
+    "capabilities": [
+      "medical_guidelines",
+      "hipaa_compliance",
+      "clinical_reasoning"
+    ],
+    "recent_messages": [],
+    "patterns": [],
+    "embeddings": [],
+    "last_updated": null
+  }
+}

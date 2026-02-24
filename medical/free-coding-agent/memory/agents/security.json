@@ -1,0 +1,15 @@
+{
+  "agent": "security",
+  "state": {
+    "status": "idle",
+    "capabilities": [
+      "vulnerability_scan",
+      "security_audit",
+      "owasp_compliance"
+    ],
+    "recent_messages": [],
+    "patterns": [],
+    "embeddings": [],
+    "last_updated": null
+  }
+}

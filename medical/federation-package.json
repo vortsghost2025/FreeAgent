@@ -1,0 +1,19 @@
+{
+  "name": "medical-ai-federation",
+  "version": "1.0.0",
+  "description": "Medical AI Federation - Unified control for Medical Pipeline, Plugins, and Coding Ensemble with $0/month goal",
+  "main": "cockpit-server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node cockpit-server.js",
+    "dev": "node cockpit-server.js & node --watch",
+    "test": "node -e \"import('./federation-core.js').then(module => { module.getFederationCoordinator().healthCheck(); })\""
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.16.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

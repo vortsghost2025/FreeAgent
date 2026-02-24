@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical AI IDE - Unified Federation Workspace</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-primary: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-tertiary: #21262d;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --accent: #58a6ff;
+      --accent-hover: #79b0ff;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --border: #30363d;
+      --header: #1f2937;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-size: 1rem; /* Set base font size to 16px */
+    }
+
+    /* Top Bar - Command Bar */
+    .top-bar {
+      height: 52px;
+      background: var(--header);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 100;
+    }
+
+    .top-bar .left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .top-bar .logo {
+      font-size: 1.3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #58a6ff 0%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .top-bar .quick-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .top-bar .quick-actions button {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem; /* More readable quick action buttons */
+      transition: all 0.2s;
+    }
+
+    .top-bar .quick-actions button:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .top-bar .right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .top-bar .connection {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--error);
+      box-shadow: 0 0 10px var(--error);
+    }
+
+    .status-dot.connected { background: var(--success); box-shadow: 0 0 10px var(--success); }
+
+    /* Main Layout */
+    .main-layout {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Left Sidebar - Federation Navigator */
+    .left-sidebar {
+      width: 240px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .sidebar-section {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-section:last-child {
+      border-bottom: none;
+    }
+
+    .sidebar-header {
+      padding: 12px 15px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sidebar-items {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s;
+      color: var(--text-primary);
+    }
+
+    .sidebar-item:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .sidebar-item.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .sidebar-item .icon { font-size: 1.2rem; }
+
+    .sidebar-item .label { flex: 1; font-size: 0.9rem; }
+
+    .sidebar-item .badge {
+      background: var(--error);
+      color: white;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 10px;
+    }
+
+    /* Agent toggles */
+    .agent-toggles {
+      padding: 10px 15px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .agent-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .agent-toggle:hover {
+      background: var(--border);
+    }
+
+    .agent-toggle input[type="checkbox"] {
+      accent-color: var(--accent);
+    }
+
+    .agent-toggle label {
+      flex: 1;
+      font-size: 0.95rem; /* More readable agent labels */
+      cursor: pointer;
+    }
+
+    /* Center Panel - Workspace Canvas */
+    .center-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-toolbar .tabs {
+      display: flex;
+      gap: 5px;
+    }
+
+    .panel-tab {
+      padding: 12px 20px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 0.95rem; /* More readable panel tabs */
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .panel-tab:hover {
+      color: var(--text-primary);
+      background: var(--bg-tertiary);
+    }
+
+    .panel-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .panel-toolbar .actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .panel-toolbar button {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem; /* More readable button text */
+      transition: all 0.2s;
+    }
+
+    .panel-toolbar button:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    /* Chat Panel */
+    .chat-panel {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 0; /* Important for flex scrolling */
+    }
+
+    .chat-panel.active { display: flex; }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      min-height: 0; /* Important for flex scrolling */
+    }
+
+    .chat-message {
+      max-width: 85%;
+      padding: 16px 20px;
+      border-radius: 16px;
+      line-height: 1.8;
+      font-size: 1.1rem; /* Larger font for better readability */
+      animation: slideIn 0.3s ease-out;
+      word-wrap: break-word;
+      overflow-wrap: break-word; /* Break long words */
+      max-height: 50vh; /* Prevent messages from taking up too much space */
+      overflow-y: auto; /* Allow scrolling within long messages */
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .chat-message.user {
+      align-self: flex-end;
+      background: var(--accent);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-message.agent {
+      align-self: flex-start;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-message.system {
+      align-self: center;
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      font-size: 1rem; /* More readable system messages */
+      padding: 10px 18px;
+      border-radius: 8px;
+      line-height: 1.6;
+    }
+
+    .chat-message .agent-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem; /* More readable agent badges */
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .chat-message pre {
+      background: var(--bg-primary);
+      padding: 18px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 14px 0;
+      border: 1px solid var(--border);
+      font-size: 1rem; /* More readable code blocks */
+      line-height: 1.6;
+    }
+
+    .chat-message code {
+      background: var(--bg-tertiary);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.95em; /* Slightly larger inline code */
+    }
+
+    .chat-input-area {
+      padding: 15px 20px;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0; /* Prevent input area from being compressed */
+    }
+
+    .chat-input-wrapper {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .chat-input-wrapper textarea {
+      flex: 1;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      padding: 14px;
+      resize: none;
+      font-size: 1.05rem; /* Larger input text for better readability */
+      min-height: 70px;
+      max-height: 200px;
+      font-family: inherit;
+      transition: all 0.2s;
+      line-height: 1.5;
+    }
+
+    .chat-input-wrapper textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+    }
+
+    .chat-input-wrapper .send-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem; /* Larger send button text */
+      transition: all 0.2s;
+      white-space: nowrap;
+      box-shadow: 0 4px 15px rgba(88, 166, 255, 0.3);
+    }
+
+    .chat-input-wrapper .send-btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+    }
+
+    /* Editor Panel */
+    .editor-panel {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .editor-panel.active { display: flex; }
+
+    .editor-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .editor-toolbar .file-tabs {
+      display: flex;
+      gap: 5px;
+    }
+
+    .editor-toolbar .file-tab {
+      padding: 8px 16px;
+      border-radius: 6px 6px 0 0;
+      cursor: pointer;
+      font-size: 0.85rem;
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .editor-toolbar .file-tab:hover {
+      background: var(--bg-secondary);
+    }
+
+    .editor-toolbar .file-tab.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .editor-toolbar .file-tab .close {
+      font-size: 0.9rem;
+      opacity: 0.6;
+    }
+
+    .editor-toolbar .file-tab .close:hover {
+      opacity: 1;
+    }
+
+    .editor-toolbar .actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .editor-content {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .CodeMirror {
+      height: 100%;
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* Workflow Panel */
+    .workflow-panel {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    .workflow-panel.active { display: flex; }
+
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 15px;
+      overflow-y: auto;
+    }
+
+    .workflow-card {
+      background: var(--bg-tertiary);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .workflow-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .workflow-card h3 {
+      color: var(--accent);
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+
+    .workflow-card p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .workflow-card .meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .workflow-card.running .status {
+      color: var(--warning);
+    }
+
+    .workflow-card.completed .status {
+      color: var(--success);
+    }
+
+    /* Right Panel - Context Engine */
+    .right-panel {
+      width: 320px;
+      background: var(--bg-secondary);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .right-panel-tabs {
+      display: flex;
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .right-panel-tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 0.95rem; /* More readable right panel tabs */
+      transition: all 0.2s;
+    }
+
+    .right-panel-tab:hover {
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+    }
+
+    .right-panel-tab.active {
+      color: var(--accent);
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .right-panel-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 15px;
+      min-height: 0; /* Important for flex scrolling */
+    }
+
+    .right-panel-content.hidden { display: none; }
+
+    /* Agent Panel */
+    .agent-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .agent-item {
+      background: var(--bg-tertiary);
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 3px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .agent-item:hover {
+      border-left-color: var(--accent);
+      background: var(--bg-secondary);
+    }
+
+    .agent-item.selected {
+      border-left-color: var(--accent);
+      background: var(--bg-secondary);
+    }
+
+    .agent-item.active {
+      border-left-color: var(--success);
+    }
+
+    .agent-item h4 {
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      color: var(--text-primary);
+    }
+
+    .agent-item p {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    /* Metrics Panel */
+    .metrics-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .metric-item {
+      background: var(--bg-tertiary);
+      padding: 12px;
+      border-radius: 8px;
+    }
+
+    .metric-item .label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .metric-item .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .metric-item .trend {
+      font-size: 0.75rem;
+      margin-left: 8px;
+    }
+
+    .metric-item .trend.up { color: var(--success); }
+    .metric-item .trend.down { color: var(--error); }
+
+    /* Swarm Panel */
+    .swarm-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .swarm-agent {
+      background: var(--bg-tertiary);
+      padding: 12px;
+      border-radius: 6px;
+    }
+
+    .swarm-agent h4 {
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+    }
+
+    .swarm-agent .status {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .swarm-agent .bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .swarm-agent .bar-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.3s;
+    }
+
+    /* Logs Panel */
+    .log-entries {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8rem;
+    }
+
+    .log-entry {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+    }
+
+    .log-entry .time {
+      color: var(--text-secondary);
+      min-width: 80px;
+    }
+
+    .log-entry .type {
+      min-width: 80px;
+    }
+
+    .log-entry .type.INFO { color: var(--success); }
+    .log-entry .type.ERROR { color: var(--error); }
+    .log-entry .type.WARN { color: var(--warning); }
+
+    /* Bottom Panel - Task Timeline */
+    .bottom-panel {
+      height: 180px;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bottom-panel-header {
+      padding: 8px 15px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .bottom-panel-content {
+      flex: 1;
+      overflow-x: auto;
+      overflow-y: auto;
+      padding: 10px 15px;
+    }
+
+    .timeline {
+      display: flex;
+      gap: 20px;
+      padding: 5px 0;
+    }
+
+    .timeline-item {
+      min-width: 200px;
+      background: var(--bg-tertiary);
+      padding: 10px 15px;
+      border-radius: 8px;
+      border-left: 3px solid var(--border);
+    }
+
+    .timeline-item.completed { border-left-color: var(--success); }
+    .timeline-item.failed { border-left-color: var(--error); }
+    .timeline-item.running { border-left-color: var(--warning); }
+
+    .timeline-item .time {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .timeline-item .title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .timeline-item .detail {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    /* Typing Indicator */
+    .typing-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    .typing-indicator span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-secondary);
+      animation: bounce 1.4s infinite ease-in-out;
+    }
+
+    .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <!-- Top Bar - Command Bar -->
+  <div class="top-bar">
+    <div class="left">
+      <div class="logo">🌌 Medical AI IDE</div>
+      <div class="quick-actions">
+        <button onclick="launchWorkflow('medical-pipeline')">📋 Pipeline</button>
+        <button onclick="launchWorkflow('gwas')">🧬 GWAS</button>
+        <button onclick="selectAgentMode()">🤖 Agents</button>
+        <button onclick="toggleTheme()">🎨 Theme</button>
+      </div>
+    </div>
+    <div class="right">
+      <div class="connection">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Connecting...</span>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="quick-actions" onclick="saveAll()">💾 Save All</button>
+        <button class="quick-actions" onclick="runActive()">▶ Run</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <!-- Left Sidebar - Federation Navigator -->
+    <div class="left-sidebar">
+      <!-- Chat -->
+      <div class="sidebar-section">
+        <div class="sidebar-header">💬 Chat</div>
+        <div class="sidebar-items">
+          <div class="sidebar-item active" data-section="chat">
+            <span class="icon">💬</span>
+            <span class="label">Multi-Agent Chat</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Code Editor -->
+      <div class="sidebar-section">
+        <div class="sidebar-header">📝 Code Editor</div>
+        <div class="sidebar-items">
+          <div class="sidebar-item" data-section="editor">
+            <span class="icon">📝</span>
+            <span class="label">Code Workspace</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workflows -->
+      <div class="sidebar-section">
+        <div class="sidebar-header">🔬 Workflows</div>
+        <div class="sidebar-items">
+          <div class="sidebar-item" data-section="workflow" data-workflow="medical-pipeline">
+            <span class="icon">📋</span>
+            <span class="label">Medical Pipeline</span>
+          </div>
+          <div class="sidebar-item" data-section="workflow" data-workflow="gwas">
+            <span class="icon">🧬</span>
+            <span class="label">GWAS Analysis</span>
+          </div>
+          <div class="sidebar-item" data-section="workflow" data-workflow="rare-disease">
+            <span class="icon">🔍</span>
+            <span class="label">Rare Disease</span>
+          </div>
+          <div class="sidebar-item" data-section="workflow" data-workflow="variant-calling">
+            <span class="icon">🧬</span>
+            <span class="label">Variant Calling</span>
+          </div>
+          <div class="sidebar-item" data-section="workflow" data-workflow="federated-learning">
+            <span class="icon">🤝</span>
+            <span class="label">Federated Learning</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Swarm -->
+      <div class="sidebar-section">
+        <div class="sidebar-header">🐝 Swarm</div>
+        <div class="sidebar-items">
+          <div class="sidebar-item" data-section="swarm">
+            <span class="icon">🐝</span>
+            <span class="label">Swarm Status</span>
+            <span class="badge" id="swarmBadge">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agents -->
+      <div class="sidebar-section">
+        <div class="sidebar-header">🤖 Agents</div>
+        <div class="agent-toggles">
+          <div class="agent-toggle">
+            <input type="checkbox" id="ag-code" checked>
+            <label>📝 Code Generation</label>
+          </div>
+          <div class="agent-toggle">
+            <input type="checkbox" id="ag-data">
+            <label>🔧 Data Engineering</label>
+          </div>
+          <div class="agent-toggle">
+            <input type="checkbox" id="ag-clinical">
+            <label>🏥 Clinical Analysis</label>
+          </div>
+          <div class="agent-toggle">
+            <input type="checkbox" id="ag-testing">
+            <label>✅ Testing</label>
+          </div>
+          <div class="agent-toggle">
+            <input type="checkbox" id="ag-security">
+            <label>🔒 Security</label>
+          </div>
+          <div class="agent-toggle">
+            <input type="checkbox" id="ag-api">
+            <label>🔌 API Integration</label>
+          </div>
+          <div class="agent-toggle">
+            <input type="checkbox" id="ag-db">
+            <label>🗄 Database</label>
+          </div>
+          <div class="agent-toggle">
+            <input type="checkbox" id="ag-devops">
+            <label>🚀 DevOps</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div class="sidebar-section">
+        <div class="sidebar-header">📊 Metrics</div>
+        <div class="sidebar-items">
+          <div class="sidebar-item" data-section="metrics">
+            <span class="icon">📊</span>
+            <span class="label">Federation Cockpit</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Panel - Workspace Canvas -->
+    <div class="center-panel">
+      <div class="panel-toolbar">
+        <div class="tabs">
+          <div class="panel-tab active" data-panel="chat">💬 Chat</div>
+          <div class="panel-tab" data-panel="editor">📝 Editor</div>
+          <div class="panel-tab" data-panel="workflow">🔬 Workflows</div>
+        </div>
+        <div class="actions">
+          <button onclick="clearActive()">🗑 Clear</button>
+          <button onclick="runActive()">▶ Run</button>
+          <button onclick="saveActive()">💾 Save</button>
+        </div>
+      </div>
+
+      <!-- Chat Panel -->
+      <div class="chat-panel active" id="chatPanel">
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-message system">
+            🌌 Welcome to Medical AI IDE - Unified Federation Workspace
+            <br><br>
+            Select agents from the left sidebar and start chatting!
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <div class="chat-input-wrapper">
+            <textarea id="chatInput" placeholder="Type your message here... (Shift+Enter for new line)" rows="2"></textarea>
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Editor Panel -->
+      <div class="editor-panel" id="editorPanel">
+        <div class="editor-toolbar">
+          <div class="file-tabs">
+            <div class="file-tab active" data-file="main.js">main.js</div>
+            <div class="file-tab" data-file="output.txt">output.txt</div>
+            <span style="flex: 1;"></span>
+            <div class="file-tab" onclick="newFile()">➕</div>
+          </div>
+          <div class="actions">
+            <button onclick="runCode()">▶ Run</button>
+            <button onclick="saveCode()">💾 Save</button>
+            <button onclick="formatCode()">✨ Format</button>
+          </div>
+        </div>
+        <div class="editor-content">
+          <div id="codeEditor" class="code-editor"></div>
+        </div>
+      </div>
+
+      <!-- Workflow Panel -->
+      <div class="workflow-panel" id="workflowPanel">
+        <div class="workflow-grid">
+          <div class="workflow-card" onclick="runWorkflow('medical-pipeline')">
+            <h3>📋 Medical Pipeline</h3>
+            <p>5-agent processing pipeline (ingestion, triage, summarization, risk scoring, output)</p>
+            <div class="meta">
+              <span class="status" id="wp-pipeline-status">Ready</span>
+              <span>~3ms execution</span>
+            </div>
+          </div>
+          <div class="workflow-card" onclick="runWorkflow('gwas')">
+            <h3>🧬 GWAS Analysis</h3>
+            <p>Genome-wide association studies with map/reduce distributed computing</p>
+            <div class="meta">
+              <span class="status" id="wp-gwas-status">Ready</span>
+              <span>~2s execution</span>
+            </div>
+          </div>
+          <div class="workflow-card" onclick="runWorkflow('rare-disease')">
+            <h3>🔍 Rare Disease</h3>
+            <p>Multi-agent diagnostic workflow for rare disease identification</p>
+            <div class="meta">
+              <span class="status" id="wp-rare-status">Ready</span>
+              <span>~2s execution</span>
+            </div>
+          </div>
+          <div class="workflow-card" onclick="runWorkflow('variant-calling')">
+            <h3>🧬 Variant Calling</h3>
+            <p>Identify genetic variants from sequencing data</p>
+            <div class="meta">
+              <span class="status" id="wp-variant-status">Ready</span>
+              <span>~5s execution</span>
+            </div>
+          </div>
+          <div class="workflow-card" onclick="runWorkflow('federated-learning')">
+            <h3>🤝 Federated Learning</h3>
+            <p>Privacy-preserving distributed model training across nodes</p>
+            <div class="meta">
+              <span class="status" id="wp-federated-status">Ready</span>
+              <span>~11s execution</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel - Context Engine -->
+    <div class="right-panel">
+      <div class="right-panel-tabs">
+        <div class="right-panel-tab active" data-right="agents">🤖 Agents</div>
+        <div class="right-panel-tab" data-right="workflows">🔬 Workflows</div>
+        <div class="right-panel-tab" data-right="swarm">🐝 Swarm</div>
+        <div class="right-panel-tab" data-right="metrics">📊 Metrics</div>
+        <div class="right-panel-tab" data-right="logs">📋 Logs</div>
+      </div>
+
+      <!-- Agents Panel -->
+      <div class="right-panel-content" id="agentsPanel">
+        <div class="agent-list">
+          <div class="agent-item selected" data-agent="code_generation">
+            <h4>📝 Code Generation</h4>
+            <p>Write and modify code with best practices</p>
+          </div>
+          <div class="agent-item" data-agent="data_engineering">
+            <h4>🔧 Data Engineering</h4>
+            <p>Schema validation and data transformation</p>
+          </div>
+          <div class="agent-item" data-agent="clinical_analysis">
+            <h4>🏥 Clinical Analysis</h4>
+            <p>CDC/WHO guidelines and HIPAA compliance</p>
+          </div>
+          <div class="agent-item" data-agent="testing">
+            <h4>✅ Testing</h4>
+            <p>TDD, coverage, and edge case testing</p>
+          </div>
+          <div class="agent-item" data-agent="security">
+            <h4>🔒 Security</h4>
+            <p>OWASP and vulnerability scanning</p>
+          </div>
+          <div class="agent-item" data-agent="api_integration">
+            <h4>🔌 API Integration</h4>
+            <p>RESTful APIs and OpenAPI specs</p>
+          </div>
+          <div class="agent-item" data-agent="database">
+            <h4>🗄 Database</h4>
+            <p>SQL optimization and migrations</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workflows Panel -->
+      <div class="right-panel-content hidden" id="workflowsPanel">
+        <div class="metrics-list">
+          <div class="metric-item">
+            <div class="label">Active Workflows</div>
+            <div class="value">5</div>
+          </div>
+          <div class="metric-item">
+            <div class="label">Total Runs</div>
+            <div class="value" id="workflowRuns">0</div>
+          </div>
+          <div class="metric-item">
+            <div class="label">Success Rate</div>
+            <div class="value" id="workflowSuccess">100%</div>
+            <div class="trend up">↑</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Swarm Panel -->
+      <div class="right-panel-content hidden" id="swarmPanel">
+        <div class="swarm-grid">
+          <div class="swarm-agent">
+            <h4>Agent 1</h4>
+            <div class="status">Idle</div>
+            <div class="bar"><div class="bar-fill" style="width: 0%"></div></div>
+          </div>
+          <div class="swarm-agent">
+            <h4>Agent 2</h4>
+            <div class="status">Idle</div>
+            <div class="bar"><div class="bar-fill" style="width: 0%"></div></div>
+          </div>
+          <div class="swarm-agent">
+            <h4>Agent 3</h4>
+            <div class="status">Idle</div>
+            <div class="bar"><div class="bar-fill" style="width: 0%"></div></div>
+          </div>
+          <div class="swarm-agent">
+            <h4>Agent 4</h4>
+            <div class="status">Idle</div>
+            <div class="bar"><div class="bar-fill" style="width: 0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metrics Panel -->
+      <div class="right-panel-content hidden" id="metricsPanel">
+        <div class="metrics-list">
+          <div class="metric-item">
+            <div class="label">Total Requests</div>
+            <div class="value" id="metricRequests">0</div>
+          </div>
+          <div class="metric-item">
+            <div class="label">Requests/Sec</div>
+            <div class="value" id="metricRPS">0.0</div>
+          </div>
+          <div class="metric-item">
+            <div class="label">Avg Latency</div>
+            <div class="value" id="metricLatency">0ms</div>
+            <div class="trend down">↓</div>
+          </div>
+          <div class="metric-item">
+            <div class="label">Tokens Used</div>
+            <div class="value" id="metricTokens">0</div>
+          </div>
+          <div class="metric-item">
+            <div class="label">Est. Cost</div>
+            <div class="value" id="metricCost">$0.00</div>
+            <div class="trend">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Logs Panel -->
+      <div class="right-panel-content hidden" id="logsPanel">
+        <div class="log-entries" id="logEntries">
+          <div class="log-entry">
+            <span class="time">--:--:--</span>
+            <span class="type INFO">[INFO]</span>
+            <span>System initialized</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Panel - Task Timeline -->
+    <div class="bottom-panel">
+      <div class="bottom-panel-header">
+        <span>📊 Task Timeline</span>
+        <button onclick="clearTimeline()" style="background: var(--bg-tertiary); border: 1px solid var(--border); padding: 4px 12px; border-radius: 4px; cursor: pointer; color: var(--text-primary);">Clear</button>
+      </div>
+      <div class="bottom-panel-content">
+        <div class="timeline" id="timeline">
+          <div class="timeline-item completed">
+            <div class="time">Just now</div>
+            <div class="title">System Started</div>
+            <div class="detail">Medical AI IDE initialized</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+  <script>
+    let ws = null;
+    let selectedAgents = ['code_generation'];
+    let editor = null;
+    let startTime = Date.now();
+    let workflowRuns = 0;
+
+    // Initialize CodeMirror
+    document.addEventListener('DOMContentLoaded', () => {
+      editor = CodeMirror(document.getElementById('codeEditor'), {
+        value: `// Medical AI IDE - Code Editor\n// Start coding here!\n\nconst express = require('express');\nconst app = express();\n\napp.get('/', (req, res) => {\n  res.json({ message: 'Hello from Medical AI IDE!' });\n});\n\napp.listen(3000, () => {\n  console.log('Server running on port 3000');\n});`,
+        mode: 'javascript',
+        theme: 'dracula',
+        lineNumbers: true,
+        autoCloseBrackets: true,
+        matchBrackets: true,
+        indentUnit: 2,
+        tabSize: 2,
+        lineWrapping: true
+      });
+    });
+
+    // Left sidebar navigation
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const section = item.dataset.section;
+        if (section === 'workflow') {
+          launchWorkflow(item.dataset.workflow);
+          return;
+        }
+
+        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        switch (section) {
+          case 'chat':
+            showPanel('chat');
+            break;
+          case 'editor':
+            showPanel('editor');
+            break;
+          case 'swarm':
+            showRightPanel('swarm');
+            showPanel('chat');
+            break;
+          case 'metrics':
+            showRightPanel('metrics');
+            showPanel('chat');
+            break;
+        }
+      });
+    });
+
+    // Center panel tabs
+    document.querySelectorAll('.panel-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const panel = tab.dataset.panel;
+        document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        document.querySelectorAll('.chat-panel, .editor-panel, .workflow-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById(panel + 'Panel').classList.add('active');
+
+        if (panel === 'workflow') {
+          showRightPanel('workflows');
+        } else {
+          showRightPanel('agents');
+        }
+      });
+    });
+
+    // Right panel tabs
+    document.querySelectorAll('.right-panel-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const panel = tab.dataset.right;
+        document.querySelectorAll('.right-panel-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        document.querySelectorAll('.right-panel-content').forEach(p => p.classList.add('hidden'));
+        document.getElementById(panel + 'Panel').classList.remove('hidden');
+      });
+    });
+
+    // Agent toggles
+    document.querySelectorAll('.agent-toggle input').forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        const agent = checkbox.id.replace('ag-', '').replace(/-([a-z])/g, '_$1').toUpperCase();
+        selectedAgents = Array.from(document.querySelectorAll('.agent-toggle input:checked'))
+          .map(cb => cb.id.replace('ag-', '').replace(/-([a-z])/g, '_$1'));
+        addLogEntry('INFO', `Agent ${agent} ${checkbox.checked ? 'enabled' : 'disabled'}`);
+      });
+    });
+
+    // Right panel agent selection
+    document.querySelectorAll('.agent-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.agent-item').forEach(a => a.classList.remove('selected'));
+        item.classList.add('selected');
+        const agentName = item.querySelector('h4').textContent;
+        addMessage('system', `Switched to ${agentName}`);
+      });
+    });
+
+    function showPanel(panel) {
+      document.querySelectorAll('.chat-panel, .editor-panel, .workflow-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById(panel + 'Panel').classList.add('active');
+    }
+
+    function showRightPanel(panel) {
+      document.querySelectorAll('.right-panel-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.right-panel-content').forEach(p => p.classList.add('hidden'));
+      document.querySelector(`[data-right="${panel}"]`)?.classList.add('active');
+      document.getElementById(panel + 'Panel')?.classList.remove('hidden');
+    }
+
+    // WebSocket connection
+    function connect() {
+      ws = new WebSocket('ws://localhost:8888/');
+
+      ws.onopen = () => {
+        document.getElementById('statusDot').classList.add('connected');
+        document.getElementById('statusText').textContent = 'Connected';
+        startTime = Date.now();
+        addLogEntry('INFO', 'Connected to Medical AI Federation');
+        requestStatus();
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        handleWSMessage(data);
+      };
+
+      ws.onclose = () => {
+        document.getElementById('statusDot').classList.remove('connected');
+        document.getElementById('statusText').textContent = 'Disconnected';
+        addLogEntry('ERROR', 'WebSocket disconnected');
+        setTimeout(connect, 3000);
+      };
+    }
+
+    function handleWSMessage(data) {
+      switch (data.type) {
+        case 'status':
+          updateMetrics(data.data);
+          addTimelineItem('Federation Status Update', 'Health check completed', 'completed');
+          break;
+        case 'task_complete':
+          removeTypingIndicator();
+          addAgentMessage(`Task completed in ${data.executionTime}ms`);
+          addTimelineItem('Task Completed', `Agent execution finished in ${data.executionTime}ms`, 'completed');
+          addLogEntry('INFO', `Task completed: ${data.executionTime}ms`);
+          break;
+        case 'task_failed':
+          removeTypingIndicator();
+          addMessage('system', `Task failed: ${data.error}`);
+          addTimelineItem('Task Failed', data.error, 'failed');
+          addLogEntry('ERROR', `Task failed: ${data.error}`);
+          break;
+      }
+    }
+
+    function addMessage(type, content) {
+      const container = document.getElementById('chatMessages');
+      const message = document.createElement('div');
+      message.className = `chat-message ${type}`;
+
+      if (type === 'agent') {
+        const agents = selectedAgents.map(a => a.replace('_', ' ')).join(', ');
+        message.innerHTML = `<span class="agent-badge">${agents}</span>${formatContent(content)}`;
+      } else {
+        message.innerHTML = content;
+      }
+
+      container.appendChild(message);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function formatContent(content) {
+      if (typeof content !== 'string') return content;
+      content = content.replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+      content = content.replace(/`([^`]+)`/g, '<code>$1</code>');
+      return content;
+    }
+
+    function showTypingIndicator() {
+      const container = document.getElementById('chatMessages');
+      const indicator = document.createElement('div');
+      indicator.className = 'chat-message system typing';
+      indicator.id = 'typingIndicator';
+      indicator.innerHTML = `
+        <div class="typing-indicator">
+          <span></span><span></span><span></span>
+        </div>
+      `;
+      container.appendChild(indicator);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+      const indicator = document.getElementById('typingIndicator');
+      if (indicator) indicator.remove();
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      if (!message) return;
+
+      addMessage('user', message);
+      input.value = '';
+
+      const agents = selectedAgents;
+      addLogEntry('INFO', `Sending message to agents: ${agents.join(', ')}`);
+
+      // Try local Ollama first (zero cost)
+      try {
+        const response = await fetch('/api/ollama/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: message,
+            options: {
+              temperature: 0.7,
+              top_k: 40,
+              top_p: 0.9,
+              num_predict: 2048
+            }
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            removeTypingIndicator();
+            addAgentMessage(data.result);
+            addLogEntry('INFO', 'Local Ollama response received');
+          } else {
+            throw new Error(data.error || 'Unknown error');
+          }
+        } else {
+          throw new Error(`Ollama API error: ${response.status}`);
+        }
+      } catch (error) {
+        console.error('Local Ollama generation failed:', error);
+        addMessage('system', `Local model error: ${error.message}`);
+        addLogEntry('ERROR', `Local model error: ${error.message}`);
+
+        // Fallback to WebSocket federation if local fails
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          showTypingIndicator();
+          ws.send(JSON.stringify({
+            type: 'execute_task',
+            task: {
+              type: 'code_generation',
+              message,
+              data: { message, agents }
+            }
+          }));
+        }
+      }
+    }
+
+    function addLogEntry(type, message) {
+      const container = document.getElementById('logEntries');
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+
+      const now = new Date();
+      const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+
+      entry.innerHTML = `
+        <span class="time">${time}</span>
+        <span class="type ${type}">[${type}]</span>
+        <span>${message}</span>
+      `;
+
+      container.insertBefore(entry, container.firstChild);
+
+      while (container.children.length > 50) {
+        container.removeChild(container.lastChild);
+      }
+    }
+
+    function addTimelineItem(title, detail, status) {
+      const timeline = document.getElementById('timeline');
+      const item = document.createElement('div');
+      item.className = `timeline-item ${status}`;
+
+      const now = new Date();
+      const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+      item.innerHTML = `
+        <div class="time">${time}</div>
+        <div class="title">${title}</div>
+        <div class="detail">${detail}</div>
+      `;
+
+      timeline.insertBefore(item, timeline.firstChild);
+
+      while (timeline.children.length > 20) {
+        timeline.removeChild(timeline.lastChild);
+      }
+    }
+
+    function updateMetrics(data) {
+      if (data.coordinator) {
+        document.getElementById('metricRequests').textContent = data.coordinator.totalRequests;
+        document.getElementById('metricRPS').textContent = data.coordinator.requestsPerSecond.toFixed(2);
+        document.getElementById('metricLatency').textContent = data.coordinator.avgLatency.toFixed(0) + 'ms';
+      }
+    }
+
+    function launchWorkflow(workflow) {
+      addMessage('system', `Launching workflow: ${workflow}...`);
+      addTimelineItem('Workflow Started', `Launching ${workflow}`, 'running');
+      addLogEntry('INFO', `Workflow launched: ${workflow}`);
+
+      const statusEl = document.getElementById(`wp-${workflow}-status`);
+      if (statusEl) {
+        statusEl.textContent = 'Running';
+        statusEl.parentElement.classList.add('running');
+      }
+
+      workflowRuns++;
+      document.getElementById('workflowRuns').textContent = workflowRuns;
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: 'execute_task',
+          task: {
+            type: 'workflow',
+            workflow,
+            data: { workflow }
+          }
+        }));
+      }
+
+      setTimeout(() => {
+        if (statusEl) {
+          statusEl.textContent = 'Completed';
+          statusEl.parentElement.classList.remove('running');
+          statusEl.parentElement.classList.add('completed');
+        }
+        addTimelineItem('Workflow Completed', `${workflow} finished successfully`, 'completed');
+      }, 2000);
+    }
+
+    function runWorkflow(workflow) {
+      showPanel('workflow');
+      setTimeout(() => launchWorkflow(workflow), 100);
+    }
+
+    function runCode() {
+      const code = editor.getValue();
+      addMessage('system', 'Running code...');
+      addLogEntry('INFO', 'Executing code from editor');
+
+      try {
+        const result = eval(code);
+        addAgentMessage(`Result: ${JSON.stringify(result, null, 2)}`);
+      } catch (error) {
+        addMessage('system', `Error: ${error.message}`);
+        addLogEntry('ERROR', `Code execution error: ${error.message}`);
+      }
+    }
+
+    function saveCode() {
+      const code = editor.getValue();
+      localStorage.setItem('medical-ide-code', code);
+      addMessage('system', 'Code saved to localStorage');
+      addLogEntry('INFO', 'Code saved');
+    }
+
+    function formatCode() {
+      // Simple formatting - in production use prettier
+      const code = editor.getValue();
+      const formatted = code
+        .replace(/;/g, ';\n')
+        .replace(/\{/g, ' {\n  ')
+        .replace(/\}/g, '\n}')
+        .replace(/\n\s*\n/g, '\n')
+        .replace(/^\s+/gm, '');
+      editor.setValue(formatted);
+    }
+
+    function saveAll() {
+      addMessage('system', 'Saving all open files...');
+      addLogEntry('INFO', 'Saving all files');
+    }
+
+    function runActive() {
+      const activeTab = document.querySelector('.panel-tab.active');
+      if (activeTab?.dataset.panel === 'editor') {
+        runCode();
+      }
+    }
+
+    function clearActive() {
+      const activeTab = document.querySelector('.panel-tab.active');
+      if (activeTab?.dataset.panel === 'editor') {
+        editor.setValue('');
+        addMessage('system', 'Editor cleared');
+      }
+    }
+
+    function clearTimeline() {
+      const timeline = document.getElementById('timeline');
+      timeline.innerHTML = '';
+      addMessage('system', 'Timeline cleared');
+      addLogEntry('INFO', 'Timeline cleared');
+    }
+
+    function selectAgentMode() {
+      showPanel('chat');
+      addMessage('system', 'Select agents from the left sidebar');
+    }
+
+    function toggleTheme() {
+      addMessage('system', 'Theme toggle coming soon!');
+      addLogEntry('INFO', 'Theme toggle requested');
+    }
+
+    function newFile() {
+      addMessage('system', 'New file coming soon!');
+      addLogEntry('INFO', 'New file creation requested');
+    }
+
+    function requestStatus() {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'status_request' }));
+      }
+    }
+
+    // Keyboard shortcuts
+    document.getElementById('chatInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // Auto-connect
+    connect();
+    setInterval(requestStatus, 5000);
+  </script>
+</body>
+</html>

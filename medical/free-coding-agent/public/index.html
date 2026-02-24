@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Coding Agent</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      text-align: center;
+      padding: 20px 0;
+      border-bottom: 1px solid #333;
+      margin-bottom: 20px;
+    }
+    
+    header h1 {
+      color: #00d9ff;
+      font-size: 2rem;
+    }
+    
+    header p {
+      color: #888;
+      margin-top: 5px;
+    }
+    
+    .config-bar {
+      display: flex;
+      gap: 15px;
+      padding: 15px;
+      background: #16213e;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .config-bar label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+    
+    .config-bar select, .config-bar input {
+      padding: 8px 12px;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background: #1a1a2e;
+      color: #eee;
+      font-size: 14px;
+    }
+    
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+    
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ff4444;
+    }
+    
+    .status-dot.connected {
+      background: #44ff44;
+    }
+    
+    .chat-container {
+      background: #16213e;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 600px;
+    }
+    
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    
+    .message {
+      margin-bottom: 15px;
+      padding: 12px 15px;
+      border-radius: 8px;
+      max-width: 80%;
+    }
+    
+    .message.user {
+      background: #0f3460;
+      margin-left: auto;
+    }
+    
+    .message.assistant {
+      background: #1a1a2e;
+      border: 1px solid #333;
+    }
+    
+    .message.system {
+      background: #2d2d44;
+      color: #888;
+      font-size: 12px;
+      max-width: 100%;
+      text-align: center;
+    }
+    
+    .message .role {
+      font-weight: bold;
+      font-size: 12px;
+      margin-bottom: 5px;
+      color: #00d9ff;
+    }
+    
+    .message.user .role {
+      color: #ff9f43;
+    }
+    
+    .tool-call {
+      background: #2d2d44;
+      border-left: 3px solid #00d9ff;
+      padding: 10px;
+      margin: 10px 0;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    
+    .tool-call.success {
+      border-color: #44ff44;
+    }
+    
+    .tool-call.error {
+      border-color: #ff4444;
+    }
+    
+    .input-area {
+      display: flex;
+      gap: 10px;
+      padding: 15px;
+      background: #1a1a2e;
+      border-top: 1px solid #333;
+    }
+    
+    .input-area textarea {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #333;
+      border-radius: 8px;
+      background: #16213e;
+      color: #eee;
+      font-size: 14px;
+      resize: none;
+      min-height: 50px;
+    }
+    
+    .input-area button {
+      padding: 12px 25px;
+      background: #00d9ff;
+      color: #1a1a2e;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    
+    .input-area button:hover {
+      background: #00b8d9;
+    }
+    
+    .input-area button:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    
+    pre {
+      background: #1a1a2e;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+    
+    code {
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 13px;
+    }
+    
+    .typing {
+      display: inline-block;
+      animation: blink 1s infinite;
+    }
+    
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🤖 Free Coding Agent</h1>
+      <p>Your personal AI coding assistant</p>
+    </header>
+    
+    <div class="config-bar">
+      <label>
+        Provider:
+        <select id="provider">
+          <option value="ollama">Ollama (Local)</option>
+          <option value="groq">Groq (Cloud)</option>
+          <option value="together">Together AI (Cloud)</option>
+        </select>
+      </label>
+      <label>
+        Model:
+        <input type="text" id="model" placeholder="llama3.2" />
+      </label>
+      <label>
+        Working Dir:
+        <input type="text" id="workingDir" placeholder="./" style="width: 200px;" />
+      </label>
+      <div class="status">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Disconnected</span>
+      </div>
+    </div>
+    
+    <div class="chat-container">
+      <div class="messages" id="messages">
+        <div class="message system">
+          Welcome! Configure your provider and start coding with AI.
+        </div>
+      </div>
+      <div class="input-area">
+        <textarea id="userInput" placeholder="Type your message..." rows="2"></textarea>
+        <button id="sendBtn" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    let ws = null;
+    let connected = false;
+    let currentAssistantMessage = null;
+    
+    function updateStatus(isConnected) {
+      connected = isConnected;
+      document.getElementById('statusDot').classList.toggle('connected', isConnected);
+      document.getElementById('statusText').textContent = isConnected ? 'Connected' : 'Disconnected';
+      document.getElementById('sendBtn').disabled = !isConnected;
+    }
+    
+    function addMessage(role, content) {
+      const messages = document.getElementById('messages');
+      const msg = document.createElement('div');
+      msg.className = `message ${role}`;
+      msg.innerHTML = `<div class="role">${role}</div><div class="content">${content}</div>`;
+      messages.appendChild(msg);
+      messages.scrollTop = messages.scrollHeight;
+      return msg;
+    }
+    
+    function addSystemMessage(content) {
+      const messages = document.getElementById('messages');
+      const msg = document.createElement('div');
+      msg.className = 'message system';
+      msg.textContent = content;
+      messages.appendChild(msg);
+      messages.scrollTop = messages.scrollHeight;
+    }
+    
+    function addToolCall(tool, result) {
+      if (!currentAssistantMessage) return;
+      const toolDiv = document.createElement('div');
+      toolDiv.className = `tool-call ${result.success ? 'success' : 'error'}`;
+      toolDiv.innerHTML = `<strong>${tool}</strong>: ${result.success ? result.output : result.error}`;
+      currentAssistantMessage.querySelector('.content').appendChild(toolDiv);
+    }
+    
+    function connect() {
+      const provider = document.getElementById('provider').value;
+      const model = document.getElementById('model').value || undefined;
+      const workingDir = document.getElementById('workingDir').value || undefined;
+      
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      ws = new WebSocket(`${protocol}//${window.location.host}`);
+      
+      ws.onopen = () => {
+        ws.send(JSON.stringify({
+          type: 'init',
+          provider,
+          model,
+          workingDir
+        }));
+      };
+      
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        
+        switch (data.type) {
+          case 'init':
+            if (data.success) {
+              updateStatus(true);
+              addSystemMessage(`Connected to ${provider}`);
+            } else {
+              addSystemMessage(`Error: ${data.error}`);
+            }
+            break;
+            
+          case 'chunk':
+            if (!currentAssistantMessage) {
+              currentAssistantMessage = addMessage('assistant', '');
+            }
+            currentAssistantMessage.querySelector('.content').textContent += data.content;
+            break;
+            
+          case 'tool':
+            addToolCall(data.tool, data.result);
+            break;
+            
+          case 'complete':
+            currentAssistantMessage = null;
+            break;
+            
+          case 'error':
+            addSystemMessage(`Error: ${data.error}`);
+            currentAssistantMessage = null;
+            break;
+            
+          case 'reset':
+            document.getElementById('messages').innerHTML = '';
+            addSystemMessage('Conversation cleared');
+            break;
+        }
+      };
+      
+      ws.onclose = () => {
+        updateStatus(false);
+        addSystemMessage('Disconnected');
+      };
+      
+      ws.onerror = () => {
+        addSystemMessage('Connection error');
+      };
+    }
+    
+    function sendMessage() {
+      const input = document.getElementById('userInput');
+      const message = input.value.trim();
+      
+      if (!message || !connected) return;
+      
+      addMessage('user', message);
+      ws.send(JSON.stringify({
+        type: 'chat',
+        content: message
+      }));
+      
+      input.value = '';
+    }
+    
+    document.getElementById('userInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+    
+    document.getElementById('provider').addEventListener('change', () => {
+      if (ws) {
+        ws.close();
+      }
+      connect();
+    });
+    
+    // Connect on load
+    connect();
+  </script>
+</body>
+</html>

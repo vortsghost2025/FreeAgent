@@ -1,0 +1,80 @@
+{
+  "agents": [
+    {
+      "name": "code",
+      "role": "code_generation",
+      "description": "Write and modify code with best practices",
+      "model": "ollama",
+      "memoryPath": "memory/agents/code.json",
+      "tools": "./agents/tools-code.js"
+    },
+    {
+      "name": "data",
+      "role": "data_engineering",
+      "description": "Schema validation and data transformation",
+      "model": "ollama",
+      "memoryPath": "memory/agents/data.json",
+      "tools": "./agents/tools-data.js"
+    },
+    {
+      "name": "clinical",
+      "role": "clinical_analysis",
+      "description": "CDC/WHO guidelines and HIPAA compliance",
+      "model": "ollama",
+      "memoryPath": "memory/agents/clinical.json",
+      "tools": "./agents/tools-clinical.js"
+    },
+    {
+      "name": "test",
+      "role": "testing",
+      "description": "Test-driven development and coverage analysis",
+      "model": "ollama",
+      "memoryPath": "memory/agents/test.json",
+      "tools": "./agents/tools-testing.js"
+    },
+    {
+      "name": "security",
+      "role": "security",
+      "description": "Vulnerability scanning and security audits",
+      "model": "ollama",
+      "memoryPath": "memory/agents/security.json",
+      "tools": "./agents/tools-security.js"
+    },
+    {
+      "name": "api",
+      "role": "api_integration",
+      "description": "API design and OpenAPI specs",
+      "model": "ollama",
+      "memoryPath": "memory/agents/api.json",
+      "tools": "./agents/tools-api.js"
+    },
+    {
+      "name": "db",
+      "role": "database",
+      "description": "SQL generation and query optimization",
+      "model": "ollama",
+      "memoryPath": "memory/agents/db.json",
+      "tools": "./agents/tools-db.js"
+    },
+    {
+      "name": "devops",
+      "role": "devops",
+      "description": "Docker, CI/CD, and deployment",
+      "model": "ollama",
+      "memoryPath": "memory/agents/devops.json",
+      "tools": "./agents/tools-devops.js"
+    }
+  ],
+  "modelProvider": {
+    "default": "ollama",
+    "endpoint": "/api/ollama/generate",
+    "fallback": "federation"
+  },
+  "memoryEngine": {
+    "type": "json",
+    "agentPathPrefix": "memory/agents/",
+    "conversationPathPrefix": "memory/conversations/",
+    "patternPathPrefix": "memory/patterns/",
+    "taskPathPrefix": "memory/tasks/"
+  }
+}
