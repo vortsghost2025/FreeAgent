@@ -11,7 +11,7 @@ export class OllamaEndpoint extends LocalModelEndpoint {
     super();
     this.endpoint = config.endpoint || "http://localhost:11434/api/generate";
     this.model = config.model || "llama3.1:8b";
-    this.timeout = config.timeout || 60000;
+    this.timeout = config.timeout || 180000; // 3 minutes for multi-agent orchestration
     this.enabled = config.enabled !== false;
     this.cachedInfo = null;
   }
