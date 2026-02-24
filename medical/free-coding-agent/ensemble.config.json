@@ -12,49 +12,49 @@
       "id": "AG1",
       "role": "code_generation",
       "provider": "ollama",
-      "model": "llama3.2"
+      "model": "llama3.1:8b"
     },
     "data_engineering": {
       "id": "AG2",
       "role": "data_engineering",
-      "provider": "together",
-      "model": "mistral-large"
+      "provider": "ollama",
+      "model": "deepseek-coder-v2:16b"
     },
     "clinical_analysis": {
       "id": "AG3",
       "role": "clinical_analysis",
-      "provider": "groq",
-      "model": "llama3-70b"
+      "provider": "ollama",
+      "model": "llama3.1:8b"
     },
     "testing": {
       "id": "AG4",
       "role": "testing",
       "provider": "ollama",
-      "model": "llama3.2"
+      "model": "llama3.1:8b"
     },
     "security": {
       "id": "AG5",
       "role": "security",
-      "provider": "together",
-      "model": "mistral-large"
+      "provider": "ollama",
+      "model": "deepseek-coder-v2:16b"
     },
     "api_integration": {
       "id": "AG6",
       "role": "api_integration",
-      "provider": "groq",
-      "model": "llama3-70b"
+      "provider": "ollama",
+      "model": "deepseek-coder-v2:16b"
     },
     "database": {
       "id": "AG7",
       "role": "database",
       "provider": "ollama",
-      "model": "llama3.2"
+      "model": "llama3.1:8b"
     },
     "devops": {
       "id": "AG8",
       "role": "devops",
-      "provider": "together",
-      "model": "mistral-large"
+      "provider": "ollama",
+      "model": "deepseek-coder-v2:16b"
     }
   },
   "terminal": {
