@@ -10,7 +10,7 @@ export class OllamaEndpoint extends LocalModelEndpoint {
   constructor(config = {}) {
     super();
     this.endpoint = config.endpoint || "http://localhost:11434/api/generate";
-    this.model = config.model || "llama3.2";
+    this.model = config.model || "llama3.1:8b";
     this.timeout = config.timeout || 60000;
     this.enabled = config.enabled !== false;
     this.cachedInfo = null;
@@ -22,29 +22,36 @@ export class OllamaEndpoint extends LocalModelEndpoint {
     }
 
     console.log(`[Ollama] Generating with model: ${this.model}`);
+    console.log(`[Ollama] Endpoint: ${this.endpoint}`);
 
     try {
+      const requestBody = {
+        model: this.model,
+        prompt,
+        stream: false,
+        options: {
+          temperature: options.temperature || 0.7,
+          top_k: options.top_k || 40,
+          top_p: options.top_p || 0.9,
+          num_predict: options.max_tokens || 2048,
+        },
+      };
+      const bodyString = JSON.stringify(requestBody);
+      console.log(`[Ollama] Sending JSON:`, bodyString);
+
       const response = await fetch(this.endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          model: this.model,
-          prompt,
-          stream: false,
-          options: {
-            temperature: options.temperature || 0.7,
-            top_k: options.top_k || 40,
-            top_p: options.top_p || 0.9,
-            num_predict: options.max_tokens || 2048,
-          },
-        }),
+        body: bodyString,
         signal: AbortSignal.timeout(this.timeout),
       });
 
       if (!response.ok) {
-        throw new Error(`Ollama API error: ${response.status}`);
+        const errorText = await response.text();
+        console.error(`[Ollama] Error response:`, errorText);
+        throw new Error(`Ollama API error: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();

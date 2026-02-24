@@ -21,6 +21,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { getFederationCoordinator, SystemType } from './federation-core.js';
 import { initEnsemble, getEnsemble } from './free-coding-agent/src/simple-ensemble.js';
+import { spawn } from 'child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -647,31 +648,168 @@ server.on('upgrade', (request, socket, head) => {
   });
 });
 
-// Start server
-server.listen(COCKPIT_CONFIG.port, COCKPIT_CONFIG.host, () => {
-  console.log('');
-  console.log('╔════════════════════════════════════════════════════════════╗');
-  console.log('║       🚀 MEGA UNIFIED COCKPIT - ALL 3 AGENT SYSTEMS 🚀        ║');
-  console.log('╚════════════════════════════════════════════════════════════╝');
-  console.log('');
-  console.log(`✅ Server listening on ${COCKPIT_CONFIG.host}:${COCKPIT_CONFIG.port}`);
-  console.log('');
-  console.log('🎯 Available Interfaces:');
-  console.log(`   • Mega Cockpit (All 3 Systems): http://${COCKPIT_CONFIG.host}:${COCKPIT_CONFIG.port}/`);
-  console.log(`   • Federation Core:             http://${COCKPIT_CONFIG.host}:${COCKPIT_CONFIG.port}/federation`);
-  console.log(`   • Galaxy IDE:                  http://${COCKPIT_CONFIG.host}:${COCKPIT_CONFIG.port}/galaxy`);
-  console.log(`   • Unified IDE:                 http://${COCKPIT_CONFIG.host}:${COCKPIT_CONFIG.port}/unified-ide`);
-  console.log(`   • Basic Cockpit:               http://${COCKPIT_CONFIG.host}:${COCKPIT_CONFIG.port}/cockpit`);
-  console.log('');
-  console.log('🏛️ Active Systems:');
-  console.log('   1. Federation Core   - Medical Pipeline, Plugins, Routing');
-  console.log('   2. Simple Ensemble   - 8 Agents, Local Ollama, Zero Cost');
-  console.log('   3. Distributed       - Full-Featured, Tools, Memory');
-  console.log('');
-});
+/**
+ * Kill process using a specific port (safe implementation using spawn)
+ * @param {number} port - Port number (must be a valid integer)
+ * @returns {Promise<void>}
+ */
+function killProcessOnPort(port) {
+  // Validate port is a safe integer
+  const safePort = Math.floor(Number(port));
+  if (!Number.isInteger(safePort) || safePort < 1 || safePort > 65535) {
+    return Promise.reject(new Error(`Invalid port number: ${port}`));
+  }
+
+  return new Promise((resolve, reject) => {
+    // Use spawn with array arguments to prevent command injection
+    const netstat = spawn('netstat', ['-ano']);
+    const findstr = spawn('findstr', [`:${safePort}`]);
+    
+    let output = '';
+    
+    netstat.stdout.pipe(findstr.stdin);
+    findstr.stdout.on('data', (data) => {
+      output += data.toString();
+    });
+    
+    findstr.on('close', (code) => {
+      if (!output) {
+        reject(new Error(`Could not find process on port ${safePort}`));
+        return;
+      }
+
+      // Extract PID from netstat output (last column)
+      const lines = output.trim().split('\n');
+      for (const line of lines) {
+        const parts = line.trim().split(/\s+/);
+        if (parts.length >= 5) {
+          const state = parts[3]; // State is typically 4th column in netstat -ano
+          const pid = parts[parts.length - 1];
+
+          if (state === 'LISTENING' && pid && /^\d+$/.test(pid)) {
+            console.log(`🔧 Found process ${pid} using port ${safePort}`);
+            console.log(`⚠️  About to kill process ${pid}. Press Ctrl+C within 3 seconds to cancel...`);
+            
+            // Give user time to cancel
+            setTimeout(() => {
+              // Use spawn with array arguments to prevent command injection
+              const taskkill = spawn('taskkill', ['/F', '/PID', pid]);
+              
+              taskkill.on('close', (killCode) => {
+                if (killCode === 0) {
+                  console.log(`✅ Killed process ${pid}`);
+                  resolve();
+                } else {
+                  reject(new Error(`Failed to kill process ${pid} (exit code: ${killCode})`));
+                }
+              });
+              
+              taskkill.on('error', (killErr) => {
+                reject(new Error(`Failed to kill process ${pid}: ${killErr.message}`));
+              });
+            }, 3000);
+            return;
+          }
+        }
+      }
+      reject(new Error(`Could not find PID for port ${safePort}`));
+    });
+    
+    findstr.on('error', (err) => {
+      reject(new Error(`Failed to search for port: ${err.message}`));
+    });
+    
+    netstat.on('error', (err) => {
+      reject(new Error(`Failed to run netstat: ${err.message}`));
+    });
+  });
+}
+
+/**
+ * Start server with self-healing port conflict resolution
+ * @returns {Promise<void>}
+ */
+async function startServer() {
+  const maxRetries = 3;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await new Promise((resolve, reject) => {
+        server.listen(COCKPIT_CONFIG.port, COCKPIT_CONFIG.host, () => {
+          resolve();
+        });
+
+        server.once('error', (error) => {
+          reject(error);
+        });
+      });
+
+      // Success - break the loop and open browser
+      console.log(`✅ Server listening on http://localhost:${COCKPIT_CONFIG.port}/`);
+      console.log('');
+      console.log('╔════════════════════════════════════════════════════════════╗');
+      console.log('║       🚀 MEGA UNIFIED COCKPIT - ALL 3 AGENT SYSTEMS 🚀        ║');
+      console.log('╚════════════════════════════════════════════════════════════╝');
+      console.log('');
+      console.log('🎯 Available Interfaces:');
+      console.log(`   • Mega Cockpit (All 3 Systems): http://localhost:${COCKPIT_CONFIG.port}/`);
+      console.log(`   • Federation Core:             http://localhost:${COCKPIT_CONFIG.port}/federation`);
+      console.log(`   • Galaxy IDE:                  http://localhost:${COCKPIT_CONFIG.port}/galaxy`);
+      console.log(`   • Unified IDE:                 http://localhost:${COCKPIT_CONFIG.port}/unified-ide`);
+      console.log(`   • Basic Cockpit:               http://localhost:${COCKPIT_CONFIG.port}/cockpit`);
+      console.log('');
+      console.log('🏛️ Active Systems:');
+      console.log('   1. Federation Core   - Medical Pipeline, Plugins, Routing');
+      console.log('   2. Simple Ensemble   - 8 Agents, Local Ollama, Zero Cost');
+      console.log('   3. Distributed       - Full-Featured, Tools, Memory');
+      console.log('');
+
+      // Auto-open browser (safe implementation using spawn)
+      setTimeout(() => {
+        const safePort = Math.floor(Number(COCKPIT_CONFIG.port));
+        if (Number.isInteger(safePort) && safePort > 0 && safePort <= 65535) {
+          spawn('cmd', ['/c', 'start', '', `http://localhost:${safePort}/`], { detached: true, stdio: 'ignore' });
+        }
+      }, 1000);
+
+      break;
+
+    } catch (error) {
+      if (error.code === 'EADDRINUSE') {
+        console.log(`⚠️  Port ${COCKPIT_CONFIG.port} is in use (attempt ${attempt}/${maxRetries})`);
+
+        if (attempt < maxRetries) {
+          try {
+            await killProcessOnPort(COCKPIT_CONFIG.port);
+            console.log(`⏳ Waiting 2 seconds before retry...`);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+          } catch (killError) {
+            console.error(`❌ ${killError.message}`);
+          }
+        } else {
+          console.error('❌ Failed to free port 8889: after 3 attempts.');
+          process.exit(1);
+        }
+      } else {
+        console.error(`❌ Server error: ${error.message}`);
+        process.exit(1);
+      }
+    }
+  }
+}
 
 // Set up federation coordinator
 registerDefaultSystems();
+
+// Start server with self-healing (wrap in async IIFE)
+(async () => {
+  try {
+    await startServer();
+  } catch (error) {
+    console.error('❌ Failed to start server:', error.message);
+    process.exit(1);
+  }
+})();
 
 /**
  * Register default systems with the federation
@@ -681,7 +819,7 @@ async function registerDefaultSystems() {
 
   // Initialize SimpleEnsemble (zero-cost local-first)
   try {
-    await initEnsemble();
+    await initEnsemble({ model: "llama3.1:8b" });
     console.log('✅ SimpleEnsemble initialized (8 agents, local Ollama)');
   } catch (error) {
     console.error('⚠️ Failed to initialize SimpleEnsemble:', error.message);

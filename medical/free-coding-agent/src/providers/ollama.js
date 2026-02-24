@@ -4,7 +4,7 @@ export class OllamaProvider extends BaseProvider {
   constructor(config = {}) {
     super(config);
     this.name = "ollama";
-    this.model = config.model || "llama3.2";
+    this.model = config.model || "llama3.1:8b";
     this.baseUrl = config.baseUrl || "http://localhost:11434";
   }
 

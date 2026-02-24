@@ -194,33 +194,31 @@ class FederationCoordinator extends EventEmitter {
    */
   async _executeEnsembleTask(system, task) {
     try {
-      // Import ensemble
-      const { EnsembleCoordinator } = await import('./free-coding-agent/src/ensemble-core.js');
+      // Import the REAL SimpleEnsemble (not EnsembleCoordinator)
+      const { getEnsemble } = await import('./free-coding-agent/src/simple-ensemble.js');
 
-      // Create ensemble instance with config
-      const config = {
-        agents: system.config.agents || 2,
-        collaborationModes: system.config.collaborationModes || 3
-      };
+      // Get ensemble instance
+      const ensemble = getEnsemble();
 
-      const ensemble = new EnsembleCoordinator(config);
-
-      // Process task (simplified without provider dependency)
-      const agentRoles = this._determineAgentRoles(task);
+      // Extract message and selected agents from task data
       const message = task.data.message || JSON.stringify(task.data);
+      const selectedAgents = task.data.agents || [];
 
-      // Simulate ensemble processing for now
+      // Execute through real ensemble with Ollama
       const startTime = Date.now();
+      const ensembleResult = await ensemble.execute(message, selectedAgents);
+      const executionTime = Date.now() - startTime;
 
-      // Mock result structure
+      // Format results for federation response
+      const agentNames = ensembleResult.results?.map(r => r.agent) || [];
+      const allResponses = ensembleResult.results?.map(r => r.response).join('\n\n---\n\n');
+
       const result = {
         mode: task.data.mode || 'parallel',
-        agents: agentRoles,
-        summary: `Task processed by ${agentRoles.length} agent(s): ${agentRoles.join(', ')}`,
-        details: message
+        agents: agentNames,
+        summary: `Task processed by ${agentNames.length} agent(s): ${agentNames.join(', ')}`,
+        details: allResponses || ensembleResult.error || 'No response'
       };
-
-      const executionTime = Date.now() - startTime;
 
       return {
         systemId: system.id,

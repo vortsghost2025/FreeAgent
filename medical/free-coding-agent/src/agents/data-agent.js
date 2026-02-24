@@ -1,13 +1,13 @@
 import { StandardAgent } from "./standard-agent.js";
 
 export class DataAgent extends StandardAgent {
-  constructor() {
+  constructor(model = null) {
     super({
       name: "data",
       role: "Data Agent",
       description:
         "Handles data validation, transformation, querying, and analysis.",
-      model: "llama3.2",
+      model: model,
       tools: [],
       memoryPath: "memory/agents/data.json",
     });

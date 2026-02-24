@@ -54,7 +54,7 @@
       "id": "AG8",
       "role": "devops",
       "provider": "ollama",
-      "model": "deepseek-coder-v2:16b"
+      "model": "llama3.1:8b"
     }
   },
   "terminal": {

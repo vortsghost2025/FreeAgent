@@ -604,11 +604,11 @@
 
     <!-- System Tabs -->
     <div class="system-tabs">
-      <button class="system-tab federation active" data-system="federation">
-        🏛️ Federation
-      </button>
-      <button class="system-tab simple" data-system="simple">
+      <button class="system-tab simple active" data-system="simple_ensemble">
         ⚡ Simple
+      </button>
+      <button class="system-tab federation" data-system="federation">
+        🏛️ Federation
       </button>
       <button class="system-tab distributed" data-system="distributed">
         🌐 Distributed
@@ -652,7 +652,7 @@
       <div class="input-area">
         <div class="input-container">
           <textarea class="input-field" id="userInput" placeholder="Describe your task or ask a question..." rows="3"></textarea>
-          <button class="send-btn" onclick="sendMessage()">Send</button>
+          <button class="send-btn" id="sendButton" onclick="sendMessage()">Send</button>
         </div>
       </div>
     </div>
@@ -697,173 +697,144 @@
         <div class="section-title">Quick Actions</div>
         <div class="agent-item" onclick="selectAllAgents()">
           <div class="agent-name">✅ Select All Agents</div>
-          <div class="agent-role">Enable all available agents</div>
-        </div>
-        <div class="agent-item" onclick="deselectAllAgents()">
-          <div class="agent-name">❌ Deselect All</div>
-          <div class="agent-role">Clear agent selection</div>
         </div>
       </div>
     </div>
-  </div>
 
-  <script>
-    // State
-    let currentSystem = 'federation';
-    let selectedAgents = new Set();
-    let ws = null;
-    let tasksCompleted = 0;
-    let responseTimes = [];
+    <script>
+      // System definitions
+      const systems = {
+            federation: {
+              title: '🏛️ Federation Core',
+              desc: 'Medical AI Federation System',
+              infoTitle: 'Federation Core',
+              infoDesc: 'Medical AI Federation with routing, health checks, and cost tracking. Best for production workloads.',
+              agents: [
+                { id: 'medical_pipeline', name: 'Medical Pipeline', role: 'Structural Processing', provider: 'federation' }
+              ]
+            },
+          
+            simple_ensemble: {
+              title: '⚡ Simple Ensemble',
+              desc: 'Fast 8-Agent Local System',
+              infoTitle: 'Simple Ensemble',
+              infoDesc: 'Fast local 8‑agent ensemble for quick tasks.',
+              agents: [
+                { id: 'code', name: 'Code Agent', role: 'Coding', provider: 'simple_ensemble' },
+                { id: 'reasoning', name: 'Reasoning Agent', role: 'Logic + Planning', provider: 'simple_ensemble' },
+                { id: 'nlp', name: 'NLP Agent', role: 'Language Understanding', provider: 'simple_ensemble' },
+                { id: 'vision', name: 'Vision Agent', role: 'Image Analysis', provider: 'simple_ensemble' },
+                { id: 'math', name: 'Math Agent', role: 'Computation', provider: 'simple_ensemble' },
+                { id: 'search', name: 'Search Agent', role: 'Web Search', provider: 'simple_ensemble' },
+                { id: 'tools', name: 'Tools Agent', role: 'Utility Functions', provider: 'simple_ensemble' },
+                { id: 'summarizer', name: 'Summarizer', role: 'Compression', provider: 'simple_ensemble' }
+              ]
+            },
+          
+            distributed: {
+              title: '🌐 Distributed Ensemble',
+              desc: 'Full-Featured Multi-Provider',
+              infoTitle: 'Distributed Ensemble',
+              infoDesc: 'Complete distributed system with tool support, error fixing, and persistent memory. Production-ready.',
+              agents: [
+                { id: 'code_generation', name: 'Code Generation', role: 'Code + Tools', provider: 'hybrid' },
+                { id: 'data_engineering', name: 'Data Engineering', role: 'Data + Tools', provider: 'hybrid' },
+                { id: 'clinical_analysis', name: 'Clinical Analysis', role: 'Medical + Tools', provider: 'hybrid' },
+                { id: 'testing', name: 'Testing', role: 'QA + Tools', provider: 'hybrid' },
+                { id: 'security', name: 'Security', role: 'Security + Tools', provider: 'hybrid' },
+                { id: 'api_integration', name: 'API Integration', role: 'API + Tools', provider: 'hybrid' },
+                { id: 'database', name: 'Database', role: 'DB + Tools', provider: 'hybrid' },
+                { id: 'devops', name: 'DevOps', role: 'Ops + Tools', provider: 'hybrid' }
+              ]
+            }
+          };
 
-    // System definitions
-    const systems = {
-      federation: {
-        title: '🏛️ Federation Core',
-        desc: 'Medical AI Federation System',
-        infoTitle: 'Federation Core',
-        infoDesc: 'Medical AI Federation with routing, health checks, and cost tracking. Best for production workloads.',
-        agents: [
-          { id: 'medical_pipeline', name: 'Medical Pipeline', role: 'Structural Processing', provider: 'federation' },
-          { id: 'coding_ensemble', name: 'Coding Ensemble', role: 'Code Generation', provider: 'federation' },
-          { id: 'plugins', name: 'Plugin System', role: 'Extensible Modules', provider: 'federation' }
-        ]
-      },
-      simple: {
-        title: '⚡ Simple Ensemble',
-        desc: 'Fast 8-Agent Local System',
-        infoTitle: 'Simple Ensemble',
-        infoDesc: 'Lightweight 8-agent system using Ollama. Zero cost, local-only. Fastest for development.',
-        agents: [
-          { id: 'code_generation', name: 'Code Generation', role: 'Code Expert', provider: 'ollama', model: 'llama3.2' },
-          { id: 'data_engineering', name: 'Data Engineering', role: 'Data Expert', provider: 'together', model: 'mistral-large' },
-          { id: 'clinical_analysis', name: 'Clinical Analysis', role: 'Medical Expert', provider: 'groq', model: 'llama3-70b' },
-          { id: 'testing', name: 'Testing', role: 'QA Expert', provider: 'ollama', model: 'llama3.2' },
-          { id: 'security', name: 'Security', role: 'Security Expert', provider: 'together', model: 'mistral-large' },
-          { id: 'api_integration', name: 'API Integration', role: 'API Expert', provider: 'groq', model: 'llama3-70b' },
-          { id: 'database', name: 'Database', role: 'DB Expert', provider: 'ollama', model: 'llama3.2' },
-          { id: 'devops', name: 'DevOps', role: 'Ops Expert', provider: 'together', model: 'mistral-large' }
-        ]
-      },
-      distributed: {
-        title: '🌐 Distributed Ensemble',
-        desc: 'Full-Featured Multi-Provider',
-        infoTitle: 'Distributed Ensemble',
-        infoDesc: 'Complete distributed system with tool support, error fixing, and persistent memory. Production-ready.',
-        agents: [
-          { id: 'code_generation', name: 'Code Generation', role: 'Code + Tools', provider: 'hybrid' },
-          { id: 'data_engineering', name: 'Data Engineering', role: 'Data + Tools', provider: 'hybrid' },
-          { id: 'clinical_analysis', name: 'Clinical Analysis', role: 'Medical + Tools', provider: 'hybrid' },
-          { id: 'testing', name: 'Testing', role: 'QA + Tools', provider: 'hybrid' },
-          { id: 'security', name: 'Security', role: 'Security + Tools', provider: 'hybrid' },
-          { id: 'api_integration', name: 'API Integration', role: 'API + Tools', provider: 'hybrid' },
-          { id: 'database', name: 'Database', role: 'DB + Tools', provider: 'hybrid' },
-          { id: 'devops', name: 'DevOps', role: 'Ops + Tools', provider: 'hybrid' }
-        ]
-      }
-    };
+          // Global state
+          let ws = null;
+          let currentSystem = 'simple_ensemble';
+          let selectedAgents = new Set();
+          let tasksCompleted = 0;
+          let responseTimes = [];
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', () => {
-      console.log('🚀 Mega Cockpit initializing...');
-
-      try {
-        setupEventListeners();
-        loadSystem(currentSystem);
-
-        // Initialize WebSocket last, so UI is ready even if it fails
-        setTimeout(() => {
-          try {
+          // Initialize on page load
+          document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Initializing Mega Cockpit...');
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Initialize WebSocket
             initWebSocket();
-          } catch (error) {
-            console.error('WebSocket initialization error:', error);
-            // UI still works without WebSocket
+            
+            // Load default system
+            loadSystem('simple_ensemble');
+            
+            console.log('✅ Initialization complete');
+          });
+
+          // Setup event listeners - must be at global scope
+          function setupEventListeners() {
+            // System tab switching
+            document.querySelectorAll('.system-tab').forEach(tab => {
+              tab.addEventListener('click', () => {
+                const system = tab.dataset.system;
+                switchSystem(system);
+              });
+            });
+
+            // Send button click
+            document.getElementById('sendButton').addEventListener('click', sendMessage);
+
+            // Enter key to send
+            document.getElementById('userInput').addEventListener('keydown', (e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+              }
+            });
           }
-        }, 500);
 
-        console.log('✅ Mega Cockpit initialized');
-      } catch (error) {
-        console.error('Initialization error:', error);
-        console.error('Stack:', error.stack);
-        // Try to show error in UI
-        document.addEventListener('DOMContentLoaded', () => {
-          const chatContainer = document.getElementById('chatContainer');
-          if (chatContainer) {
-            chatContainer.innerHTML += `
-              <div class="message ai">
-                <div class="message-content" style="background: #ff4444; color: white;">
-                  <div class="message-header">⚠️ Initialization Error</div>
-                  <div class="message-body">${error.message}</div>
-                </div>
-              </div>
-            `;
+          // Initialize WebSocket
+          function initWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}`;
+
+            try {
+              ws = new WebSocket(wsUrl);
+
+              ws.onopen = () => {
+                updateConnectionStatus('connected');
+                console.log('✅ WebSocket connected');
+              };
+
+              ws.onmessage = (event) => {
+                try {
+                  const data = JSON.parse(event.data);
+                  handleWebSocketMessage(data);
+                } catch (error) {
+                  console.error('Error parsing WebSocket message:', error);
+                }
+              };
+
+              ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                updateConnectionStatus('error');
+              };
+
+              ws.onclose = () => {
+                console.log('WebSocket disconnected');
+                updateConnectionStatus('disconnected');
+                ws = null;
+              };
+            } catch (error) {
+              console.error('Failed to initialize WebSocket:', error);
+              updateConnectionStatus('error');
+              ws = null;
+            }
           }
-        });
-      }
-    });
 
-    // Setup event listeners
-    function setupEventListeners() {
-      // System tab switching
-      document.querySelectorAll('.system-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-          const system = tab.dataset.system;
-          switchSystem(system);
-        });
-      });
-
-      // Enter key to send
-      document.getElementById('userInput').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          sendMessage();
-        }
-      });
-    }
-
-    // Initialize WebSocket
-    function initWebSocket() {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${protocol}//${window.location.host}`;
-
-      try {
-        ws = new WebSocket(wsUrl);
-
-        ws.onopen = () => {
-          updateConnectionStatus('connected');
-          console.log('✅ WebSocket connected');
-        };
-
-        ws.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data);
-            handleWebSocketMessage(data);
-          } catch (error) {
-            console.error('Error parsing WebSocket message:', error);
-          }
-        };
-
-        ws.onerror = (error) => {
-          console.error('WebSocket error:', error);
-          updateConnectionStatus('error');
-          // Don't crash - just update status
-        };
-
-        ws.onclose = () => {
-          console.log('WebSocket disconnected');
-          updateConnectionStatus('disconnected');
-          // Clear the connection but don't auto-reconnect to prevent loops
-          ws = null;
-        };
-      } catch (error) {
-        console.error('Failed to initialize WebSocket:', error);
-        updateConnectionStatus('error');
-        // UI still works even without WebSocket
-        ws = null;
-      }
-    }
-
-    // Handle WebSocket messages
-    function handleWebSocketMessage(data) {
+          // Handle WebSocket messages
+          function handleWebSocketMessage(data) {
       switch (data.type) {
         case 'task_complete':
           addAIMessage(data.result || 'Task completed successfully', data.taskId);
@@ -908,6 +879,7 @@
 
     // Switch system
     function switchSystem(system) {
+      console.log('🔄 switchSystem() - switching to:', system);
       currentSystem = system;
 
       // Update tabs
@@ -1008,6 +980,9 @@
 
       if (!message) return;
 
+      // Debug: log current system
+      console.log('🚀 sendMessage() - currentSystem:', currentSystem);
+
       // Add user message
       addUserMessage(message);
       input.value = '';
@@ -1081,11 +1056,17 @@
     function handleEnsembleResponse(data) {
       if (data.results) {
         if (Array.isArray(data.results)) {
-          data.results.forEach((result, index) => {
-            if (result.output) {
-              addAIMessage(result.output, null, `Agent ${index + 1}`);
+          data.results.forEach((result) => {
+            // results have format: { agent: "code", response: "text...", timestamp: ... }
+            if (result.response) {
+              addAIMessage(result.response, null, `🤖 ${result.agent || 'Agent'}`);
+            } else if (result.output) {
+              addAIMessage(result.output, null, `🤖 Agent`);
             }
           });
+        } else if (data.results.response) {
+          // Single result object with response field
+          addAIMessage(data.results.response, null, `🤖 ${data.results.agent || 'Agent'}`);
         } else {
           addAIMessage(JSON.stringify(data.results, null, 2));
         }
@@ -1127,28 +1108,10 @@
     // Show typing indicator
     function showTypingIndicator() {
       const chatContainer = document.getElementById('chatContainer');
-      const typingEl = document.createElement('div');
-      typingEl.id = 'typingIndicator';
-      typingEl.className = 'message ai';
-      typingEl.innerHTML = `
-        <div class="message-content">
-          <div class="typing-indicator">
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-          </div>
-        </div>
-      `;
-      chatContainer.appendChild(typingEl);
-      scrollToBottom();
-    }
-
     // Remove typing indicator
     function removeTypingIndicator() {
       const typingEl = document.getElementById('typingIndicator');
-      if (typingEl) {
-        typingEl.remove();
-      }
+      if (typingEl) typingEl.remove();
     }
 
     // Format message
@@ -1179,7 +1142,9 @@
 
       document.getElementById('tasksCompleted').textContent = tasksCompleted;
 
-      const avgResponse = Math.round(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length);
+      const avgResponse = Math.round(
+        responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
+      );
       document.getElementById('avgResponse').textContent = `${avgResponse} ms`;
     }
 
@@ -1196,9 +1161,7 @@
 
     // Update status
     function updateStatus(data) {
-      if (data) {
-        console.log('Status updated:', data);
-      }
+      if (data) console.log('Status updated:', data);
     }
 
     // Clear chat

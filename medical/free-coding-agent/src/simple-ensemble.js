@@ -13,7 +13,7 @@ export class SimpleEnsemble {
   constructor(config = {}) {
     // Configuration
     this.config = {
-      model: config.model || "llama3.2",
+      model: config.model || null,
       ollamaEndpoint: config.ollamaEndpoint || "http://localhost:11434/api/generate",
       memoryPath: config.memoryPath || "./free-coding-agent/memory"
     };
@@ -21,26 +21,36 @@ export class SimpleEnsemble {
     // Initialize components
     this.memory = new MemoryEngine(this.config.memoryPath);
 
-    // Initialize provider
-    this.provider = new OllamaEndpoint({
-      endpoint: this.config.ollamaEndpoint,
-      model: this.config.model
-    });
+    // Load all 8 agents (async to detect model)
+    this.agentsPromise = loadAgents();
 
-    // Load all 8 agents
-    this.agents = loadAgents();
-
-    // Initialize task router
-    this.router = new TaskRouter(this.agents, this.provider, this.memory);
-
-    console.log(`[SimpleEnsemble] Initialized with ${Object.keys(this.agents).length} agents`);
+    console.log(`[SimpleEnsemble] Initializing (will auto-detect model...)`);
   }
 
   /**
    * Initialize all agents with memory
    */
   async initialize() {
-    console.log("[SimpleEnsemble] Initializing agents...");
+    console.log("[SimpleEnsemble] Loading agents...");
+
+    // Wait for agents to load and get detected model
+    this.agents = await this.agentsPromise;
+    const detectedModel = Object.values(this.agents)[0]?.model || 'llama3.1:8b';
+    console.log(`[SimpleEnsemble] Detected model: ${detectedModel}`);
+
+    // Update config with detected model
+    this.config.model = detectedModel;
+
+    // Initialize provider with detected model
+    this.provider = new OllamaEndpoint({
+      endpoint: this.config.ollamaEndpoint,
+      model: this.config.model
+    });
+
+    // Initialize task router
+    this.router = new TaskRouter(this.agents, this.provider, this.memory);
+
+    console.log(`[SimpleEnsemble] Initializing agents...`);
 
     for (const [name, agent] of Object.entries(this.agents)) {
       try {

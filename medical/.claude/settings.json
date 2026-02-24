@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(findstr:*)",
+      "Bash(python3:*)",
+      "Bash(cmd //c \"taskkill /F /IM node.exe /T 2>NUL && node cockpit-server.js\")",
+      "Bash(ollama list:*)"
+    ]
+  }
+}
