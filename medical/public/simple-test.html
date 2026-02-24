@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Test - No External Dependencies</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0a0e1a;
+      color: #e8eaed;
+      padding: 40px;
+      margin: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 { color: #4285f4; margin-bottom: 20px; }
+    .test { background: #1a2133; border: 1px solid #2d3748; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+    .test h2 { color: #58a6ff; margin-top: 0; }
+    .status { padding: 10px; border-radius: 4px; margin-bottom: 10px; }
+    .status.success { background: #22c55e; color: white; }
+    .status.error { background: #ef4444; color: white; }
+    .status.pending { background: #f59e0b; color: white; }
+    button {
+      background: #4285f4; color: white; border: none; padding: 10px 20px; border-radius: 4px;
+      cursor: pointer; font-size: 14px; margin-right: 10px;
+    }
+    button:hover { background: #669df6; }
+    button:disabled { background: #555; cursor: not-allowed; }
+    #log {
+      background: #0d1117; padding: 15px; border-radius: 4px; overflow: auto; max-height: 300px;
+      font-family: monospace; font-size: 12px; white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧪 Simple Test - No External Dependencies</h1>
+
+    <div class="test">
+      <h2>1. Page Load Test</h2>
+      <div id="page-status" class="status pending">Loading...</div>
+    </div>
+
+    <div class="test">
+      <h2>2. API Test</h2>
+      <div id="api-status" class="status pending">Not tested</div>
+      <button onclick="testAPI()">Test /api/status</button>
+    </div>
+
+    <div class="test">
+      <h2>3. Mega Cockpit Test</h2>
+      <div id="mega-status" class="status pending">Not tested</div>
+      <button onclick="openMega()">Open Mega Cockpit</button>
+    </div>
+
+    <div class="test">
+      <h2>Console Output</h2>
+      <pre id="log"></pre>
+    </div>
+  </div>
+
+  <script>
+    const logEl = document.getElementById('log');
+
+    function log(msg) {
+      const timestamp = new Date().toISOString();
+      logEl.textContent = `[${timestamp}] ${msg}\n` + logEl.textContent;
+      console.log(msg);
+    }
+
+    // Page load test
+    window.addEventListener('load', () => {
+      const status = document.getElementById('page-status');
+      status.className = 'status success';
+      status.textContent = '✅ Page loaded successfully';
+      log('✅ Page loaded - no external dependencies');
+    });
+
+    // API test
+    async function testAPI() {
+      const btn = event.target;
+      btn.disabled = true;
+      btn.textContent = 'Testing...';
+
+      const status = document.getElementById('api-status');
+      status.className = 'status pending';
+      status.textContent = 'Testing...';
+
+      log('📡 Testing /api/status...');
+
+      try {
+        const response = await fetch('/api/status');
+        if (response.ok) {
+          const data = await response.json();
+          status.className = 'status success';
+          status.textContent = '✅ API responding';
+          log(`✅ API response: ${JSON.stringify(data).substring(0, 200)}...`);
+        } else {
+          throw new Error(`HTTP ${response.status}`);
+        }
+      } catch (error) {
+        status.className = 'status error';
+        status.textContent = `❌ ${error.message}`;
+        log(`❌ API error: ${error.message}`);
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Test /api/status';
+    }
+
+    // Open Mega Cockpit
+    function openMega() {
+      const btn = event.target;
+      btn.disabled = true;
+      btn.textContent = 'Opening...';
+
+      const status = document.getElementById('mega-status');
+      status.className = 'status pending';
+      status.textContent = 'Opening...';
+
+      log('🚀 Opening Mega Cockpit...');
+      window.location.href = '/';
+
+      status.textContent = '✅ Navigating...';
+      status.className = 'status success';
+    }
+
+    log('✅ Simple test page ready');
+  </script>
+</body>
+</html>

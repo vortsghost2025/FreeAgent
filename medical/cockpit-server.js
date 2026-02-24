@@ -531,6 +531,11 @@ app.get('/mega-test', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'test-mega-cockpit.html'));
 });
 
+// Serve Simple Test Page - no external dependencies
+app.get('/simple-test', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simple-test.html'));
+});
+
 // API endpoint for Ollama model
 app.post('/api/ollama/generate', async (req, res) => {
   try {
