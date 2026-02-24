@@ -48,6 +48,25 @@ export class StandardAgent {
   }
 
   buildPrompt(message) {
+    // DEBUG: Log message type and value to diagnose undefined issue
+    console.log(`[${this.name}] DEBUG buildPrompt - message type: ${typeof message}, value: ${JSON.stringify(message)}`);
+    
+    // Handle both string and object message formats
+    // Also handle undefined/null and objects with content/text properties
+    let messageContent;
+    if (message === undefined || message === null) {
+      messageContent = '[no message]';
+      console.warn(`[${this.name}] WARNING: message is ${message}`);
+    } else if (typeof message === 'string') {
+      messageContent = message;
+    } else if (message.content) {
+      messageContent = message.content;
+    } else if (message.text) {
+      messageContent = message.text;
+    } else {
+      messageContent = JSON.stringify(message);
+    }
+    
     return (
       "Agent: " +
       this.name +
@@ -59,7 +78,7 @@ export class StandardAgent {
       this.description +
       "\n" +
       "User message: " +
-      message.content +
+      messageContent +
       "\n" +
       "Respond as " +
       this.role +
@@ -82,9 +101,13 @@ export class StandardAgent {
   }
 
   async storeMemory(userMessage, agentResponse) {
+    // Handle both string and object message formats
+    const userContent = typeof userMessage === 'string' ? userMessage : (userMessage?.content || String(userMessage));
+    const agentContent = typeof agentResponse === 'string' ? agentResponse : (agentResponse?.content || String(agentResponse));
+    
     this.memory.push({
-      user: userMessage.content,
-      agent: agentResponse.content,
+      user: userContent,
+      agent: agentContent,
       timestamp: Date.now(),
     });
   }

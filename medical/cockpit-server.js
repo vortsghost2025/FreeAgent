@@ -571,13 +571,36 @@ app.post('/api/chat', async (req, res) => {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    const ensemble = getEnsemble();
-    const result = await ensemble.execute(message, selectedAgents || []);
+    console.log('[API /api/chat] Received message:', message.substring(0, 100));
+    console.log('[API /api/chat] Selected agents:', selectedAgents || 'all');
 
+    const ensemble = getEnsemble();
+    
+    // Check if ensemble is initialized
+    if (!ensemble.agents) {
+      console.error('[API /api/chat] Ensemble not initialized!');
+      return res.status(503).json({ 
+        success: false, 
+        error: 'Ensemble not initialized. Please restart the server.' 
+      });
+    }
+
+    // Set a timeout for the entire operation
+    const timeoutMs = 120000; // 2 minutes max
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Chat request timed out')), timeoutMs)
+    );
+
+    const result = await Promise.race([
+      ensemble.execute(message, selectedAgents || []),
+      timeoutPromise
+    ]);
+
+    console.log('[API /api/chat] Execution completed in', result.executionTime, 'ms');
     res.json({ success: true, ...result });
 
   } catch (error) {
-    console.error('Chat request failed:', error);
+    console.error('[API /api/chat] Chat request failed:', error);
     res.status(500).json({
       success: false,
       error: error.message

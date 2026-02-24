@@ -16,18 +16,35 @@ export class OllamaEndpoint extends LocalModelEndpoint {
     this.cachedInfo = null;
   }
 
-  async generate(prompt, options = {}) {
+  async generate(input, options = {}) {
     if (!this.enabled) {
       throw new Error("Ollama endpoint is disabled");
     }
 
-    console.log(`[Ollama] Generating with model: ${this.model}`);
+    // Handle both object format {prompt, model} and string format
+    let prompt;
+    let modelOverride;
+    if (typeof input === 'object' && input !== null) {
+      prompt = input.prompt;
+      modelOverride = input.model;
+    } else {
+      prompt = input;
+    }
+    
+    // Ensure prompt is a string
+    if (typeof prompt !== 'string') {
+      console.error('[Ollama] Invalid prompt type:', typeof prompt, prompt);
+      throw new Error(`Ollama generate() requires prompt to be a string, got: ${typeof prompt}`);
+    }
+
+    const model = modelOverride || this.model;
+    console.log(`[Ollama] Generating with model: ${model}`);
     console.log(`[Ollama] Endpoint: ${this.endpoint}`);
 
     try {
       const requestBody = {
-        model: this.model,
-        prompt,
+        model: model,
+        prompt: prompt,
         stream: false,
         options: {
           temperature: options.temperature || 0.7,
