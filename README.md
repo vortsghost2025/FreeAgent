@@ -15,6 +15,7 @@ FreeAgent is a lightweight, on‑device AI orchestration system designed for sta
 2. Install dependencies  
 3. Run the local agent runtime  
 4. Connect your preferred local model  
-
+## Project Status
+Active hackathon build. Core runtime design complete; implementation in progress.
 ## License
 MIT
