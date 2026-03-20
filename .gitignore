@@ -18,3 +18,4 @@ workspace_private/
 /AGENT_COORDINATION/phase-8-spec-review.md
 node_modules
 .env.local
+.env.local
