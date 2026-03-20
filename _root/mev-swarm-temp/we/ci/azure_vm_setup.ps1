@@ -6,6 +6,7 @@ Run as Administrator. Adjust $ProjectRoot if needed.
 
 param(
     [string]$ProjectRoot = $PSScriptRoot, # set to repository root when uploaded to VM
+    [string]$CudaTestPath = "",
     [switch]$SkipNsightComputeInstall
 )
 
@@ -46,7 +47,25 @@ if (-not $nsightExe -and -not $SkipNsightComputeInstall) {
 
 # Build using the wrapper script (do not call nvcc directly — wrapper handles vcvars)
 $buildScript = Join-Path $ProjectRoot "scripts\build_with_vcvars.ps1"
-$source = Join-Path $ProjectRoot "CudaTest\test.cu"
+
+# Allow overriding the CUDA test source path via -CudaTestPath. If not provided, use default within repo.
+if ([string]::IsNullOrWhiteSpace($CudaTestPath)) {
+    $source = Join-Path $ProjectRoot "CudaTest\test.cu"
+} else {
+    try {
+        $source = (Resolve-Path $CudaTestPath).Path
+    } catch {
+        # If Resolve-Path fails, try combining with ProjectRoot for relative paths
+        $maybe = Join-Path $ProjectRoot $CudaTestPath
+        if (Test-Path $maybe) { $source = (Resolve-Path $maybe).Path } else { $source = $CudaTestPath }
+    }
+}
+
+# Validate source exists before attempting build
+if (-not (Test-Path $source)) {
+    Write-Error "CUDA source not found: $source`nProvide the correct path via -CudaTestPath or ensure CudaTest\test.cu exists under the project root."
+    exit 2
+}
 $outExe = Join-Path $buildDir "cuda_sample.exe"
 
 if (-not (Test-Path $buildScript)) {
@@ -54,7 +73,7 @@ if (-not (Test-Path $buildScript)) {
     exit 1
 }
 
-Write-Host "Invoking build wrapper..."
+Write-Host "Invoking build wrapper... (source: $source)"
 & powershell -NoProfile -ExecutionPolicy Bypass -File $buildScript -Source $source -Out $outExe -MaxRegCount 32 -Arch sm_86
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Build wrapper failed with exit code $LASTEXITCODE"
