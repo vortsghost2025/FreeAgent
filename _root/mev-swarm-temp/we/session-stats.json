@@ -1,0 +1,43 @@
+{
+  "startTime": 1774016869721,
+  "iterations": 700,
+  "maxSpread": 0.002667768759872575,
+  "opportunitiesFound": 151,
+  "poolPairStats": {
+    "UniV3-0.3% → UniV3-0.05%": {
+      "count": 259,
+      "maxSpread": 0.0026533329028481465,
+      "avgSpread": 0
+    },
+    "UniV3-0.3% → Aero-vol": {
+      "count": 76,
+      "maxSpread": 0.0009602150146767428,
+      "avgSpread": 0
+    },
+    "UniV3-0.05% → Aero-vol": {
+      "count": 242,
+      "maxSpread": 0.002587996886880006,
+      "avgSpread": 0
+    },
+    "UniV3-0.05% → UniV3-0.3%": {
+      "count": 123,
+      "maxSpread": 0.002667768759872575,
+      "avgSpread": 0
+    }
+  },
+  "spreadHistory": [],
+  "lastOpportunity": {
+    "timestamp": 1774018383043,
+    "block": 43614516,
+    "pair": {
+      "buyPool": "UniV3-0.05%",
+      "sellPool": "UniV3-0.3%",
+      "buyPrice": 2128.214000079663,
+      "sellPrice": 2133.891582903399,
+      "spread": 0.002667768759872575,
+      "spreadPct": 0.2667768759872575
+    },
+    "profitUSD": 0.012426309118082401,
+    "gasEstimate": "TBD"
+  }
+}

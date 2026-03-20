@@ -1,0 +1,5 @@
+C:\Users\seand\OneDrive\workspace\_root\mev-swarm-temp\we\bin\Debug\we.dacpac
+C:\Users\seand\OneDrive\workspace\_root\mev-swarm-temp\we\obj\Debug\Model.xml
+C:\Users\seand\OneDrive\workspace\_root\mev-swarm-temp\we\obj\Debug\refactor.xml
+C:\Users\seand\OneDrive\workspace\_root\mev-swarm-temp\we\obj\Debug\postdeploy.sql
+C:\Users\seand\OneDrive\workspace\_root\mev-swarm-temp\we\obj\Debug\predeploy.sql
