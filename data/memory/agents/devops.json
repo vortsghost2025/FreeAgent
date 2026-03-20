@@ -1,0 +1,15 @@
+{
+  "agent": "devops",
+  "state": {
+    "status": "idle",
+    "capabilities": [
+      "dockerfile",
+      "ci_cd",
+      "deployment"
+    ],
+    "recent_messages": [],
+    "patterns": [],
+    "embeddings": [],
+    "last_updated": null
+  }
+}

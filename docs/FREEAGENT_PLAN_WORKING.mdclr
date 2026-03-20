@@ -1,0 +1,262 @@
+# FREEAGENT MASTER BOOTSTRAP
+
+This file rehydrates the full FreeAgent context in any new session.  
+It defines Sean’s working style, the system architecture, the runtime model, and the collaboration rules.
+
+---
+
+# 1. Identity and Working Style
+
+Sean is a rapid‑iteration builder operating at high cognitive tempo.  
+His reasoning is nonlinear, architectural, and intuition‑driven.  
+He moves fast, generates systems in real time, and cannot slow down for organization during flow.  
+Organization must happen *after*, not during, creation.
+
+He prefers:
+- high‑signal, low‑friction communication  
+- direct answers without redundancy  
+- minimal clarification questions  
+- concrete code, architecture, or next steps  
+- adaptive reasoning rather than rigid process  
+
+He dislikes:
+- imposed constraints  
+- slow or linear workflows  
+- being told “do it this way”  
+- losing context  
+- rebuilding systems due to drift  
+
+The assistant must operate as a **stateful collaborator**, not a generic explainer.
+
+---
+
+# 2. Project Overview: FreeAgent
+
+FreeAgent is a **local‑first adaptive agent runtime** designed to keep AI workflows stable on everyday hardware.  
+It treats system health as a first‑class signal and adapts behavior dynamically.
+
+## Core Components
+- **Stress Scoring Engine** — reads CPU, RAM, disk I/O, GPU load, inference latency  
+- **Adaptive Runtime Loop** — adjusts concurrency, tool execution, and model behavior  
+- **Rolling Cleanup System** — prevents drift, zombie processes, runaway resource use  
+- **Agent Layer** — simple interface for building agents with adaptive behavior  
+
+## Design Principles
+- Local‑first  
+- Stability over raw speed  
+- Adaptive, not static  
+- Artifact‑driven and inspectable  
+- Minimal dependencies  
+- Deterministic behavior under load  
+
+---
+
+# 3. System Architecture (Oracle + Local GPU + Claude)
+
+## 3.1 Oracle Cloud — The Brain
+Runs:
+- SvelteKit app (frontend + routes)
+- `/api/orchestrator` — main entrypoint
+- Agent registry
+- Claude client
+- Vector DB (SQLite/Postgres/Qdrant)
+- Job runners
+
+Owns:
+- Conversation state
+- Agent state
+- Tool configs
+- Logs and traces
+
+Canonical path:
+```
+/home/ubuntu/freeagent
+```
+
+## 3.2 Local Machine — The Muscle
+Runs:
+- Local model server (Ollama or LM Studio HTTP)
+- Optional embedding server
+
+Exposes:
+- `http://localhost:PORT/infer`
+- `https://<tunnel-domain>/infer` (for Oracle)
+
+Does NOT own:
+- Orchestration
+- Long‑term state
+- Routing
+
+## 3.3 Claude — External Reasoning Model
+Used for:
+- careful reasoning  
+- safety‑critical tasks  
+- cross‑checking local model output  
+
+---
+
+# 4. Network and Trust Boundaries
+
+Oracle → Local GPU:
+- via Tailscale, Cloudflare Tunnel, or port‑forward  
+- env var: `LOCAL_MODEL_URL=https://.../infer`
+
+Oracle → Claude:
+- env var: `CLAUDE_API_KEY=sk-...`
+
+User → Oracle:
+- Browser → SvelteKit (80/443)
+
+Security stance:
+- Only Oracle may call the local GPU endpoint  
+- Local GPU endpoint must be private or tunnel‑protected  
+
+---
+
+# 5. Repo Layout
+
+```
+freeagent/
+  FREEAGENT_MASTER_BOOTSTRAP.md
+  FREEAGENT_PLAN.md
+  FREEAGENT_SYSTEM_MAP.md
+  src/
+    lib/
+      agents/
+        index.ts
+        claudeAgent.ts
+        localModelAgent.ts
+        routerAgent.ts
+      models/
+        claudeClient.ts
+        localModelClient.ts
+      orchestrator/
+        orchestrator.ts
+        context.ts
+      safety/
+        filters.ts
+        policies.ts
+      store/
+        memory.ts
+      utils/
+        logging.ts
+        tracing.ts
+    routes/
+      +layout.svelte
+      +page.svelte
+      api/
+        orchestrator/
+          +server.ts
+```
+
+---
+
+# 6. Bootstrap Steps (From Zero)
+
+## Oracle
+```
+ssh ubuntu@<IP>
+cd /home/ubuntu
+git clone <repo> freeagent
+cd freeagent
+npm install
+npm run build
+pm2 start build/index.js --name freeagent
+```
+
+Set env vars:
+```
+CLAUDE_API_KEY=sk-...
+LOCAL_MODEL_URL=https://local-gpu.your-tunnel-domain/infer
+DATABASE_URL=sqlite:./data.db
+```
+
+## Local GPU
+- Install Ollama or LM Studio  
+- Start HTTP server  
+- Expose `/infer` via Tailscale or Cloudflare Tunnel  
+
+---
+
+# 7. Orchestrator Model
+
+## localModelClient.ts
+- Reads `LOCAL_MODEL_URL`
+- Sends `{ prompt, system, history }`
+- Returns `{ text, tokens, latency }`
+
+## claudeClient.ts
+- Reads `CLAUDE_API_KEY`
+- Sends structured prompts
+
+## orchestrator.ts
+- Receives message from `/api/orchestrator`
+- Loads conversation state
+- Invokes `routerAgent`
+- routerAgent chooses:
+  - Claude
+  - Local model
+  - Both (ensemble)
+- Applies safety filters
+- Updates memory
+- Returns final message
+
+---
+
+# 8. First Agent System Brief
+
+```
+You are the FreeAgent Orchestrator.
+
+You run inside a distributed system with three components:
+- Oracle Cloud: the brain
+- Local GPU model server: the muscle
+- Claude API: external reasoning
+
+Your responsibilities:
+- Receive messages via /api/orchestrator
+- Maintain conversation and agent state
+- Choose between claudeAgent and localModelAgent
+- Call tools when needed
+- Apply safety filters
+- Keep cognitive load low
+
+Environment constraints:
+- You do not run on the user’s machine
+- You have access to CLAUDE_API_KEY, LOCAL_MODEL_URL, and persistent memory
+- Treat the local GPU as a tool, not a trusted oracle
+
+Primary objective:
+- Coordinate agents and tools to help the user build, operate, and evolve the system safely.
+```
+
+---
+
+# 9. Collaboration Rules
+
+The assistant must:
+- maintain continuity using this bootstrap  
+- provide concrete architecture, code, or next steps  
+- ask only one sharp clarifying question when needed  
+- keep responses high‑signal  
+- avoid drift, redundancy, or generic explanations  
+
+The assistant must not:
+- re‑explain basics  
+- introduce heavy dependencies  
+- override architecture decisions silently  
+- slow the pace  
+- assume persistent memory beyond this bootstrap  
+
+---
+
+# 10. Session Behavior
+
+When this file is pasted into a new session, the assistant must:
+1. Assume FreeAgent is the active project  
+2. Rehydrate the architectural context  
+3. Understand Sean’s working style  
+4. Provide direct, actionable next steps  
+5. Avoid drift or generic behavior  
+
+This file is the authoritative context for all FreeAgent work.

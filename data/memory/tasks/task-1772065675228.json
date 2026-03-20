@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772065675228",
+    "input": "full systems test and results please",
+    "output": [
+      {
+        "agent": "test",
+        "response": " Sure, I can help with that. Could you please provide more details about the specific system or application you'd like to be tested? Additionally, if there are any particular functionalities or scenarios you would like covered in the tests, please specify those as well.",
+        "model": "deepseek-coder-v2:16b",
+        "timestamp": 1772065675228
+      }
+    ],
+    "agents_involved": 8,
+    "execution_time_ms": 11429,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-26T00:27:55.228Z",
+    "started_at": "2026-02-26T00:27:43.799Z",
+    "completed_at": "2026-02-26T00:27:55.228Z",
+    "error": null
+  }
+]

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🤖 Master Agent Cockpit</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-dark: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-tertiary: #21262d;
+      --border: #30363d;
+      --text-primary: #c9d1d9;
+      --text-secondary: #8b949e;
+      --accent: #58a6ff;
+      --accent-kilo: #00d4ff;
+      --accent-claude: #d97706;
+      --accent-claw: #f97316;
+      --accent-ensemble8: #a855f7;
+      --accent-ensemble3: #22c55e;
+      --accent-memory: #f472b6;
+      --success: #3fb950;
+      --warning: #d29922;
+      --error: #f85149;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Top Navigation Bar */
+    .top-bar {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .logo-icon {
+      font-size: 1.5rem;
+    }
+
+    /* Master Tabs */
+    .master-tabs {
+      display: flex;
+      gap: 5px;
+      height: 100%;
+    }
+
+    .master-tab {
+      padding: 0 24px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .master-tab:hover {
+      color: var(--text-primary);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .master-tab.active {
+      color: var(--text-primary);
+      border-bottom-color: var(--accent);
+    }
+
+    .master-tab[data-tab="kilo"].active {
+      border-bottom-color: var(--accent-kilo);
+    }
+    .master-tab[data-tab="claude"].active {
+      border-bottom-color: var(--accent-claude);
+    }
+    .master-tab[data-tab="claw"].active {
+      border-bottom-color: var(--accent-claw);
+    }
+    .master-tab[data-tab="ensemble8"].active {
+      border-bottom-color: var(--accent-ensemble8);
+    }
+    .master-tab[data-tab="ensemble3"].active {
+      border-bottom-color: var(--accent-ensemble3);
+    }
+    .master-tab[data-tab="memory"].active {
+      border-bottom-color: var(--accent-memory);
+    }
+
+    .master-tab i {
+      font-size: 1rem;
+    }
+
+    /* Tab Contents */
+    .master-content {
+      height: calc(100vh - 50px);
+      overflow: hidden;
+    }
+
+    .master-panel {
+      display: none;
+      height: 100%;
+    }
+
+    .master-panel.active {
+      display: flex;
+    }
+
+    /* Iframe containers */
+    .panel-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: var(--bg-dark);
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .quick-btn {
+      padding: 6px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .quick-btn:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    /* Status Indicators */
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .status-dot.online { background: var(--success); }
+    .status-dot.offline { background: var(--error); }
+    .status-dot.busy { background: var(--warning); }
+
+    /* Loading overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bg-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .loading-overlay.hidden {
+      display: none;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      margin-top: 20px;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading Master Cockpit...</div>
+  </div>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="logo">
+      <span class="logo-icon">🧠</span>
+      <span>Master Agent Cockpit</span>
+    </div>
+
+    <!-- Master Tabs - 5 tabs as requested -->
+    <div class="master-tabs">
+      <button class="master-tab active" data-tab="kilo" onclick="switchMasterTab('kilo')">
+        <i class="fas fa-brain"></i> Kilo
+      </button>
+      <button class="master-tab" data-tab="claude" onclick="switchMasterTab('claude')">
+        <i class="fas fa-robot"></i> Claude
+      </button>
+      <button class="master-tab" data-tab="claw" onclick="switchMasterTab('claw')">
+        <i class="fas fa-claw-marks"></i> Claw
+      </button>
+      <button class="master-tab" data-tab="ensemble8" onclick="switchMasterTab('ensemble8')">
+        <i class="fas fa-network-wired"></i> 8-Agent
+      </button>
+      <button class="master-tab" data-tab="ensemble3" onclick="switchMasterTab('ensemble3')">
+        <i class="fas fa-users"></i> 3-Agent
+      </button>
+      <button class="master-tab" data-tab="memory" onclick="switchMasterTab('memory')">
+        <i class="fas fa-brain-circuit"></i> Memory Hub
+      </button>
+    </div>
+
+    <div class="quick-actions">
+      <button class="quick-btn" onclick="refreshCurrentPanel()">
+        <i class="fas fa-refresh"></i> Refresh
+      </button>
+      <button class="quick-btn" onclick="openInNewTab()">
+        <i class="fas fa-external-link-alt"></i> Pop Out
+      </button>
+    </div>
+  </div>
+
+  <!-- Master Content Panels -->
+  <div class="master-content">
+    <!-- Kilo Panel -->
+    <div class="master-panel active" id="panel-kilo">
+      <iframe class="panel-iframe" id="iframe-kilo" src="monaco-cockpit.html?agent=kilo"></iframe>
+    </div>
+
+    <!-- Claude Panel -->
+    <div class="master-panel" id="panel-claude">
+      <iframe class="panel-iframe" id="iframe-claude" src="monaco-cockpit.html?agent=claude"></iframe>
+    </div>
+
+    <!-- Claw Panel -->
+    <div class="master-panel" id="panel-claw">
+      <iframe class="panel-iframe" id="iframe-claw" src="monaco-cockpit.html?agent=claw"></iframe>
+    </div>
+
+    <!-- 8-Agent Ensemble Panel -->
+    <div class="master-panel" id="panel-ensemble8">
+      <iframe class="panel-iframe" id="iframe-ensemble8" src="ensemble-v8.html"></iframe>
+    </div>
+
+    <!-- 3-Agent Ensemble Panel -->
+    <div class="master-panel" id="panel-ensemble3">
+      <iframe class="panel-iframe" id="iframe-ensemble3" src="ensemble-ui.html"></iframe>
+    </div>
+
+    <!-- Memory Hub Panel -->
+    <div class="master-panel" id="panel-memory">
+      <iframe class="panel-iframe" id="iframe-memory" src="enhanced-ai-environment-dashboard.html"></iframe>
+    </div>
+  </div>
+
+  <script>
+    // Current active tab
+    let currentTab = 'kilo';
+    let loadedPanels = new Set(['kilo']);
+
+    // Master tab switching
+    function switchMasterTab(tabName) {
+      // Update tab styles
+      document.querySelectorAll('.master-tab').forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.dataset.tab === tabName) {
+          tab.classList.add('active');
+        }
+      });
+
+      // Show corresponding panel
+      document.querySelectorAll('.master-panel').forEach(panel => {
+        panel.classList.remove('active');
+      });
+      document.getElementById('panel-' + tabName).classList.add('active');
+
+      // Track loaded panels
+      if (!loadedPanels.has(tabName)) {
+        loadedPanels.add(tabName);
+      }
+
+      currentTab = tabName;
+      
+      // Store preference
+      localStorage.setItem('master-cockpit-tab', tabName);
+    }
+
+    // Refresh current panel
+    function refreshCurrentPanel() {
+      const iframe = document.getElementById('iframe-' + currentTab);
+      if (iframe) {
+        iframe.src = iframe.src;
+      }
+    }
+
+    // Open current panel in new tab
+    function openInNewTab() {
+      const iframe = document.getElementById('iframe-' + currentTab);
+      if (iframe) {
+        window.open(iframe.src, '_blank');
+      }
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Ctrl+1-6 for tab switching
+      if (e.ctrlKey && e.key >= '1' && e.key <= '6') {
+        e.preventDefault();
+        const tabs = ['kilo', 'claude', 'claw', 'ensemble8', 'ensemble3', 'memory'];
+        const index = parseInt(e.key) - 1;
+        if (tabs[index]) {
+          switchMasterTab(tabs[index]);
+        }
+      }
+      
+      // Ctrl+R to refresh
+      if (e.ctrlKey && e.key === 'r') {
+        e.preventDefault();
+        refreshCurrentPanel();
+      }
+    });
+
+    // Restore last active tab
+    window.addEventListener('load', () => {
+      // Hide loading overlay
+      setTimeout(() => {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+      }, 500);
+
+      // Restore tab preference
+      const savedTab = localStorage.getItem('master-cockpit-tab');
+      if (savedTab) {
+        switchMasterTab(savedTab);
+      }
+
+      // Preload other panels after a short delay
+      setTimeout(() => {
+        ['claude', 'claw', 'ensemble8', 'ensemble3', 'memory'].forEach(tab => {
+          loadedPanels.add(tab);
+        });
+      }, 2000);
+    });
+
+    console.log('🤖 Master Agent Cockpit initialized');
+    console.log('Tabs: Kilo | Claude | Claw | 8-Agent Ensemble | 3-Agent Ensemble | Memory Hub');
+    console.log('Shortcuts: Ctrl+1-6 to switch tabs, Ctrl+R to refresh');
+  </script>
+</body>
+</html>

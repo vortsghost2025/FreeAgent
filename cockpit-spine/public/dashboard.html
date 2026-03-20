@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>AI Environment Dashboard</title>
+	<style>
+		body { font-family: Arial, sans-serif; margin: 2em; background: #f7f7fa; }
+		h1 { color: #333; }
+		.section { margin-bottom: 2em; }
+		.section h2 { margin-bottom: 0.5em; }
+		pre { background: #222; color: #b5f4a5; padding: 1em; border-radius: 6px; overflow-x: auto; }
+		#status { color: #007bff; font-weight: bold; }
+	</style>
+</head>
+<body>
+	<h1>AI Environment Dashboard</h1>
+	<div class="section">
+		<div>Status: <span id="status">Connecting...</span></div>
+	</div>
+	<div class="section">
+		<h2>Metrics</h2>
+		<pre id="metrics">(none)</pre>
+	</div>
+	<div class="section">
+		<h2>Optimizations</h2>
+		<pre id="optimizations">(none)</pre>
+	</div>
+	<div class="section">
+		<h2>Insights</h2>
+		<pre id="insights">(none)</pre>
+	</div>
+	<div class="section">
+		<h2>Messages</h2>
+		<pre id="messages">(none)</pre>
+	</div>
+	<script>
+		// Connect to the fixed WebSocket endpoint
+		const wsUrl = 'ws://localhost:3000/agent';
+		let ws;
+		document.getElementById('status').textContent = 'Connecting...';
+		ws = new WebSocket(wsUrl);
+		ws.onopen = () => {
+			document.getElementById('status').textContent = 'Connected to ' + wsUrl;
+		};
+		ws.onerror = () => {
+			document.getElementById('status').textContent = 'WebSocket connection failed';
+		};
+		ws.onclose = () => {
+			document.getElementById('status').textContent = 'Disconnected';
+		};
+		ws.onmessage = (event) => {
+			let data;
+			try { data = JSON.parse(event.data); } catch { data = event.data; }
+			if (typeof data === 'object') {
+				if (data.metrics) document.getElementById('metrics').textContent = JSON.stringify(data.metrics, null, 2);
+				if (data.optimizations) document.getElementById('optimizations').textContent = JSON.stringify(data.optimizations, null, 2);
+				if (data.insights) document.getElementById('insights').textContent = JSON.stringify(data.insights, null, 2);
+				if (data.status) document.getElementById('status').textContent = data.status;
+				if (data.message) document.getElementById('messages').textContent = data.message;
+			} else {
+				document.getElementById('messages').textContent = data;
+			}
+		};
+	</script>
+</body>
+</html>
+...existing code...

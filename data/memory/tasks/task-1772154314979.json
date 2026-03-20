@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772154314979",
+    "input": "{\"batch\":2384,\"agent\":\"clinical\",\"intensity\":\"maximum\"}",
+    "output": [
+      {
+        "agent": "clinical",
+        "response": "Error: fetch failed",
+        "model": "llama3.1:8b",
+        "timestamp": 1772154314979
+      }
+    ],
+    "agents_involved": 9,
+    "execution_time_ms": 12206,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-27T01:05:14.979Z",
+    "started_at": "2026-02-27T01:05:02.773Z",
+    "completed_at": "2026-02-27T01:05:14.979Z",
+    "error": null
+  }
+]

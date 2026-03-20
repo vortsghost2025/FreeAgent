@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1771951896627",
+    "input": "why is it not found?",
+    "output": [
+      {
+        "agent": "clinical_analysis",
+        "response": "Agent 'clinical_analysis' not found",
+        "timestamp": 1771951896627,
+        "error": true
+      }
+    ],
+    "agents_involved": 1,
+    "execution_time_ms": 1,
+    "status": "completed",
+    "routing": {
+      "decision": "selected",
+      "selected_agent": "clinical_analysis",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-24T16:51:36.627Z",
+    "started_at": "2026-02-24T16:51:36.626Z",
+    "completed_at": "2026-02-24T16:51:36.627Z",
+    "error": null
+  }
+]

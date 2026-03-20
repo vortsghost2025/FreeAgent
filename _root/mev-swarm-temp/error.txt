@@ -1,0 +1,4 @@
+
+⚠️  WARNING: LIVE TRADING MODE ENABLED ⚠️
+    Set DRY_RUN=true to run in simulation mode
+

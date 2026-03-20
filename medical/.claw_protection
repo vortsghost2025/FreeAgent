@@ -1,0 +1,63 @@
+{
+  "version": "1.0",
+  "created": "2026-02-24T12:45:00Z",
+  "created_by": "Claw (OpenClaw Agent)",
+  "purpose": "Protect work from being undone by other agents",
+  "protected_directories": [
+    "memory/",
+    "AGENT_COORDINATION/"
+  ],
+  "protected_files": [
+    "MEMORY.md",
+    "USER.md",
+    "IDENTITY.md",
+    "SOUL.md",
+    "AGENTS.md",
+    "HEARTBEAT.md",
+    "TOOLS.md"
+  ],
+  "never_delete_patterns": [
+    "LAYER*.md",
+    "*_CHECKPOINT*.json",
+    "memory/*.md",
+    "AGENT_COORDINATION/*.md"
+  ],
+  "approval_required_for": [
+    "Deleting any .md file",
+    "Modifying MEMORY.md without reading it first",
+    "Clearing AGENT_COORDINATION/",
+    "Deleting files in _holding/"
+  ],
+  "session_history": [
+    {
+      "date": "2026-02-24",
+      "agent": "Claw",
+      "fixes_applied": 24,
+      "files_created": [
+        "public/unified-shell.html",
+        "public/swarm-tab.html", 
+        "public/health-tab.html",
+        "AGENT_COORDINATION/CLAW_STATUS.md",
+        "AGENT_COORDINATION/TASK_QUEUE.md",
+        "AGENT_COORDINATION/UNIFIED_COCKPIT_PLAN.md",
+        "AGENT_COORDINATION/SWARM_INTEGRATION_STATUS.md",
+        "AGENT_COORDINATION/SWARM_INTEGRATION_ARCHITECTURE.md",
+        "AGENT_COORDINATION/PERFORMANCE_TEST_RESULTS.md",
+        "AGENT_COORDINATION/ORGANIZATION_PLAN.md",
+        "AGENT_COORDINATION/REALITY_CHECK.md",
+        "AGENT_COORDINATION/COORDINATION_CHANNEL.md",
+        "AGENT_COORDINATION/CHAT_INPUT_FIX.md",
+        "AGENT_COORDINATION/LAYOUT_FIX.md"
+      ],
+      "files_archived": [
+        "swarm-ui-with-compute-router.html",
+        "swarm-index.html",
+        "complete_expansion_explorer.html",
+        "test-sftp.html",
+        "frontend.html"
+      ],
+      "servers_running": ["localhost:8889"],
+      "next_priority": "Groq routing for multi-agent queries"
+    }
+  ]
+}

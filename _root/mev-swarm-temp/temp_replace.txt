@@ -1,0 +1,55 @@
+// ============================================================
+// Event: Listen for arbitrage opportunities
+// ============================================================
+// In a real system, this would come from the watcher via IPC/Redis
+// For this demo, we'll simulate a fixed opportunity
+
+console.log('\n📡 Waiting for arbitrage opportunities...\n');
+console.log('   Watching for opportunities in mempool...\n');
+
+// In simulation mode, just wait a bit then exit
+if (!security.isLive) {
+  console.log('\nℹ️  Running in simulation mode - will watch for 60 seconds then exit\n');
+  console.log('   (Use LIVE_TRADING=true to enable continuous execution)\n');
+
+  // Watch for 60 seconds
+  await new Promise(resolve => setTimeout(resolve, 60000));
+
+  console.log('\n⏸️  Watch time elapsed - exiting simulation mode\n');
+  console.log('   Set LIVE_TRADING=true in .env.local to run continuously\n');
+  process.exit(0);
+}
+
+// In live mode, run continuously
+console.log('\n⚠️  LIVE TRADING MODE - Running continuously');
+console.log('   Press Ctrl+C to stop\n');
+
+// Simulate opportunity (in production, this comes from watcher)
+const simulatedOpportunity = {
+  route: ['0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'],
+  routeType: '2-hop',
+  dexes: ['Uniswap V2', 'Uniswap V2'],
+  amountIn: ethers.parseEther('0.1'),
+  expectedProfitUsd: 5.00,
+  tokenInSymbol: 'WETH',
+  tokenInDecimals: 18
+};
+
+// Execute
+const result = await executor.execute(simulatedOpportunity);
+
+console.log('\n' + '='.repeat(60));
+console.log('🎯 EXECUTION COMPLETE');
+console.log('='.repeat(60) + '\n');
+
+if (result.executed) {
+  console.log('✅ Arbitrage Executed Successfully!');
+  console.log('   Profit: $' + result.actualProfit.toFixed(2));
+  console.log('   Tx Hash: ' + result.txHash);
+} else if (result.shouldExecute) {
+  console.log('ℹ️  Arbitrage Skipped: ' + result.reason);
+} else {
+  console.log('❌ Arbitrage Failed: ' + result.reason || 'Unknown error');
+}
+
+main().catch(console.error);

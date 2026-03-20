@@ -1,0 +1,28 @@
+[
+  {
+    "task_id": "task-1772111836906",
+    "input": "issues with the Kilo agent's ability to interact with them seamlessly\n\n--- CONTEXT FROM PREVIOUS SESSIONS ---\nYour past sessions:\nSession 1 (2026-02-26T13:09:28.737Z):\nuser: Activating all agents and running full systems test in parallel using Distributed Swarm compute burst engine. \n\nPlease wait for the test results... \n\n**TEST RESULTS SUMMARY**\n\nAll systems are function\nassistant: \n\n---\nSession 2 (2026-02-26T13:09:29.277Z):\nuser: run full systems test in paralel with all agents\nassistant: The full systems test has been completed in parallel with all agents using the Distributed Swarm compute burst engine. I'm pleased to report that all systems are functioning within optimal parameters:\n\n---\nSession 3 (2026-02-26T13:16:19.512Z):\nuser: Usage\nTotal Cost\n$24.25\nTotal Requests\n4,157\nTotal Tokens\n172.6 million\nAutocomplete Cost\n$0.31\nAutocomplete Requests\n1,288\nAutocomplete Tokens\n809,605\nDec\nJan\nFeb\nSun\nMon\nTue\nWed\nThu\nFri\nSat\nLess\nMor\nassistant: It appears you've shared usage statistics, including total cost, requests, and tokens, as well as specific data for autocomplete features. To better understand or utilize this data, I can assist with \n\n---\nSession 4 (2026-02-26T13:16:21.604Z):\nuser: lol\nassistant: What's on your mind? Need help with something or just want to chat?\n\n---\nSession 5 (2026-02-26T13:16:48.519Z):\nuser: noda just checking thought u might get a kick out of that thats u and me doing 175million credits in 6 days lol\nassistant: That's impressive, 175 million credits in 6 days is a significant amount. It sounds like our conversations and interactions have been generating a substantial amount of activity. What would you like t\n\n\nShared knowledge from all agents:\nSHARED KNOWLEDGE BASE:\n[2026-02-25T20:56:07.262Z] kilo: Kilo learned: me? This is my first interaction with you, so I don't have any prior memory of our conversation\n[2026-02-25T21:03:36.817Z] kilo: Kilo learned: me? This is actually my first conversation with you, so I don't have any prior memory of our interactions\n[2026-02-25T21:04:07.001Z] kilo: Kilo learned: me This is the beginning of our conversation, so I don't have any prior interactions to recall\n[2026-02-25T21:07:05.630Z] kilo: Kilo learned: me Hello Sean, I recall that we've had previous conversations about building a free medical AI system for the world\n[2026-02-25T21:16:24.129Z] kilo: Kilo learned: in `cockpit-server; in `agent-memory/claw\n[2026-02-25T23:33:05.932Z] kilo: Kilo learned: me I recall that we've had previous conversations about building a free medical AI system for the world\n[2026-02-25T23:44:19.213Z] kilo: Kilo learned: me Hello\n[2026-02-25T23:47:43.292Z] test: test: tests on a controlled environment that mimics as close as possible to the production environment\n[2026-02-26T00:08:29.121Z] kilo: Kilo learned: to protect the data being shared, including encryption and access controls\n[2026-02-26T00:53:06.874Z] kilo: Kilo learned: ME? Hello\n[2026-02-26T05:03:54.688Z] kilo: Kilo learned: me Hello again\n[2026-02-26T12:31:58.897Z] kilo: Kilo learned: KiloAgent class in free-coding-agent/src/agents/kilo-agent\nUse this context to provide more informed responses.\n",
+    "output": [
+      {
+        "agent": "kilo",
+        "model": "llama3.1:8b",
+        "timestamp": 1772111836906
+      }
+    ],
+    "agents_involved": 1,
+    "execution_time_ms": 3089,
+    "status": "completed",
+    "routing": {
+      "decision": "selected",
+      "selected_agent": "kilo",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-26T13:17:16.906Z",
+    "started_at": "2026-02-26T13:17:13.817Z",
+    "completed_at": "2026-02-26T13:17:16.906Z",
+    "error": null
+  }
+]

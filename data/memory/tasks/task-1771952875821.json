@@ -1,0 +1,28 @@
+[
+  {
+    "task_id": "task-1771952875821",
+    "input": "connect to agent in vs code",
+    "output": [
+      {
+        "agent": "code",
+        "response": "**Connected to VS Code**\n\nI'm now online and ready to assist you with all your coding needs. You can interact with me through the Command Palette or by using the Code Agent extension in VS Code.\n\nWhat do you need help with today? Would you like to:\n1. Refactor code?\n2. Debug an issue?\n3. Generate boilerplate code?\n4. Get suggestions for improving performance?\n5. Something else?\n\nPlease specify your request, and I'll be happy to assist you!",
+        "timestamp": 1771952875821
+      }
+    ],
+    "agents_involved": 8,
+    "execution_time_ms": 13814,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-24T17:07:55.821Z",
+    "started_at": "2026-02-24T17:07:42.007Z",
+    "completed_at": "2026-02-24T17:07:55.821Z",
+    "error": null
+  }
+]

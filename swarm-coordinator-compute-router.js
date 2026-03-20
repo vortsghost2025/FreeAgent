@@ -63,8 +63,9 @@ class ComputeRouter {
           return await this.sharedCompute.execute(payload);
         }
     }
+  }
 
-    getCurrentRouting() {
+  getCurrentRouting() {
       return this.currentRouting;
   }
 
@@ -80,8 +81,17 @@ class ComputeRouter {
 
 // Register with SwarmRegistry for automatic loading
 if (typeof SwarmRegistry !== 'undefined') {
-  SwarmRegistry.registerComponent('ComputeRouter', ComputeRouter);
-  console.log('[ComputeRouter] Registered with SwarmRegistry');
+  try {
+    SwarmRegistry.registerComponent('ComputeRouter', ComputeRouter);
+    console.log('[ComputeRouter] Registered with SwarmRegistry');
+  } catch (e) {
+    console.warn('[ComputeRouter] SwarmRegistry.registerComponent not available:', e.message);
+  }
+}
+
+// Expose ComputeRouter to window for browser usage
+if (typeof window !== 'undefined') {
+  window.ComputeRouter = ComputeRouter;
 }
 
 // Export for module loading

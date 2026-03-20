@@ -1,0 +1,63 @@
+[
+  {
+    "task_id": "task-1771911464540",
+    "input": "test",
+    "output": [
+      {
+        "agent": "code",
+        "response": "Error: Ollama API error: 400",
+        "timestamp": 1771911464525
+      },
+      {
+        "agent": "data",
+        "response": "Error: Ollama API error: 400",
+        "timestamp": 1771911464528
+      },
+      {
+        "agent": "clinical",
+        "response": "Error: Ollama API error: 400",
+        "timestamp": 1771911464530
+      },
+      {
+        "agent": "test",
+        "response": "Error: Ollama API error: 400",
+        "timestamp": 1771911464532
+      },
+      {
+        "agent": "security",
+        "response": "Error: Ollama API error: 400",
+        "timestamp": 1771911464534
+      },
+      {
+        "agent": "api",
+        "response": "Error: Ollama API error: 400",
+        "timestamp": 1771911464536
+      },
+      {
+        "agent": "db",
+        "response": "Error: Ollama API error: 400",
+        "timestamp": 1771911464539
+      },
+      {
+        "agent": "devops",
+        "response": "Error: Ollama API error: 400",
+        "timestamp": 1771911464540
+      }
+    ],
+    "agents_involved": 8,
+    "execution_time_ms": 18,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-24T05:37:44.540Z",
+    "started_at": "2026-02-24T05:37:44.522Z",
+    "completed_at": "2026-02-24T05:37:44.540Z",
+    "error": null
+  }
+]

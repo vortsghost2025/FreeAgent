@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772154203844",
+    "input": "{\"batch\":1634,\"agent\":\"security\",\"intensity\":\"maximum\"}",
+    "output": [
+      {
+        "agent": "security",
+        "response": "Error: fetch failed",
+        "model": "deepseek-coder-v2:16b",
+        "timestamp": 1772154203844
+      }
+    ],
+    "agents_involved": 9,
+    "execution_time_ms": 6991,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-27T01:03:23.844Z",
+    "started_at": "2026-02-27T01:03:16.853Z",
+    "completed_at": "2026-02-27T01:03:23.844Z",
+    "error": null
+  }
+]

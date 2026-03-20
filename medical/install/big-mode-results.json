@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-02-28T04:26:19.064Z",
+  "uptime": 0.959,
+  "workerCount": 50,
+  "engineTypes": [
+    "Price-drift watchers",
+    "Liquidation monitors",
+    "Gas-timing analyzers",
+    "Cross-DEX scanners",
+    "Arbitrage detectors",
+    "Mempool pattern recognizers"
+  ],
+  "totalOpportunities": 371,
+  "successfulTrades": 180,
+  "totalProfit": 1.2517782333426979,
+  "profitPerMinute": 78.31772054281738,
+  "profitPerWorker": 0.025035564666853957
+}

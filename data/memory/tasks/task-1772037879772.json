@@ -1,0 +1,28 @@
+[
+  {
+    "task_id": "task-1772037879772",
+    "input": "**Test 1** — should route to `code` agent:",
+    "output": [
+      {
+        "agent": "code",
+        "response": "Received test case: **Test 1**. I will now execute the necessary steps to verify its functionality.\n\nTo confirm, **Test 1** is supposed to route to my domain, which involves code-related tasks such as:\n\n1. Writing and executing code.\n2. Debugging any issues that arise during execution.\n3. Refactoring existing code for improved maintainability and performance.\n\nPlease provide the test details or the specific task I should perform related to **Test 1**.",
+        "timestamp": 1772037879772
+      }
+    ],
+    "agents_involved": 1,
+    "execution_time_ms": 1836,
+    "status": "completed",
+    "routing": {
+      "decision": "selected",
+      "selected_agent": "code",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-25T16:44:39.772Z",
+    "started_at": "2026-02-25T16:44:37.936Z",
+    "completed_at": "2026-02-25T16:44:39.772Z",
+    "error": null
+  }
+]

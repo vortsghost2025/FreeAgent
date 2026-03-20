@@ -6,3 +6,23 @@ coverage/
 .idea/
 dist/
 build/
+
+# Environment variables - NEVER commit .env files with real keys!
+.env
+.env.local
+.env.*.local
+bin/
+model/
+extension/
+sharedClientCache/
+
+free-coding-agent/memory/
+# Local environment (API keys)
+.env
+.env.local
+mev-swarm/.env
+*.vsix
+  
+# Install duplicates - consolidated to mev-swarm/  
+install/mev-swarm/ 
+mev-swarm/.env 

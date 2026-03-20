@@ -1,0 +1,35 @@
+[
+  {
+    "task_id": "task-1772153692820",
+    "input": "{\"agent\":\"clinical\",\"test\":\"test_7\",\"intensity\":\"maximum\"}",
+    "output": [
+      {
+        "agent": "clinical",
+        "response": "**Clinical Reasoning Initiated**\n\nI have received your request with the following details:\n\n* Test ID: `test_7`\n* Intensity level: `maximum`\n\nTo proceed, I need to assess the clinical context and determine the most appropriate course of action.\n\nPlease confirm if you would like me to:\n\n1. Perform a risk assessment for the patient based on the test results?\n2. Develop a treatment plan tailored to the patient's specific needs?\n3. Provide guidance on how to interpret the test results in the context of the patient's medical history?\n\nPlease respond with one of the above options or provide additional information to facilitate further clinical reasoning.",
+        "model": "llama3.1:8b",
+        "timestamp": 1772153572866
+      },
+      {
+        "agent": "test",
+        "response": "Error: The operation was aborted due to timeout",
+        "model": "deepseek-coder-v2:16b",
+        "timestamp": 1772153692820
+      }
+    ],
+    "agents_involved": 9,
+    "execution_time_ms": 180065,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-27T00:54:52.820Z",
+    "started_at": "2026-02-27T00:51:52.755Z",
+    "completed_at": "2026-02-27T00:54:52.820Z",
+    "error": null
+  }
+]

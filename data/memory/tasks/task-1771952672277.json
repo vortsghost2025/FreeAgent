@@ -1,0 +1,28 @@
+[
+  {
+    "task_id": "task-1771952672277",
+    "input": "\"test\"",
+    "output": [
+      {
+        "agent": "test",
+        "response": "You've initiated a test session!\n\nI can perform various test-related tasks. What would you like to do?\n\nHere are some options:\n\n1. **Generate tests**: I can create test cases based on your code or specifications.\n2. **Run tests**: You can execute existing tests, and I'll report the results.\n3. **Analyze coverage**: I can provide insights into which parts of your code have been tested.\n4. **Validate test data**: If you have test data, I can help ensure it's correct and complete.\n\nWhich option interests you?",
+        "timestamp": 1771952672277
+      }
+    ],
+    "agents_involved": 8,
+    "execution_time_ms": 15387,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-24T17:04:32.277Z",
+    "started_at": "2026-02-24T17:04:16.890Z",
+    "completed_at": "2026-02-24T17:04:32.277Z",
+    "error": null
+  }
+]

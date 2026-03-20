@@ -1,0 +1,21 @@
+{
+  "task_id": "task-0003",
+  "input": "",
+  "output": "",
+  "agents_involved": [],
+  "subsystem": "",
+  "execution_time_ms": 0,
+  "status": "pending",
+  "routing": {
+    "decision": "local_model",
+    "selected_agent": "all",
+    "selected_subsystem": "coding_ensemble",
+    "estimated_cost": 0,
+    "actual_cost": 0,
+    "confidence": 0.9
+  },
+  "created_at": null,
+  "started_at": null,
+  "completed_at": null,
+  "error": null
+}

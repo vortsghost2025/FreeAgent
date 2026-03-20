@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772048410375",
+    "input": "\"test\"",
+    "output": [
+      {
+        "agent": "test",
+        "response": " As the Test Agent, I'll generate a simple test case for you to verify basic functionality. Please provide more details or specify what needs to be tested if there is something else in mind.",
+        "model": "deepseek-coder-v2:16b",
+        "timestamp": 1772048410375
+      }
+    ],
+    "agents_involved": 8,
+    "execution_time_ms": 4591,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-25T19:40:10.375Z",
+    "started_at": "2026-02-25T19:40:05.784Z",
+    "completed_at": "2026-02-25T19:40:10.375Z",
+    "error": null
+  }
+]

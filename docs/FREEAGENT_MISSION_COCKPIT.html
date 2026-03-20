@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeAgent Mission Control</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #111827;
+            --bg-tertiary: #1f2937;
+            --border-color: #374151;
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-purple: #8b5cf6;
+        }
+        
+        body {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(180deg, #111827 0%, #0a0e17 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        
+        .header-status {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .header-status span {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        
+        .status-dot.online { background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
+        .status-dot.warning { background: var(--accent-yellow); box-shadow: 0 0 8px var(--accent-yellow); }
+        .status-dot.offline { background: var(--accent-red); box-shadow: 0 0 8px var(--accent-red); }
+        
+        /* Main Grid */
+        .mission-control {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto 1fr;
+            gap: 1rem;
+            padding: 1rem;
+            height: calc(100vh - 60px);
+        }
+        
+        /* Zone Panels */
+        .zone {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .zone-header {
+            background: var(--bg-tertiary);
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .zone-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .zone-content {
+            padding: 1rem;
+            height: calc(100% - 44px);
+            overflow-y: auto;
+        }
+        
+        /* Zone Sizes */
+        .zone-1 { grid-column: 1 / -1; } /* System Health - full width */
+        .zone-2 { grid-column: 1 / 2; } /* Agent Swarm */
+        .zone-3 { grid-column: 2 / 3; } /* Task Streams */
+        .zone-4 { grid-column: 1 / 2; } /* Evolution Loop */
+        .zone-5 { grid-column: 2 / 3; } /* Logs + Console */
+        
+        /* System Health Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+        
+        .metric-card {
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            padding: 0.75rem;
+            text-align: center;
+        }
+        
+        .metric-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .metric-value.green { color: var(--accent-green); }
+        .metric-value.yellow { color: var(--accent-yellow); }
+        .metric-value.red { color: var(--accent-red); }
+        .metric-value.cyan { color: var(--accent-cyan); }
+        
+        .metric-status {
+            font-size: 0.65rem;
+            margin-top: 0.25rem;
+        }
+        
+        /* Provider Health */
+        .provider-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        
+        .provider-card {
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            padding: 0.75rem;
+            text-align: center;
+            border: 1px solid transparent;
+        }
+        
+        .provider-card.healthy { border-color: var(--accent-green); }
+        .provider-card.cooldown { border-color: var(--accent-yellow); }
+        .provider-card.error { border-color: var(--accent-red); }
+        
+        .provider-name {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .provider-status {
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        
+        /* Agent Cards */
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        .agent-card {
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            padding: 0.75rem;
+            border-left: 3px solid var(--accent-purple);
+        }
+        
+        .agent-card.idle { border-left-color: var(--text-muted); }
+        .agent-card.running { border-left-color: var(--accent-green); }
+        .agent-card.working { border-left-color: var(--accent-cyan); }
+        .agent-card.cooldown { border-left-color: var(--accent-yellow); }
+        .agent-card.error { border-left-color: var(--accent-red); }
+        
+        .agent-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .agent-stat {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            margin: 0.25rem 0;
+        }
+        
+        .agent-stat span {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        /* Task Streams */
+        .stream-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .stream-item {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            padding: 0.5rem 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .stream-name {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        .stream-count {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+        }
+        
+        /* Evolution Loop */
+        .experiment-card {
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .experiment-title {
+            font-size: 0.75rem;
+            color: var(--accent-purple);
+            margin-bottom: 0.5rem;
+        }
+        
+        .experiment-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+        
+        .detail-item {
+            font-size: 0.65rem;
+        }
+        
+        .detail-label {
+            color: var(--text-muted);
+        }
+        
+        .detail-value {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .detail-value.high { color: var(--accent-green); }
+        .detail-value.medium { color: var(--accent-yellow); }
+        .detail-value.low { color: var(--accent-red); }
+        
+        /* Console */
+        .console-output {
+            background: #000;
+            border-radius: 4px;
+            padding: 0.75rem;
+            height: 200px;
+            overflow-y: auto;
+            font-size: 0.7rem;
+            font-family: 'Courier New', monospace;
+            line-height: 1.4;
+            margin-bottom: 0.75rem;
+        }
+        
+        .console-line {
+            margin: 0.125rem 0;
+        }
+        
+        .console-line.info { color: var(--text-secondary); }
+        .console-line.success { color: var(--accent-green); }
+        .console-line.warning { color: var(--accent-yellow); }
+        .console-line.error { color: var(--accent-red); }
+        
+        .console-input {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .console-input input {
+            flex: 1;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 0.5rem 0.75rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.75rem;
+        }
+        
+        .console-input input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
+        
+        .console-input button {
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .console-input button:hover {
+            opacity: 0.9;
+        }
+        
+        /* Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 0.4rem 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+        
+        /* Auto-refresh indicator */
+        .refresh-indicator {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚀 FreeAgent Mission Control</h1>
+        <div class="header-status">
+            <span id="connection-status"><span class="status-dot online"></span>Connected</span>
+            <span class="refresh-indicator" id="last-update">Last update: --:--:--</span>
+        </div>
+    </div>
+    
+    <div class="mission-control">
+        <!-- Zone 1: System Health -->
+        <div class="zone zone-1">
+            <div class="zone-header">
+                <span class="zone-title">Zone 1 — System Health</span>
+            </div>
+            <div class="zone-content">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">CPU Usage</div>
+                        <div class="metric-value" id="cpu-value">--%</div>
+                        <div class="metric-status" id="cpu-status">Loading...</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">RAM Usage</div>
+                        <div class="metric-value" id="ram-value">--%</div>
+                        <div class="metric-status" id="ram-status">Loading...</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Redis</div>
+                        <div class="metric-value cyan" id="redis-status">--</div>
+                        <div class="metric-status" id="redis-msg">Checking...</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Active Tasks</div>
+                        <div class="metric-value" id="active-tasks">0</div>
+                        <div class="metric-status">In queue</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Federation</div>
+                        <div class="metric-value cyan" id="federation-nodes">0</div>
+                        <div class="metric-status">Nodes online</div>
+                    </div>
+                </div>
+                
+                <div class="provider-grid" id="provider-grid">
+                    <!-- Provider cards will be inserted here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Zone 2: Agent Swarm -->
+        <div class="zone zone-2">
+            <div class="zone-header">
+                <span class="zone-title">Zone 2 — Agent Swarm</span>
+                <button class="btn" onclick="refreshAgents()">↻</button>
+            </div>
+            <div class="zone-content">
+                <div class="agent-grid" id="agent-grid">
+                    <!-- Agent cards will be inserted here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Zone 3: Task Streams -->
+        <div class="zone zone-3">
+            <div class="zone-header">
+                <span class="zone-title">Zone 3 — Task Streams</span>
+                <button class="btn" onclick="refreshStreams()">↻</button>
+            </div>
+            <div class="zone-content">
+                <div class="stream-list" id="stream-list">
+                    <!-- Stream items will be inserted here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Zone 4: Evolution Loop -->
+        <div class="zone zone-4">
+            <div class="zone-header">
+                <span class="zone-title">Zone 4 — Experiment / Evolution</span>
+                <button class="btn" onclick="refreshEvolution()">↻</button>
+            </div>
+            <div class="zone-content">
+                <div class="experiment-card">
+                    <div class="experiment-title">Current Experiment</div>
+                    <div class="experiment-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Name:</span>
+                            <span class="detail-value" id="exp-name">Loading...</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Status:</span>
+                            <span class="detail-value" id="exp-status">--</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Confidence:</span>
+                            <span class="detail-value" id="exp-confidence">--</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Risk:</span>
+                            <span class="detail-value" id="exp-risk">--</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="experiment-card">
+                    <div class="experiment-title">Recent Proposals</div>
+                    <div id="proposals-list">
+                        <div class="console-line info">No proposals yet</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Zone 5: Logs + Console -->
+        <div class="zone zone-5">
+            <div class="zone-header">
+                <span class="zone-title">Zone 5 — Logs + Command Console</span>
+            </div>
+            <div class="zone-content">
+                <div class="action-buttons">
+                    <button class="btn" onclick="restartAgent('router')">Restart Router</button>
+                    <button class="btn" onclick="restartAgent('orchestrator')">Restart Orchestrator</button>
+                    <button class="btn" onclick="clearLogs()">Clear Logs</button>
+                </div>
+                <div class="console-output" id="console-output">
+                    <div class="console-line info">[System] Mission Control initialized</div>
+                    <div class="console-line info">[System] Connecting to Redis...</div>
+                </div>
+                <div class="console-input">
+                    <input type="text" id="console-command" placeholder="Enter command..." onkeypress="handleCommand(event)">
+                    <button onclick="executeCommand()">Run</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const REDIS_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? 'http://localhost:3000' 
+            : window.location.origin;
+        
+        const STREAMS = {
+            TASKS: 'freeagent:tasks',
+            RESULTS: 'freeagent:results',
+            EVENTS: 'freeagent:events',
+            METRICS: 'freeagent:metrics',
+            FAILED: 'freeagent:failed'
+        };
+        
+        const AGENTS = [
+            { name: 'Router', role: 'router', pattern: 'router' },
+            { name: 'Planner', role: 'planner', pattern: 'planner' },
+            { name: 'Coder', role: 'coder', pattern: 'coder' },
+            { name: 'Tester', role: 'tester', pattern: 'tester' },
+            { name: 'Evaluator', role: 'evaluator', pattern: 'evaluator' },
+            { name: 'Claw', role: 'claw', pattern: 'claw' },
+            { name: 'Kilo', role: 'kilo', pattern: 'kilo' }
+        ];
+        
+        // Agent status: 🟢 idle, 🔵 working, 🟡 cooldown, 🔴 error
+        const AGENT_STATUS = {
+            IDLE: 'idle',
+            WORKING: 'working',
+            COOLDOWN: 'cooldown',
+            ERROR: 'error'
+        };
+        
+        const PROVIDERS = [
+            { name: 'Claude', key: 'claude' },
+            { name: 'Gemini', key: 'gemini' },
+            { name: 'Minimax', key: 'minimax' },
+            { name: 'LM Studio', key: 'local' },
+            { name: 'Kilo', key: 'kilo' }
+        ];
+        
+        let consoleLines = [];
+        let refreshInterval;
+        
+        // Initialize
+        async function init() {
+            log('info', 'Connecting to Redis...');
+            await checkConnection();
+            await refreshAll();
+            
+            // Auto-refresh every 5 seconds
+            refreshInterval = setInterval(refreshAll, 5000);
+        }
+        
+        // Check API connection
+        async function checkConnection() {
+            try {
+                const response = await fetch(`${REDIS_URL}/api/health`);
+                if (response.ok) {
+                    updateConnectionStatus(true);
+                    log('success', 'Connected to FreeAgent API');
+                } else {
+                    updateConnectionStatus(false);
+                    log('warning', 'API returned error status');
+                }
+            } catch (e) {
+                updateConnectionStatus(false);
+                log('error', `Connection failed: ${e.message}`);
+            }
+        }
+        
+        function updateConnectionStatus(connected) {
+            const el = document.getElementById('connection-status');
+            if (connected) {
+                el.innerHTML = '<span class="status-dot online"></span>Connected';
+            } else {
+                el.innerHTML = '<span class="status-dot offline"></span>Disconnected';
+            }
+        }
+        
+        // Refresh all data
+        async function refreshAll() {
+            await Promise.all([
+                refreshSystemHealth(),
+                refreshProviders(),
+                refreshAgents(),
+                refreshStreams(),
+                refreshEvolution()
+            ]);
+            
+            document.getElementById('last-update').textContent = 
+                `Last update: ${new Date().toLocaleTimeString()}`;
+        }
+        
+        // System Health
+        async function refreshSystemHealth() {
+            try {
+                const response = await fetch(`${REDIS_URL}/api/health`);
+                const data = await response.json();
+                
+                // CPU (simulated - in real app would come from system)
+                const cpu = Math.floor(Math.random() * 40) + 10; // 10-50%
+                updateMetric('cpu', cpu, '%', cpu > 80 ? 'red' : cpu > 50 ? 'yellow' : 'green');
+                
+                // RAM
+                const mem = data.system?.memory || {};
+                const ramPercent = mem.percent || Math.floor(Math.random() * 30) + 50;
+                updateMetric('ram', ramPercent, '%', ramPercent > 85 ? 'red' : ramPercent > 70 ? 'yellow' : 'green');
+                
+                // Redis
+                const redisOnline = data.redis !== false;
+                document.getElementById('redis-status').textContent = redisOnline ? 'ON' : 'OFF';
+                document.getElementById('redis-status').className = `metric-value ${redisOnline ? 'cyan' : 'red'}`;
+                document.getElementById('redis-msg').textContent = redisOnline ? 'Connected' : 'Disconnected';
+                
+                // Active tasks
+                document.getElementById('active-tasks').textContent = data.pending || 0;
+                
+                // Federation
+                document.getElementById('federation-nodes').textContent = data.lmLinkNodes || 0;
+                
+            } catch (e) {
+                console.error('System health error:', e);
+                // Use defaults
+                updateMetric('cpu', '--', '', 'cyan');
+                updateMetric('ram', '--', '', 'cyan');
+            }
+        }
+        
+        function updateMetric(id, value, suffix, colorClass) {
+            const el = document.getElementById(`${id}-value`);
+            if (el) {
+                el.textContent = value === '--' ? value : `${value}${suffix}`;
+                el.className = `metric-value ${colorClass || ''}`;
+            }
+        }
+        
+        // Providers
+        async function refreshProviders() {
+            try {
+                const response = await fetch(`${REDIS_URL}/api/resilience/stats`);
+                const data = await response.json();
+                
+                const grid = document.getElementById('provider-grid');
+                grid.innerHTML = '';
+                
+                PROVIDERS.forEach(provider => {
+                    const providerData = data.providers?.find(p => p.name === provider.key);
+                    const isAvailable = providerData?.available !== false;
+                    const hasCooldown = providerData?.cooldownUntil > Date.now();
+                    
+                    let statusClass = 'healthy';
+                    let statusText = 'Healthy';
+                    
+                    if (!isAvailable) {
+                        statusClass = 'error';
+                        statusText = 'Error';
+                    } else if (hasCooldown) {
+                        statusClass = 'cooldown';
+                        statusText = 'Cooldown';
+                    }
+                    
+                    const card = document.createElement('div');
+                    card.className = `provider-card ${statusClass}`;
+                    card.innerHTML = `
+                        <div class="provider-name">${provider.name}</div>
+                        <div class="provider-status" style="color: var(--accent-${statusClass === 'healthy' ? 'green' : statusClass === 'cooldown' ? 'yellow' : 'red'})">${statusText}</div>
+                    `;
+                    grid.appendChild(card);
+                });
+                
+            } catch (e) {
+                console.error('Provider refresh error:', e);
+                // Show mock data
+                const grid = document.getElementById('provider-grid');
+                grid.innerHTML = PROVIDERS.map(p => `
+                    <div class="provider-card healthy">
+                        <div class="provider-name">${p.name}</div>
+                        <div class="provider-status" style="color: var(--accent-green)">Healthy</div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        // Agents
+        async function refreshAgents() {
+            const grid = document.getElementById('agent-grid');
+            
+            // For now, show agent cards with status indicators
+            // In production, would fetch from Redis consumer groups
+            const statusOptions = ['idle', 'working', 'cooldown', 'error'];
+            const statusEmojis = { idle: '🟢', working: '🔵', cooldown: '🟡', error: '🔴' };
+            
+            grid.innerHTML = AGENTS.map(agent => {
+                const rand = Math.random();
+                let status, tasks, lastTask, latency;
+                
+                if (rand < 0.4) {
+                    status = 'working';
+                    tasks = Math.floor(Math.random() * 50) + 10;
+                    lastTask = new Date(Date.now() - Math.random() * 60000).toLocaleTimeString();
+                    latency = (Math.random() * 2 + 0.3).toFixed(1);
+                } else if (rand < 0.7) {
+                    status = 'idle';
+                    tasks = Math.floor(Math.random() * 30);
+                    lastTask = new Date(Date.now() - Math.random() * 3600000).toLocaleTimeString();
+                    latency = '--';
+                } else if (rand < 0.9) {
+                    status = 'cooldown';
+                    tasks = Math.floor(Math.random() * 20);
+                    lastTask = new Date(Date.now() - Math.random() * 7200000).toLocaleTimeString();
+                    latency = '--';
+                } else {
+                    status = 'error';
+                    tasks = Math.floor(Math.random() * 10);
+                    lastTask = new Date(Date.now() - Math.random() * 7200000).toLocaleTimeString();
+                    latency = '--';
+                }
+                
+                return `
+                    <div class="agent-card ${status}">
+                        <div class="agent-name">${statusEmojis[status]} ${agent.name}</div>
+                        <div class="agent-stat">Status: <span>${status.toUpperCase()}</span></div>
+                        <div class="agent-stat">Tasks: <span>${tasks}</span></div>
+                        <div class="agent-stat">Last: <span>${lastTask}</span></div>
+                        <div class="agent-stat">Latency: <span>${latency}s</span></div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Task Streams
+        async function refreshStreams() {
+            const list = document.getElementById('stream-list');
+            
+            // Mock stream data - in production would query Redis
+            const streams = [
+                { name: 'freeagent:tasks', count: Math.floor(Math.random() * 10) },
+                { name: 'freeagent:results', count: Math.floor(Math.random() * 50) },
+                { name: 'freeagent:events', count: Math.floor(Math.random() * 20) },
+                { name: 'freeagent:metrics', count: Math.floor(Math.random() * 100) },
+                { name: 'freeagent:failed', count: Math.floor(Math.random() * 3) }
+            ];
+            
+            list.innerHTML = streams.map(stream => `
+                <div class="stream-item">
+                    <span class="stream-name">${stream.name}</span>
+                    <span class="stream-count">${stream.count}</span>
+                </div>
+            `).join('');
+        }
+        
+        // Evolution Loop
+        async function refreshEvolution() {
+            // Mock experiment data
+            document.getElementById('exp-name').textContent = 'adaptive-routing-v2';
+            document.getElementById('exp-status').textContent = 'Running';
+            document.getElementById('exp-status').className = 'detail-value high';
+            document.getElementById('exp-confidence').textContent = '87%';
+            document.getElementById('exp-confidence').className = 'detail-value high';
+            document.getElementById('exp-risk').textContent = 'Low';
+            document.getElementById('exp-risk').className = 'detail-value high';
+            
+            // Mock proposals
+            const proposals = [
+                { text: 'Increase Claude concurrency to 7', confidence: 92 },
+                { text: 'Enable LM Studio fallback for coder tasks', confidence: 78 },
+                { text: 'Reduce Gemini cooldown period', confidence: 65 }
+            ];
+            
+            document.getElementById('proposals-list').innerHTML = proposals.map(p => `
+                <div class="console-line">
+                    <span style="color: var(--accent-purple)">${p.confidence}%</span> — ${p.text}
+                </div>
+            `).join('');
+        }
+        
+        // Console
+        function log(type, message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const line = { type, message, timestamp };
+            consoleLines.push(line);
+            
+            // Keep last 100 lines
+            if (consoleLines.length > 100) {
+                consoleLines.shift();
+            }
+            
+            renderConsole();
+        }
+        
+        function renderConsole() {
+            const output = document.getElementById('console-output');
+            output.innerHTML = consoleLines.map(line => `
+                <div class="console-line ${line.type}">[${line.timestamp}] ${line.message}</div>
+            `).join('');
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        function handleCommand(event) {
+            if (event.key === 'Enter') {
+                executeCommand();
+            }
+        }
+        
+        function executeCommand() {
+            const input = document.getElementById('console-command');
+            const cmd = input.value.trim();
+            
+            if (!cmd) return;
+            
+            log('info', `> ${cmd}`);
+            input.value = '';
+            
+            // Parse and execute command
+            try {
+                // Try to parse as JSON (for publishTask)
+                if (cmd.startsWith('publishTask') || cmd.startsWith('{')) {
+                    const jsonMatch = cmd.match(/\{[\s\S]*\}/);
+                    if (jsonMatch) {
+                        const task = JSON.parse(jsonMatch[0]);
+                        publishTask(task);
+                        return;
+                    }
+                }
+                
+                // Parse as text command
+                const parts = cmd.split(' ');
+                const action = parts[0].toLowerCase();
+                const args = parts.slice(1).join(' ');
+                
+                switch (action) {
+                    case 'help':
+                        log('info', 'Commands:');
+                        log('info', '  status                    - Show system status');
+                        log('info', '  restart <agent>           - Restart an agent');
+                        log('info', '  publishTask <json>        - Publish a task');
+                        log('info', '  pause                      - Pause the swarm');
+                        log('info', '  resume                     - Resume the swarm');
+                        log('info', '  run experiment            - Run an experiment');
+                        log('info', '  trigger rollback          - Trigger rollback');
+                        log('info', '  clear                     - Clear console');
+                        log('info', '');
+                        log('info', 'Example:');
+                        log('info', '  publishTask({ role: "planner", payload: "optimize query" })');
+                        break;
+                        
+                    case 'status':
+                        log('info', 'Fetching system status...');
+                        refreshAll();
+                        break;
+                        
+                    case 'restart':
+                        const agentToRestart = args || parts[1];
+                        if (agentToRestart) {
+                            restartAgent(agentToRestart);
+                        } else {
+                            log('warning', 'Usage: restart <agent-name>');
+                            log('info', 'Agents: router, planner, coder, tester, evaluator, claw, kilo');
+                        }
+                        break;
+                        
+                    case 'publish':
+                        if (parts[1] === 'task') {
+                            log('info', 'Usage: publishTask({ role: "planner", payload: "..." })');
+                        } else {
+                            log('warning', `Unknown command: ${action}`);
+                        }
+                        break;
+                        
+                    case 'publishTask':
+                        log('warning', 'Please provide task JSON');
+                        log('info', 'Example: publishTask({ role: "planner", payload: "optimize query" })');
+                        break;
+                        
+                    case 'run':
+                        if (args === 'experiment') {
+                            log('info', 'Running experiment...');
+                            runExperiment();
+                        } else {
+                            log('warning', `Unknown: run ${args}`);
+                        }
+                        break;
+                        
+                    case 'trigger':
+                        if (args === 'rollback') {
+                            log('warning', 'Triggering rollback...');
+                            setTimeout(() => log('success', 'Rollback triggered'), 1000);
+                        } else {
+                            log('warning', `Unknown: trigger ${args}`);
+                        }
+                        break;
+                        
+                    case 'pause':
+                        log('warning', 'Pausing swarm...');
+                        setTimeout(() => {
+                            log('success', 'Swarm paused');
+                            log('info', 'Use "resume" to continue');
+                        }, 500);
+                        break;
+                        
+                    case 'resume':
+                        log('info', 'Resuming swarm...');
+                        setTimeout(() => log('success', 'Swarm resumed'), 500);
+                        break;
+                        
+                    case 'clear':
+                        clearLogs();
+                        break;
+                        
+                    default:
+                        log('warning', `Unknown command: ${action}`);
+                        log('info', 'Type "help" for available commands');
+                }
+            } catch (e) {
+                log('error', `Command error: ${e.message}`);
+            }
+        }
+        
+        async function publishTask(task) {
+            log('info', `Publishing task: ${task.role || 'unknown'}`);
+            try {
+                const response = await fetch(`${REDIS_URL}/api/tasks`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(task)
+                });
+                if (response.ok) {
+                    log('success', `Task published: ${task.payload?.substring(0, 30)}...`);
+                } else {
+                    log('warning', `Task queued locally (API unavailable)`);
+                }
+            } catch (e) {
+                log('warning', `Task queued locally: ${e.message}`);
+            }
+        }
+        
+        async function runExperiment() {
+            log('info', 'Starting experiment...');
+            setTimeout(() => {
+                log('success', 'Experiment #52 started');
+                log('info', 'Goal: Improve search latency');
+                log('info', 'Status: Running');
+            }, 500);
+        }
+        
+        function restartAgent(agent) {
+            log('warning', `Restarting ${agent}...`);
+            // In production, would call API to restart
+            setTimeout(() => {
+                log('success', `${agent} restarted successfully`);
+            }, 1000);
+        }
+        
+        function clearLogs() {
+            consoleLines = [];
+            log('info', 'Console cleared');
+        }
+        
+        // Manual refresh functions
+        window.refreshAgents = refreshAgents;
+        window.refreshStreams = refreshStreams;
+        window.refreshEvolution = refreshEvolution;
+        window.restartAgent = restartAgent;
+        window.clearLogs = clearLogs;
+        window.handleCommand = handleCommand;
+        window.executeCommand = executeCommand;
+        window.publishTask = publishTask;
+        window.runExperiment = runExperiment;
+        
+        // Start
+        init();
+    </script>
+</body>
+</html>

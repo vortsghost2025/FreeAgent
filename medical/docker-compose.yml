@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+  # Consensus Coordinator - Central hub for agent coordination
+  consensus-coordinator:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: gemini-agent-system:latest
+    container_name: consensus-coordinator
+    command: node consensus-coordinator.js
+    ports:
+      - "8765:8765"  # WebSocket port for agent communication
+    environment:
+      - NODE_ENV=production
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - CONSENSUS_THRESHOLD=0.67
+      - AGENT_TIMEOUT=30000
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config
+    networks:
+      - agent-network
+    restart: unless-stopped
+
+  # Decision Agents - Scalable agent pool
+  decision-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: gemini-agent-system:latest
+    command: node decision-agent.js
+    environment:
+      - NODE_ENV=production
+      - CONSENSUS_HUB_URL=ws://consensus-coordinator:8765
+      - AGENT_CAPABILITIES=strategy,analysis,validation
+      - MAX_CONCURRENT_TASKS=5
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - agent-network
+    depends_on:
+      - consensus-coordinator
+    deploy:
+      replicas: 5  # Start with 5 agents, scale to 1000 for stress testing
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+
+  # Data Watchers - Real-time information gathering
+  data-watcher:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: gemini-agent-system:latest
+    command: node data-watcher.js
+    environment:
+      - NEWS_API_KEY=${NEWS_API_KEY}
+      - TWITTER_BEARER_TOKEN=${TWITTER_BEARER_TOKEN}
+      - MARKET_DATA_PROVIDER=coingecko
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - agent-network
+    depends_on:
+      - consensus-coordinator
+
+  # Monitoring Dashboard - Real-time system observability
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    image: gemini-dashboard:latest
+    container_name: monitoring-dashboard
+    command: node dashboard.js
+    ports:
+      - "3000:3000"  # Web dashboard
+    environment:
+      - CONSENSUS_HUB_URL=ws://consensus-coordinator:8765
+      - REFRESH_INTERVAL=1000
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - agent-network
+    depends_on:
+      - consensus-coordinator
+
+  # Stress Testing Controller
+  stress-tester:
+    build:
+      context: .
+      dockerfile: Dockerfile.stress
+    image: stress-tester:latest
+    container_name: stress-controller
+    command: node stress-controller.js
+    environment:
+      - TARGET_AGENT_COUNT=1000
+      - TEST_DURATION_MINUTES=30
+      - CONSENSUS_HUB_URL=ws://consensus-coordinator:8765
+    volumes:
+      - ./stress-results:/app/results
+    networks:
+      - agent-network
+    profiles:
+      - stress-testing
+
+networks:
+  agent-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  logs:
+  config:
+  stress-results:

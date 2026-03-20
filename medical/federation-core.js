@@ -11,6 +11,9 @@
 
 import { EventEmitter } from 'events';
 
+// Import Provider Scorer for system performance tracking
+import { providerScorer } from './utils/provider-scorer.js';
+
 // Federation Status
 export const FederationStatus = {
   HEALTHY: 'healthy',
@@ -69,10 +72,11 @@ class FederationCoordinator extends EventEmitter {
    */
   async routeTask(task) {
     const startTime = Date.now();
+    let targetSystem = null;
 
     try {
       // Determine which system should handle this task
-      const targetSystem = this._selectSystem(task);
+      targetSystem = this._selectSystem(task);
 
       if (!targetSystem) {
         throw new Error('No suitable system available for this task');
@@ -87,11 +91,20 @@ class FederationCoordinator extends EventEmitter {
       const latency = Date.now() - startTime;
       this._updateMetrics(task, targetSystem, result, latency);
 
+      // Record success in provider scorer
+      const cost = result?.cost || 0;
+      providerScorer.recordSuccess(targetSystem.id, latency, cost);
+
       return result;
 
     } catch (error) {
       console.error(`❌ Task execution failed:`, error);
       this.metrics.totalRequests++;
+      
+      // Record failure in provider scorer
+      if (targetSystem) {
+        providerScorer.recordFailure(targetSystem.id);
+      }
 
       throw error;
     }
@@ -105,29 +118,51 @@ class FederationCoordinator extends EventEmitter {
     const taskType = task.type || 'unknown';
     const hasMedicalData = this._hasMedicalData(task.data);
 
-    // System selection matrix
+    // Get candidate systems for this task type
+    const candidates = [];
+    
+    // System selection matrix - collect all candidate systems
     if (taskType === 'structural_processing' && hasMedicalData) {
-      // Use Medical Pipeline (fastest for structural tasks)
-      return this.systems.get(SystemType.MEDICAL_PIPELINE);
+      candidates.push(SystemType.MEDICAL_PIPELINE);
     }
 
     if (taskType === 'medical_analysis' || taskType === 'clinical_reasoning') {
-      // Use Coding Ensemble Clinical Analysis agent
-      return this.systems.get(SystemType.CODING_ENSEMBLE);
+      candidates.push(SystemType.CODING_ENSEMBLE);
     }
 
     if (taskType === 'code_generation' || taskType === 'coding_assistance') {
-      // Use Coding Ensemble Code Generation agent
-      return this.systems.get(SystemType.CODING_ENSEMBLE);
+      candidates.push(SystemType.CODING_ENSEMBLE);
     }
 
     if (taskType === 'data_processing' || taskType === 'validation') {
-      // Use Plugins system if available
-      return this.systems.get(SystemType.PLUGINS);
+      candidates.push(SystemType.PLUGINS);
     }
 
-    // Default: try Coding Ensemble
-    return this.systems.get(SystemType.CODING_ENSEMBLE);
+    // If no specific candidates, use default
+    if (candidates.length === 0) {
+      candidates.push(SystemType.CODING_ENSEMBLE);
+    }
+
+    // Use provider scorer to select the best candidate
+    // Filter to only include registered systems
+    const availableCandidates = candidates.filter(sysId => this.systems.has(sysId));
+    
+    if (availableCandidates.length <= 1) {
+      return this.systems.get(availableCandidates[0]) || this.systems.get(SystemType.CODING_ENSEMBLE);
+    }
+
+    // Use simple round-robin selection among candidates (avoiding provider scorer misuse)
+    const selectedIndex = (this.requestCounter++) % availableCandidates.length;
+    const selectedSystemId = availableCandidates[selectedIndex];
+    const selectedSystem = this.systems.get(selectedSystemId);
+    
+    if (selectedSystem) {
+      console.log(`🎯 Selected system using round-robin: ${selectedSystemId} (task: ${taskType})`);
+      return selectedSystem;
+    }
+
+    // Fallback to first available
+    return this.systems.get(availableCandidates[0]);
   }
 
   /**

@@ -1,0 +1,89 @@
+Memurai 4.1 release notes
+================================================================================
+
+--------------------------------------------------------------------------------
+Upgrade urgency levels:
+
+LOW:      No need to upgrade unless there are new features you want to use.
+MODERATE: Program an upgrade of the server, but it's not urgent.
+HIGH:     There is a critical bug that may affect a subset of users. Upgrade!
+CRITICAL: There is a critical bug affecting MOST USERS. Upgrade ASAP.
+SECURITY: There are security fixes in the release.
+--------------------------------------------------------------------------------
+
+
+================================================================================
+Memurai 4.2.2    Released Nov 19 2025
+================================================================================
+
+Upgrade urgency: HIGH.
+
+Memurai 4.2.2 is on par with Redis 7.4.7. For details, see:
+https://raw.githubusercontent.com/redis/redis/7.4.7/00-RELEASENOTES
+
+This release introduces the following changes:
+
+* Fix for an overflow in 'HyperLogLog' with 2GB+ entries that may result in
+  a crash.
+* Fix for installer failing on some systems when installing Memurai with
+  a Windows Service
+
+================================================================================
+Memurai 4.2.2    --- End of Release Notes ---
+================================================================================
+
+
+================================================================================
+Memurai 4.2.1    Released Oct 09 2025
+================================================================================
+
+Upgrade urgency: SECURITY.
+
+Memurai 4.2.1 is on par with Redis 7.4.6. For details, see:
+https://raw.githubusercontent.com/redis/redis/7.4.6/00-RELEASENOTES
+
+This release introduces the following changes:
+
+Security fixes:
+
+* (CVE-2025-49844) A Lua script may lead to remote code execution
+* (CVE-2025-46817) A Lua script may lead to integer overflow and potential RCE
+* (CVE-2025-46818) A Lua script can be executed in the context of another user
+* (CVE-2025-46819) LUA out-of-bound read
+* (CVE-2025-32023) Fix out-of-bounds write in `HyperLogLog` commands
+* (CVE-2025-48367) Retry accepting other connections even if the accepted connection reports an error
+
+Bug fixes:
+
+* Full replica synchronization could leave an additional RDB file in
+  the working directory.
+
+================================================================================
+Memurai 4.2.1    --- End of Release Notes ---
+================================================================================
+
+
+================================================================================
+Memurai 4.2.0    Released Apr 30 2025
+================================================================================
+
+Upgrade urgency: LOW. First release of Memurai 4.2.
+Memurai 4.2.0 is on par with Redis 7.4.3. For details, see:
+https://raw.githubusercontent.com/redis/redis/7.4.3/00-RELEASENOTES
+
+Introduction to the Memurai 4.2 release
+=======================================
+
+Memurai 4.2 brings compatibility with Redis 7.4 API and includes a number of
+optimizations, bug fixes and new commands.
+
+In particular, users should be aware of the following:
+
+* Memurai 4.2 requires license file for operation. Memurai is bundled with
+  a license intended for development and testing that will be loaded by default.
+  Refer to the documentation at docs.memurai.com for details on how to use
+  license files and how to obtain a commercial license.
+
+================================================================================
+Memurai 4.2.0    --- End of Release Notes ---
+================================================================================

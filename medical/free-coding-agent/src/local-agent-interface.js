@@ -154,14 +154,18 @@ export class StandardAgent {
     console.log(`[${this.name}] Initialized`);
   }
 
-  async handleMessage(message, provider) {
+  async handleMessage(message, provider, options = {}) {
     const prompt = this.buildPrompt(message);
     console.log(`[${this.name}] Processing message`);
+
+    // Use provided model from options, or fall back to agent's default model
+    const modelToUse = options.model || this.model;
+    console.log(`[${this.name}] Using model: ${modelToUse}`);
 
     try {
       const response = await provider.generate({
         prompt,
-        model: this.model
+        model: modelToUse
       });
 
       const agentResponse = {
@@ -212,6 +216,11 @@ export class StandardAgent {
       agent: agentResponse.content,
       timestamp: Date.now()
     });
+    
+    // Limit memory size to prevent command line overflow
+    if (this.memory.length > 20) {
+      this.memory = this.memory.slice(-15); // Keep only last 15 messages
+    }
   }
 }
 

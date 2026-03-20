@@ -1,0 +1,22 @@
+[
+  {
+    "task_id": "task-1771901415504",
+    "input": "test",
+    "output": null,
+    "agents_involved": 1,
+    "execution_time_ms": 0,
+    "status": "failed",
+    "routing": {
+      "decision": "selected",
+      "selected_agent": "code_generation",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-24T02:50:15.504Z",
+    "started_at": "2026-02-24T02:50:15.504Z",
+    "completed_at": "2026-02-24T02:50:15.504Z",
+    "error": "Cannot read properties of undefined (reading 'handleMessage')"
+  }
+]

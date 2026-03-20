@@ -1,0 +1,36 @@
+[
+  {
+    "timestamp": 1772249336902,
+    "metrics": {
+      "success_rate": 0.977793351527313,
+      "error_rate": 0.029910708723589988,
+      "throughput": 0.9464650471494941,
+      "latency": 0.15780434343163016,
+      "queue_depth": 17
+    },
+    "system_state": {
+      "workers_active": 16,
+      "queue_depth": 35,
+      "resource_usage": {
+        "cpu": 25.02312334022525,
+        "memory": 19.919161451371945,
+        "disk": 58.63638558125546
+      },
+      "task_distribution": {
+        "lingam": 1.3646461627220652,
+        "kilo": 23.97381501077877,
+        "workers": 24.707094134571086
+      }
+    },
+    "actions_taken": [
+      "auto_scaled_workers",
+      "rerouted_tasks",
+      "adjusted_timeouts",
+      "optimized_batching"
+    ],
+    "outcome": {
+      "overall_score": 0.9556567030805839,
+      "classification": "excellent"
+    }
+  }
+]

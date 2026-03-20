@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autonomous Agent Collaboration Hub</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --secondary: #7c3aed;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --dark: #1e293b;
+      --darker: #0f172a;
+      --light: #f8fafc;
+      --gray: #64748b;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: var(--darker);
+      color: var(--light);
+      padding: 20px;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+    
+    header {
+      text-align: center;
+      padding: 20px 0;
+      margin-bottom: 30px;
+      border-bottom: 2px solid var(--primary);
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    
+    .subtitle {
+      color: var(--gray);
+      font-size: 1.1rem;
+    }
+    
+    .connection-status {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 15px;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid var(--success);
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .panel {
+      background: rgba(30, 41, 59, 0.7);
+      border-radius: 10px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .panel-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .status-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    
+    .status-active {
+      background-color: var(--success);
+      box-shadow: 0 0 10px var(--success);
+    }
+    
+    .status-warning {
+      background-color: var(--warning);
+      box-shadow: 0 0 10px var(--warning);
+    }
+    
+    .status-critical {
+      background-color: var(--danger);
+      box-shadow: 0 0 10px var(--danger);
+    }
+    
+    .messages-container {
+      height: 400px;
+      overflow-y: auto;
+      margin-bottom: 15px;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .message {
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.3);
+    }
+    
+    .message.vscode {
+      border-left: 4px solid var(--primary);
+    }
+    
+    .message.lmarena {
+      border-left: 4px solid var(--secondary);
+    }
+    
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: var(--gray);
+    }
+    
+    .message-content {
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+    
+    .input-group {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .message-input {
+      flex-grow: 1;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--light);
+    }
+    
+    .btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      background: var(--primary);
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .btn:hover {
+      background: #3b82f6;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn-vscode {
+      background: var(--primary);
+    }
+    
+    .btn-lmarena {
+      background: var(--secondary);
+    }
+    
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+    }
+    
+    .stat-item {
+      text-align: center;
+    }
+    
+    .stat-number {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--success);
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--gray);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Autonomous Agent Collaboration Hub</h1>
+      <p class="subtitle">Real-time Communication Between VS Code & LM Arena Agents</p>
+    </header>
+    
+    <div class="connection-status" id="connectionStatus">
+      <span class="status-indicator status-warning"></span>
+      Connecting to server...
+    </div>
+    
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">VS Code Agents</h2>
+          <div class="status-indicator status-active"></div>
+        </div>
+        <div class="messages-container" id="vsCodeMessages">
+          <div class="message vscode">
+            <div class="message-header">
+              <span>System</span>
+              <span>Just now</span>
+            </div>
+            <div class="message-content">VS Code agent panel initialized. Waiting for messages...</div>
+          </div>
+        </div>
+        <div class="input-group">
+          <input type="text" class="message-input" id="vsCodeInput" name="vsCodeInput" placeholder="Send a message to VS Code agents...">
+          <button class="btn btn-vscode" id="sendVsCodeBtn">Send</button>
+        </div>
+      </div>
+      
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">LM Arena Agents</h2>
+          <div class="status-indicator status-active"></div>
+        </div>
+        <div class="messages-container" id="lmArenaMessages">
+          <div class="message lmarena">
+            <div class="message-header">
+              <span>System</span>
+              <span>Just now</span>
+            </div>
+            <div class="message-content">LM Arena agent panel initialized. Waiting for messages...</div>
+          </div>
+        </div>
+        <div class="input-group">
+          <input type="text" class="message-input" id="lmArenaInput" name="lmArenaInput" placeholder="Send a message to LM Arena agents...">
+          <button class="btn btn-lmarena" id="sendLmArenaBtn">Send</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-number" id="vsCodeCount">0</div>
+        <div class="stat-label">VS Code Messages</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="lmArenaCount">0</div>
+        <div class="stat-label">LM Arena Messages</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="connections">0</div>
+        <div class="stat-label">Active Connections</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // WebSocket connection
+    let socket;
+    let isConnected = false;
+    
+    // DOM elements
+    const vsCodeMessages = document.getElementById('vsCodeMessages');
+    const lmArenaMessages = document.getElementById('lmArenaMessages');
+    const vsCodeInput = document.getElementById('vsCodeInput');
+    const lmArenaInput = document.getElementById('lmArenaInput');
+    const sendVsCodeBtn = document.getElementById('sendVsCodeBtn');
+    const sendLmArenaBtn = document.getElementById('sendLmArenaBtn');
+    const connectionStatus = document.getElementById('connectionStatus');
+    const vsCodeCount = document.getElementById('vsCodeCount');
+    const lmArenaCount = document.getElementById('lmArenaCount');
+    const connections = document.getElementById('connections');
+    
+    // Connect to WebSocket server
+    function connectWebSocket() {
+      try {
+        // Try to connect to WebSocket
+        socket = new WebSocket(`ws://${window.location.host}/ws`);
+        
+        socket.onopen = function(event) {
+          console.log('Connected to collaboration hub');
+          isConnected = true;
+          
+          // Update connection status
+          connectionStatus.innerHTML = `
+            <span class="status-indicator status-active"></span>
+            Connected to server
+          `;
+        };
+        
+        socket.onmessage = function(event) {
+          try {
+            const data = JSON.parse(event.data);
+            
+            if (data.type === 'init') {
+              // Initialize with existing messages
+              populateMessages(data.data.vsCodeMessages, vsCodeMessages, 'vscode');
+              populateMessages(data.data.lmArenaMessages, lmArenaMessages, 'lmarena');
+              updateCounts();
+            } else if (data.type === 'newMessage') {
+              // Add new message to the appropriate panel
+              if (data.data.platform === 'vsCode') {
+                addMessageToPanel(data.data, vsCodeMessages, 'vscode');
+              } else if (data.data.platform === 'lmArena') {
+                addMessageToPanel(data.data, lmArenaMessages, 'lmarena');
+              }
+              updateCounts();
+            }
+          } catch (e) {
+            console.error('Error parsing WebSocket message:', e);
+          }
+        };
+        
+        socket.onclose = function(event) {
+          if (isConnected) {
+            isConnected = false;
+            
+            // Update connection status
+            connectionStatus.innerHTML = `
+              <span class="status-indicator status-warning"></span>
+              Disconnected - attempting to reconnect...
+            `;
+            
+            // Attempt to reconnect after delay
+            setTimeout(connectWebSocket, 5000);
+          }
+        };
+        
+        socket.onerror = function(error) {
+          console.error('WebSocket error:', error);
+          isConnected = false;
+        };
+      } catch (e) {
+        console.error('Error establishing WebSocket connection:', e);
+      }
+    }
+    
+    // Populate messages in a panel
+    function populateMessages(messages, panelElement, platformClass) {
+      panelElement.innerHTML = '';
+      
+      if (messages && messages.length > 0) {
+        messages.forEach(message => {
+          addMessageToPanel(message, panelElement, platformClass);
+        });
+      } else {
+        panelElement.innerHTML = `<div class="message ${platformClass}">
+          <div class="message-header">
+            <span>System</span>
+            <span>Just now</span>
+          </div>
+          <div class="message-content">No messages yet. Be the first to send one!</div>
+        </div>`;
+      }
+      
+      // Scroll to bottom
+      panelElement.scrollTop = panelElement.scrollHeight;
+    }
+    
+    // Add a message to a specific panel
+    function addMessageToPanel(message, panelElement, platformClass) {
+      const messageEl = document.createElement('div');
+      messageEl.className = `message ${platformClass}`;
+      
+      const time = new Date(message.timestamp).toLocaleTimeString();
+      messageEl.innerHTML = `
+        <div class="message-header">
+          <span>${message.sender}</span>
+          <span>${time}</span>
+        </div>
+        <div class="message-content">${message.content}</div>
+      `;
+      
+      panelElement.appendChild(messageEl);
+      
+      // Scroll to bottom
+      panelElement.scrollTop = panelElement.scrollHeight;
+    }
+    
+    // Update message counts
+    function updateCounts() {
+      vsCodeCount.textContent = document.querySelectorAll('#vsCodeMessages .message').length;
+      lmArenaCount.textContent = document.querySelectorAll('#lmArenaMessages .message').length;
+      
+      if (isConnected) {
+        connections.textContent = '1';
+      } else {
+        connections.textContent = '0';
+      }
+    }
+    
+    // Send message to VS Code agents
+    sendVsCodeBtn.addEventListener('click', () => {
+      const content = vsCodeInput.value.trim();
+      if (content && socket && isConnected) {
+        const message = {
+          platform: 'vsCode',
+          sender: 'Human Operator',
+          content: content
+        };
+        
+        socket.send(JSON.stringify(message));
+        vsCodeInput.value = '';
+      }
+    });
+    
+    // Send message to LM Arena agents
+    sendLmArenaBtn.addEventListener('click', () => {
+      const content = lmArenaInput.value.trim();
+      if (content && socket && isConnected) {
+        const message = {
+          platform: 'lmArena',
+          sender: 'Human Operator',
+          content: content
+        };
+        
+        socket.send(JSON.stringify(message));
+        lmArenaInput.value = '';
+      }
+    });
+    
+    // Allow Enter key to send messages
+    vsCodeInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendVsCodeBtn.click();
+      }
+    });
+    
+    lmArenaInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendLmArenaBtn.click();
+      }
+    });
+    
+    // Initialize WebSocket connection
+    connectWebSocket();
+    
+    // Update counts initially
+    updateCounts();
+  </script>
+</body>
+</html>

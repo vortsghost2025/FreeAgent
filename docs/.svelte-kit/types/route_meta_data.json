@@ -1,0 +1,25 @@
+{
+	"/": [],
+	"/api/memory": [
+		"src/routes/api/memory/+server.ts"
+	],
+	"/api/memory/stats": [
+		"src/routes/api/memory/stats/+server.ts"
+	],
+	"/api/orchestrator": [
+		"src/routes/api/orchestrator/+server.ts"
+	],
+	"/api/sessions": [
+		"src/routes/api/sessions/+server.ts"
+	],
+	"/api/sessions/[id]": [
+		"src/routes/api/sessions/[id]/+server.ts"
+	],
+	"/api/sessions/[id]/messages": [
+		"src/routes/api/sessions/[id]/messages/+server.ts"
+	],
+	"/api/tools": [
+		"src/routes/api/tools/+server.ts"
+	],
+	"/hello": []
+}

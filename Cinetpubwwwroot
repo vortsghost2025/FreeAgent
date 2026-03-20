@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 7 Evolution - Autonomous Intelligence</title>
+  <style>
+    :root {
+      --green: #00cc66; --gold: #ffcc00; --blue: #66ccff;
+      --bg: #0a0a0f; --bg-mid: #111118; --text: #cce6ff;
+      --red: #dc3545; --orange: #e67a00; --dim: #556677;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text); font-family: 'Share Tech Mono', 'Courier New', monospace;
+      min-height: 100vh; padding: 20px;
+    }
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 72px; background: var(--green); padding: 0 24px;
+    }
+    .header-title {
+      font-size: 1.5rem; color: #000; font-weight: 700; letter-spacing: 0.08em;
+    }
+    .header-sub {
+      font-size: 0.875rem; color: rgba(255,255,255,0.7); letter-spacing: 0.05em;
+    }
+    .dashboard {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) gap: 20px;
+      margin-top: 20px;
+    }
+    .metric-card {
+      background: #0d0d14; border: 1px solid var(--dim);
+      border-radius: 4px; padding: 16px;
+    }
+    .metric-card h3 {
+      font-size: 1rem; color: var(--green); margin-bottom: 12px;
+      font-weight: 600;
+    }
+    .metric-card .value {
+      font-size: 1.5rem; font-weight: 700; margin-left: 8px;
+    }
+    .metric-card .label {
+      font-size: 0.75rem; color: var(--dim); opacity: 0.8;
+      margin-bottom: 4px;
+    }
+    .status-badge {
+      display: inline-block; padding: 4px 12px;
+      border-radius: 3px; font-size: 0.75rem; font-weight: 600;
+    }
+    .status-badge.good { background: var(--green); color: #000; }
+    .status-badge.warning { background: var(--orange); color: #000; }
+    .status-badge.error { background: var(--red); color: #000; }
+    .status-badge.critical { background: #dc3545; color: #000; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-title">Phase 7: Autonomous Evolution</div>
+    <div class="header-sub">
+      Self-directed improvement cycles with closed-loop learning and federated coordination
+    </div>
+    <div class="header-right">
+      <span class="sub" id="evolution-status" class="status-badge status-badge-good">ACTIVE</span>
+      <span class="main" id="cycles-run">0 Cycles Completed</span>
+      <span class="sub" id="improvements">0 Proposals</span>
+    </div>
+  </div>
+
+  <div class="dashboard">
+    <!-- Evolution Cycles -->
+    <div class="metric-card">
+      <h3>Cycle Status</h3>
+      <div class="value"><span class="label">Status:</span> <span id="cycle-status" class="status-badge status-badge-good">ACTIVE</span></div>
+      <div class="value"><span class="label">Improvement Rate:</span> <span class="value">0.0%</span></div>
+      <div class="value"><span class="label">Drift Score:</span> <span class="value">0.0</span></div>
+    </div>
+
+    <!-- Diagnostics -->
+    <div class="metric-card">
+      <h3>Federated Diagnostics</h3>
+      <div class="value"><span class="label">Anomalies Detected:</span> <span id="anomalies" class="value">0</span></div>
+      <div class="value"><span class="label">Nondeterminism Score:</span> <span id="nondet" class="value">0.00</span></div>
+      <div class="value"><span class="label">Convergence Stability:</span> <span id="convergence" class="value">1.00</span></div>
+    </div>
+
+    <!-- Proposals -->
+    <div class="metric-card">
+      <h3>Autonomous Proposals</h3>
+      <div class="value"><span class="label">Active Proposals:</span> <span id="proposals" class="value">0</span></div>
+      <div class="value"><span class="label">Approved:</span> <span id="approved" class="value">0</span></div>
+      <div class="value"><span class="label">Rejected:</span> <span id="rejected" class="value">0</span></div>
+    </div>
+
+    <!-- Safety Constraints -->
+    <div class="metric-card">
+      <h3>Safety-Bounded Exploration</h3>
+      <div class="value"><span class="label">Violations:</span> <span id="violations" class="value status-badge status-badge-good">0</span></div>
+      <div class="value"><span class="label">Constraint Violations:</span> <span id="constraints" class="value status-badge status-badge-good">0</span></div>
+    </div>
+
+    <!-- Supervision -->
+    <div class="metric-card">
+      <h3>Supervised Autonomy</h3>
+      <div class="value"><span class="label">Governance Escalations:</span> <span id="escalations" class="value">0</span></div>
+      <div class="value"><span class="label">Veto Authority:</span> <span id="vetoes" class="value">0</span></div>
+    </div>
+
+    <!-- Pattern Memory -->
+    <div class="metric-card">
+      <h3>Evolution Memory</h3>
+      <div class="value"><span class="label">Patterns Learned:</span> <span id="patterns" class="value">0</span></div>
+      <div class="value"><span class="label">Constraints Remembered:</span> <span id="constraints" class="value">0</span></div>
+    </div>
+
+    <!-- Federated Evolution -->
+    <div class="metric-card">
+      <h3>Federated Evolution</h3>
+      <div class="value"><span class="label">Convergence:</span> <span id="fed-evolution" class="value status-badge status-badge-good">CONVERGED</span></div>
+      <div class="value"><span class="label">Last Convergence:</span> <span id="last-convergence" class="value">N/A</span></div>
+    </div>
+
+    <!-- Controls -->
+    <div style="grid-column: 1fr">
+      <div class="metric-card">
+        <h3>Controls</h3>
+        <div class="value"><span class="label">Run Evolution Cycle:</span></div>
+        <button class="btn btn-blue" onclick="runEvolutionCycle()">▶ Run</button>
+      </div>
+      <div class="metric-card">
+        <h3>Diagnostics</h3>
+        <div class="value"><span class="label">Clear Diagnostics:</span></div>
+        <button class="btn btn-orange" onclick="clearDiagnostics()">⚠ Clear</button>
+      </div>
+      <div class="metric-card">
+        <h3>Safety Override</h3>
+        <div class="value"><span class="label">Manual Mode:</span> <span id="manual-mode" class="status-badge status-badge-warning">AUTO</span></div>
+        <button class="btn btn-green" onclick="toggleManualMode()">🔒 Enable</button>
+      </div>
+    </div>
+
+    <div style="grid-column: 1fr">
+      <div class="metric-card" style="border: 1px solid var(--dim); background: rgba(85,102,119,0.05);">
+        <h3>Console Output</h3>
+        <div id="console-output" style="background: #000; color: var(--green); padding: 12px; border-radius: 4px; font-family: 'Courier New', monospace; max-height: 300px; overflow-y: auto; font-size: 0.75rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Import Phase 7 modules from swarm infrastructure
+    import { SelfDirectedImprovementCycleEngine } from './swarm-registry.js';
+    import { FederatedSelfDiagnosticsEngine } from './swarm-registry.js';
+    import { PatchProposalBuilder } from './swarm-registry.js';
+    import { GuardrailPolicy } from './swarm-registry.js';
+    import { SafetyConstraintEngine } from './swarm-registry.js';
+
+    // Evolution State
+    const evolutionEngine = new SelfDirectedImprovementCycleEngine({ clusterId: 'phase-7-agent' });
+    const diagnostics = new FederatedSelfDiagnosticsEngine();
+    const guardrail = new GuardrailPolicy();
+
+    // Metrics
+    let metrics = {
+      cycleStatus: 'IDLE',
+      cyclesRun: 0,
+      improvementRate: 0,
+      driftScore: 0,
+      anomaliesDetected: 0,
+      convergenceStability: 1.00,
+      activeProposals: 0,
+      violations: 0,
+      escalations: 0,
+      patternsLearned: 0,
+      convergence: 'NONE',
+      manualMode: false
+    };
+
+    let consoleLog = [];
+    const consoleEl = document.getElementById('console-output');
+
+    // Update metrics function
+    function updateMetrics(newMetrics) {
+      metrics = { ...metrics, ...newMetrics };
+      updateUI();
+      logOutput('Metrics Updated: ' + JSON.stringify(newMetrics));
+    }
+
+    // Run evolution cycle
+    async function runEvolutionCycle() {
+      logOutput('Starting Evolution Cycle...');
+
+      const signals = diagnostics.generateDiagnostics();
+
+      const cycles = evolutionEngine.runCycle(cycleId + '-' + Date.now(), signals);
+
+      metrics.cyclesRun++;
+      metrics.cycleStatus = cycles.status;
+      metrics.improvementRate = cycles.improvementRate;
+      metrics.driftScore = cycles.diagnostics?.driftScore || 0;
+
+      updateMetrics({
+        cycleStatus: cycles.status,
+        cyclesRun: metrics.cyclesRun,
+        improvementRate: metrics.improvementRate
+      });
+    }
+
+    // Clear diagnostics
+    function clearDiagnostics() {
+      logOutput('Diagnostics Cleared');
+      updateMetrics({
+        anomaliesDetected: 0,
+        nondeterminismScore: 0
+      });
+    }
+
+    // Toggle manual mode
+    function toggleManualMode() {
+      const manualModeEl = document.getElementById('manual-mode');
+      metrics.manualMode = !metrics.manualMode;
+
+      if (metrics.manualMode) {
+        manualModeEl.className = 'status-badge status-badge-warning';
+        manualModeEl.innerHTML = 'MANUAL';
+        logOutput('Manual Mode: ENABLED - Safety rails active');
+      } else {
+        manualModeEl.className = 'status-badge status-badge-good';
+        manualModeEl.innerHTML = 'AUTO';
+        logOutput('Auto Mode ENABLED - Autonomous evolution active');
+      }
+    }
+
+    // Update UI
+    function updateUI() {
+      document.getElementById('cycles-run').textContent = metrics.cyclesRun.toString();
+      document.getElementById('evolution-status').textContent = metrics.cycleStatus;
+      document.getElementById('improvements').textContent = metrics.activeProposals.toString();
+      document.getElementById('anomalies').textContent = metrics.anomaliesDetected.toString();
+      document.getElementById('nondet').textContent = metrics.nondeterminismScore.toFixed(3);
+      document.getElementById('convergence').textContent = metrics.convergence;
+
+      const manualModeEl = document.getElementById('manual-mode');
+      if (metrics.manualMode) {
+        manualModeEl.className = 'status-badge status-badge-warning';
+        manualModeEl.innerHTML = 'MANUAL';
+      } else {
+        manualModeEl.className = 'status-badge status-badge-good';
+        manualModeEl.innerHTML = 'AUTO';
+      }
+    }
+
+    function logOutput(message) {
+      const timestamp = new Date().toLocaleTimeString();
+      const logLine = `<div>[${timestamp}] ${message}</div>`;
+      consoleEl.innerHTML += logLine;
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+      console.log(message);
+    }
+
+    // Initialize
+    window.onload = function() {
+      logOutput('Phase 7 Evolution Dashboard Loaded');
+      setInterval(() => {
+        // Simulate periodic metrics update
+        const simulatedDrift = Math.random() * 0.1 - 0.05;
+        if (metrics.cycleStatus === 'ACTIVE') {
+          const oldDrift = metrics.driftScore || 0;
+          const newDrift = oldDrift + (simulatedDrift - 0.05);
+          metrics.driftScore = Math.max(0, Math.min(0.5, Math.abs(newDrift)));
+        }
+      }, 5000);
+    }, 10000);
+    };
+  </script>
+</body>
+</html>

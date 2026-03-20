@@ -1,0 +1,14 @@
+## SUPER SIMPLE - 3 STEPS
+
+### Step 1: Go here
+https://etherscan.io/address/0xaC9d24032F5375625661fADA31902D10D25c55e7
+
+### Step 2: Click "Write Contract" (near the top)
+Then click "Connect Web3" and choose MetaMask
+
+### Step 3: Find withdrawETH() and click "Write"
+Scroll down until you see "withdrawETH" - click the button
+
+That's it! The $51 goes to your wallet.
+
+Don't worry about anything else on the page. Just those 3 steps.

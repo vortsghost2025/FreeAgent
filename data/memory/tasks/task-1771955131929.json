@@ -1,0 +1,28 @@
+[
+  {
+    "task_id": "task-1771955131928",
+    "input": "4",
+    "output": [
+      {
+        "agent": "code",
+        "response": "I'm ready to assist you with your coding needs. What would you like help with? Do you have a specific project in mind or are you looking for general guidance on a particular topic?",
+        "timestamp": 1771955131928
+      }
+    ],
+    "agents_involved": 8,
+    "execution_time_ms": 13876,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-24T17:45:31.928Z",
+    "started_at": "2026-02-24T17:45:18.052Z",
+    "completed_at": "2026-02-24T17:45:31.929Z",
+    "error": null
+  }
+]

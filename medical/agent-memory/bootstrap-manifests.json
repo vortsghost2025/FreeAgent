@@ -1,0 +1,152 @@
+{
+  "api": {
+    "agent": "api",
+    "description": "Expert in API design, integration, and REST/GraphQL services",
+    "inheritsFrom": [
+      "shared",
+      "kilo"
+    ],
+    "domains": [
+      "shared",
+      "api"
+    ]
+  },
+  "bootstrap-manifests": {
+    "agent": "bootstrap-manifests",
+    "description": "",
+    "inheritsFrom": [
+      "shared",
+      "kilo"
+    ],
+    "domains": [
+      "shared",
+      "shared"
+    ]
+  },
+  "claw": {
+    "agent": "claw",
+    "description": "Second master orchestration agent - parallel to Kilo",
+    "inheritsFrom": [
+      "shared"
+    ],
+    "domains": [
+      "shared",
+      "architecture"
+    ]
+  },
+  "clinical": {
+    "agent": "clinical",
+    "description": "Expert in medical analysis, diagnosis support, and clinical data",
+    "inheritsFrom": [
+      "shared",
+      "kilo"
+    ],
+    "domains": [
+      "shared",
+      "medical"
+    ]
+  },
+  "code": {
+    "agent": "code",
+    "description": "Expert in code generation, refactoring, and software development",
+    "inheritsFrom": [
+      "shared",
+      "kilo"
+    ],
+    "domains": [
+      "shared",
+      "coding"
+    ]
+  },
+  "data": {
+    "agent": "data",
+    "description": "Expert in data processing, pipelines, and ETL",
+    "inheritsFrom": [
+      "shared",
+      "kilo"
+    ],
+    "domains": [
+      "shared",
+      "data"
+    ]
+  },
+  "db": {
+    "agent": "db",
+    "description": "Expert in database design, optimization, and SQL",
+    "inheritsFrom": [
+      "shared",
+      "kilo"
+    ],
+    "domains": [
+      "shared",
+      "database"
+    ]
+  },
+  "devops": {
+    "agent": "devops",
+    "description": "Expert in CI/CD, deployment, and infrastructure automation",
+    "inheritsFrom": [
+      "shared",
+      "kilo"
+    ],
+    "domains": [
+      "shared",
+      "operations"
+    ]
+  },
+  "kilo": {
+    "agent": "kilo",
+    "description": "Master orchestration agent for the Claw Federation",
+    "inheritsFrom": [
+      "shared"
+    ],
+    "domains": [
+      "shared",
+      "architecture"
+    ]
+  },
+  "security": {
+    "agent": "security",
+    "description": "Expert in security audits, vulnerability assessment, and secure coding",
+    "inheritsFrom": [
+      "shared",
+      "kilo"
+    ],
+    "domains": [
+      "shared",
+      "security"
+    ]
+  },
+  "shared": {
+    "agent": "shared",
+    "description": "Shared knowledge across all agents",
+    "inheritsFrom": [],
+    "domains": [
+      "shared"
+    ]
+  },
+  "test": {
+    "agent": "test",
+    "description": "Expert in QA, testing, and quality assurance",
+    "inheritsFrom": [
+      "shared",
+      "kilo"
+    ],
+    "domains": [
+      "shared",
+      "testing"
+    ]
+  },
+  "unified-brain": {
+    "agent": "unified-brain",
+    "description": "",
+    "inheritsFrom": [
+      "shared",
+      "kilo"
+    ],
+    "domains": [
+      "shared",
+      "shared"
+    ]
+  }
+}

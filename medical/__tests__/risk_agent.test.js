@@ -1,5 +1,5 @@
 // FILE: __tests__/risk_agent.test.js
-const { createRiskAgent } = require('../agents/risk_agent');
+import { createRiskAgent } from '../agents/risk_agent.js';
 
 test('risk factory and contract', async () => {
   const agent = createRiskAgent('risk-001');

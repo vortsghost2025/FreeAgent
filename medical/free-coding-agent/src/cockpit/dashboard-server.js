@@ -112,6 +112,20 @@ export class DashboardServer extends EventEmitter {
       res.json(this.getSystemStatus());
     });
 
+    this.app.get("/api/memory-stats", (req, res) => {
+      const os = require('os');
+      const total = os.totalmem();
+      const free = os.freemem();
+      const used = total - free;
+      
+      res.json({
+        total: total / (1024 * 1024 * 1024),
+        free: free / (1024 * 1024 * 1024),
+        used: used / (1024 * 1024 * 1024),
+        percent: (used / total) * 100
+      });
+    });
+
     this.app.get("/api/agents", (req, res) => {
       res.json(this.getAgentStatus());
     });

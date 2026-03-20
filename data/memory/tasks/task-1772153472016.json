@@ -1,0 +1,35 @@
+[
+  {
+    "task_id": "task-1772153472016",
+    "input": "{\"agent\":\"test\",\"check\":\"health\"}",
+    "output": [
+      {
+        "agent": "clinical",
+        "response": "**Clinical Reasoning Initiated**\n\nTo confirm, you're requesting a health check? I'll guide you through our standardized workflow.\n\nPlease select one of the following options to proceed:\n\n1. **Symptom Checker**: Describe your symptoms and I'll help identify potential causes.\n2. **Medical History Review**: Share your medical history, including allergies and previous conditions.\n3. **Vital Sign Check**: We can review your vital signs (e.g., temperature, blood pressure).\n\nChoose an option by responding with the corresponding number.",
+        "model": "llama3.1:8b",
+        "timestamp": 1772153472016
+      },
+      {
+        "agent": "test",
+        "response": " As a test agent responsible for handling test generation, coverage, and validation, I am here to assist you with any queries or requests related to testing processes. Please provide more details if you need further assistance or have specific requirements for the tests you'd like to conduct.",
+        "model": "deepseek-coder-v2:16b",
+        "timestamp": 1772153455591
+      }
+    ],
+    "agents_involved": 9,
+    "execution_time_ms": 32630,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-27T00:51:12.016Z",
+    "started_at": "2026-02-27T00:50:39.386Z",
+    "completed_at": "2026-02-27T00:51:12.016Z",
+    "error": null
+  }
+]

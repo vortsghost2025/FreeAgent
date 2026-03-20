@@ -3,400 +3,1455 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Free Coding Agent</title>
+  <title>Medical AI Federation Cockpit</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      background: #1a1a2e;
-      color: #eee;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f0f23;
+      color: #e0e0e0;
       min-height: 100vh;
     }
-    
+
     .container {
-      max-width: 1200px;
+      max-width: 1600px;
       margin: 0 auto;
       padding: 20px;
     }
-    
+
     header {
       text-align: center;
       padding: 20px 0;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid #2a2a4a;
       margin-bottom: 20px;
     }
-    
+
     header h1 {
       color: #00d9ff;
+      margin: 0 5px 0 0 20px 0;
       font-size: 2rem;
     }
-    
+
     header p {
       color: #888;
-      margin-top: 5px;
+      margin: 0;
     }
-    
-    .config-bar {
+
+    .perception-controls {
       display: flex;
       gap: 15px;
-      padding: 15px;
-      background: #16213e;
-      border-radius: 8px;
-      margin-bottom: 20px;
+      margin-top: 15px;
+      justify-content: center;
       flex-wrap: wrap;
     }
-    
-    .config-bar label {
+
+    .perception-btn {
+      background: #2a2a4a;
+      border: 1px solid #00d9ff;
+      color: #00d9ff;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s;
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 14px;
     }
-    
-    .config-bar select, .config-bar input {
-      padding: 8px 12px;
-      border: 1px solid #333;
-      border-radius: 4px;
+
+    .perception-btn:hover {
+      background: #00d9ff;
+      color: #0f0f23;
+    }
+
+    .perception-btn.active {
+      background: #00d9ff;
+      color: #0f0f23;
+      box-shadow: 0 0 15px rgba(0, 217, 255, 0.5);
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .status-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .status-card {
       background: #1a1a2e;
-      color: #eee;
-      font-size: 14px;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
     }
-    
-    .status {
+
+    .status-card h3 {
+      color: #00d9ff;
+      margin: 0 0 10px 0;
+    }
+
+    .status-card .value {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #44ff44;
+    }
+
+    .status-card .label {
+      color: #888;
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+
+    .status-card.indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .status-card.healthy { background: #44ff44; }
+    .status-card.degraded { background: #ff9f43; }
+    .status-card.unhealthy { background: #ff4444; }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    margin-bottom: 20px;
+    }
+
+    .section {
+      background: #1a1a2e;
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .section h2 {
+      color: #00d9ff;
+      margin: 0 0 15px 0;
+      font-size: 1.5rem;
+    }
+
+    .system-list {
+      display: grid;
+      gap: 10px;
+    margin-top: 15px;
+    }
+
+    .system-item {
+      background: #16213e;
+      border-radius: 6px;
+      padding: 15px;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 8px;
-      margin-left: auto;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
     }
-    
-    .status-dot {
+
+    .system-item:hover {
+      border-left-color: #00d9ff;
+      background: #1e2a4a;
+    }
+
+    .system-item.health-indicator {
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      background: #ff4444;
     }
-    
-    .status-dot.connected {
-      background: #44ff44;
+
+    .system-item.health-indicator.healthy { background: #44ff44; }
+    .system-item.health-indicator.degraded { background: #ff9f43; }
+    .system-item.health-indicator.unhealthy { background: #ff4444; }
+
+    .system-item .info {
+      flex: 1;
     }
-    
-    .chat-container {
+
+    .system-item .info h4 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #e0e0e0;
+    }
+
+    .system-item .info p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    .task-form {
       background: #16213e;
       border-radius: 8px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      height: 600px;
-    }
-    
-    .messages {
-      flex: 1;
-      overflow-y: auto;
       padding: 20px;
     }
-    
-    .message {
-      margin-bottom: 15px;
-      padding: 12px 15px;
-      border-radius: 8px;
-      max-width: 80%;
-    }
-    
-    .message.user {
-      background: #0f3460;
-      margin-left: auto;
-    }
-    
-    .message.assistant {
-      background: #1a1a2e;
-      border: 1px solid #333;
-    }
-    
-    .message.system {
-      background: #2d2d44;
-      color: #888;
-      font-size: 12px;
-      max-width: 100%;
-      text-align: center;
-    }
-    
-    .message .role {
-      font-weight: bold;
-      font-size: 12px;
+
+    .task-form label {
+      display: block;
+      color: #e0e0e0;
       margin-bottom: 5px;
-      color: #00d9ff;
+      font-weight: 500;
     }
-    
-    .message.user .role {
-      color: #ff9f43;
-    }
-    
-    .tool-call {
-      background: #2d2d44;
-      border-left: 3px solid #00d9ff;
+
+    .task-form input,
+    .task-form textarea,
+    .task-form select {
+      width: 100%;
       padding: 10px;
-      margin: 10px 0;
-      font-family: monospace;
-      font-size: 12px;
-    }
-    
-    .tool-call.success {
-      border-color: #44ff44;
-    }
-    
-    .tool-call.error {
-      border-color: #ff4444;
-    }
-    
-    .input-area {
-      display: flex;
-      gap: 10px;
-      padding: 15px;
-      background: #1a1a2e;
-      border-top: 1px solid #333;
-    }
-    
-    .input-area textarea {
-      flex: 1;
-      padding: 12px;
-      border: 1px solid #333;
-      border-radius: 8px;
-      background: #16213e;
-      color: #eee;
+      border: 1px solid #2a2a4a;
+      border-radius: 4px;
+      background: #0f0f23;
+      color: #e0e0e0;
       font-size: 14px;
-      resize: none;
-      min-height: 50px;
+      margin-bottom: 5px;
     }
-    
-    .input-area button {
-      padding: 12px 25px;
+
+    .task-form button {
       background: #00d9ff;
-      color: #1a1a2e;
+      color: #0f0f23;
       border: none;
-      border-radius: 8px;
+      padding: 12px 24px;
+      border-radius: 6px;
       cursor: pointer;
-      font-weight: bold;
-      transition: background 0.3s;
+      font-weight: 500;
+      transition: all 0.2s;
     }
-    
-    .input-area button:hover {
+
+    .task-form button:hover {
       background: #00b8d9;
     }
-    
-    .input-area button:disabled {
-      background: #555;
-      cursor: not-allowed;
+
+    .task-options {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
     }
-    
-    pre {
+
+    .task-options label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #e0e0e0;
+      font-size: 0.9rem;
+    }
+
+    .cost-metrics {
       background: #1a1a2e;
-      padding: 10px;
-      border-radius: 4px;
-      overflow-x: auto;
-      margin: 10px 0;
+      border-radius: 8px;
+      padding: 20px;
     }
-    
-    code {
-      font-family: 'Fira Code', 'Consolas', monospace;
-      font-size: 13px;
+
+    .cost-metrics .metric {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #2a2a4a;
+    margin-bottom: 10px;
     }
-    
-    .typing {
-      display: inline-block;
-      animation: blink 1s infinite;
+
+    .cost-metrics .metric:last-child {
+      border-bottom: none;
     }
-    
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0; }
+
+    .cost-metrics .metric .value {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .cost-metrics .metric .target {
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    .cost-metrics .progress-bar {
+      height: 20px;
+      background: #2a2a4a;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .cost-metrics .progress-bar .progress {
+      height: 100%;
+      background: #00d9ff;
+      border-radius: 10px;
+      transition: width 0.3s ease-out;
+    }
+
+    .log-panel {
+      background: #0f0f23;
+      border-radius: 8px;
+      padding: 20px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .log-entry {
+      padding: 10px 0;
+      border-bottom: 1px solid #2a2a4a;
+      margin-bottom: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+    }
+
+    .log-entry.system {
+      color: #ff9f43;
+    font-weight: bold;
+    margin-right: 10px;
+    }
+
+    .log-entry .message {
+      color: #e0e0e0;
+    margin-top: 5px;
+    }
+
+    .log-entry .timestamp {
+      color: #888;
+      font-size: 0.8rem;
+      margin-left: 10px;
+    }
+
+    .log-entry.error {
+      color: #ff4444;
+      margin-left: 10px;
+    }
+
+    .connection-indicator {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ff4444;
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    .connection-indicator.connected { background: #44ff44; }
+
+    .recommendation {
+      background: #1e2a4a;
+      border-left: 3px solid transparent;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .recommendation strong {
+      color: #00d9ff;
+      display: block;
+    }
+
+    .recommendation p {
+      color: #888;
+      margin: 5px 0;
+    }
+
+    .hidden { display: none; }
+
+    /* Interface Navigation Cards */
+    .interfaces-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .interface-card {
+      background: #1a1a2e;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid #2a2a4a;
+      text-decoration: none;
+      display: block;
+    }
+
+    .interface-card:hover {
+      background: #2a2a4a;
+      border-color: #00d9ff;
+      transform: translateY(-2px);
+    }
+
+    .interface-card .icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .interface-card .name {
+      color: #00d9ff;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .interface-card .desc {
+      color: #888;
+      font-size: 0.75rem;
+    }
+
+    .interfaces-section {
+      background: #1a1a2e;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .interfaces-section h2 {
+      color: #00d9ff;
+      margin: 0 0 15px 0;
+      font-size: 1.3rem;
+    }
+
+    .quick-task-card {
+      cursor: pointer;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      border: 2px solid #00d9ff !important;
+      animation: pulse 2s infinite;
+    }
+
+    .quick-task-card:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(0, 217, 255, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(0, 217, 255, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 217, 255, 0); }
+    }
+
+    /* Quick Task Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .quick-task-modal {
+      background: #1a1a2e;
+      border-radius: 15px;
+      padding: 30px;
+      width: 90%;
+      max-width: 500px;
+      border: 2px solid #00d9ff;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      color: #00d9ff;
+      margin: 0;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      color: #ff4444;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 5px;
+    }
+
+    .quick-task-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-group label {
+      color: #e0e0e0;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 12px;
+      border: 1px solid #2a2a4a;
+      border-radius: 6px;
+      background: #0f0f23;
+      color: #e0e0e0;
+      font-size: 14px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #00d9ff;
+    }
+
+    .assign-button {
+      background: linear-gradient(135deg, #00d9ff 0%, #00b8d9 100%);
+      color: #0f0f23;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+    }
+
+    .assign-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 217, 255, 0.4);
+    }
+
+    .agent-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .agent-tag {
+      background: #2a2a4a;
+      color: #e0e0e0;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .agent-tag:hover {
+      background: #00d9ff;
+      color: #0f0f23;
+    }
+
+    .test-runner-card {
+      cursor: pointer;
+      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%) !important;
+      border: 2px solid #ff9f43 !important;
+      animation: pulse-red 3s infinite;
+    }
+
+    .test-runner-card:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+    }
+
+    @keyframes pulse-red {
+      0% { box-shadow: 0 0 0 0 rgba(255, 159, 67, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 159, 67, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 159, 67, 0); }
+    }
+
+    /* Test Results Modal */
+    .test-results-modal {
+      background: #1a1a2e;
+      border-radius: 15px;
+      padding: 30px;
+      width: 90%;
+      max-width: 800px;
+      border: 2px solid #ff9f43;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .test-result-item {
+      background: #0f0f23;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-left: 4px solid #ff9f43;
+    }
+
+    .test-result-item.passed {
+      border-left-color: #44ff44;
+    }
+
+    .test-result-item.failed {
+      border-left-color: #ff4444;
+    }
+
+    .test-summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .summary-card {
+      background: #2a2a4a;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .summary-number {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .summary-label {
+      font-size: 0.9rem;
+      color: #888;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>🤖 Free Coding Agent</h1>
-      <p>Your personal AI coding assistant</p>
+      <h1>🏥 Medical AI Federation Cockpit</h1>
+      <p>Unified control for Medical Pipeline, Plugins, and Coding Ensemble</p>
+      
+      <!-- Perception Controls -->
+      <div class="perception-controls">
+        <button class="perception-btn" id="imageUploadBtn">
+          <span>🖼️</span> Upload Image
+        </button>
+        <button class="perception-btn" id="voiceRecordBtn">
+          <span>🎤</span> Record Voice
+        </button>
+        <button class="perception-btn" id="perceptionStatusBtn">
+          <span>👁️</span> Perception Status
+        </button>
+      </div>
+      
+      <!-- Hidden file input for image upload -->
+      <input type="file" id="imageFileInput" class="file-input" accept="image/*">
     </header>
-    
-    <div class="config-bar">
-      <label>
-        Provider:
-        <select id="provider">
-          <option value="ollama">Ollama (Local)</option>
-          <option value="groq">Groq (Cloud)</option>
-          <option value="together">Together AI (Cloud)</option>
-        </select>
-      </label>
-      <label>
-        Model:
-        <input type="text" id="model" placeholder="llama3.2" />
-      </label>
-      <label>
-        Working Dir:
-        <input type="text" id="workingDir" placeholder="./" style="width: 200px;" />
-      </label>
-      <div class="status">
-        <div class="status-dot" id="statusDot"></div>
-        <span id="statusText">Disconnected</span>
+
+    <!-- Status Overview -->
+    <div class="status-bar">
+      <div class="status-card">
+        <div class="indicator"></div>
+        <div class="value" id="uptime">0:00:00</div>
+        <div class="label">Uptime</div>
+      </div>
+      <div class="status-card">
+        <div class="indicator"></div>
+        <div class="value" id="requests">0</div>
+        <div class="label">Total Requests</div>
+      </div>
+      <div class="status-card">
+        <div class="indicator"></div>
+        <div class="value" id="rps">0.0</div>
+        <div class="label">Req/Second</div>
+      </div>
+      <div class="status-card">
+        <div class="indicator"></div>
+        <div class="value" id="latency">0ms</div>
+        <div class="label">Avg Latency</div>
       </div>
     </div>
-    
-    <div class="chat-container">
-      <div class="messages" id="messages">
-        <div class="message system">
-          Welcome! Configure your provider and start coding with AI.
+
+    <!-- Available Interfaces -->
+    <div class="interfaces-section">
+      <h2>🚀 Available Interfaces</h2>
+      <div class="interfaces-grid">
+        <a href="/mega" class="interface-card" target="_blank">
+          <div class="icon">🚀</div>
+          <div class="name">Mega Cockpit</div>
+          <div class="desc">Full agent control</div>
+        </a>
+        <a href="/galaxy" class="interface-card" target="_blank">
+          <div class="icon">🌌</div>
+          <div class="name">Galaxy IDE</div>
+          <div class="desc">Multi-agent IDE</div>
+        </a>
+        <a href="/unified-ide" class="interface-card" target="_blank">
+          <div class="icon">💻</div>
+          <div class="name">Unified IDE</div>
+          <div class="desc">Code + Chat</div>
+        </a>
+        <a href="/monaco-cockpit" class="interface-card" target="_blank">
+          <div class="icon">🎯</div>
+          <div class="name">Monaco Cockpit</div>
+          <div class="desc">Monaco editor</div>
+        </a>
+        <a href="/unified-shell" class="interface-card" target="_blank">
+          <div class="icon">🖥️</div>
+          <div class="name">Unified Shell</div>
+          <div class="desc">Shell interface</div>
+        </a>
+        <a href="/ide" class="interface-card" target="_blank">
+          <div class="icon">📝</div>
+          <div class="name">IDE Workspace</div>
+          <div class="desc">Code workspace</div>
+        </a>
+        <a href="/swarm" class="interface-card" target="_blank">
+          <div class="icon">🐝</div>
+          <div class="name">Swarm Tab</div>
+          <div class="desc">Swarm control</div>
+        </a>
+        <a href="/swarm-dashboard" class="interface-card" target="_blank">
+          <div class="icon">📊</div>
+          <div class="name">Swarm Dashboard</div>
+          <div class="desc">Swarm metrics</div>
+        </a>
+        <a href="/perception-demo" class="interface-card" target="_blank">
+          <div class="icon">👁️</div>
+          <div class="name">Perception Demo</div>
+          <div class="desc">Image/voice AI</div>
+        </a>
+        <a href="/benchmark" class="interface-card" target="_blank">
+          <div class="icon">📈</div>
+          <div class="name">Benchmark</div>
+          <div class="desc">Performance metrics</div>
+        </a>
+        <a href="/rate-limit-cockpit" class="interface-card" target="_blank">
+          <div class="icon">⚡</div>
+          <div class="name">Rate Limit</div>
+          <div class="desc">Rate control</div>
+        </a>
+        <a href="/health" class="interface-card" target="_blank">
+          <div class="icon">❤️</div>
+          <div class="name">Health Check</div>
+          <div class="desc">System health</div>
+        </a>
+        <a href="/agent-task-manager.html" class="interface-card" target="_blank">
+          <div class="icon">📋</div>
+          <div class="name">Task Manager</div>
+          <div class="desc">Agent task assignment</div>
+        </a>
+        <div class="interface-card quick-task-card" onclick="openQuickTaskModal()">
+          <div class="icon">⚡</div>
+          <div class="name">Quick Assign</div>
+          <div class="desc">Instant task assignment</div>
+        </div>
+        <div class="interface-card test-runner-card" onclick="openTestRunner()">
+          <div class="icon">🧪</div>
+          <div class="name">Test Runner</div>
+          <div class="desc">Run system tests</div>
         </div>
       </div>
-      <div class="input-area">
-        <textarea id="userInput" placeholder="Type your message..." rows="2"></textarea>
-        <button id="sendBtn" onclick="sendMessage()">Send</button>
+    </div>
+
+    <div class="main-content">
+      <!-- Systems Status -->
+      <div class="section">
+        <h2>🔌 System Status</h2>
+        <div class="system-list" id="systems-list">
+          <!-- Systems will be populated by JS -->
+        </div>
+      </div>
+
+      <!-- Task Execution -->
+      <div class="section">
+        <h2>📋 Task Execution</h2>
+        <div class="task-form">
+          <label>Task Type</label>
+          <select id="taskType">
+            <option value="general">General Purpose</option>
+            <option value="structural">Structural Processing</option>
+            <option value="medical">Medical Analysis</option>
+            <option value="code">Code Generation</option>
+            <option value="data">Data Processing</option>
+          </select>
+
+          <label>Task Message</label>
+          <textarea id="taskMessage" rows="4" placeholder="Describe your task..."></textarea>
+
+          <div class="task-options">
+            <label>
+              <input type="checkbox" id="useAutoRouting" checked>
+              Auto-route to best system
+            </label>
+            <label>
+              Preferred System:
+              <select id="preferredSystem">
+                <option value="">Auto (Recommended)</option>
+                <option value="medical_pipeline">Medical Pipeline</option>
+                <option value="coding_ensemble">Coding Ensemble</option>
+                <option value="plugins">Plugins System</option>
+              </select>
+            </label>
+          </div>
+
+          <button onclick="executeTask()">Execute Task</button>
+        </div>
+      </div>
+
+      <!-- Cost Tracking -->
+      <div class="section">
+        <h2>💰 Cost Tracking ($0/mo Goal)</h2>
+        <div class="cost-metrics">
+          <div class="metric">
+            <div>
+              <div class="value" id="tokensUsed">0</div>
+              <div class="target">$0/mo</div>
+            </div>
+            <div class="label">Tokens Used This Month</div>
+          </div>
+          <div class="metric">
+            <div>
+              <div class="value" id="estimatedCost">$0.00</div>
+              <div class="target">$0/mo</div>
+            </div>
+            <div class="label">Estimated Monthly Cost</div>
+          </div>
+          <div class="metric">
+            <div>
+              <div class="value" id="costRatio">0%</div>
+              <div class="target">Target Ratio</div>
+            </div>
+            <div class="metric">
+            <div class="label">Usage Ratio</div>
+          </div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress" id="costProgress"></div>
+        </div>
+        <button onclick="getDetailedCostReport()">Get Detailed Report</button>
+      </div>
+
+      <!-- Activity Log -->
+      <div class="section">
+        <h2>📋 Activity Log</h2>
+        <div class="log-panel" id="logPanel">
+          <p class="system" style="text-align: center; color: #888; padding: 20px;">
+            Cockpit connecting...
+          </p>
+        </div>
       </div>
     </div>
-  </div>
-  
-  <script>
-    let ws = null;
-    let connected = false;
-    let currentAssistantMessage = null;
-    
-    function updateStatus(isConnected) {
-      connected = isConnected;
-      document.getElementById('statusDot').classList.toggle('connected', isConnected);
-      document.getElementById('statusText').textContent = isConnected ? 'Connected' : 'Disconnected';
-      document.getElementById('sendBtn').disabled = !isConnected;
-    }
-    
-    function addMessage(role, content) {
-      const messages = document.getElementById('messages');
-      const msg = document.createElement('div');
-      msg.className = `message ${role}`;
-      msg.innerHTML = `<div class="role">${role}</div><div class="content">${content}</div>`;
-      messages.appendChild(msg);
-      messages.scrollTop = messages.scrollHeight;
-      return msg;
-    }
-    
-    function addSystemMessage(content) {
-      const messages = document.getElementById('messages');
-      const msg = document.createElement('div');
-      msg.className = 'message system';
-      msg.textContent = content;
-      messages.appendChild(msg);
-      messages.scrollTop = messages.scrollHeight;
-    }
-    
-    function addToolCall(tool, result) {
-      if (!currentAssistantMessage) return;
-      const toolDiv = document.createElement('div');
-      toolDiv.className = `tool-call ${result.success ? 'success' : 'error'}`;
-      toolDiv.innerHTML = `<strong>${tool}</strong>: ${result.success ? result.output : result.error}`;
-      currentAssistantMessage.querySelector('.content').appendChild(toolDiv);
-    }
-    
-    function connect() {
-      const provider = document.getElementById('provider').value;
-      const model = document.getElementById('model').value || undefined;
-      const workingDir = document.getElementById('workingDir').value || undefined;
-      
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      ws = new WebSocket(`${protocol}//${window.location.host}`);
-      
-      ws.onopen = () => {
-        ws.send(JSON.stringify({
-          type: 'init',
-          provider,
-          model,
-          workingDir
-        }));
-      };
-      
-      ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        
-        switch (data.type) {
-          case 'init':
-            if (data.success) {
-              updateStatus(true);
-              addSystemMessage(`Connected to ${provider}`);
-            } else {
-              addSystemMessage(`Error: ${data.error}`);
-            }
-            break;
-            
-          case 'chunk':
-            if (!currentAssistantMessage) {
-              currentAssistantMessage = addMessage('assistant', '');
-            }
-            currentAssistantMessage.querySelector('.content').textContent += data.content;
-            break;
-            
-          case 'tool':
-            addToolCall(data.tool, data.result);
-            break;
-            
-          case 'complete':
-            currentAssistantMessage = null;
-            break;
-            
-          case 'error':
-            addSystemMessage(`Error: ${data.error}`);
-            currentAssistantMessage = null;
-            break;
-            
-          case 'reset':
-            document.getElementById('messages').innerHTML = '';
-            addSystemMessage('Conversation cleared');
-            break;
+
+    <!-- Connection Status -->
+    <div class="connection-indicator" id="connectionStatus" class="disconnected"></div>
+
+    <script>
+      let ws = null;
+      let systems = [];
+      let activeTasks = [];
+
+      // Connect to cockpit WebSocket
+      function connect() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        ws = new WebSocket(`${protocol}//${window.location.host}`);
+
+        ws.onopen = () => {
+          console.log('✓ Connected to cockpit');
+          document.getElementById('connectionStatus').classList.remove('disconnected');
+          document.getElementById('connectionStatus').classList.add('connected');
+
+          // Request initial status
+          ws.send(JSON.stringify({ type: 'status_request' }));
+        };
+
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+
+          switch (data.type) {
+            case 'status':
+              updateStatus(data.data);
+              break;
+
+            case 'systems':
+              updateSystemsList(data.data);
+              break;
+
+            case 'task_started':
+              addLogEntry('info', `Task started: ${data.task}`);
+              break;
+
+            case 'task_complete':
+              addLogEntry('success', `Task completed in ${data.executionTime || data.result?.executionTime || 0}ms`);
+              break;
+
+            case 'task_failed':
+              addLogEntry('error', `Task failed: ${data.error || 'unknown'}`);
+              break;
+
+            case 'health_check_result':
+              updateSystemsList(data.data);
+              break;
+
+            case 'cost_report':
+              updateCostMetrics(data.data);
+              break;
+
+            case 'route_recommendation':
+              showRecommendations(data.data);
+              break;
+
+            case 'metrics':
+              updateCostMetrics(data.data);
+              break;
+
+            case 'error':
+              addLogEntry('error', `Error: ${data.error || 'unknown'}`);
+              break;
+          }
+        };
+
+        ws.onclose = () => {
+          console.log('✗ Disconnected from cockpit');
+          document.getElementById('connectionStatus').classList.remove('connected');
+          document.getElementById('connectionStatus').classList.add('disconnected');
+        };
+
+        ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+          addLogEntry('error', `Connection error: ${error.message}`);
+        };
+      }
+
+      function updateStatus(status) {
+        if (status.coordinator) {
+          document.getElementById('uptime').textContent = formatTime(status.coordinator.uptime);
+          document.getElementById('requests').textContent = status.coordinator.totalRequests.toLocaleString();
+          document.getElementById('rps').textContent = status.coordinator.requestsPerSecond.toFixed(2);
+          document.getElementById('latency').textContent = status.coordinator.avgLatency.toFixed(0) + 'ms';
         }
-      };
-      
-      ws.onclose = () => {
-        updateStatus(false);
-        addSystemMessage('Disconnected');
-      };
-      
-      ws.onerror = () => {
-        addSystemMessage('Connection error');
-      };
-    }
-    
-    function sendMessage() {
-      const input = document.getElementById('userInput');
-      const message = input.value.trim();
-      
-      if (!message || !connected) return;
-      
-      addMessage('user', message);
-      ws.send(JSON.stringify({
-        type: 'chat',
-        content: message
-      }));
-      
-      input.value = '';
-    }
-    
-    document.getElementById('userInput').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
       }
-    });
-    
-    document.getElementById('provider').addEventListener('change', () => {
-      if (ws) {
-        ws.close();
+
+      function updateSystemsList(statusData) {
+        const list = document.getElementById('systems-list');
+        list.innerHTML = '';
+
+        statusData.systems.forEach(sys => {
+          const healthClass = sys.status === 'healthy' ? 'healthy' :
+                              sys.status === 'degraded' ? 'degraded' : 'unhealthy';
+
+          list.innerHTML += `
+            <div class="system-item">
+              <div class="info">
+                <h4>${sys.name}</h4>
+                <p>${sys.type}</p>
+                <p><strong>Status:</strong> <span class="health-indicator ${healthClass}"></span> ${sys.status}</p>
+                <p><strong>Capabilities:</strong> ${Array.isArray(sys.capabilities) ? sys.capabilities.join(', ') : 'None'}</p>
+                <p><strong>Throughput:</strong> ${sys.metrics?.throughput || sys.metrics?.requestsPerSecond || 0} req/s</p>
+              </div>
+              <div class="health-indicator ${healthClass}"></div>
+            </div>
+          `;
+        });
       }
+
+      function addLogEntry(type, message, timestamp = null) {
+        const panel = document.getElementById('logPanel');
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+
+        const timeStr = timestamp ? formatTime(timestamp) : formatTime(new Date());
+
+        entry.innerHTML = `
+          <span class="timestamp">${timeStr}</span>
+          <span class="system">[${type.toUpperCase()}]</span>
+          <span class="message">${message}</span>
+        `;
+
+        panel.insertBefore(entry, panel.firstChild);
+
+        // Keep only last 50 entries
+        while (panel.children.length > 50) {
+          panel.removeChild(panel.lastChild);
+        }
+      }
+
+      function updateCostMetrics(data) {
+        document.getElementById('tokensUsed').textContent = data.tokensUsed?.toLocaleString() || '0';
+        document.getElementById('estimatedCost').textContent = '$' + (data.estimatedMonthlyCost || '0.00').toFixed(2);
+        document.getElementById('costRatio').textContent = Math.min((data.costRatio || 0) * 100, 100).toFixed(0) + '%';
+
+        const progress = (data.costRatio || 0);
+        document.getElementById('costProgress').style.width = progress + '%';
+      }
+
+      function showRecommendations(data) {
+        const panel = document.getElementById('logPanel');
+
+        data.forEach(rec => {
+          const entry = document.createElement('div');
+          entry.className = 'log-entry';
+
+          entry.innerHTML = `
+            <span class="timestamp">${formatTime(new Date())}</span>
+            <span class="system">[RECOMMENDATION]</span>
+            <span class="message">
+              <strong>${rec.reason || 'Auto-routing recommended'}</strong>
+              <p style="color: #888;">${rec.details || 'System will automatically select the best option based on task type and system health.'}</p>
+              <p><strong>Confidence:</strong> ${(rec.confidence || 0.9 * 100).toFixed(0)}%</p>
+            </span>
+          `;
+
+          panel.insertBefore(entry, panel.firstChild);
+        });
+      }
+
+      function executeTask() {
+        const type = document.getElementById('taskType').value;
+        const message = document.getElementById('taskMessage').value;
+        const autoRoute = document.getElementById('useAutoRouting').checked;
+        const preferredSystem = document.getElementById('preferredSystem').value;
+
+        if (!message.trim()) {
+          alert('Please enter a task message');
+          return;
+        }
+
+        const task = {
+          type: type,
+          message: message,
+          data: { message },
+          autoRoute,
+          preferredSystem
+        };
+
+        addLogEntry('info', `Executing task: ${type}`);
+
+        ws.send(JSON.stringify({
+          type: 'execute_task',
+          task: task
+        }));
+      }
+
+      function formatTime(msOrDate) {
+        // If it's a Date object, convert to milliseconds from now
+        if (msOrDate instanceof Date) {
+          const now = Date.now();
+          const diff = now - msOrDate.getTime();
+          if (diff < 1000) {
+            return 'just now';
+          }
+          return formatTime(diff);
+        }
+
+        // It's a number in milliseconds
+        const ms = msOrDate;
+        if (ms < 1000) {
+          return ms.toFixed(0) + 'ms';
+        }
+        const seconds = Math.floor(ms / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+
+        if (days > 0) {
+          return `${days}d ${hours % 24}h ${minutes % 60}m`;
+        } else if (hours > 0) {
+          return `${hours}h ${minutes % 60}m`;
+        } else if (minutes > 0) {
+          return `${minutes}m ${Math.floor((seconds % 60))}s`;
+        } else {
+          return `${seconds}s`;
+        }
+      }
+
+      function getDetailedCostReport() {
+        ws.send(JSON.stringify({ type: 'cost_report' }));
+      }
+
+      // Auto-connect
       connect();
-    });
+
+      // Perception Controls Setup
+      function setupPerceptionControls() {
+        // Image Upload
+        document.getElementById('imageUploadBtn').addEventListener('click', () => {
+          document.getElementById('imageFileInput').click();
+        });
+
+        document.getElementById('imageFileInput').addEventListener('change', async (event) => {
+          const file = event.target.files[0];
+          if (file) {
+            await processImageUpload(file);
+          }
+        });
+
+        // Voice Recording
+        document.getElementById('voiceRecordBtn').addEventListener('click', toggleVoiceRecording);
+
+        // Perception Status
+        document.getElementById('perceptionStatusBtn').addEventListener('click', checkPerceptionStatus);
+      }
+
+      // Process Image Upload
+      async function processImageUpload(file) {
+        try {
+          const reader = new FileReader();
+          reader.onload = async (e) => {
+            const base64Image = e.target.result.split(',')[1];
+            
+            addLogEntry('info', `Processing image: ${file.name}`);
+            
+            const response = await fetch('/api/perception/image', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                image: base64Image,
+                mimeType: file.type
+              })
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+              addLogEntry('success', `Image processed successfully: ${result.result.summary || 'Analysis complete'}`);
+              // Display image analysis results
+              if (result.result.details) {
+                addLogEntry('info', `Details: ${JSON.stringify(result.result.details)}`);
+              }
+            } else {
+              addLogEntry('error', `Image processing failed: ${result.error}`);
+            }
+          };
+          reader.readAsDataURL(file);
+        } catch (error) {
+          addLogEntry('error', `Image upload error: ${error.message}`);
+        }
+      }
+
+      // Voice Recording Toggle
+      let mediaRecorder = null;
+      let audioChunks = [];
+
+      async function toggleVoiceRecording() {
+        const btn = document.getElementById('voiceRecordBtn');
+        
+        if (!mediaRecorder) {
+          // Start recording
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+
+            mediaRecorder.ondataavailable = (event) => {
+              audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = async () => {
+              const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+              await processVoiceRecording(audioBlob);
+              btn.classList.remove('active');
+              btn.innerHTML = '<span>🎤</span> Record Voice';
+            };
+
+            mediaRecorder.start();
+            btn.classList.add('active');
+            btn.innerHTML = '<span>⏹️</span> Stop Recording';
+            addLogEntry('info', 'Voice recording started...');
+
+          } catch (error) {
+            addLogEntry('error', `Microphone access denied: ${error.message}`);
+          }
+        } else {
+          // Stop recording
+          mediaRecorder.stop();
+          mediaRecorder.stream.getTracks().forEach(track => track.stop());
+          mediaRecorder = null;
+        }
+      }
+
+      // Process Voice Recording
+      async function processVoiceRecording(audioBlob) {
+        try {
+          addLogEntry('info', 'Processing voice recording...');
+          
+          const arrayBuffer = await audioBlob.arrayBuffer();
+          const base64Audio = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+          
+          const response = await fetch('/api/perception/voice', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              audio: base64Audio,
+              mimeType: audioBlob.type
+            })
+          });
+
+          const result = await response.json();
+          
+          if (result.success) {
+            addLogEntry('success', `Voice processed successfully: ${result.result.transcript || 'Transcription complete'}`);
+            if (result.result.text) {
+              addLogEntry('info', `Recognized text: ${result.result.text}`);
+            }
+          } else {
+            addLogEntry('error', `Voice processing failed: ${result.error}`);
+          }
+        } catch (error) {
+          addLogEntry('error', `Voice processing error: ${error.message}`);
+        }
+      }
+
+      // Check Perception Status
+      async function checkPerceptionStatus() {
+        try {
+          const response = await fetch('/api/perception/status');
+          const result = await response.json();
+          
+          if (result.success) {
+            const status = result.status;
+            addLogEntry('info', `Perception System Status:`);
+            addLogEntry('info', `  Available: ${status.available ? 'Yes' : 'No'}`);
+            addLogEntry('info', `  Vision: ${status.vision ? 'Enabled' : 'Disabled'}`);
+            addLogEntry('info', `  Audio: ${status.audio ? 'Enabled' : 'Disabled'}`);
+            if (status.models) {
+              addLogEntry('info', `  Models: ${Object.keys(status.models).join(', ')}`);
+            }
+          } else {
+            addLogEntry('warning', 'Perception system not available');
+          }
+        } catch (error) {
+          addLogEntry('error', `Perception status check failed: ${error.message}`);
+        }
+      }
+
+      // Initialize perception controls
+      document.addEventListener('DOMContentLoaded', () => {
+        setupPerceptionControls();
+      });
+
+      // Quick Task Modal Functions
+      function openQuickTaskModal() {
+        document.getElementById('quickTaskModal').style.display = 'flex';
+      }
+
+      function closeQuickTaskModal() {
+        document.getElementById('quickTaskModal').style.display = 'none';
+        document.getElementById('quickTaskForm').reset();
+      }
+
+      async function assignQuickTask(event) {
+        event.preventDefault();
+        
+        const taskDescription = document.getElementById('quickTaskDesc').value;
+        const requiredSkills = Array.from(document.getElementById('quickTaskSkills').selectedOptions)
+          .map(option => option.value);
+        
+        if (!taskDescription.trim()) {
+          alert('Please enter a task description');
+          return;
+        }
+
+        try {
+          const response = await fetch('/api/tasks/auto-assign', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              description: taskDescription,
+              requiredSkills: requiredSkills
+            })
+          });
+
+          const result = await response.json();
+          
+          if (result.success) {
+            addLogEntry('success', `Task assigned: ${result.message}`);
+            closeQuickTaskModal();
+          } else {
+            addLogEntry('error', `Task assignment failed: ${result.error}`);
+          }
+        } catch (error) {
+          addLogEntry('error', `Network error: ${error.message}`);
+        }
+      }
+
+      // Add agent suggestion tags
+      function addAgentSuggestions() {
+        const suggestionsContainer = document.getElementById('agentSuggestions');
+        const commonTasks = [
+          { name: 'Bug Fix', skills: ['debugging', 'coding'] },
+          { name: 'Feature Implementation', skills: ['coding', 'api'] },
+          { name: 'Data Analysis', skills: ['data', 'analysis'] },
+          { name: 'Security Audit', skills: ['security', 'testing'] },
+          { name: 'Performance Optimization', skills: ['optimization', 'database'] }
+        ];
+        
+        suggestionsContainer.innerHTML = commonTasks
+          .map(task => `
+            <div class="agent-tag" onclick="fillQuickTask('${task.name}', [${task.skills.map(s => `'${s}'`).join(', ')}])">
+              ${task.name}
+            </div>
+          `)
+          .join('');
+      }
+
+      function fillQuickTask(name, skills) {
+        document.getElementById('quickTaskDesc').value = `Work on: ${name}`;
+        const select = document.getElementById('quickTaskSkills');
+        Array.from(select.options).forEach(option => {
+          option.selected = skills.includes(option.value);
+        });
+      }
+
+      // Initialize modal when DOM loads
+      document.addEventListener('DOMContentLoaded', () => {
+        addAgentSuggestions();
+      });
+
+      // Test Runner Functions
+      async function openTestRunner() {
+        addLogEntry('info', 'Opening test runner...');
+        
+        try {
+          // Show loading state
+          const modal = document.createElement('div');
+          modal.id = 'testRunnerModal';
+          modal.className = 'modal-overlay';
+          modal.innerHTML = `
+            <div class="test-results-modal">
+              <div class="modal-header">
+                <h3>🧪 System Test Runner</h3>
+                <button class="close-modal" onclick="closeTestRunner()">&times;</button>
+              </div>
+              <div id="testContent">
+                <div style="text-align: center; padding: 40px;">
+                  <div style="font-size: 2rem; margin-bottom: 20px;">🔬</div>
+                  <p>Running comprehensive system tests...</p>
+                  <div style="margin-top: 20px; color: #888;">This may take a few moments</div>
+                </div>
+              </div>
+            </div>
+          `;
+          
+          document.body.appendChild(modal);
+          modal.style.display = 'flex';
+          
+          // Run tests
+          const response = await fetch('/api/tests/run');
+          const testData = await response.json();
+          
+          if (testData.success) {
+            displayTestResults(testData.results);
+            addLogEntry('success', `Tests completed: ${testData.results.summary.passed}/${testData.results.summary.total} passed`);
+          } else {
+            displayTestError(testData.error);
+            addLogEntry('error', `Test execution failed: ${testData.error}`);
+          }
+          
+        } catch (error) {
+          addLogEntry('error', `Test runner error: ${error.message}`);
+          displayTestError(error.message);
+        }
+      }
+
+      function closeTestRunner() {
+        const modal = document.getElementById('testRunnerModal');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      function displayTestResults(results) {
+        const content = document.getElementById('testContent');
+        
+        content.innerHTML = `
+          <div class="test-summary">
+            <div class="summary-card">
+              <div class="summary-number" style="color: #00d9ff;">${results.summary.total}</div>
+              <div class="summary-label">Total Tests</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-number" style="color: #44ff44;">${results.summary.passed}</div>
+              <div class="summary-label">Passed</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-number" style="color: #ff4444;">${results.summary.failed}</div>
+              <div class="summary-label">Failed</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-number" style="color: #ff9f43;">${results.summary.duration}ms</div>
+              <div class="summary-label">Duration</div>
+            </div>
+          </div>
+          
+          <h4 style="color: #00d9ff; margin: 20px 0 15px 0;">Test Results:</h4>
+          ${results.tests.map(test => `
+            <div class="test-result-item ${test.status}">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <strong style="font-size: 1.1rem;">${test.name}</strong>
+                <span style="padding: 5px 12px; border-radius: 20px; font-size: 0.9rem; background: ${test.status === 'passed' ? '#44ff44' : '#ff4444'}; color: #0f0f23;">
+                  ${test.status.toUpperCase()}
+                </span>
+              </div>
+              <div style="color: #ccc; font-size: 0.9rem;">
+                ${test.details || test.error || 'No details available'}
+              </div>
+            </div>
+          `).join('')}
+          
+          <div style="margin-top: 20px; padding: 15px; background: #2a2a4a; border-radius: 8px;">
+            <strong>Timestamp:</strong> ${new Date(results.timestamp).toLocaleString()}<br>
+            <strong>Test Types:</strong> Memory Systems, Task Assignment, Perception, Agent Systems
+          </div>
+        `;
+      }
+
+      function displayTestError(error) {
+        const content = document.getElementById('testContent');
+        content.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: #ff4444;">
+            <div style="font-size: 3rem; margin-bottom: 20px;">⚠️</div>
+            <h3>Test Execution Failed</h3>
+            <p style="margin: 15px 0;">${error}</p>
+            <button class="assign-button" onclick="closeTestRunner()" style="margin-top: 20px;">Close</button>
+          </div>
+        `;
+      }
+    </script>
     
-    // Connect on load
-    connect();
-  </script>
-</body>
+    <!-- Quick Task Assignment Modal -->
+    <div id="quickTaskModal" class="modal-overlay">
+      <div class="quick-task-modal">
+        <div class="modal-header">
+          <h3>⚡ Quick Task Assignment</h3>
+          <button class="close-modal" onclick="closeQuickTaskModal()">&times;</button>
+        </div>
+        
+        <form id="quickTaskForm" class="quick-task-form" onsubmit="assignQuickTask(event)">
+          <div class="form-group">
+            <label for="quickTaskDesc">Task Description:</label>
+            <input type="text" id="quickTaskDesc" placeholder="Describe the task to assign..." required>
+          </div>
+          
+          <div class="form-group">
+            <label for="quickTaskSkills">Required Skills:</label>
+            <select id="quickTaskSkills" multiple>
+              <option value="coding">Coding/Development</option>
+              <option value="data">Data Analysis</option>
+              <option value="clinical">Clinical/Medical</option>
+              <option value="testing">Testing/QA</option>
+              <option value="security">Security</option>
+              <option value="api">API Development</option>
+              <option value="database">Database</option>
+              <option value="devops">DevOps</option>
+              <option value="debugging">Debugging</option>
+              <option value="design">Design</option>
+              <option value="optimization">Optimization</option>
+              <option value="analysis">Analysis</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Quick Suggestions:</label>
+            <div id="agentSuggestions" class="agent-suggestions">
+              <!-- Tags will be populated by JavaScript -->
+            </div>
+          </div>
+          
+          <button type="submit" class="assign-button">_ASSIGN TASK_</button>
+        </form>
+      </div>
+    </div>
+  </body>
 </html>

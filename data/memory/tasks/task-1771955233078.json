@@ -1,0 +1,28 @@
+[
+  {
+    "task_id": "task-1771955233078",
+    "input": "test",
+    "output": [
+      {
+        "agent": "test",
+        "response": "**Test Generation Initiated**\n\nHello! As the Test Agent, I'm here to assist you with generating tests, analyzing code coverage, and validating your application's functionality.\n\nWhat would you like me to help you with?\n\nWould you like to:\n1. Generate test cases for a specific module or feature?\n2. Analyze the current code coverage of your project?\n3. Validate a particular scenario or edge case?\n4. Something else (please specify)?\n\nPlease respond with one of the above options or provide more context about your requirements!",
+        "timestamp": 1771955233078
+      }
+    ],
+    "agents_involved": 8,
+    "execution_time_ms": 58571,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-24T17:47:13.078Z",
+    "started_at": "2026-02-24T17:46:14.507Z",
+    "completed_at": "2026-02-24T17:47:13.078Z",
+    "error": null
+  }
+]

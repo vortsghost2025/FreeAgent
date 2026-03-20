@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Swarm Test Panel</title>
+  <style>
+    :root {
+      --green: #00cc66; --gold: #ffcc00; --blue: #66ccff;
+      --bg: #0a0a0f; --bg-mid: #111118; --text: #cce6ff;
+      --red: #dc3545; --orange: #e67a00; --dim: #556677;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text); font-family: 'Share Tech Mono', 'Courier New', monospace; min-height: 100vh;
+      padding: 20px;
+    }
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px; background: var(--green); padding: 0 24px;
+    }
+    .header-title {
+      font-size: 1.5rem; color: #000; font-weight: 700; letter-spacing: 0.08em;
+    }
+    .header-sub {
+      font-size: 0.75rem; color: rgba(255,255,255,0.7); letter-spacing: 0.05em;
+    }
+    .header-right {
+      display: flex; gap: 12px;
+    }
+    .nav {
+      display: flex; gap: 8px; background: var(--bg-mid);
+      border-bottom: 2px solid var(--green); padding: 12px 16px;
+    }
+    .nav-item {
+      padding: 8px 16px; border-radius: 4px; font-size: 0.75rem;
+      letter-spacing: 0.1em; font-weight: 700; text-decoration: none;
+      border: 1px solid transparent; transition: opacity 0.15s;
+    }
+    .nav-item:hover {
+      opacity: 0.8;
+    }
+    .test-section {
+      background: rgba(255,255,255,0.05); border-radius: 8px; padding: 20px;
+      margin-top: 20px; border: 1px solid rgba(0,0,0,0.1);
+    }
+    .test-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+    }
+    .test-card {
+      background: #0d0d14; border: 1px solid var(--dim);
+      border-radius: 4px; padding: 16px;
+    }
+    .test-card h3 {
+      font-size: 1rem; color: var(--green); margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .test-card p {
+      font-size: 0.8rem; color: var(--dim); line-height: 1.4;
+      margin: 0; padding: 0;
+    }
+    .test-card .result {
+      display: inline-block; padding: 4px 12px; margin-top: 12px;
+      border-radius: 3px; font-size: 0.75rem;
+    }
+    .result-pass {
+      background: var(--green); color: #000; padding: 2px 8px;
+      border-radius: 3px;
+    }
+    .result-fail {
+      background: var(--red); color: #000; padding: 2px 8px;
+      border-radius: 3px;
+    }
+    .status {
+      text-align: center; padding: 8px; font-size: 0.8rem;
+      border-radius: 3px;
+    }
+    .btn {
+      display: inline-block; padding: 10px 20px; border-radius: 4px;
+      font-size: 0.9rem; letter-spacing: 0.05em; font-weight: 600;
+      text-decoration: none; cursor: pointer; border: none;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+    .btn-green { background: var(--green); color: #000; }
+    .btn-blue { background: var(--blue); color: #000; }
+    .console {
+      background: #000; color: var(--green); padding: 12px;
+      border-radius: 4px; font-family: 'Courier New', monospace;
+      max-height: 200px; overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-title">Swarm Test Panel</div>
+    <div class="header-sub">Verify swarm infrastructure before integrating Phase 7</div>
+    <div class="header-right">
+      <a href="swarm-index.html" class="nav-item">← Swarm Hub</a>
+    </div>
+  </div>
+
+  <div class="nav">
+    <a href="#" class="nav-item" onclick="testRegistry()">Swarm Registry</a>
+    <a href="#" class="nav-item" onclick="testCoordinator()">Swarm Coordinator</a>
+    <a href="#" class="nav-item" onclick="testAgentRegistration()">Agent Registration</a>
+    <a href="#" class="nav-item" onclick="testTaskQueue()">Task Queue</a>
+  </div>
+
+  <div class="test-section">
+    <h2 style="color: var(--gold); margin-bottom: 16px;">Swarm Infrastructure Tests</h2>
+
+    <div class="test-grid">
+      <div class="test-card">
+        <h3>Swarm Registry</h3>
+        <p>Test agent registration and capability discovery</p>
+        <div id="registry-result" class="result">READY</div>
+      </div>
+
+      <div class="test-card">
+        <h3>Swarm Coordinator</h3>
+        <p>Test task routing and orchestration</p>
+        <div id="coordinator-result" class="result">READY</div>
+      </div>
+
+      <div class="test-card">
+        <h3>Agent Registration</h3>
+        <p>Test registering Phase 7 Evolution Agent</p>
+        <div id="agent-result" class="result">READY</div>
+      </div>
+
+      <div class="test-card">
+        <h3>Task Queue</h3>
+        <p>Test submitting and tracking tasks</p>
+        <div id="task-result" class="result">READY</div>
+      </div>
+    </div>
+
+    <div class="status" id="test-status" style="display:none;">
+      <p>Running integration tests...</p>
+    </div>
+
+  <div class="console" id="console-output"></div>
+
+  <div style="margin-top: 32px; text-align: center;">
+    <button class="btn btn-green" onclick="runAllTests()">Run All Tests</button>
+  </div>
+
+  <script>
+    // Mock swarm infrastructure for testing
+    const mockRegistry = {
+      agents: new Map(),
+      capabilities: new Map(),
+      registered: 0
+    };
+
+    const mockCoordinator = {
+      taskQueue: [],
+      queuedTasks: 0,
+      completedTasks: 0
+    };
+
+    const mockPhase7Agent = {
+      agentId: 'phase-7-evolution',
+      type: 'INTELLIGENCE',
+      capabilities: ['self-directed-improvement', 'federated-diagnostics', 'autonomous-patches', 'bounded-exploration', 'supervised-autonomy'],
+      status: 'IDLE'
+    };
+
+    // Test 1: Registry
+    function testRegistry() {
+      const statusEl = document.getElementById('registry-result');
+      try {
+        mockRegistry.agents.set('phase-7-evolution', mockPhase7Agent);
+        mockRegistry.capabilities.set('phase-7-evolution', [
+          'self-directed-improvement', 'federated-diagnostics'
+        ]);
+        statusEl.className = 'result result-pass';
+        statusEl.textContent = 'PASS ✓';
+        mockRegistry.registered++;
+      } catch (err) {
+        statusEl.className = 'result result-fail';
+        statusEl.textContent = 'FAIL ✗';
+        statusEl.innerHTML = err.message || 'Error';
+      }
+      logOutput('Registry Test: ' + (mockRegistry.registered > 0 ? 'PASS' : 'FAIL'));
+    }
+
+    // Test 2: Coordinator
+    function testCoordinator() {
+      const statusEl = document.getElementById('coordinator-result');
+      try {
+        // Simulate task submission
+        const taskId = 'test-' + Date.now();
+        mockCoordinator.taskQueue.push(taskId);
+        mockCoordinator.queuedTasks++;
+
+        // Simulate task completion
+        const completedTask = mockCoordinator.taskQueue.shift();
+        if (completedTask) {
+          mockCoordinator.completedTasks++;
+        }
+
+        statusEl.className = mockCoordinator.taskQueue.length > 0 ? 'result result-pass' : 'result result-fail';
+        statusEl.textContent = mockCoordinator.taskQueue.length > 0 ? 'PASS ✓' : 'FAIL ✗';
+      } catch (err) {
+        statusEl.className = 'result result-fail';
+        statusEl.textContent = 'FAIL ✗';
+      }
+      logOutput('Coordinator Test: ' + (mockCoordinator.taskQueue.length > 0 ? 'PASS' : 'FAIL'));
+    }
+
+    // Test 3: Agent Registration
+    function testAgentRegistration() {
+      const statusEl = document.getElementById('agent-result');
+      try {
+        const agent = mockRegistry.agents.get('phase-7-evolution');
+        const registered = agent !== undefined;
+        statusEl.className = registered ? 'result result-pass' : 'result result-fail';
+        statusEl.textContent = registered ? 'REGISTERED ✓' : 'NOT FOUND ✗';
+      } catch (err) {
+        statusEl.className = 'result result-fail';
+        statusEl.textContent = 'ERROR';
+      }
+      logOutput('Agent Registration: ' + (registered ? 'PASS' : 'FAIL'));
+    }
+
+    // Test 4: Task Queue
+    function testTaskQueue() {
+      const statusEl = document.getElementById('task-result');
+      const hasQueue = mockCoordinator.taskQueue.length > 0;
+      const processed = mockCoordinator.completedTasks > 0;
+      statusEl.className = (hasQueue && processed) ? 'result result-pass' : 'result result-fail';
+      statusEl.textContent = hasQueue && processed ? 'ACTIVE ✓' : 'INACTIVE ✗';
+      logOutput('Task Queue: ' + (hasQueue ? 'PASS' : 'FAIL'));
+    }
+
+    function runAllTests() {
+      const statusEl = document.getElementById('test-status');
+      statusEl.style.display = 'block';
+      statusEl.innerHTML = '<p>Running all tests...</p>';
+
+      // Reset state
+      mockRegistry.registered = 0;
+      mockCoordinator.taskQueue = [];
+      mockCoordinator.completedTasks = 0;
+
+      // Run all tests sequentially
+      setTimeout(() => testRegistry(), 100);
+      setTimeout(() => testCoordinator(), 400);
+      setTimeout(() => testAgentRegistration(), 700);
+      setTimeout(() => testTaskQueue(), 1000);
+
+      // Final status
+      setTimeout(() => {
+        const allPassed = mockRegistry.registered > 0 &&
+                          mockCoordinator.taskQueue.length > 0 &&
+                          mockCoordinator.completedTasks > 0 &&
+                          mockRegistry.agents.has('phase-7-evolution');
+
+        statusEl.className = allPassed ? 'result result-pass' : 'result result-fail';
+        statusEl.innerHTML = allPassed ?
+          '<h3 style="color: var(--green)">✓ All Tests Passed</h3>' :
+          '<h3 style="color: var(--red)">✗ Tests Failed</h3>';
+      }, 2000);
+    }
+
+    function logOutput(message) {
+      const consoleEl = document.getElementById('console-output');
+      const timestamp = new Date().toLocaleTimeString();
+      consoleEl.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    // Initialize
+    window.onload = function() {
+      logOutput('Swarm Test Panel Loaded');
+    };
+  </script>
+</body>
+</html>

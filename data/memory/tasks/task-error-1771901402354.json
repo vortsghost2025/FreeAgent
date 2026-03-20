@@ -1,0 +1,22 @@
+[
+  {
+    "task_id": "task-1771901402354",
+    "input": "test",
+    "output": null,
+    "agents_involved": 3,
+    "execution_time_ms": 1,
+    "status": "failed",
+    "routing": {
+      "decision": "selected",
+      "selected_agent": "code_generation,data_engineering,clinical_analysis",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-24T02:50:02.354Z",
+    "started_at": "2026-02-24T02:50:02.353Z",
+    "completed_at": "2026-02-24T02:50:02.354Z",
+    "error": "Cannot read properties of undefined (reading 'handleMessage')"
+  }
+]

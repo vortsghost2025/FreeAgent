@@ -1,0 +1,28 @@
+[
+  {
+    "task_id": "task-1771915326026",
+    "input": "hi",
+    "output": [
+      {
+        "agent": "code",
+        "response": "Error: Ollama API error: 400 - {\"error\":\"json: cannot unmarshal object into Go struct field GenerateRequest.prompt of type string\"}",
+        "timestamp": 1771915326026
+      }
+    ],
+    "agents_involved": 1,
+    "execution_time_ms": 10,
+    "status": "completed",
+    "routing": {
+      "decision": "selected",
+      "selected_agent": "code",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-24T06:42:06.026Z",
+    "started_at": "2026-02-24T06:42:06.016Z",
+    "completed_at": "2026-02-24T06:42:06.026Z",
+    "error": null
+  }
+]

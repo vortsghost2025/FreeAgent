@@ -1,0 +1,5 @@
+Gemini Live Agent Challenge|Mar 16|$80K|agents+consensus
+Amazon Nova AI Hackathon|Mar 16|$40K|orchestration+MCP
+GitLab AI Hackathon|Mar 25|$65K|production-hardening+CI/CD
+DigitalOcean Gradient AI|Mar 18|$20K|infra+deployment
+Airia AI Agents|Mar 19|$7K|low-competition+agent-coordination

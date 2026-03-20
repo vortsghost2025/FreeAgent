@@ -1,7 +1,3 @@
 {
-    "recommendations": [
-        "andrepimenta.claude-code-chat",
-        "anthropic.claude-code",
-        "codeflow-studio.claude-code-extension"
-    ]
+	"recommendations": ["svelte.svelte-vscode", "esbenp.prettier-vscode", "dbaeumer.vscode-eslint"]
 }

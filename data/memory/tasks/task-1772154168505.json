@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772154168505",
+    "input": "{\"batch\":37,\"agent\":\"test\",\"intensity\":\"maximum\"}",
+    "output": [
+      {
+        "agent": "test",
+        "response": "Error: Ollama API error: 503 - {\"error\":\"server busy, please try again.  maximum pending requests exceeded\"}",
+        "model": "deepseek-coder-v2:16b",
+        "timestamp": 1772154168505
+      }
+    ],
+    "agents_involved": 9,
+    "execution_time_ms": 164118,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-27T01:02:48.505Z",
+    "started_at": "2026-02-27T01:00:04.387Z",
+    "completed_at": "2026-02-27T01:02:48.505Z",
+    "error": null
+  }
+]

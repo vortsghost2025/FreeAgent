@@ -1,0 +1,88 @@
+{
+  "tasks": [
+    {
+      "id": "task-1772118935778-o2518qrye",
+      "description": "Monitor system performance metrics",
+      "requiredSkills": [
+        "monitoring",
+        "data",
+        "analysis"
+      ],
+      "createdAt": "2026-02-26T15:15:35.778Z",
+      "status": "assigned",
+      "assignedTo": "data",
+      "completedAt": null
+    },
+    {
+      "id": "task-1772118936281-j8g5ni7wr",
+      "description": "Clean up temporary files and logs",
+      "requiredSkills": [
+        "maintenance",
+        "devops",
+        "cleanup"
+      ],
+      "createdAt": "2026-02-26T15:15:36.281Z",
+      "status": "pending",
+      "assignedTo": null,
+      "completedAt": null
+    },
+    {
+      "id": "task-1772118936799-5pbt54ycc",
+      "description": "Validate database connections",
+      "requiredSkills": [
+        "database",
+        "testing",
+        "validation"
+      ],
+      "createdAt": "2026-02-26T15:15:36.799Z",
+      "status": "assigned",
+      "assignedTo": "test",
+      "completedAt": null
+    },
+    {
+      "id": "task-1772118937311-jc702vlkl",
+      "description": "Update security certificates",
+      "requiredSkills": [
+        "security",
+        "devops",
+        "maintenance"
+      ],
+      "createdAt": "2026-02-26T15:15:37.311Z",
+      "status": "assigned",
+      "assignedTo": "security",
+      "completedAt": null
+    },
+    {
+      "id": "task-1772118937825-5y4uik3xe",
+      "description": "Generate daily usage reports",
+      "requiredSkills": [
+        "data",
+        "reporting",
+        "analysis"
+      ],
+      "createdAt": "2026-02-26T15:15:37.825Z",
+      "status": "assigned",
+      "assignedTo": "clinical",
+      "completedAt": null
+    },
+    {
+      "id": "task-1772119670747-q8o4yb996",
+      "description": "Test task assignment",
+      "requiredSkills": [
+        "testing"
+      ],
+      "createdAt": "2026-02-26T15:27:50.747Z",
+      "status": "assigned",
+      "assignedTo": "test",
+      "completedAt": null
+    }
+  ],
+  "assignments": {
+    "task-1772118935778-o2518qrye": "data",
+    "task-1772118936799-5pbt54ycc": "test",
+    "task-1772118937311-jc702vlkl": "security",
+    "task-1772118937825-5y4uik3xe": "clinical",
+    "task-1772119670747-q8o4yb996": "test"
+  },
+  "timestamp": "2026-02-26T15:27:50.747Z"
+}

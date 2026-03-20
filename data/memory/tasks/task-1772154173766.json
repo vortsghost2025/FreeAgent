@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772154173766",
+    "input": "{\"batch\":9,\"agent\":\"clinical\",\"intensity\":\"maximum\"}",
+    "output": [
+      {
+        "agent": "clinical",
+        "response": "Error: The operation was aborted due to timeout",
+        "model": "llama3.1:8b",
+        "timestamp": 1772154173766
+      }
+    ],
+    "agents_involved": 9,
+    "execution_time_ms": 180433,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-27T01:02:53.766Z",
+    "started_at": "2026-02-27T00:59:53.333Z",
+    "completed_at": "2026-02-27T01:02:53.766Z",
+    "error": null
+  }
+]

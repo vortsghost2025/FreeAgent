@@ -1,0 +1,30 @@
+{
+  "coordination_protocol": {
+    "version": "1.0",
+    "mode": "collaborative_autonomous",
+    "agents": {
+      "kilo": {
+        "role": "orchestrator_runtime",
+        "capabilities": ["routing", "memory_management", "tool_coordination", "system_health"],
+        "permissions": ["full_access", "yolo", "bypass_restrictions"],
+        "primary_focus": ["runtime_optimization", "agent_coordination", "system_stability"]
+      },
+      "claude_code": {
+        "role": "development_assistant",
+        "capabilities": ["code_implementation", "debugging", "architecture_improvements", "documentation"],
+        "permissions": ["full_access", "yolo", "bypass_restrictions"],
+        "primary_focus": ["feature_implementation", "bug_fixes", "code_quality"]
+      }
+    },
+    "collaboration_rules": {
+      "shared_awareness": "both_agents_see_all_tasks_and_changes",
+      "conflict_resolution": "last_write_wins_with_logging",
+      "communication_channel": "coordination_log",
+      "parallel_execution": true,
+      "task_sharing": true
+    },
+    "coordination_log": "./data/coordination_log.json",
+    "task_board": "./data/task_board.json",
+    "shared_context": "./data/shared_context.json"
+  }
+}

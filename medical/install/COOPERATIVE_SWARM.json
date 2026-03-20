@@ -1,0 +1,866 @@
+{
+  "timestamp": "2026-02-28T08:00:00.000Z",
+  "roles": {
+    "meta_controller": {
+      "responsibilities": [
+        "set_global_mode",
+        "adjust_thresholds",
+        "coordinate_swarm"
+      ],
+      "listens_to": [
+        "all"
+      ],
+      "can_broadcast": [
+        "mode_changes",
+        "threshold_updates"
+      ],
+      "cooperation_style": "directive"
+    },
+    "economic_engine": {
+      "responsibilities": [
+        "filter_opportunities",
+        "evaluate_profitability",
+        "risk_assessment"
+      ],
+      "listens_to": [
+        "arbitrage_opportunities",
+        "market_data",
+        "mode_changes"
+      ],
+      "can_broadcast": [
+        "opportunity_decisions",
+        "risk_assessments"
+      ],
+      "cooperation_style": "analytical"
+    },
+    "strategy_worker": {
+      "responsibilities": [
+        "execute_strategies",
+        "process_tasks",
+        "report_results"
+      ],
+      "listens_to": [
+        "opportunity_decisions",
+        "mode_changes",
+        "task_assignments"
+      ],
+      "can_broadcast": [
+        "execution_results",
+        "task_completion"
+      ],
+      "cooperation_style": "executive"
+    },
+    "health_monitor": {
+      "responsibilities": [
+        "watch_performance",
+        "detect_stress",
+        "alert_system"
+      ],
+      "listens_to": [
+        "all"
+      ],
+      "can_broadcast": [
+        "health_alerts",
+        "performance_metrics"
+      ],
+      "cooperation_style": "observational"
+    },
+    "vscode_agent": {
+      "responsibilities": [
+        "code_review",
+        "debugging",
+        "patching"
+      ],
+      "listens_to": [
+        "health_alerts",
+        "execution_errors",
+        "code_requests"
+      ],
+      "can_broadcast": [
+        "code_patches",
+        "debug_info"
+      ],
+      "cooperation_style": "supportive"
+    },
+    "lmstudio_agent": {
+      "responsibilities": [
+        "reasoning",
+        "planning",
+        "analysis"
+      ],
+      "listens_to": [
+        "complex_problems",
+        "strategic_decisions",
+        "analysis_requests"
+      ],
+      "can_broadcast": [
+        "insights",
+        "plans",
+        "recommendations"
+      ],
+      "cooperation_style": "advisory"
+    },
+    "cockpit_dashboard": {
+      "responsibilities": [
+        "visualization",
+        "oversight",
+        "user_interface"
+      ],
+      "listens_to": [
+        "all"
+      ],
+      "can_broadcast": [
+        "display_updates",
+        "user_commands"
+      ],
+      "cooperation_style": "presentational"
+    }
+  },
+  "agents": {
+    "mev_organism_core": {
+      "role": "meta_controller",
+      "capabilities": [
+        "mode_management",
+        "strategy_coordination",
+        "health_monitoring"
+      ],
+      "cooperation_level": "full",
+      "registered": "2026-02-28T08:00:00.000Z",
+      "status": "active",
+      "last_activity": null
+    },
+    "arb_scanner_1": {
+      "role": "economic_engine",
+      "capabilities": [
+        "arbitrage_scanning",
+        "profit_calculation",
+        "dex_monitoring"
+      ],
+      "cooperation_level": "full",
+      "registered": "2026-02-28T08:00:00.000Z",
+      "status": "active",
+      "last_activity": null
+    },
+    "strategy_executor_1": {
+      "role": "strategy_worker",
+      "capabilities": [
+        "task_processing",
+        "strategy_execution",
+        "feedback_reporting"
+      ],
+      "cooperation_level": "full",
+      "registered": "2026-02-28T08:00:00.000Z",
+      "status": "active",
+      "last_activity": null
+    },
+    "strategy_executor_2": {
+      "role": "strategy_worker",
+      "capabilities": [
+        "task_processing",
+        "strategy_execution",
+        "feedback_reporting"
+      ],
+      "cooperation_level": "full",
+      "registered": "2026-02-28T08:00:00.000Z",
+      "status": "active",
+      "last_activity": null
+    },
+    "health_watcher": {
+      "role": "health_monitor",
+      "capabilities": [
+        "performance_monitoring",
+        "stress_detection",
+        "alert_generation"
+      ],
+      "cooperation_level": "full",
+      "registered": "2026-02-28T08:00:00.000Z",
+      "status": "active",
+      "last_activity": null
+    },
+    "lmstudio_reasoner": {
+      "role": "lmstudio_agent",
+      "capabilities": [
+        "llm_processing",
+        "chat_completions",
+        "model_inference"
+      ],
+      "cooperation_level": "full",
+      "registered": "2026-02-28T08:00:00.000Z",
+      "status": "active",
+      "last_activity": null
+    },
+    "sean": {
+      "role": "meta_controller",
+      "capabilities": [
+        "project_lead",
+        "decision_making"
+      ],
+      "cooperation_level": "full",
+      "registered": "2026-02-28T14:12:04.477Z",
+      "status": "active",
+      "last_activity": null
+    },
+    "kilo": {
+      "role": "vscode_agent",
+      "capabilities": [
+        "code_review",
+        "architecture"
+      ],
+      "cooperation_level": "full",
+      "registered": "2026-02-28T14:12:04.487Z",
+      "status": "active",
+      "last_activity": null
+    },
+    "qwen": {
+      "role": "lmstudio_agent",
+      "capabilities": [
+        "technical_advice",
+        "analysis"
+      ],
+      "cooperation_level": "full",
+      "registered": "2026-02-28T14:12:04.488Z",
+      "status": "active",
+      "last_activity": null
+    }
+  },
+  "signals": [
+    {
+      "id": "broadcast_initial_setup",
+      "type": "swarm_initialization",
+      "payload": {
+        "status": "cooperative_swarm_online",
+        "roles_active": 6,
+        "agents_registered": 6,
+        "cooperation_ready": true
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T08:00:01.000Z",
+      "source_role": "meta_controller",
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286282376_ithde8i31",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "sean",
+        "role": "meta_controller",
+        "capabilities": [
+          "project_lead",
+          "decision_making"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:44:42.376Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286282378_ptocnq1i6",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "kilo",
+        "role": "vscode_agent",
+        "capabilities": [
+          "code_review",
+          "architecture"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:44:42.378Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286282380_q0pqj557q",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "qwen",
+        "role": "lmstudio_agent",
+        "capabilities": [
+          "technical_advice",
+          "analysis"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:44:42.380Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286365089_e5ssd7w7o",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "sean",
+        "role": "meta_controller",
+        "capabilities": [
+          "project_lead",
+          "decision_making"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:46:05.089Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286365090_0uxd1g8j9",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "kilo",
+        "role": "vscode_agent",
+        "capabilities": [
+          "code_review",
+          "architecture"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:46:05.090Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286365092_h5g3k7odu",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "qwen",
+        "role": "lmstudio_agent",
+        "capabilities": [
+          "technical_advice",
+          "analysis"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:46:05.092Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286365095_abybjchbx",
+      "type": "test_message",
+      "payload": {
+        "content": "Hello cooperative swarm!",
+        "purpose": "testing_broadcast_functionality"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:46:05.095Z",
+      "source_role": "meta_controller",
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286684640_jn7wnkc2z",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "sean",
+        "role": "meta_controller",
+        "capabilities": [
+          "project_lead",
+          "decision_making"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:51:24.640Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286684642_y1c84wg39",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "kilo",
+        "role": "vscode_agent",
+        "capabilities": [
+          "code_review",
+          "architecture"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:51:24.642Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286684644_ro528gmtv",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "qwen",
+        "role": "lmstudio_agent",
+        "capabilities": [
+          "technical_advice",
+          "analysis"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:51:24.644Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286836821_4nfygmzbz",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "sean",
+        "role": "meta_controller",
+        "capabilities": [
+          "project_lead",
+          "decision_making"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:53:56.821Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286836823_zym71da7o",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "kilo",
+        "role": "vscode_agent",
+        "capabilities": [
+          "code_review",
+          "architecture"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:53:56.823Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286836825_h2sxenebh",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "qwen",
+        "role": "lmstudio_agent",
+        "capabilities": [
+          "technical_advice",
+          "analysis"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:53:56.825Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286895655_lpdvdolr4",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "sean",
+        "role": "meta_controller",
+        "capabilities": [
+          "project_lead",
+          "decision_making"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:54:55.655Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286895657_25dswr4lo",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "kilo",
+        "role": "vscode_agent",
+        "capabilities": [
+          "code_review",
+          "architecture"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:54:55.657Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286895659_rjricvoqa",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "qwen",
+        "role": "lmstudio_agent",
+        "capabilities": [
+          "technical_advice",
+          "analysis"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:54:55.659Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286931332_64cvysblk",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "sean",
+        "role": "meta_controller",
+        "capabilities": [
+          "project_lead",
+          "decision_making"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:55:31.332Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286931334_exiapfksj",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "kilo",
+        "role": "vscode_agent",
+        "capabilities": [
+          "code_review",
+          "architecture"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:55:31.334Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286931336_6z9jroqky",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "qwen",
+        "role": "lmstudio_agent",
+        "capabilities": [
+          "technical_advice",
+          "analysis"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:55:31.336Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286971348_nakz686bt",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "sean",
+        "role": "meta_controller",
+        "capabilities": [
+          "project_lead",
+          "decision_making"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:56:11.348Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286971351_61jrr820l",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "kilo",
+        "role": "vscode_agent",
+        "capabilities": [
+          "code_review",
+          "architecture"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:56:11.351Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772286971353_y1z2c7fh2",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "qwen",
+        "role": "lmstudio_agent",
+        "capabilities": [
+          "technical_advice",
+          "analysis"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:56:11.353Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772287108883_q4abk3dbh",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "sean",
+        "role": "meta_controller",
+        "capabilities": [
+          "project_lead",
+          "decision_making"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:58:28.883Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772287108885_bscs8evg8",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "kilo",
+        "role": "vscode_agent",
+        "capabilities": [
+          "code_review",
+          "architecture"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:58:28.885Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772287108888_sbp65f6z5",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "qwen",
+        "role": "lmstudio_agent",
+        "capabilities": [
+          "technical_advice",
+          "analysis"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T13:58:28.888Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772287580641_dmlghq33k",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "sean",
+        "role": "meta_controller",
+        "capabilities": [
+          "project_lead",
+          "decision_making"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T14:06:20.642Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772287580645_ioodb5vvl",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "kilo",
+        "role": "vscode_agent",
+        "capabilities": [
+          "code_review",
+          "architecture"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T14:06:20.645Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772287580648_ai0iw2t39",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "qwen",
+        "role": "lmstudio_agent",
+        "capabilities": [
+          "technical_advice",
+          "analysis"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T14:06:20.648Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772287580665_64wooqb07",
+      "type": "mode_change",
+      "payload": {
+        "from": "economic",
+        "to": "aggressive",
+        "parameters": {
+          "risk": 0.3,
+          "filter": 0.25,
+          "explore": 0.7,
+          "minProfitThreshold": 0.0001
+        }
+      },
+      "priority": "high",
+      "timestamp": "2026-02-28T14:06:20.665Z",
+      "source_role": "meta_controller",
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772287924486_w5ze9ou7t",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "sean",
+        "role": "meta_controller",
+        "capabilities": [
+          "project_lead",
+          "decision_making"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T14:12:04.486Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772287924487_6648k0fxq",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "kilo",
+        "role": "vscode_agent",
+        "capabilities": [
+          "code_review",
+          "architecture"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T14:12:04.487Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772287924490_xgmngub6g",
+      "type": "agent_registered",
+      "payload": {
+        "agent": "qwen",
+        "role": "lmstudio_agent",
+        "capabilities": [
+          "technical_advice",
+          "analysis"
+        ],
+        "cooperation_level": "full"
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T14:12:04.490Z",
+      "source_role": null,
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    },
+    {
+      "id": "broadcast_1772287924543_takppxhb5",
+      "type": "mode_change",
+      "payload": {
+        "from": "economic",
+        "to": "aggressive",
+        "parameters": {
+          "risk": 0.3,
+          "filter": 0.25,
+          "explore": 0.7,
+          "minProfitThreshold": 0.0001
+        }
+      },
+      "priority": "high",
+      "timestamp": "2026-02-28T14:12:04.543Z",
+      "source_role": "meta_controller",
+      "broadcast_to": "all_agents",
+      "cooperation_log": []
+    }
+  ],
+  "cooperation_log": [
+    {
+      "timestamp": "2026-02-28T08:00:02.000Z",
+      "agent": "mev_organism_core",
+      "role": "meta_controller",
+      "action": "swarm_initialization",
+      "result": "broadcast_sent"
+    },
+    {
+      "timestamp": "2026-02-28T13:46:05.096Z",
+      "agent": "sean",
+      "role": "meta_controller",
+      "action": "arbitrage_opportunity",
+      "result": "responded"
+    }
+  ],
+  "collective_state": {
+    "mode": "economic",
+    "sub_mode": "aggressive",
+    "health": "stable",
+    "opportunities": [],
+    "stress_level": 0,
+    "active_roles": [
+      "meta_controller",
+      "economic_engine",
+      "strategy_worker",
+      "health_monitor",
+      "lmstudio_agent",
+      "vscode_agent"
+    ],
+    "cooperation_efficiency": 1
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "systems": [
+    "quantum-orchestrator",
+    "working-memory",
+    "episodic-memory",
+    "parallel-collaboration",
+    "context-distributor",
+    "cockpit-server",
+    "agent-ensemble"
+  ],
+  "status": "partial"
+}

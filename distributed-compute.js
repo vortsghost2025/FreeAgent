@@ -6,22 +6,31 @@
  * For WE. For distributed power. 💙⚡
  */
 
-// JOB TYPES
-const JobType = {
-  MAP_REDUCE: 'map-reduce',
-  PIPELINE: 'pipeline',
-  BATCH: 'batch',
-  PARALLEL: 'parallel',
-  TRANSFORM: 'transform'
-};
+// Prevent duplicate declarations
+if (typeof JobType !== 'undefined') {
+  console.warn('JobType already declared, skipping duplicate declaration');
+} else {
+  // JOB TYPES
+  var JobType = {
+    MAP_REDUCE: 'map-reduce',
+    PIPELINE: 'pipeline',
+    BATCH: 'batch',
+    PARALLEL: 'parallel',
+    TRANSFORM: 'transform'
+  };
+}
 
-const JobStatus = {
-  PENDING: 'pending',
-  RUNNING: 'running',
-  COMPLETED: 'completed',
-  FAILED: 'failed',
-  CANCELLED: 'cancelled'
-};
+if (typeof JobStatus !== 'undefined') {
+  console.warn('JobStatus already declared, skipping duplicate declaration');
+} else {
+  var JobStatus = {
+    PENDING: 'pending',
+    RUNNING: 'running',
+    COMPLETED: 'completed',
+    FAILED: 'failed',
+    CANCELLED: 'cancelled'
+  };
+}
 
 /**
  * Compute Job - Represents a distributed computation

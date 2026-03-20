@@ -1,0 +1,7 @@
+{
+  "task": {
+    "type": "multi-agent-orchestration",
+    "data": "Coordinate multiple agents to analyze patient data"
+  },
+  "preferredSystem": "coding_ensemble"
+}

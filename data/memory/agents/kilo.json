@@ -1,0 +1,10 @@
+{
+  "agent": "kilo",
+  "name": "Kilo Master Agent",
+  "role": "master_orchestrator",
+  "description": "Master orchestration agent for the Claw Federation",
+  "state": {},
+  "recent_messages": [],
+  "last_updated": "2026-02-26T12:45:00.000Z",
+  "memory_version": "1.0.0"
+}

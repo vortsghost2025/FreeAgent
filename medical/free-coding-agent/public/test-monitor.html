@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧪 Concurrent Test Monitor</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a2a6c 0%, #b21f1f 50%, #1a2a6c 100%);
+      color: white;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, #00ffff, #ff00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .tests-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .test-card {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 15px;
+      padding: 20px;
+      border: 2px solid #00ffff;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .test-card.running {
+      border-color: #00ff00;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+    }
+
+    .test-card.completed {
+      border-color: #00ffff;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    }
+
+    .test-card.failed {
+      border-color: #ff0000;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+    }
+
+    .test-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .test-title {
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .test-status {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .status-running {
+      background: #00ff00;
+      color: #000;
+    }
+
+    .status-completed {
+      background: #00ffff;
+      color: #000;
+    }
+
+    .status-failed {
+      background: #ff0000;
+      color: #fff;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      margin: 15px 0;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00ffff, #ff00ff);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .test-details {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .controls {
+      text-align: center;
+      margin: 30px 0;
+    }
+
+    .btn {
+      background: linear-gradient(45deg, #00ffff, #ff00ff);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 0 10px;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+    }
+
+    .timeline {
+      margin-top: 30px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 15px;
+      padding: 20px;
+    }
+
+    .timeline-header {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+    .timeline-events {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .timeline-event {
+      padding: 10px;
+      margin: 5px 0;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🧪 CONCURRENT TEST MONITOR</h1>
+    <p>Real-time visualization of parallel test execution</p>
+  </div>
+
+  <div class="stats-container">
+    <div class="stat-card">
+      <div class="stat-value" id="totalTests">0</div>
+      <div class="stat-label">Total Tests</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="runningTests">0</div>
+      <div class="stat-label">Running</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="completedTests">0</div>
+      <div class="stat-label">Completed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="failedTests">0</div>
+      <div class="stat-label">Failed</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn" onclick="startTests()">🚀 Start Concurrent Tests</button>
+    <button class="btn" onclick="stopTests()">⏹️ Stop All Tests</button>
+    <button class="btn" onclick="clearMonitor()">🧹 Clear Monitor</button>
+  </div>
+
+  <div class="tests-grid" id="testsContainer">
+    <!-- Test cards will be dynamically added here -->
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-header">📋 Execution Timeline</div>
+    <div class="timeline-events" id="timelineEvents">
+      <div class="timeline-event">
+        <span>Monitor initialized</span>
+        <span id="initTime"></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Test data and state management
+    let testSuite = [];
+    let testInterval = null;
+    let timelineEvents = [];
+
+    // Initialize
+    document.getElementById('initTime').textContent = new Date().toLocaleTimeString();
+
+    // Sample test definitions
+    const testDefinitions = [
+      { id: 'medical-pipeline', name: 'Medical Pipeline Validation', duration: 3000, type: 'integration' },
+      { id: 'agent-coordination', name: 'Multi-Agent Coordination', duration: 2500, type: 'functional' },
+      { id: 'swarm-scaling', name: 'Swarm Auto-Scaling', duration: 4000, type: 'performance' },
+      { id: 'memory-management', name: 'Memory Leak Detection', duration: 3500, type: 'stress' },
+      { id: 'api-endpoints', name: 'API Endpoint Testing', duration: 2000, type: 'unit' },
+      { id: 'websocket-connections', name: 'WebSocket Stability', duration: 3200, type: 'network' },
+      { id: 'genomics-workflow', name: 'GWAS Processing', duration: 2800, type: 'scientific' },
+      { id: 'error-handling', name: 'Error Recovery Tests', duration: 2200, type: 'resilience' }
+    ];
+
+    // Add test to monitor
+    function addTestToMonitor(test) {
+      const container = document.getElementById('testsContainer');
+      const testCard = document.createElement('div');
+      testCard.className = 'test-card';
+      testCard.id = `test-${test.id}`;
+      
+      testCard.innerHTML = `
+        <div class="test-header">
+          <div class="test-title">${test.name}</div>
+          <div class="test-status status-running">RUNNING</div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-${test.id}"></div>
+        </div>
+        <div class="test-details">
+          Type: ${test.type} | Duration: ${test.duration}ms
+        </div>
+      `;
+      
+      container.appendChild(testCard);
+      addToTimeline(`Started: ${test.name}`, 'info');
+    }
+
+    // Update test progress
+    function updateTestProgress(testId, progress) {
+      const progressBar = document.getElementById(`progress-${testId}`);
+      if (progressBar) {
+        progressBar.style.width = `${progress}%`;
+      }
+    }
+
+    // Complete test
+    function completeTest(testId, success = true) {
+      const testCard = document.getElementById(`test-${testId}`);
+      const statusElement = testCard.querySelector('.test-status');
+      
+      if (success) {
+        testCard.classList.remove('running');
+        testCard.classList.add('completed');
+        statusElement.textContent = 'COMPLETED';
+        statusElement.className = 'test-status status-completed';
+        addToTimeline(`Completed: ${testId}`, 'success');
+      } else {
+        testCard.classList.remove('running');
+        testCard.classList.add('failed');
+        statusElement.textContent = 'FAILED';
+        statusElement.className = 'test-status status-failed';
+        addToTimeline(`Failed: ${testId}`, 'error');
+      }
+      
+      updateStats();
+    }
+
+    // Update statistics
+    function updateStats() {
+      const total = testSuite.length;
+      const running = testSuite.filter(t => t.status === 'running').length;
+      const completed = testSuite.filter(t => t.status === 'completed').length;
+      const failed = testSuite.filter(t => t.status === 'failed').length;
+      
+      document.getElementById('totalTests').textContent = total;
+      document.getElementById('runningTests').textContent = running;
+      document.getElementById('completedTests').textContent = completed;
+      document.getElementById('failedTests').textContent = failed;
+    }
+
+    // Add to timeline
+    function addToTimeline(message, type = 'info') {
+      const timeline = document.getElementById('timelineEvents');
+      const eventElement = document.createElement('div');
+      eventElement.className = 'timeline-event';
+      
+      eventElement.innerHTML = `
+        <span>${message}</span>
+        <span>${new Date().toLocaleTimeString()}</span>
+      `;
+      
+      timeline.insertBefore(eventElement, timeline.firstChild);
+      
+      // Keep only last 20 events
+      if (timeline.children.length > 20) {
+        timeline.removeChild(timeline.lastChild);
+      }
+    }
+
+    // Start concurrent tests
+    function startTests() {
+      if (testInterval) return; // Already running
+      
+      testSuite = [...testDefinitions].map(test => ({
+        ...test,
+        status: 'pending',
+        startTime: null,
+        progress: 0
+      }));
+      
+      addToTimeline('🚀 Starting concurrent test suite...', 'info');
+      
+      testInterval = setInterval(() => {
+        // Randomly start pending tests
+        testSuite
+          .filter(test => test.status === 'pending')
+          .slice(0, 3) // Start up to 3 tests at once
+          .forEach(test => {
+            test.status = 'running';
+            test.startTime = Date.now();
+            addTestToMonitor(test);
+          });
+        
+        // Update running tests
+        testSuite
+          .filter(test => test.status === 'running')
+          .forEach(test => {
+            const elapsed = Date.now() - test.startTime;
+            const progress = Math.min(100, (elapsed / test.duration) * 100);
+            updateTestProgress(test.id, progress);
+            
+            if (elapsed >= test.duration) {
+              // Random success/failure (85% success rate)
+              const success = Math.random() > 0.15;
+              test.status = success ? 'completed' : 'failed';
+              completeTest(test.id, success);
+            }
+          });
+        
+        updateStats();
+        
+        // Stop interval when all tests complete
+        if (testSuite.every(test => test.status !== 'pending' && test.status !== 'running')) {
+          clearInterval(testInterval);
+          testInterval = null;
+          addToTimeline('🏁 All tests completed!', 'success');
+        }
+      }, 100);
+    }
+
+    // Stop all tests
+    function stopTests() {
+      if (testInterval) {
+        clearInterval(testInterval);
+        testInterval = null;
+      }
+      
+      testSuite.forEach(test => {
+        if (test.status === 'running') {
+          test.status = 'failed';
+          completeTest(test.id, false);
+        }
+      });
+      
+      addToTimeline('⏹️ Tests manually stopped', 'warning');
+      updateStats();
+    }
+
+    // Clear monitor
+    function clearMonitor() {
+      document.getElementById('testsContainer').innerHTML = '';
+      document.getElementById('timelineEvents').innerHTML = `
+        <div class="timeline-event">
+          <span>Monitor cleared</span>
+          <span>${new Date().toLocaleTimeString()}</span>
+        </div>
+      `;
+      
+      testSuite = [];
+      if (testInterval) {
+        clearInterval(testInterval);
+        testInterval = null;
+      }
+      
+      updateStats();
+      addToTimeline('🧹 Monitor cleared', 'info');
+    }
+
+    // Initialize stats
+    updateStats();
+  </script>
+</body>
+</html>

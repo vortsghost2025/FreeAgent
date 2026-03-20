@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🦞 Claw Federation - Unified Cockpit</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0e1a;
+      color: #e8eaed;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
+      padding: 0 20px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      flex-shrink: 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .logo-icon {
+      font-size: 1.5rem;
+    }
+
+    .logo-text {
+      background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 4px;
+      border-radius: 10px;
+    }
+
+    .tab {
+      padding: 8px 16px;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.7);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .tab.active {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      box-shadow: 0 0 20px rgba(66, 133, 244, 0.3);
+    }
+
+    .status-bar {
+      margin-left: auto;
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .status-dot.online { background: #10b981; }
+    .status-dot.offline { background: #ef4444; }
+    .status-dot.warning { background: #f59e0b; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .content {
+      flex: 1;
+      position: relative;
+      background: #0f172a;
+    }
+
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: none;
+      background: #0f172a;
+    }
+
+    iframe.active {
+      display: block;
+    }
+
+    /* Loading state */
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #6b7280;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top-color: #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Error state */
+    .error-message {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <span class="logo-icon">🦞</span>
+      <span class="logo-text">Claw Federation</span>
+    </div>
+    
+    <div class="tabs">
+      <button class="tab active" data-target="medical" data-src="/mega-cockpit.html" onclick="switchTab('medical')">
+        🏥 Medical
+      </button>
+      <button class="tab" data-target="swarm" data-src="/swarm" onclick="switchTab('swarm')">
+        🐝 Swarm
+      </button>
+      <button class="tab" data-target="health" data-src="/health-tab.html" onclick="switchTab('health')">
+        🌍 Health Intel
+      </button>
+      <button class="tab" data-target="benchmark" data-src="/benchmark-dashboard.html" onclick="switchTab('benchmark')">
+        📊 Benchmark
+      </button>
+      <button class="tab" data-target="ide" data-src="/unified-ide.html" onclick="switchTab('ide')">
+        💻 IDE
+      </button>
+    </div>
+    
+    <div class="status-bar">
+      <div class="status-item">
+        <span class="status-dot online"></span>
+        <span>Medical: 8 agents</span>
+      </div>
+      <div class="status-item">
+        <span class="status-dot online" id="ollamaStatus"></span>
+        <span>Ollama</span>
+      </div>
+      <div class="status-item">
+        <span class="status-dot" id="groqStatus"></span>
+        <span>Groq</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="content">
+    <iframe id="medical" class="active" src="/mega-cockpit.html"></iframe>
+    <iframe id="swarm" src="/swarm"></iframe>
+    <iframe id="health" src="/health-tab.html"></iframe>
+    <iframe id="benchmark" src="/benchmark-dashboard.html"></iframe>
+    <iframe id="ide" src="/unified-ide.html"></iframe>
+  </div>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Update tab styles
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        // Show corresponding iframe
+        const target = tab.dataset.target;
+        document.querySelectorAll('iframe').forEach(f => f.classList.remove('active'));
+        document.getElementById(target).classList.add('active');
+        
+        // Store preference
+        localStorage.setItem('claw-active-tab', target);
+      });
+    });
+
+    // Restore last active tab
+    const lastTab = localStorage.getItem('claw-active-tab');
+    if (lastTab) {
+      const tab = document.querySelector(`.tab[data-target="${lastTab}"]`);
+      if (tab) tab.click();
+    }
+
+    // Global tab switching function (for onclick handlers)
+    function switchTab(target) {
+      const tab = document.querySelector(`.tab[data-target="${target}"]`);
+      if (tab) {
+        // Update tab styles
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        // Show corresponding iframe
+        document.querySelectorAll('iframe').forEach(f => f.classList.remove('active'));
+        document.getElementById(target).classList.add('active');
+        
+        // Store preference
+        localStorage.setItem('claw-active-tab', target);
+      }
+    }
+
+    // Poll provider status
+    async function updateStatus() {
+      try {
+        const response = await fetch('/api/providers/status');
+        const data = await response.json();
+        
+        if (data.success && data.providers) {
+          const ollama = data.providers.ollama || {};
+          const groq = data.providers.groq || {};
+          
+          const ollamaDot = document.getElementById('ollamaStatus');
+          const groqDot = document.getElementById('groqStatus');
+          
+          ollamaDot.className = 'status-dot ' + (ollama.healthy ? 'online' : 'offline');
+          groqDot.className = 'status-dot ' + (groq.healthy ? 'online' : (groq.enabled ? 'warning' : 'offline'));
+        }
+      } catch (e) {
+        console.log('Status poll failed:', e);
+        document.getElementById('ollamaStatus').className = 'status-dot offline';
+        document.getElementById('groqStatus').className = 'status-dot offline';
+      }
+    }
+
+    // Initial status check
+    updateStatus();
+    
+    // Poll every 30 seconds
+    setInterval(updateStatus, 30000);
+
+    // Log session start
+    console.log('🦞 Claw Federation Unified Cockpit initialized');
+    console.log('Tabs: Medical, Swarm, Health Intel, Benchmark, IDE');
+  </script>
+</body>
+</html>

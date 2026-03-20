@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-02-26T14:14:29.056Z",
+  "results": {
+    "network": true,
+    "cpu": true,
+    "memory": true,
+    "disk": true,
+    "agents": true,
+    "swarm": true,
+    "health": true,
+    "overall": true
+  },
+  "successRate": "86%",
+  "detailedMetrics": {
+    "executionTime": 5,
+    "memoryGrowth": "0.65MB",
+    "diskSpeed": "409600 KB/s",
+    "agentsFound": "9/9",
+    "swarmComponents": "5/5"
+  }
+}

@@ -1,5 +1,5 @@
 // FILE: __tests__/summarization_agent.test.js
-const { createSummarizationAgent } = require('../agents/summarization_agent');
+import { createSummarizationAgent } from '../agents/summarization_agent.js';
 
 test('summarization factory and contract', async () => {
   const agent = createSummarizationAgent('sum-001');

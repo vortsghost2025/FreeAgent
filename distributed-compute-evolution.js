@@ -11,7 +11,7 @@
  */
 
 // JOB TYPES
-const JobType = {
+const JobTypeEvolution = {
   MAP_REDUCE: 'map-reduce',
   PIPELINE: 'pipeline',
   BATCH: 'batch',
@@ -19,7 +19,7 @@ const JobType = {
   TRANSFORM: 'transform'
 };
 
-const JobStatus = {
+const JobStatusEvolution = {
   PENDING: 'pending',
   RUNNING: 'running',
   COMPLETED: 'completed',
@@ -30,12 +30,12 @@ const JobStatus = {
 /**
  * Compute Job - Represents a distributed computation
  */
-class ComputeJob {
+class ComputeJobEvolution {
   constructor(id, type, config) {
     this.id = id;
     this.type = type;
     this.config = config;
-    this.status = JobStatus.PENDING;
+    this.status = JobStatusEvolution.PENDING;
     this.createdAt = Date.now();
     this.startedAt = null;
     this.completedAt = null;
@@ -48,19 +48,19 @@ class ComputeJob {
   }
 
   start() {
-    this.status = JobStatus.RUNNING;
+    this.status = JobStatusEvolution.RUNNING;
     this.startedAt = Date.now();
   }
 
   complete(result) {
-    this.status = JobStatus.COMPLETED;
+    this.status = JobStatusEvolution.COMPLETED;
     this.completedAt = Date.now();
     this.result = result;
     this.progress = 100;
   }
 
   fail(error) {
-    this.status = JobStatus.FAILED;
+    this.status = JobStatusEvolution.FAILED;
     this.completedAt = Date.now();
     this.error = error;
   }
@@ -136,7 +136,7 @@ class DistributedComputeEvolution {
    */
   async submitMapReduce(input, mapFn, reduceFn, options = {}) {
     const jobId = `${this.isolatedPrefix}mr-${this.jobIdCounter++}`;
-    const job = new ComputeJob(jobId, JobType.MAP_REDUCE, {
+    const job = new ComputeJobEvolution(jobId, JobTypeEvolution.MAP_REDUCE, {
       input,
       mapFn,
       reduceFn,
@@ -292,7 +292,7 @@ class DistributedComputeEvolution {
    */
   async submitPipeline(input, stages, options = {}) {
     const jobId = `${this.isolatedPrefix}pipe-${this.jobIdCounter++}`;
-    const job = new ComputeJob(jobId, JobType.PIPELINE, {
+    const job = new ComputeJobEvolution(jobId, JobTypeEvolution.PIPELINE, {
       input,
       stages,
       parallel: options.parallel || false,
@@ -384,7 +384,7 @@ class DistributedComputeEvolution {
    */
   async submitBatch(items, processFn, options = {}) {
     const jobId = `${this.isolatedPrefix}batch-${this.jobIdCounter++}`;
-    const job = new ComputeJob(jobId, JobType.BATCH, {
+    const job = new ComputeJobEvolution(jobId, JobTypeEvolution.BATCH, {
       items,
       processFn,
       batchSize: options.batchSize || this.defaultBatchSize,
@@ -469,7 +469,7 @@ class DistributedComputeEvolution {
    */
   async submitTransform(input, transformFn, options = {}) {
     const jobId = `${this.isolatedPrefix}transform-${this.jobIdCounter++}`;
-    const job = new ComputeJob(jobId, JobType.TRANSFORM, {
+    const job = new ComputeJobEvolution(jobId, JobTypeEvolution.TRANSFORM, {
       input,
       transformFn,
       chunks: options.chunks || this.defaultChunks,
@@ -593,12 +593,12 @@ class DistributedComputeEvolution {
       return false;
     }
 
-    if (job.status === JobStatus.COMPLETED || job.status === JobStatus.FAILED) {
+    if (job.status === JobStatusEvolution.COMPLETED || job.status === JobStatusEvolution.FAILED) {
       console.warn(`[EVOL] Job ${jobId} already ${job.status}`);
       return false;
     }
 
-    job.status = JobStatus.CANCELLED;
+    job.status = JobStatusEvolution.CANCELLED;
     this.activeJobs.delete(jobId);
 
     console.log(`[EVOL] 🛑 Job ${jobId} cancelled (isolated)`);
@@ -631,7 +631,7 @@ class DistributedComputeEvolution {
    */
   getMetrics() {
     const completedJobs = Array.from(this.jobs.values())
-      .filter(job => job.status === JobStatus.COMPLETED);
+      .filter(job => job.status === JobStatusEvolution.COMPLETED);
 
     if (completedJobs.length > 0) {
       const totalLatency = completedJobs.reduce((sum, job) => sum + job.getDuration(), 0);
@@ -657,7 +657,7 @@ class DistributedComputeEvolution {
   clearCompleted() {
     let cleared = 0;
     for (const [jobId, job] of this.jobs) {
-      if (job.status === JobStatus.COMPLETED || job.status === JobStatus.FAILED) {
+      if (job.status === JobStatusEvolution.COMPLETED || job.status === JobStatusEvolution.FAILED) {
         this.jobs.delete(jobId);
         cleared++;
       }
@@ -670,18 +670,18 @@ class DistributedComputeEvolution {
 // Export for Node.js and browser
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
-    JobType,
-    JobStatus,
-    ComputeJob,
+    JobTypeEvolution,
+    JobStatusEvolution,
+    ComputeJobEvolution,
     DistributedComputeEvolution
   };
 }
 
 // Browser global
 if (typeof window !== 'undefined') {
-  window.JobType = JobType;
-  window.JobStatus = JobStatus;
-  window.ComputeJob = ComputeJob;
+  window.JobTypeEvolution = JobTypeEvolution;
+  window.JobStatusEvolution = JobStatusEvolution;
+  window.ComputeJobEvolution = ComputeJobEvolution;
   window.DistributedComputeEvolution = DistributedComputeEvolution;
 }
 

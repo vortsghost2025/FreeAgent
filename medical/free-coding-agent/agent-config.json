@@ -66,9 +66,9 @@
     }
   ],
   "modelProvider": {
-    "default": "ollama",
-    "endpoint": "/api/ollama/generate",
-    "fallback": "federation"
+    "default": "lmstudio",
+    "fallback": "ollama",
+    "lmstudioUrl": "http://localhost:1234/v1"
   },
   "memoryEngine": {
     "type": "json",

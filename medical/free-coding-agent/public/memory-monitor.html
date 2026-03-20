@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Monitor</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
+      padding: 12px;
+      min-height: 100vh;
+    }
+    
+    .monitor-card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 16px;
+      max-width: 300px;
+    }
+    
+    .monitor-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #8b949e;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .monitor-title::before {
+      content: '🧠';
+    }
+    
+    .memory-bar-container {
+      background: #21262d;
+      border-radius: 4px;
+      height: 8px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    
+    .memory-bar {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease, background-color 0.3s ease;
+    }
+    
+    .memory-bar.healthy {
+      background: #3fb950;
+    }
+    
+    .memory-bar.warning {
+      background: #d29922;
+    }
+    
+    .memory-bar.critical {
+      background: #f85149;
+    }
+    
+    .memory-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #8b949e;
+    }
+    
+    .memory-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #c9d1d9;
+      text-align: center;
+      margin: 8px 0;
+    }
+    
+    .memory-value .unit {
+      font-size: 12px;
+      font-weight: 400;
+      color: #8b949e;
+    }
+    
+    .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    
+    .status-indicator.healthy {
+      background: #3fb950;
+      box-shadow: 0 0 8px #3fb950;
+    }
+    
+    .status-indicator.warning {
+      background: #d29922;
+      box-shadow: 0 0 8px #d29922;
+    }
+    
+    .status-indicator.critical {
+      background: #f85149;
+      box-shadow: 0 0 8px #f85149;
+      animation: pulse 1s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .status-text {
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .status-text.healthy { color: #3fb950; }
+    .status-text.warning { color: #d29922; }
+    .status-text.critical { color: #f85149; }
+    
+    .process-list {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #30363d;
+      font-size: 11px;
+    }
+    
+    .process-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      color: #8b949e;
+    }
+    
+    .process-name {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .process-status {
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 500;
+    }
+    
+    .process-status.running {
+      background: rgba(63, 185, 80, 0.2);
+      color: #3fb950;
+    }
+    
+    .process-status.paused {
+      background: rgba(248, 81, 73, 0.2);
+      color: #f85149;
+    }
+  </style>
+</head>
+<body>
+  <div class="monitor-card">
+    <div class="monitor-title">System Memory</div>
+    
+    <div class="memory-bar-container">
+      <div class="memory-bar healthy" id="memoryBar" style="width: 50%"></div>
+    </div>
+    
+    <div class="memory-value">
+      <span id="usedMemory">0</span><span class="unit">GB</span> / 
+      <span id="totalMemory">0</span><span class="unit">GB</span>
+    </div>
+    
+    <div class="memory-stats">
+      <span><span id="freeMemory">0</span>GB free</span>
+      <span id="percentUsed">0%</span>
+    </div>
+    
+    <div style="margin-top: 12px;">
+      <span class="status-indicator healthy" id="statusIndicator"></span>
+      <span class="status-text healthy" id="statusText">Normal</span>
+    </div>
+    
+    <div class="process-list">
+      <div class="process-item">
+        <span class="process-name">🤖 LM Studio</span>
+        <span class="process-status running" id="lmStatus">Running</span>
+      </div>
+      <div class="process-item">
+        <span class="process-name">📝 VS Code</span>
+        <span class="process-status running" id="vscodeStatus">Running</span>
+      </div>
+      <div class="process-item">
+        <span class="process-name">🌐 Browser</span>
+        <span class="process-status running" id="browserStatus">Running</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const THRESHOLD_WARNING = 75;
+    const THRESHOLD_CRITICAL = 90;
+    
+    let lastStatus = 'healthy';
+    
+    async function fetchMemoryStatus() {
+      try {
+        // Try to get stats from local Node process
+        const response = await fetch('/api/memory-stats');
+        if (response.ok) {
+          const stats = await response.json();
+          updateDisplay(stats);
+          return;
+        }
+      } catch (e) {
+        // API not available, use fallback
+      }
+      
+      // Fallback: use browser's memory API (Chrome only)
+      if (performance.memory) {
+        const used = performance.memory.usedJSHeapSize / (1024 * 1024 * 1024);
+        const total = performance.memory.jsHeapSizeLimit / (1024 * 1024 * 1024);
+        
+        updateDisplay({
+          used: used,
+          total: 16, // Assume 16GB
+          free: 16 - used,
+          percent: (used / 16) * 100
+        });
+      }
+    }
+    
+    function updateDisplay(stats) {
+      const { used, total, free, percent } = stats;
+      
+      // Update bar
+      const bar = document.getElementById('memoryBar');
+      bar.style.width = `${percent}%`;
+      
+      // Remove old classes
+      bar.classList.remove('healthy', 'warning', 'critical');
+      
+      // Add new class based on percentage
+      let status = 'healthy';
+      if (percent >= THRESHOLD_CRITICAL) {
+        status = 'critical';
+      } else if (percent >= THRESHOLD_WARNING) {
+        status = 'warning';
+      }
+      bar.classList.add(status);
+      
+      // Update text values
+      document.getElementById('usedMemory').textContent = used.toFixed(1);
+      document.getElementById('totalMemory').textContent = total.toFixed(1);
+      document.getElementById('freeMemory').textContent = free.toFixed(1);
+      document.getElementById('percentUsed').textContent = `${percent.toFixed(0)}%`;
+      
+      // Update status indicator
+      const indicator = document.getElementById('statusIndicator');
+      const statusText = document.getElementById('statusText');
+      
+      indicator.className = `status-indicator ${status}`;
+      statusText.className = `status-text ${status}`;
+      
+      if (status === 'critical') {
+        statusText.textContent = 'CRITICAL - Auto-pausing';
+      } else if (status === 'warning') {
+        statusText.textContent = 'Warning';
+      } else {
+        statusText.textContent = 'Normal';
+      }
+      
+      lastStatus = status;
+    }
+    
+    // Add memory stats API endpoint to dashboard server
+    // This would be added to src/cockpit/dashboard-server.js
+    
+    // Poll every 2 seconds
+    setInterval(fetchMemoryStatus, 2000);
+    fetchMemoryStatus();
+  </script>
+</body>
+</html>

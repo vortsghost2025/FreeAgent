@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772154338683",
+    "input": "{\"batch\":2382,\"agent\":\"test\",\"intensity\":\"maximum\"}",
+    "output": [
+      {
+        "agent": "test",
+        "response": "Error: fetch failed",
+        "model": "deepseek-coder-v2:16b",
+        "timestamp": 1772154338683
+      }
+    ],
+    "agents_involved": 9,
+    "execution_time_ms": 5752,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-27T01:05:38.683Z",
+    "started_at": "2026-02-27T01:05:32.931Z",
+    "completed_at": "2026-02-27T01:05:38.683Z",
+    "error": null
+  }
+]

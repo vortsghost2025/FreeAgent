@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical AI Federation Cockpit</title>
+  <link rel="stylesheet" href="/css/cockpit.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🏥 Medical AI Federation Cockpit</h1>
+      <p>Unified control for Medical Pipeline, Plugins, and Coding Ensemble</p>
+      
+      <!-- Perception Controls -->
+      <div class="perception-controls">
+        <button class="perception-btn" id="imageUploadBtn" onclick="handleImageUpload()">
+          <span>🖼️</span> Upload Image
+        </button>
+        <button class="perception-btn" id="voiceRecordBtn" onclick="handleVoiceRecord()">
+          <span>🎤</span> Record Voice
+        </button>
+        <button class="perception-btn" id="perceptionStatusBtn" onclick="handlePerceptionStatus()">
+          <span>👁️</span> Perception Status
+        </button>
+      </div>
+      
+      <!-- Hidden file input for image upload -->
+      <input type="file" id="imageFileInput" class="file-input" accept="image/*" onchange="handleImageFileSelected(event)">
+    </header>
+
+    <!-- Status Overview -->
+    <div class="status-bar">
+      <div class="status-card">
+        <div class="indicator"></div>
+        <div class="value" id="uptime">0:00:00</div>
+        <div class="label">Uptime</div>
+      </div>
+      <div class="status-card">
+        <div class="indicator"></div>
+        <div class="value" id="requests">0</div>
+        <div class="label">Total Requests</div>
+      </div>
+      <div class="status-card">
+        <div class="indicator"></div>
+        <div class="value" id="rps">0.0</div>
+        <div class="label">Req/Second</div>
+      </div>
+      <div class="status-card">
+        <div class="indicator"></div>
+        <div class="value" id="latency">0ms</div>
+        <div class="label">Avg Latency</div>
+      </div>
+    </div>
+
+    <!-- Available Interfaces -->
+    <div class="interfaces-section">
+      <h2>🚀 Available Interfaces</h2>
+      <div class="interfaces-grid">
+        <a href="/mega" class="interface-card" target="_blank">
+          <div class="icon">🚀</div>
+          <div class="name">Mega Cockpit</div>
+          <div class="desc">Full agent control</div>
+        </a>
+        <a href="/galaxy" class="interface-card" target="_blank">
+          <div class="icon">🌌</div>
+          <div class="name">Galaxy IDE</div>
+          <div class="desc">Multi-agent IDE</div>
+        </a>
+        <a href="/unified-ide" class="interface-card" target="_blank">
+          <div class="icon">💻</div>
+          <div class="name">Unified IDE</div>
+          <div class="desc">Code + Chat</div>
+        </a>
+        <a href="/monaco-cockpit" class="interface-card" target="_blank">
+          <div class="icon">🎯</div>
+          <div class="name">Monaco Cockpit</div>
+          <div class="desc">Monaco editor</div>
+        </a>
+        <a href="/unified-shell" class="interface-card" target="_blank">
+          <div class="icon">🖥️</div>
+          <div class="name">Unified Shell</div>
+          <div class="desc">Shell interface</div>
+        </a>
+        <a href="/ide" class="interface-card" target="_blank">
+          <div class="icon">📝</div>
+          <div class="name">IDE Workspace</div>
+          <div class="desc">Code workspace</div>
+        </a>
+        <a href="/swarm" class="interface-card" target="_blank">
+          <div class="icon">🐝</div>
+          <div class="name">Swarm Tab</div>
+          <div class="desc">Swarm control</div>
+        </a>
+        <a href="/swarm-dashboard" class="interface-card" target="_blank">
+          <div class="icon">📊</div>
+          <div class="name">Swarm Dashboard</div>
+          <div class="desc">Swarm metrics</div>
+        </a>
+        <a href="/perception-demo" class="interface-card" target="_blank">
+          <div class="icon">👁️</div>
+          <div class="name">Perception Demo</div>
+          <div class="desc">Image/voice AI</div>
+        </a>
+        <a href="/benchmark" class="interface-card" target="_blank">
+          <div class="icon">📈</div>
+          <div class="name">Benchmark</div>
+          <div class="desc">Performance metrics</div>
+        </a>
+        <a href="/rate-limit-cockpit" class="interface-card" target="_blank">
+          <div class="icon">⚡</div>
+          <div class="name">Rate Limit</div>
+          <div class="desc">Rate control</div>
+        </a>
+        <a href="/health" class="interface-card" target="_blank">
+          <div class="icon">❤️</div>
+          <div class="name">Health Check</div>
+          <div class="desc">System health</div>
+        </a>
+        <a href="/agent-task-manager.html" class="interface-card" target="_blank">
+          <div class="icon">📋</div>
+          <div class="name">Task Manager</div>
+          <div class="desc">Agent task assignment</div>
+        </a>
+        <div class="interface-card quick-task-card" onclick="openQuickTaskModal()">
+          <div class="icon">⚡</div>
+          <div class="name">Quick Assign</div>
+          <div class="desc">Instant task assignment</div>
+        </div>
+        <div class="interface-card test-runner-card" onclick="openTestRunner()">
+          <div class="icon">🧪</div>
+          <div class="name">Test Runner</div>
+          <div class="desc">Run system tests</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <!-- Systems Status -->
+      <div class="section">
+        <h2>🔌 System Status</h2>
+        <div class="system-list" id="systems-list">
+          <!-- Systems will be populated by JS -->
+        </div>
+      </div>
+
+      <!-- Task Execution -->
+      <div class="section">
+        <h2>📋 Task Execution</h2>
+        <div class="task-form">
+          <label>Task Type</label>
+          <select id="taskType">
+            <option value="general">General Purpose</option>
+            <option value="structural">Structural Processing</option>
+            <option value="medical">Medical Analysis</option>
+            <option value="code">Code Generation</option>
+            <option value="data">Data Processing</option>
+          </select>
+
+          <label>Task Message</label>
+          <textarea id="taskMessage" rows="4" placeholder="Describe your task..."></textarea>
+
+          <div class="task-options">
+            <label>
+              <input type="checkbox" id="useAutoRouting" checked>
+              Auto-route to best system
+            </label>
+            <label>
+              Preferred System:
+              <select id="preferredSystem">
+                <option value="">Auto (Recommended)</option>
+                <option value="medical_pipeline">Medical Pipeline</option>
+                <option value="coding_ensemble">Coding Ensemble</option>
+                <option value="plugins">Plugins System</option>
+              </select>
+            </label>
+          </div>
+
+          <button onclick="executeTask()">Execute Task</button>
+        </div>
+      </div>
+
+      <!-- Cost Tracking -->
+      <div class="section">
+        <h2>💰 Cost Tracking ($0/mo Goal)</h2>
+        <div class="cost-metrics">
+          <div class="metric">
+            <div>
+              <div class="value" id="tokensUsed">0</div>
+              <div class="target">$0/mo</div>
+            </div>
+            <div class="label">Tokens Used This Month</div>
+          </div>
+          <div class="metric">
+            <div>
+              <div class="value" id="estimatedCost">$0.00</div>
+              <div class="target">$0/mo</div>
+            </div>
+            <div class="label">Estimated Monthly Cost</div>
+          </div>
+          <div class="metric">
+            <div>
+              <div class="value" id="costRatio">0%</div>
+              <div class="target">Target Ratio</div>
+            </div>
+            <div class="metric">
+            <div class="label">Usage Ratio</div>
+          </div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress" id="costProgress"></div>
+        </div>
+        <button onclick="getDetailedCostReport()">Get Detailed Report</button>
+      </div>
+
+      <!-- Activity Log -->
+      <div class="section">
+        <h2>📋 Activity Log</h2>
+        <div class="log-panel" id="logPanel">
+          <p class="system" style="text-align: center; color: #888; padding: 20px;">
+            Cockpit connecting...
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Connection Status -->
+    <div class="connection-indicator" id="connectionStatus" class="disconnected"></div>
+  </div>
+
+  <!-- Quick Task Modal -->
+  <div class="modal-overlay" id="quickTaskModal">
+    <div class="quick-task-modal">
+      <div class="modal-header">
+        <h3>⚡ Quick Task Assignment</h3>
+        <button class="close-modal" onclick="closeQuickTaskModal()">×</button>
+      </div>
+      <div class="quick-task-form">
+        <div class="form-group">
+          <label>Task Description</label>
+          <input type="text" id="quickTaskInput" placeholder="What needs to be done?">
+        </div>
+        <div class="form-group">
+          <label>Assign to</label>
+          <select id="quickTaskAgent">
+            <option value="auto">Auto-select best agent</option>
+            <option value="kilo">Kilo</option>
+            <option value="claw">Claw</option>
+            <option value="federation">Federation</option>
+          </select>
+        </div>
+        <div class="agent-suggestions">
+          <span class="agent-tag" onclick="document.getElementById('quickTaskAgent').value='kilo'">Kilo</span>
+          <span class="agent-tag" onclick="document.getElementById('quickTaskAgent').value='claw'">Claw</span>
+          <span class="agent-tag" onclick="document.getElementById('quickTaskAgent').value='federation'">Federation</span>
+        </div>
+        <button class="assign-button" onclick="executeQuickTask()">Assign Task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/cockpit-core.js"></script>
+  <script src="/js/cockpit-ui.js"></script>
+  <script src="/js/cockpit-init.js"></script>
+</body>
+</html>

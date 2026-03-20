@@ -1,0 +1,15 @@
+{
+  "agent": "test",
+  "state": {
+    "status": "idle",
+    "capabilities": [
+      "write_tests",
+      "run_tests",
+      "coverage_analysis"
+    ],
+    "recent_messages": [],
+    "patterns": [],
+    "embeddings": [],
+    "last_updated": null
+  }
+}

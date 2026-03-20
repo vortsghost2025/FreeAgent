@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772112230033",
+    "input": "\"test\"",
+    "output": [
+      {
+        "agent": "test",
+        "response": " As a test agent, I am here to assist with various testing tasks such as generating tests, assessing code coverage, and ensuring the quality of the software through thorough validation processes. How can I be of assistance in your testing efforts?",
+        "model": "deepseek-coder-v2:16b",
+        "timestamp": 1772112230033
+      }
+    ],
+    "agents_involved": 9,
+    "execution_time_ms": 18933,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-26T13:23:50.033Z",
+    "started_at": "2026-02-26T13:23:31.100Z",
+    "completed_at": "2026-02-26T13:23:50.033Z",
+    "error": null
+  }
+]

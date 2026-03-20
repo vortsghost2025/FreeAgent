@@ -1,5 +1,5 @@
 // FILE: __tests__/output_agent.test.js
-const { createOutputAgent } = require('../agents/output_agent');
+import { createOutputAgent } from '../agents/output_agent.js';
 
 test('output factory and contract', async () => {
   const agent = createOutputAgent('out-001');

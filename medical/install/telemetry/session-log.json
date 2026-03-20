@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-27T20:57:49.340Z",
+  "sessionDuration": "5 minutes",
+  "opportunitiesDetected": 0,
+  "consensusApprovals": 0,
+  "consensusRejections": 0,
+  "websocketReconnects": 0,
+  "averageMemoryMB": 5,
+  "opportunitiesPerMinute": "0.00"
+},
