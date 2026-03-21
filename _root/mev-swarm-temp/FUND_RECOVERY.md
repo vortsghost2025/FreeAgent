@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # Instructions to recover your funds
 
 ## Current Status:
@@ -8,16 +9,16 @@
 ## To recover the $51 from contract:
 
 ### Option 1 - Use your other wallet (0x29F7...)
-If you can access 0x29F7830AfD1F612935cFAfC65BF7b02272E79E0F in MetaMask:
+If you can access REDACTED_ADDRESS in MetaMask:
 
-1. Send 0.005 ETH from 0x29F7... to 0x34769bE7087F1fE5B9ad5C50cC1526BC63217341
+1. Send 0.005 ETH from 0x29F7... to REDACTED_ADDRESS
 2. Then I can run the withdraw script to get the $51 back
 
 ### Option 2 - Update .env with 0x29F7 private key
 If you have the private key for 0x29F7..., add it to mev-swarm/.env:
 
 ```
-PRIVATE_KEY=your_private_key_for_0x29F7...
+PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 ```
 
 Then run: `node send-gas.cjs`

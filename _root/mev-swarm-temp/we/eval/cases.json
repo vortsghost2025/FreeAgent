@@ -1,0 +1,17 @@
+[
+  {
+    "id": "simple_add",
+    "prompt": "Write a concise JavaScript function named `add(a,b)` that returns the sum of two numbers.",
+    "agents": ["Code Generation"]
+  },
+  {
+    "id": "explain_algo",
+    "prompt": "Briefly explain the concept of memoization and give a short code example.",
+    "agents": ["Analysis"]
+  },
+  {
+    "id": "data_pipeline",
+    "prompt": "Outline a simple ETL pipeline to ingest CSV files into a Postgres table.",
+    "agents": ["Data Engineering"]
+  }
+]

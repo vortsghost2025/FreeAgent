@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # 🚀 Block Watcher Upgrade Instructions
 
 This upgrade will transform your watcher from showing:
@@ -231,7 +232,7 @@ async function decodeSwapData(input, value, dexName, provider, tokenCache) {
         ['uint256', 'address[]', 'address', 'uint256'],
         '0x' + data
       );
-      tokenIn = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'; // WETH
+      tokenIn = 'REDACTED_ADDRESS'; // WETH
       tokenOut = params[1][params[1].length - 1];
       amountIn = BigInt(value);
       amountOut = params[0];

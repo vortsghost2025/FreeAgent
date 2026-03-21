@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * Base Simple Launcher
  * Uses Base pool addresses (UniV3 + Aerodrome)
@@ -22,20 +23,20 @@ const CONFIG = {
 const POOLS = [
   {
     name: "UniV3 WETH/USDC",
-    address: "0xd0b53D9277642d899DF5C87A3966A349A798F224",
+    address: "REDACTED_ADDRESS",
     type: "uniswap_v3",
     fee: 500,
-    token0: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", // USDC
-    token1: "0x4200000000000000000000000000000000000006", // WETH
+    token0: "REDACTED_ADDRESS", // USDC
+    token1: "REDACTED_ADDRESS", // WETH
     decimals0: 6,
     decimals1: 18,
   },
   {
     name: "Aerodrome WETH/USDC", 
-    address: "0xcDAC0d6c6C59727a65F871236188350531885C43",
+    address: "REDACTED_ADDRESS",
     type: "uniswap_v2", // Aerodrome volatile uses same interface
-    token0: "0x4200000000000000000000000000000000000006", // WETH
-    token1: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", // USDC
+    token0: "REDACTED_ADDRESS", // WETH
+    token1: "REDACTED_ADDRESS", // USDC
     decimals0: 18,
     decimals1: 6,
   }

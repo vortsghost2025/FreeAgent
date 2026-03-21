@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * Base Multi-Pool Arbitrage Bot
  * Monitors USDC/WETH, cbBTC/WETH, cbBTC/USDC pools
@@ -15,27 +16,27 @@ const MIN_SPREAD = 0.1; // Minimum 0.1% spread to consider
 // =============================
 
 // BASE TOKENS
-const WETH = "0x4200000000000000000000000000000000000006";
-const USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
-const cbBTC = "0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf";
+const WETH = "REDACTED_ADDRESS";
+const USDC = "REDACTED_ADDRESS";
+const cbBTC = "REDACTED_ADDRESS";
 
 // ALL POOLS - NO STABLE POOLS (they use different math)
 const POOLS = [
   // === USDC/WETH (volatile pools only) ===
-  { name: "UniV3-0.01%", addr: "0xb4CB800910B228ED3d0834cF79D697127BBB00e5", type: "v3", fee: 0.0001, pair: "WETH/USDC", tokenA: WETH, decA: 18, tokenB: USDC, decB: 6 },
-  { name: "UniV3-0.05%", addr: "0xd0b53D9277642d899DF5C87A3966A349A798F224", type: "v3", fee: 0.0005, pair: "WETH/USDC", tokenA: WETH, decA: 18, tokenB: USDC, decB: 6 },
-  { name: "UniV3-0.3%", addr: "0x6c561B446416E1A00E8E93E221854d6eA4171372", type: "v3", fee: 0.003, pair: "WETH/USDC", tokenA: WETH, decA: 18, tokenB: USDC, decB: 6 },
-  { name: "Aero-vol", addr: "0xcDAC0d6c6C59727a65F871236188350531885C43", type: "v2", fee: 0.003, pair: "WETH/USDC", tokenA: WETH, decA: 18, tokenB: USDC, decB: 6 },
+  { name: "UniV3-0.01%", addr: "REDACTED_ADDRESS", type: "v3", fee: 0.0001, pair: "WETH/USDC", tokenA: WETH, decA: 18, tokenB: USDC, decB: 6 },
+  { name: "UniV3-0.05%", addr: "REDACTED_ADDRESS", type: "v3", fee: 0.0005, pair: "WETH/USDC", tokenA: WETH, decA: 18, tokenB: USDC, decB: 6 },
+  { name: "UniV3-0.3%", addr: "REDACTED_ADDRESS", type: "v3", fee: 0.003, pair: "WETH/USDC", tokenA: WETH, decA: 18, tokenB: USDC, decB: 6 },
+  { name: "Aero-vol", addr: "REDACTED_ADDRESS", type: "v2", fee: 0.003, pair: "WETH/USDC", tokenA: WETH, decA: 18, tokenB: USDC, decB: 6 },
   
   // === cbBTC/WETH ===
-  { name: "UniV3-0.01%", addr: "0x4c1e404a013bF1917fAf2dBF5E5cEf3E9Bafb5aa", type: "v3", fee: 0.0001, pair: "cbBTC/WETH", tokenA: cbBTC, decA: 8, tokenB: WETH, decB: 18 },
-  { name: "UniV3-0.05%", addr: "0x7AeA2E8A3843516afa07293a10Ac8E49906dabD1", type: "v3", fee: 0.0005, pair: "cbBTC/WETH", tokenA: cbBTC, decA: 8, tokenB: WETH, decB: 18 },
-  { name: "UniV3-0.3%", addr: "0x8c7080564B5A792A33Ef2FD473fbA6364d5495e5", type: "v3", fee: 0.003, pair: "cbBTC/WETH", tokenA: cbBTC, decA: 8, tokenB: WETH, decB: 18 },
-  { name: "Aero-vol", addr: "0x2578365B3dfA7FfE60108e181EFb79FeDdec2319", type: "v2", fee: 0.003, pair: "cbBTC/WETH", tokenA: WETH, decA: 18, tokenB: cbBTC, decB: 8 },
+  { name: "UniV3-0.01%", addr: "REDACTED_ADDRESS", type: "v3", fee: 0.0001, pair: "cbBTC/WETH", tokenA: cbBTC, decA: 8, tokenB: WETH, decB: 18 },
+  { name: "UniV3-0.05%", addr: "REDACTED_ADDRESS", type: "v3", fee: 0.0005, pair: "cbBTC/WETH", tokenA: cbBTC, decA: 8, tokenB: WETH, decB: 18 },
+  { name: "UniV3-0.3%", addr: "REDACTED_ADDRESS", type: "v3", fee: 0.003, pair: "cbBTC/WETH", tokenA: cbBTC, decA: 8, tokenB: WETH, decB: 18 },
+  { name: "Aero-vol", addr: "REDACTED_ADDRESS", type: "v2", fee: 0.003, pair: "cbBTC/WETH", tokenA: WETH, decA: 18, tokenB: cbBTC, decB: 8 },
   
   // === cbBTC/USDC ===
-  { name: "UniV3-0.05%", addr: "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef", type: "v3", fee: 0.0005, pair: "cbBTC/USDC", tokenA: USDC, decA: 6, tokenB: cbBTC, decB: 8 },
-  { name: "Aero-vol", addr: "0x9c38b55f9A9Aba91BbCEDEb12bf4428f47A6a0B8", type: "v2", fee: 0.003, pair: "cbBTC/USDC", tokenA: USDC, decA: 6, tokenB: cbBTC, decB: 8 },
+  { name: "UniV3-0.05%", addr: "REDACTED_ADDRESS", type: "v3", fee: 0.0005, pair: "cbBTC/USDC", tokenA: USDC, decA: 6, tokenB: cbBTC, decB: 8 },
+  { name: "Aero-vol", addr: "REDACTED_ADDRESS", type: "v2", fee: 0.003, pair: "cbBTC/USDC", tokenA: USDC, decA: 6, tokenB: cbBTC, decB: 8 },
 ];
 
 // ========== PRICE FUNCTIONS ==========

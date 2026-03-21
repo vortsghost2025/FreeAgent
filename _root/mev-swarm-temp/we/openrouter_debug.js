@@ -1,0 +1,1 @@
+if(!process.env.OPENROUTER_API_KEY){ console.error('NO_KEY'); process.exit(2);} const k = process.env.OPENROUTER_API_KEY; console.log('LEN='+k.length); console.log('PREFIX='+k.slice(0,8)); console.log('SUFFIX='+k.slice(-4));

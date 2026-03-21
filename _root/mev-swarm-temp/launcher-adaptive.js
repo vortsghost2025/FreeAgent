@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * ADAPTIVE LAUNCHER - Self-tuning arbitrage bot
  * Automatically adjusts: spread threshold, slippage, trade size
@@ -19,9 +20,9 @@ class AdaptiveLauncher {
     this.wallet = new ethers.Wallet(process.env.PRIVATE_KEY, this.provider);
 
     this.tokens = {
-      WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-      USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-      DAI: '0x6B175474E89094C44Da98b954EedeAC495271d0F'
+      WETH: 'REDACTED_ADDRESS',
+      USDC: 'REDACTED_ADDRESS',
+      DAI: 'REDACTED_ADDRESS'
     };
 
     // ADAPTIVE STATE - This is the brain
@@ -63,8 +64,8 @@ class AdaptiveLauncher {
 
     // Pool addresses
     this.pools = {
-      UNI_V2_WETH_USDC: '0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc',
-      SUSHI_WETH_USDC: '0x397ff1542f962076d0bfe58ea045ffa2d347aca0'
+      UNI_V2_WETH_USDC: 'REDACTED_ADDRESS',
+      SUSHI_WETH_USDC: 'REDACTED_ADDRESS'
     };
   }
 
@@ -349,7 +350,7 @@ class AdaptiveLauncher {
       ];
 
       const uniRouter = new ethers.Contract(
-        '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+        'REDACTED_ADDRESS',
         routerABI,
         this.wallet
       );

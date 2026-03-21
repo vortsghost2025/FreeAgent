@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 // mev-pre-signer.cjs - Phase 3: Pre-sign transactions for instant submission
 // This component pre-signs arbitrage transactions so they can be submitted instantly
 // when the ML model predicts an opportunity
@@ -18,16 +19,16 @@ const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
 // Pool addresses (same as data collector)
 const POOLS = [
-  { name: "UniV3-0.05%", addr: "0xd0b53D9277642d899DF5C87A3966A349A798F224", protocol: "uniswap", fee: 500 },
-  { name: "UniV3-0.3%", addr: "0x6c561B446416E1A00E8E93E221854d6eA4171372", protocol: "uniswap", fee: 3000 },
-  { name: "Aero-vol", addr: "0xcDAC0d6c6C59727a65F871236188350531885C43", protocol: "v2" }
+  { name: "UniV3-0.05%", addr: "REDACTED_ADDRESS", protocol: "uniswap", fee: 500 },
+  { name: "UniV3-0.3%", addr: "REDACTED_ADDRESS", protocol: "uniswap", fee: 3000 },
+  { name: "Aero-vol", addr: "REDACTED_ADDRESS", protocol: "v2" }
 ];
 
-const WETH = "0x4200000000000000000000000000000000000006";
-const USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+const WETH = "REDACTED_ADDRESS";
+const USDC = "REDACTED_ADDRESS";
 
-const UNISWAP_V3_ROUTER = "0x2626664c2603336E57B271c5C0b26F421741e481";
-const AERODROME_ROUTER = "0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43";
+const UNISWAP_V3_ROUTER = "REDACTED_ADDRESS";
+const AERODROME_ROUTER = "REDACTED_ADDRESS";
 
 const TRADE_SIZE_ETH = 0.0015;
 const MIN_PROFIT_USD = 0.01;

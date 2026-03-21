@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 const { ethers } = require("ethers");
 
 const RPC_URL = "https://base-rpc.publicnode.com";
@@ -5,9 +6,9 @@ const provider = new ethers.JsonRpcProvider(RPC_URL);
 
 // ONLY USDC/ETH - nothing else until this works
 const POOLS = [
-  { name: "UniV3-0.05%", addr: "0xd0b53D9277642d899DF5C87A3966A349A798F224", type: "v3" },
-  { name: "UniV3-0.3%", addr: "0x6c561B446416E1A00E8E93E221854d6eA4171372", type: "v3" },
-  { name: "Aero-vol", addr: "0xcDAC0d6c6C59727a65F871236188350531885C43", type: "v2" },
+  { name: "UniV3-0.05%", addr: "REDACTED_ADDRESS", type: "v3" },
+  { name: "UniV3-0.3%", addr: "REDACTED_ADDRESS", type: "v3" },
+  { name: "Aero-vol", addr: "REDACTED_ADDRESS", type: "v2" },
 ];
 
 const TWO_192 = 115792089237316195423570985008687907853269984665640564039457584007913129639936n;

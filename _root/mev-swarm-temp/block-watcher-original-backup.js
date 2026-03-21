@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * MEV Swarm - Real-time Mempool Watcher
  * Uses HTTP polling to watch pending transactions
@@ -30,56 +31,56 @@ const WS_URL = process.env.ETH_WS_URL ||
 // ============================================================
 const DEX_ROUTERS = {
   // Uniswap V2
-  '0x7a250d5630b4cf539739df2c5dacb4c659f2488d': 'Uniswap V2',
+  'REDACTED_ADDRESS': 'Uniswap V2',
   // Uniswap V3
-  '0xe592427a0aece92de3edee1f18e0157c05861564': 'Uniswap V3',
+  'REDACTED_ADDRESS': 'Uniswap V3',
   // Sushiswap
-  '0xd9e1ce17f2641f24ae83637ab66a2cca9c378b9f': 'Sushiswap',
+  'REDACTED_ADDRESS': 'Sushiswap',
   // Curve
-  '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063': 'Curve',
+  'REDACTED_ADDRESS': 'Curve',
   // Balancer
-  '0xba12222222228d8ba445958a75a0704d566bf2c8': 'Balancer',
+  'REDACTED_ADDRESS': 'Balancer',
   // Additional routers
-  '0x1b02da8cb1d0975baf44bc35efe2a538bde96d1d': 'SushiSwap (Avax)',
+  'REDACTED_ADDRESS': 'SushiSwap (Avax)',
   '0xa6cc3c2531fdaa6ae1a3ca84c2855806728693e': 'KyberDMM',
   '0xeb31076e7b370c07fa05cb60c5d0fb2f87c8ec3': 'DODO',
-  '0xdef171fe48cf0115b1d80b88dc8eab59176fee57': 'ParaSwap',
-  '0x1111111254eeb25477b68fb85ed929f73a960582': '1inch',
+  'REDACTED_ADDRESS': 'ParaSwap',
+  'REDACTED_ADDRESS': '1inch',
 };
 
 // Token symbols for common tokens
 const COMMON_TOKENS = {
-  '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599': 'WBTC',
-  '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2': 'WETH',
-  '0x6b175474e89094c44da98b954eedeac495271d0f': 'DAI',
-  '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48': 'USDC',
-  '0xd533a949740bb3306d119cc777fa900ba034cd52': 'CRV',
-  '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9': 'AAVE',
-  '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984': 'UNI',
-  '0x514910771af9ca656af840dff83e8264ecf986ca': 'LINK',
-  '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0': 'MATIC',
+  'REDACTED_ADDRESS': 'WBTC',
+  'REDACTED_ADDRESS': 'WETH',
+  'REDACTED_ADDRESS': 'DAI',
+  'REDACTED_ADDRESS': 'USDC',
+  'REDACTED_ADDRESS': 'CRV',
+  'REDACTED_ADDRESS': 'AAVE',
+  'REDACTED_ADDRESS': 'UNI',
+  'REDACTED_ADDRESS': 'LINK',
+  'REDACTED_ADDRESS': 'MATIC',
 };
 
 // ============================================================
 // Token Decimals Map
 // ============================================================
 const TOKEN_DECIMALS = {
-  '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2': 18, // WETH
-  '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599': 8,  // WBTC
-  '0x6b175474e89094c44da98b954eedeac495271d0f': 18, // DAI
-  '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48': 6,  // USDC
-  '0xd533a949740bb3306d119cc777fa900ba034cd52': 18, // CRV
-  '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9': 18, // AAVE
-  '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984': 18, // UNI
-  '0x514910771af9ca656af840dff83e8264ecf986ca': 18, // LINK
-  '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0': 18, // MATIC
+  'REDACTED_ADDRESS': 18, // WETH
+  'REDACTED_ADDRESS': 8,  // WBTC
+  'REDACTED_ADDRESS': 18, // DAI
+  'REDACTED_ADDRESS': 6,  // USDC
+  'REDACTED_ADDRESS': 18, // CRV
+  'REDACTED_ADDRESS': 18, // AAVE
+  'REDACTED_ADDRESS': 18, // UNI
+  'REDACTED_ADDRESS': 18, // LINK
+  'REDACTED_ADDRESS': 18, // MATIC
 };
 
 // Uniswap V2 Factory & Pair Addresses (Mainnet)
-const UNISWAP_V2_FACTORY = '0x5C69bEe701ef814a2B6ae3C9d4cEBf31118f25d5';
+const UNISWAP_V2_FACTORY = 'REDACTED_ADDRESS';
 
 // Sushiswap Factory (Mainnet)
-const SUSHISWAP_FACTORY = '0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac';
+const SUSHISWAP_FACTORY = 'REDACTED_ADDRESS';
 
 // ABI for getting pair address from factory
 const FACTORY_ABI = [
@@ -469,12 +470,12 @@ class MultiHopArbitrage {
 
   async scan2HopOpportunities(amountIn = BigInt(1e18)) {
     const commonPairs = [
-      ['0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'],
-      ['0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', '0x6b175474e89094c44da98b954eedeac495271d0f'],
-      ['0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599'],
-      ['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', '0x6b175474e89094c44da98b954eedeac495271d0f'],
-      ['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', '0xd533a949740bb3306d119cc777fa900ba034cd52'],
-      ['0x1f9840a85d5af5bf1d1762f925bdaddc4201f984', '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'],
+      ['REDACTED_ADDRESS', 'REDACTED_ADDRESS'],
+      ['REDACTED_ADDRESS', 'REDACTED_ADDRESS'],
+      ['REDACTED_ADDRESS', 'REDACTED_ADDRESS'],
+      ['REDACTED_ADDRESS', 'REDACTED_ADDRESS'],
+      ['REDACTED_ADDRESS', 'REDACTED_ADDRESS'],
+      ['REDACTED_ADDRESS', 'REDACTED_ADDRESS'],
     ];
 
     const opportunities = [];
@@ -493,11 +494,11 @@ class MultiHopArbitrage {
 
   async scan3HopOpportunities(amountIn = BigInt(1e18)) {
     const tokenSet = new Set([
-      '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-      '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-      '0x6b175474e89094c44da98b954eedeac495271d0f',
-      '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
-      '0xd533a949740bb3306d119cc777fa900ba034cd52',
+      'REDACTED_ADDRESS',
+      'REDACTED_ADDRESS',
+      'REDACTED_ADDRESS',
+      'REDACTED_ADDRESS',
+      'REDACTED_ADDRESS',
     ]);
 
     const tokens = Array.from(tokenSet);
@@ -745,16 +746,16 @@ function decodeSwapData(input, value, dexName) {
       );
       
       if (funcName === 'swapExactETHForTokens') {
-        tokenIn = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
+        tokenIn = 'REDACTED_ADDRESS';
         tokenOut = params[1][params[1].length - 1];
         amountIn = value;
         amountOut = params[0];
         // Store raw ETH address for calculations
-        tokenIn = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'; // WETH
+        tokenIn = 'REDACTED_ADDRESS'; // WETH
         tokenOut = params[1][params[1].length - 1];
       } else {
         tokenIn = params[1][0];
-        tokenOut = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'; // WETH
+        tokenOut = 'REDACTED_ADDRESS'; // WETH
         amountIn = params[0];
         amountOut = value;
       }

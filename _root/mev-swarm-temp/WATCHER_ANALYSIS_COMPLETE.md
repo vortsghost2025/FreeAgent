@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # 🔍 MEV-Swarm Watcher - Complete Analysis
 
 ## Executive Summary
@@ -53,7 +54,7 @@ ethereum.publicnode.com:  183 txs, 0 DEX (0%)
 
 ### ✅ Router Address Detection
 ```bash
-🐛 DEX tx detected but no swap data: 0x204f8dd7... to 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D
+🐛 DEX tx detected but no swap data: 0x204f8dd7... to REDACTED_ADDRESS
    🐛 Func sig: 0x7ff36ab5 (UNKNOWN)
 ```
 - Correctly identifies Uniswap V2 router address
@@ -62,7 +63,7 @@ ethereum.publicnode.com:  183 txs, 0 DEX (0%)
 ### ✅ Transaction Sampling (First 5 per run)
 ```bash
 🔍 [TX#1] 0xce7becfc...
-   To: 0x55d398326f99059fF775485246999027B3197955
+   To: REDACTED_ADDRESS
    Has data: true
    Func sig: 0xa9059cbb  // ERC20 transfer
 ```

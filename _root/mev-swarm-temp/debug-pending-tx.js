@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import 'dotenv/config';
 import { ethers } from 'ethers';
 
@@ -5,9 +6,9 @@ const RPC_URL = 'https://ethereum-mainnet.core.chainstack.com/4eaab7e73e2a832024
 const provider = new ethers.JsonRpcProvider(RPC_URL);
 
 const DEX_ROUTERS = {
-  '0x7a250d5630b4cf539739df2c5dacb4c659f2488d': 'Uniswap V2',
-  '0xe592427a0aece92de3edee1f18e0157c05861564': 'Uniswap V3',
-  '0xd9e1ce17f2641f24ae83637ab66a2cca9c378b9f': 'Sushiswap',
+  'REDACTED_ADDRESS': 'Uniswap V2',
+  'REDACTED_ADDRESS': 'Uniswap V3',
+  'REDACTED_ADDRESS': 'Sushiswap',
 };
 
 const DEX_FUNCTIONS = {

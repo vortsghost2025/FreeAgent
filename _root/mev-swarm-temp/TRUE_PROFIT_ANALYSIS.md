@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # MEV Bot - TRUE Profit Analysis (Wallet-Based Verification)
 
 **Date**: March 3, 2026
@@ -10,14 +11,14 @@
 
 ### Two-Wallet Architecture Identified
 
-**Wallet 1 (Trading Wallet)**: `0x29F7830AfD1F612935cFAfC65BF7b02272E79E0F`
+**Wallet 1 (Trading Wallet)**: `REDACTED_ADDRESS`
 - **Balance**: $219.06 (0.110683 ETH)
 - **WETH**: $192.34 (0.09718386 WETH)
 - **ETH**: $26.36 (0.01332111 ETH)
 - **Transactions**: 108 total
 - **Activity**: Executing arbitrage, wrapping/unwrapping WETH
 
-**Wallet 2 (Funding Wallet)**: `0x34769bE7087F1fE5B9ad5C50cC1526BC63217341`
+**Wallet 2 (Funding Wallet)**: `REDACTED_ADDRESS`
 - **Balance**: $27.32 (0.01379 ETH)
 - **Funding Source**: KuCoin exchange
 - **Activity**: Deposits to trading wallet, withdrawals from DEX

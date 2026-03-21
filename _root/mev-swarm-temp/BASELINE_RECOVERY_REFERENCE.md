@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # Baseline Recovery Reference
 
 Date: 2026-03-19
@@ -13,17 +14,17 @@ This document pulls together the historical reconstruction, the current launcher
 
 ## Wallet And Contract Map
 
-- Funding / staging wallet: `0x34769bE7087F1fE5B9ad5C50cC1526BC63217341`
-- Historical trading wallet: `0x29F7830AfD1F612935cFAfC65BF7b02272E79E0F`
-- Later signer / WETH-holding wallet: `0xC649A2F94AFc4E5649D3d575d16E739e70B2BA2F`
-- Active executor contract: `0x4FF5eF5d185195173b0B178eDe4A7679E7De272f`
-- Older contract seen in the repo history: `0xaC9d24032F5375625661fADA31902D10D25c55e7`
+- Funding / staging wallet: `REDACTED_ADDRESS`
+- Historical trading wallet: `REDACTED_ADDRESS`
+- Later signer / WETH-holding wallet: `REDACTED_ADDRESS`
+- Active executor contract: `REDACTED_ADDRESS`
+- Older contract seen in the repo history: `REDACTED_ADDRESS`
 
 ## Historical Timeline
 
 - February 27, 2026:
   - first confirmed KuCoin funding into `0x3476...`
-  - tx: `0x87604f90584f286f2d25fa1eb37441e56578b6a59d96d6e3f5f3b4221b91c6d7`
+  - tx: `REDACTED_PRIVATE_KEY`
 - March 2, 2026:
   - setup / funding / deployment activity
   - transition into real executor activity later that day
@@ -38,9 +39,9 @@ This document pulls together the historical reconstruction, the current launcher
 
 Examples of real historical executor calls:
 
-- `0x23d19670d2042df4b53205d52374babc3d595b77b000ed2bf83b68b149fd6e1d`
-- `0xe59a8ab9a5d81c08db4e84637ea6db0904e64163e94a66889ba1574053dffcd2`
-- `0x57a7656530875af333b7c50f6096ac3924ce271b1bcc3652f3c04aff293e89bd`
+- `REDACTED_PRIVATE_KEY`
+- `REDACTED_PRIVATE_KEY`
+- `REDACTED_PRIVATE_KEY`
 
 What those prove:
 

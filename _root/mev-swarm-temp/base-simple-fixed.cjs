@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 const { ethers } = require("ethers");
 
 const RPC_URL = "https://base-rpc.publicnode.com";
@@ -5,9 +6,9 @@ const provider = new ethers.JsonRpcProvider(RPC_URL);
 
 // Only pools we KNOW work from debug
 const POOLS = [
-  { name: "UniV3-ETH-0.05%", addr: "0xd0b53D9277642d899DF5C87A3966A349A798F224", type: "v3", pair: "USDC/ETH" },
-  { name: "UniV3-ETH-0.3%", addr: "0x6c561B446416E1A00E8E93E221854d6eA4171372", type: "v3", pair: "USDC/ETH" },
-  { name: "Aero-ETH", addr: "0xcDAC0d6c6C59727a65F871236188350531885C43", type: "v2", pair: "USDC/ETH" },
+  { name: "UniV3-ETH-0.05%", addr: "REDACTED_ADDRESS", type: "v3", pair: "USDC/ETH" },
+  { name: "UniV3-ETH-0.3%", addr: "REDACTED_ADDRESS", type: "v3", pair: "USDC/ETH" },
+  { name: "Aero-ETH", addr: "REDACTED_ADDRESS", type: "v2", pair: "USDC/ETH" },
 ];
 
 // ONE function that works for USDC/ETH - fixed BigInt math

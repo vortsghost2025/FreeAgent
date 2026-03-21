@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import { ethers } from 'ethers';
 import 'dotenv/config';
 
@@ -7,8 +8,8 @@ import 'dotenv/config';
  */
 
 async function recoverFunds() {
-  const compromisedAddress = '0x29F7830AfD1F612935cFAfC65BF7b02272E79E0F';
-  const compromisedKey = '0xe06a93e9b9ddb2350632aa4e6e9e20e931f40e7d288475cceec2a46654723193';
+  const compromisedAddress = 'REDACTED_ADDRESS';
+  const compromisedKey = 'REDACTED_PRIVATE_KEY';
 
   console.log('╔════════════════════════════════════════════════════════════════╗');
   console.log('║  🚨 EMERGENCY FUND RECOVERY TOOL                  ║');

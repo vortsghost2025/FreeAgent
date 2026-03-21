@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import('ethers').then(async ({ ethers }) => {
   const provider = new ethers.JsonRpcProvider('https://ethereum-mainnet.core.chainstack.com/4eaab7e73e2a832024e11e41e6688733');
 
@@ -5,7 +6,7 @@ import('ethers').then(async ({ ethers }) => {
   const CURVE_POOLS = [
     {
       name: 'USDC/WETH (main)',
-      address: '0x4DEcE878Ce96F3491ccAD3a663DcDa694D41e829',
+      address: 'REDACTED_ADDRESS',
     }
   ];
 
@@ -27,8 +28,8 @@ import('ethers').then(async ({ ethers }) => {
       console.log('  Coin0:', coin0);
       console.log('  Coin1:', coin1);
 
-      const USDC = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
-      const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+      const USDC = 'REDACTED_ADDRESS';
+      const WETH = 'REDACTED_ADDRESS';
 
       const isUSDC = coin0.toLowerCase() === USDC.toLowerCase() || coin1.toLowerCase() === USDC.toLowerCase();
       const isWETH = coin0.toLowerCase() === WETH.toLowerCase() || coin1.toLowerCase() === WETH.toLowerCase();

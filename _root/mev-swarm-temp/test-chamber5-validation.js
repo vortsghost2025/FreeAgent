@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * MEV Swarm - Chamber 5 Validation Test
  * Mempool Integration Layer
@@ -31,21 +32,21 @@ async function testChamber5() {
     {
       hash: '0x123abc',
       data: '0x022c0d9f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a',
-      to: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+      to: 'REDACTED_ADDRESS',
       value: ethers.parseEther('10'),
       gasPrice: BigInt(30e9)
     },
     {
       hash: '0x456def',
       data: '0xc04b8d59000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-      to: '0xE592427A0AEce92De3Edee1F18E0157C05861564',
+      to: 'REDACTED_ADDRESS',
       value: ethers.parseEther('5'),
       gasPrice: BigInt(35e9)
     },
     {
       hash: '0x789ghi',
       data: '0x38ed17390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-      to: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F',
+      to: 'REDACTED_ADDRESS',
       value: 0n,
       gasPrice: BigInt(25e9)
     }
@@ -100,7 +101,7 @@ async function testChamber5() {
   const v2SwapTx = {
     hash: '0xv2test',
     data: '0x022c0d9f0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a',
-    to: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+    to: 'REDACTED_ADDRESS',
     value: ethers.parseEther('10'),
     timestamp: Date.now()
   };
@@ -121,7 +122,7 @@ async function testChamber5() {
   const v3SwapTx = {
     hash: '0xv3test',
     data: '0xc04b8d59000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-    to: '0xE592427A0AEce92De3Edee1F18E0157C05861564',
+    to: 'REDACTED_ADDRESS',
     value: ethers.parseEther('5'),
     timestamp: Date.now()
   };

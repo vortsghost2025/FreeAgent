@@ -1,19 +1,20 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 const { ethers } = require("ethers");
 
 const RPC_URL = "https://base-rpc.publicnode.com";
 const provider = new ethers.JsonRpcProvider(RPC_URL);
 
-const WETH = "0x4200000000000000000000000000000000000006";
-const USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
-const cbBTC = "0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf";
+const WETH = "REDACTED_ADDRESS";
+const USDC = "REDACTED_ADDRESS";
+const cbBTC = "REDACTED_ADDRESS";
 
 const POOLS = [
-  { name: "UniV3-USDC/ETH-0.05%", addr: "0xd0b53D9277642d899DF5C87A3966A349A798F224", type: "v3" },
-  { name: "Aero-USDC/ETH-vol", addr: "0xcDAC0d6c6C59727a65F871236188350531885C43", type: "v2" },
-  { name: "Aero-USDC/ETH-stable", addr: "0x3548029694fbB241D45FB24Ba0cd9c9d4E745f16", type: "v2" },
-  { name: "UniV3-cbBTC/ETH-0.3%", addr: "0x8c7080564B5A792A33Ef2FD473fbA6364d5495e5", type: "v3" },
-  { name: "Aero-cbBTC/ETH-vol", addr: "0x2578365B3dfA7FfE60108e181EFb79FeDdec2319", type: "v2" },
-  { name: "UniV3-cbBTC/USDC-0.05%", addr: "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef", type: "v3" },
+  { name: "UniV3-USDC/ETH-0.05%", addr: "REDACTED_ADDRESS", type: "v3" },
+  { name: "Aero-USDC/ETH-vol", addr: "REDACTED_ADDRESS", type: "v2" },
+  { name: "Aero-USDC/ETH-stable", addr: "REDACTED_ADDRESS", type: "v2" },
+  { name: "UniV3-cbBTC/ETH-0.3%", addr: "REDACTED_ADDRESS", type: "v3" },
+  { name: "Aero-cbBTC/ETH-vol", addr: "REDACTED_ADDRESS", type: "v2" },
+  { name: "UniV3-cbBTC/USDC-0.05%", addr: "REDACTED_ADDRESS", type: "v3" },
 ];
 
 async function debugPool(pool) {

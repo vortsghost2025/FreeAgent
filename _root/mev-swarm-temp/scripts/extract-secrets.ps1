@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 $out = 'C:\Users\seand\OneDrive\workspace\_root\mev-swarm-temp\.local_secrets.env'
 if (Test-Path $out) { Remove-Item $out -Force }
 $seen = @{}
@@ -10,7 +11,7 @@ Get-ChildItem -Path 'C:\Users\seand\Documents' -Recurse -File -ErrorAction Silen
         if (-not $seen.ContainsKey($v)) {
           $seen[$v] = $true
           if ($v -match '^0x[a-fA-F0-9]{64}$') {
-            Add-Content -Path $out -Value ("PRIVATE_KEY=$v")
+            Add-Content -Path $out -Value ("PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
           } else {
             Add-Content -Path $out -Value $v
           }

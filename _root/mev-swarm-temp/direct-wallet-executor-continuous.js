@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import { ethers } from 'ethers';
 import 'dotenv/config';
 import { initSecurity, getPrivateKey } from './security-guard.js';
@@ -13,8 +14,8 @@ import { initSecurity, getPrivateKey } from './security-guard.js';
  * - Continuous scanning every 5 seconds
  */
 
-const UNISWAP_V2_ROUTER = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
-const WETH_ADDRESS = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+const UNISWAP_V2_ROUTER = 'REDACTED_ADDRESS';
+const WETH_ADDRESS = 'REDACTED_ADDRESS';
 
 const ROUTER_ABI = [
   'function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external payable returns (uint[] memory amounts)',
@@ -73,7 +74,7 @@ async function main() {
   const ethUsd = Number(process.env.ETH_PRICE_USD || '2000');
   console.log(`WETH Balance: ${ethers.formatEther(balance)} WETH`);
 
-  const USDC_ADDRESS = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
+  const USDC_ADDRESS = 'REDACTED_ADDRESS';
   const router = new ethers.Contract(UNISWAP_V2_ROUTER, ROUTER_ABI, wallet);
 
   // Continuous scanning loop

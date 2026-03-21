@@ -1,0 +1,90 @@
+name: GPU CI (updated)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  cuda-benchmark:
+    runs-on: ubuntu-latest
+
+    container:
+      image: nvidia/cuda:12.4.0-devel-ubuntu22.04
+      options: --gpus all
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          apt-get update && apt-get install -y cmake python3-pip ccache
+          python3 -m pip install --user pandas matplotlib seaborn ioredis
+
+      - name: Enable ccache for nvcc
+        run: |
+          echo "CCACHE_DIR=$HOME/.ccache" >> $GITHUB_ENV
+          echo "CMAKE_CUDA_COMPILER_LAUNCHER=ccache" >> $GITHUB_ENV
+
+      - name: Validate environment
+        run: ./validate_environment.sh
+
+      - name: Build & run benchmark (parallel if multi-GPU)
+        run: |
+          chmod +x *.sh
+          GPU_COUNT=$(nvidia-smi -L 2>/dev/null | wc -l || echo 0)
+          echo "Found GPUs: $GPU_COUNT"
+          if [ "$GPU_COUNT" -ge 2 ]; then
+            ./run_sweep_part1.sh & ./run_sweep_part2.sh & wait
+          else
+            ./run_all.sh
+          fi
+
+      - name: Upload results as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sweep-results
+          path: |
+            sweep_results.csv
+            sweep_results.png
+
+      - name: Emit advice JSON
+        run: |
+          python3 ../../we/eval/generate_swarm_advice.py
+
+      - name: Read best params into env
+        run: |
+          echo "TOTAL_PARAMS=$(python3 -c 'import json,sys;print(json.load(open("we/eval/swarm_cuda_advice.json"))["best_total_params"])')" >> $GITHUB_ENV
+
+      - name: Generate PTX/SASS for recommended params (if possible)
+        run: |
+          set -e
+          if [ -n "${{ env.TOTAL_PARAMS }}" ]; then
+            echo "Generating PTX/SASS for TOTAL_PARAMS=$TOTAL_PARAMS"
+            (cd .. && ./generate_ptx_sass.sh) || echo "generate_ptx_sass failed"
+          else
+            echo "TOTAL_PARAMS not set; skipping PTX/SASS generation"
+          fi
+        working-directory: we/cuda_param_sweep
+
+      - name: Run bridge (one-shot to publish advice)
+        run: |
+          # run the updated bridge in one-shot mode for a short period so CI can publish advice
+          timeout 20s BRIDGE_ONESHOT=true node ../../gpu/ai-strategy-bridge-updated.js || true
+
+      - name: Diff SASS against baseline
+        run: |
+          chmod +x we/cuda_param_sweep/diff_sass.sh
+          bash we/cuda_param_sweep/diff_sass.sh || true
+
+      - name: Upload advice & build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sweep-advice-and-build
+          path: |
+            we/eval/swarm_cuda_advice.json
+            we/cuda_param_sweep/build_ptx/main.sass
+            we/cuda_param_sweep/build_ptx/main.ptx
+            we/cuda_param_sweep/build_ptx/sass.diff

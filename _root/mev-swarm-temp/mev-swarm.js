@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import { ethers } from 'ethers';
 import 'dotenv/config';
 
@@ -10,11 +11,11 @@ const CONFIG = {
   // Your MetaMask wallet - MUST be set in .env
   PRIVATE_KEY: process.env.BOT_WALLET_PRIVATE_KEY || null,
   // Contract address (already deployed)
-  EXECUTOR_ADDRESS: '0xaC9d24032F5375625661fADA31902D10D25c55e7',
+  EXECUTOR_ADDRESS: 'REDACTED_ADDRESS',
   // RPC endpoint (Infura from your MetaMask)
   RPC_URL: process.env.RPC_URL || 'https://gas.api.infura.io/v3/b1a490506e4347588813d728467507b3',
   // Target DEX for arbitrage
-  TARGET_ADDRESS: process.argv[2] || '0x360489e0fc38bff1ac24bc08220546259d460b06'
+  TARGET_ADDRESS: process.argv[2] || 'REDACTED_ADDRESS'
 };
 
 console.log('╔════════════════════════════════════════════════════════════════╗');
@@ -27,7 +28,7 @@ const privateKeyEnv = process.env.BOT_WALLET_PRIVATE_KEY;
 if (!privateKeyEnv) {
   console.log('❌ No private key configured');
   console.log('   Set BOT_WALLET_PRIVATE_KEY in .env file');
-  console.log('   Example: BOT_WALLET_PRIVATE_KEY="0xabc123..."');
+  console.log('   Example: BOT_WALLET_PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
   process.exit(1);
 }
 

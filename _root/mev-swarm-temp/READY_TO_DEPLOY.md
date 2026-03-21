@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # 🎯 MEV Swarm - Deployment Ready Summary
 
 ## 📊 Current State: Ready for Deployment
@@ -184,10 +185,10 @@ node LAUNCH_SEQUENCE.js
 MAINNET_RPC_URL=https://eth.llamarpc.com
 
 # Private Key (YOU MUST ADD THIS)
-PRIVATE_KEY=0xYOUR_PRIVATE_KEY_HERE
+PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 
 # Optional: Etherscan API
-ETHERSCAN_API_KEY=YOUR_ETHERSCAN_API_KEY_HERE
+ETHERSCAN_API_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 
 # Executor Address (will be set after deployment)
 EXECUTOR_ADDRESS=

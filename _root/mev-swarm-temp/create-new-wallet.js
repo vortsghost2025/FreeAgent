@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 const { ethers } = require('ethers');
 
 /**
@@ -43,7 +44,7 @@ async function createNewWallet() {
   console.log('📋 NEXT STEPS:\n');
 
   console.log('1. UPDATE MEV-SWARM/.ENV:');
-  console.log(`   PRIVATE_KEY=${wallet.privateKey}\n`);
+  console.log(`   PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 
   console.log('2. UPDATE KILO MCP SETTINGS:');
   console.log('   File: C:\\Users\\seand\\AppData\\Roaming\\Code\\User\\globalStorage\\kilocode.kilo-code\\settings\\mcp_settings.json');
@@ -65,7 +66,7 @@ async function createNewWallet() {
     address: wallet.address,
     privateKey: wallet.privateKey,
     createdAt: new Date().toISOString(),
-    contract: '0xaC9d24032F5375625661fADA31902D10D25c55e7', // Old contract
+    contract: 'REDACTED_ADDRESS', // Old contract
     action: 'NEW_WALLET_CREATED'
   };
 

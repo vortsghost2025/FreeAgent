@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * MEV Swarm - Real-time Mempool Watcher (UPGRADED)
  * Uses HTTP polling to watch pending transactions
@@ -32,72 +33,72 @@ const WS_URL = process.env.ETH_WS_URL ||
 // ============================================================
 const DEX_ROUTERS = {
   // Uniswap V2
-  '0x7a250d5630b4cf539739df2c5dacb4c659f2488d': 'Uniswap V2',
+  'REDACTED_ADDRESS': 'Uniswap V2',
   // Uniswap V3
-  '0xe592427a0aece92de3edee1f18e0157c05861564': 'Uniswap V3',
+  'REDACTED_ADDRESS': 'Uniswap V3',
   // Sushiswap
-  '0xd9e1ce17f2641f24ae83637ab66a2cca9c378b9f': 'Sushiswap',
+  'REDACTED_ADDRESS': 'Sushiswap',
   // Curve
-  '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063': 'Curve',
+  'REDACTED_ADDRESS': 'Curve',
   // Balancer
-  '0xba12222222228d8ba445958a75a0704d566bf2c8': 'Balancer',
+  'REDACTED_ADDRESS': 'Balancer',
   // Additional routers
-  '0x1b02da8cb1d0975baf44bc35efe2a538bde96d1d': 'SushiSwap (Avax)',
+  'REDACTED_ADDRESS': 'SushiSwap (Avax)',
   '0xa6cc3c2531fdaa6ae1a3ca84c2855806728693e': 'KyberDMM',
   '0xeb31076e7b370c07fa05cb60c5d0fb2f87c8ec3': 'DODO',
-  '0xdef171fe48cf0115b1d80b88dc8eab59176fee57': 'ParaSwap',
-  '0x1111111254eeb25477b68fb85ed929f73a960582': '1inch',
-  '0x6550f1e5783c8948358dc2c451c0ba42c9c9f8eb': '0x Exchange Proxy', // Matcha
-  '0x1111111254fb6c44bac0bed2854e76f90643097d': '1inch V5 Aggregator',
-  '0xdef171fe48cf0115b1d80b88dc8eab59176fee57': 'ParaSwap V5',
-  '0x1b02da8cb1d0975baf44bc35efe2a538bde96d1d': 'SushiSwap Router',
-  '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984': 'Uniswap V3 Universal Router', // NEW
+  'REDACTED_ADDRESS': 'ParaSwap',
+  'REDACTED_ADDRESS': '1inch',
+  'REDACTED_ADDRESS': '0x Exchange Proxy', // Matcha
+  'REDACTED_ADDRESS': '1inch V5 Aggregator',
+  'REDACTED_ADDRESS': 'ParaSwap V5',
+  'REDACTED_ADDRESS': 'SushiSwap Router',
+  'REDACTED_ADDRESS': 'Uniswap V3 Universal Router', // NEW
 };
 
 // Token symbols for common tokens
 const COMMON_TOKENS = {
-  '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599': 'WBTC',
-  '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2': 'WETH',
-  '0x6b175474e89094c44da98b954eedeac495271d0f': 'DAI',
-  '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48': 'USDC',
-  '0xdac17f958d2ee523a2206206994597c13d831ec7': 'USDT',
-  '0xd533a949740bb3306d119cc777fa900ba034cd52': 'CRV',
-  '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9': 'AAVE',
-  '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984': 'UNI',
-  '0x514910771af9ca656af840dff83e8264ecf986ca': 'LINK',
-  '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0': 'MATIC',
-  '0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce': 'SHIB',
-  '0x1ceb0cb1c4240e60895d7ed8d32ea53167e38f66': 'cETH',
-  '0x4d5f47fa6a74757f35d14fcd9804a4d85ccbbbf4': 'cUSDC',
-  '0x39aa39c021dfbae8fac545936693ac917d5e7563': 'cUSDT',
-  '0xae7ab96520de3a18e5e60b4f85001a6d2e0404b5': 'wstETH',
-  '0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0': 'rETH',
-  '0xc00e94cb662c3520282e6f5717214004a7f26888': 'COMP',
-  '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2': 'MKR',
-  '0xd533a949740bb3306d119cc777fa900ba034cd52': 'LDO',
-  '0x5982b7c9694b680545719f4788c6c7e5b4c7b4f8': 'PEPE',
-  '0x4338665cbb7b2485a8855a139b75d5e34ab0db4b': 'CNH', // Chinese token
-  '0x6982508145454ce725ddea2f744b8d62944a830f': 'PEPE',
+  'REDACTED_ADDRESS': 'WBTC',
+  'REDACTED_ADDRESS': 'WETH',
+  'REDACTED_ADDRESS': 'DAI',
+  'REDACTED_ADDRESS': 'USDC',
+  'REDACTED_ADDRESS': 'USDT',
+  'REDACTED_ADDRESS': 'CRV',
+  'REDACTED_ADDRESS': 'AAVE',
+  'REDACTED_ADDRESS': 'UNI',
+  'REDACTED_ADDRESS': 'LINK',
+  'REDACTED_ADDRESS': 'MATIC',
+  'REDACTED_ADDRESS': 'SHIB',
+  'REDACTED_ADDRESS': 'cETH',
+  'REDACTED_ADDRESS': 'cUSDC',
+  'REDACTED_ADDRESS': 'cUSDT',
+  'REDACTED_ADDRESS': 'wstETH',
+  'REDACTED_ADDRESS': 'rETH',
+  'REDACTED_ADDRESS': 'COMP',
+  'REDACTED_ADDRESS': 'MKR',
+  'REDACTED_ADDRESS': 'LDO',
+  'REDACTED_ADDRESS': 'PEPE',
+  'REDACTED_ADDRESS': 'CNH', // Chinese token
+  'REDACTED_ADDRESS': 'PEPE',
 };
 
 // ============================================================
 // Token Decimals Map (hardcoded for common tokens)
 // ============================================================
 const TOKEN_DECIMALS = {
-  '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2': 18, // WETH
-  '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599': 8,  // WBTC
-  '0x6b175474e89094c44da98b954eedeac495271d0f': 18, // DAI
-  '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48': 6,  // USDC
-  '0xdac17f958d2ee523a2206206994597c13d831ec7': 6,  // USDT
-  '0xd533a949740bb3306d119cc777fa900ba034cd52': 18, // CRV
-  '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9': 18, // AAVE
-  '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984': 18, // UNI
-  '0x514910771af9ca656af840dff83e8264ecf986ca': 18, // LINK
-  '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0': 18, // MATIC
-  '0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce': 18, // SHIB
-  '0xae7ab96520de3a18e5e60b4f85001a6d2e0404b5': 18, // wstETH
-  '0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0': 18, // rETH
-  '0xc00e94cb662c5920282e6f5717214004a7f26888': 18, // COMP
+  'REDACTED_ADDRESS': 18, // WETH
+  'REDACTED_ADDRESS': 8,  // WBTC
+  'REDACTED_ADDRESS': 18, // DAI
+  'REDACTED_ADDRESS': 6,  // USDC
+  'REDACTED_ADDRESS': 6,  // USDT
+  'REDACTED_ADDRESS': 18, // CRV
+  'REDACTED_ADDRESS': 18, // AAVE
+  'REDACTED_ADDRESS': 18, // UNI
+  'REDACTED_ADDRESS': 18, // LINK
+  'REDACTED_ADDRESS': 18, // MATIC
+  'REDACTED_ADDRESS': 18, // SHIB
+  'REDACTED_ADDRESS': 18, // wstETH
+  'REDACTED_ADDRESS': 18, // rETH
+  'REDACTED_ADDRESS': 18, // COMP
 };
 
 // ============================================================
@@ -329,7 +330,7 @@ async function decodeTransaction(tx, provider, tokenCache) {
         '0x' + data
       );
       path = params[1];
-      tokenIn = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'; // WETH
+      tokenIn = 'REDACTED_ADDRESS'; // WETH
       tokenOut = params[1][params[1].length - 1];
       amountIn = BigInt(value);
       amountOut = params[0];

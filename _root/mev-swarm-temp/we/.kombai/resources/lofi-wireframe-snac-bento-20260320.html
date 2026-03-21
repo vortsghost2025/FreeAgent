@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SNAC-v2 Cockpit — Bento Grid Mission Control Wireframe</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+    background: #f5f5f5;
+    color: #222;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  /* --- Legend --- */
+  .legend {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 2px; }
+
+  /* --- Title --- */
+  .wireframe-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    border-bottom: 2px dashed #333;
+    padding-bottom: 8px;
+  }
+  .wireframe-subtitle {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 16px;
+  }
+
+  /* --- Badge system --- */
+  .badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    z-index: 10;
+    white-space: nowrap;
+  }
+  .badge-reuse { background: #4CAF50; color: white; }
+  .badge-new { background: #FF9800; color: white; }
+  .badge-wrapper { position: relative; display: inline-block; }
+  .badge-wrapper-block { position: relative; }
+
+  /* --- Cockpit Shell --- */
+  .cockpit-shell {
+    background: #fff;
+    border: 2px solid #333;
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    height: 820px;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  /* --- Header --- */
+  .wf-header {
+    height: 52px;
+    min-height: 52px;
+    background: #f0f0f0;
+    border-bottom: 2px solid #333;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .wf-header-logo {
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .wf-header-logo .rocket { font-size: 16px; }
+  .wf-header-spacer { flex: 1; }
+  .status-bar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 11px;
+  }
+  .status-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid #999;
+    padding: 2px 8px;
+    border-radius: 3px;
+    background: white;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .dot-ok { background: #666; }
+  .dot-warn { background: #aaa; border: 1px solid #666; }
+  .contrast-btn {
+    border: 1px dashed #666;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    cursor: pointer;
+    background: white;
+  }
+
+  /* --- Body: Sidebar + Main --- */
+  .cockpit-body {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* --- Sidebar --- */
+  .wf-sidebar {
+    width: 64px;
+    min-width: 64px;
+    background: #e8e8e8;
+    border-right: 2px solid #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 0;
+    gap: 6px;
+    overflow: hidden;
+    transition: width 0.2s;
+  }
+  .wf-sidebar.expanded { width: 240px; min-width: 240px; }
+  .sidebar-icon-btn {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #999;
+    border-radius: 4px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .sidebar-icon-btn.active {
+    background: #e0e0e0;
+    border: 2px solid #333;
+  }
+  .sidebar-icon-btn:hover { background: #ddd; }
+  .sidebar-divider {
+    width: 80%;
+    border: none;
+    border-top: 1px dashed #bbb;
+    margin: 4px 0;
+  }
+  .sidebar-label {
+    font-size: 9px;
+    color: #555;
+    text-align: center;
+    margin-top: 2px;
+  }
+  .sidebar-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+
+  /* --- Main Content --- */
+  .wf-main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr 280px;
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
+    padding: 8px;
+    overflow: hidden;
+    background: #f5f5f5;
+  }
+
+  /* --- Bento Panel base --- */
+  .bento-panel {
+    background: white;
+    border: 2px solid #333;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+  .bento-panel.span-col { grid-column: span 2; }
+  .bento-panel.span-row { grid-row: span 2; }
+  .bento-panel.col3-row1 { grid-column: 3; grid-row: 1; }
+  .bento-panel.col3-row2 { grid-column: 3; grid-row: 2; }
+
+  /* Panel header */
+  .bento-header {
+    background: #e8e8e8;
+    border-bottom: 2px dashed #aaa;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .bento-header-title {
+    font-size: 12px;
+    font-weight: bold;
+    flex: 1;
+  }
+  .bento-header-badge {
+    font-size: 10px;
+    border: 1px solid #999;
+    padding: 1px 6px;
+    border-radius: 2px;
+  }
+  .bento-header-badge.ok { border-style: solid; }
+  .bento-header-badge.error { background: #eee; border-style: dashed; }
+  .bento-header-actions { display: flex; gap: 4px; }
+  .icon-btn-sm {
+    width: 20px; height: 20px;
+    border: 1px solid #999;
+    border-radius: 2px;
+    background: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  .bento-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  /* --- Chat panels --- */
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+  }
+  .chat-msg {
+    padding: 6px 8px;
+    border: 1px dashed #bbb;
+    border-radius: 3px;
+    background: #fafafa;
+  }
+  .chat-msg.user { background: #f0f0f0; border-style: solid; text-align: right; }
+  .chat-msg.agent { background: white; }
+  .chat-msg-label { font-size: 9px; color: #888; margin-bottom: 2px; text-transform: uppercase; }
+  .chat-msg-ensemble {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .ensemble-agent-row {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    font-size: 10px;
+    padding: 3px 6px;
+    border: 1px dashed #ccc;
+    border-radius: 2px;
+  }
+  .ensemble-agent-name { font-weight: bold; flex: 1; }
+  .ensemble-status { font-size: 9px; color: #888; }
+
+  .chat-input-bar {
+    display: flex;
+    gap: 6px;
+    padding: 6px 8px;
+    border-top: 1px dashed #bbb;
+    flex-shrink: 0;
+  }
+  .chat-input {
+    flex: 1;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-family: inherit;
+    font-size: 12px;
+    resize: none;
+    height: 48px;
+  }
+  .send-btn {
+    border: 2px solid #333;
+    border-radius: 3px;
+    padding: 0 14px;
+    background: #333;
+    color: white;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .send-btn-ghost {
+    border: 2px solid #333;
+    border-radius: 3px;
+    padding: 0 12px;
+    background: white;
+    font-family: inherit;
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  /* Agent selector bar */
+  .agent-selector {
+    display: flex;
+    gap: 4px;
+    padding: 5px 8px;
+    border-bottom: 1px dashed #bbb;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+  .agent-chip {
+    font-size: 9px;
+    border: 1px solid #999;
+    border-radius: 2px;
+    padding: 2px 6px;
+    cursor: pointer;
+    background: white;
+  }
+  .agent-chip.selected {
+    background: #333;
+    color: white;
+    border-color: #333;
+  }
+
+  /* Font size control */
+  .font-control {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    padding: 4px 8px;
+    border-bottom: 1px dashed #bbb;
+    flex-shrink: 0;
+  }
+  .font-slider { flex: 1; max-width: 80px; }
+
+  /* --- Status panels (right column) --- */
+  .status-panel-section {
+    padding: 8px;
+    border-bottom: 1px dashed #bbb;
+    flex-shrink: 0;
+  }
+  .status-panel-section:last-child { border-bottom: none; }
+  .status-section-title {
+    font-size: 9px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #555;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    padding: 2px 0;
+  }
+  .stat-val { font-weight: bold; font-size: 14px; }
+  .stat-bar-bg {
+    height: 4px;
+    background: #e0e0e0;
+    border-radius: 2px;
+    margin-top: 4px;
+  }
+  .stat-bar-fill { height: 100%; background: #555; border-radius: 2px; }
+
+  .service-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+  .service-item {
+    border: 1px dashed #bbb;
+    border-radius: 3px;
+    padding: 4px 6px;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #fafafa;
+  }
+  .service-item .dot { width: 6px; height: 6px; }
+
+  /* --- Timeline --- */
+  .timeline-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .timeline-event {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 0;
+    font-size: 10px;
+    border-bottom: 1px dashed #f0f0f0;
+  }
+  .tl-time { color: #888; width: 55px; flex-shrink: 0; font-size: 9px; }
+  .tl-dot { width: 6px; height: 6px; border-radius: 50%; background: #aaa; flex-shrink: 0; }
+  .tl-type { flex: 1; }
+
+  /* --- Swarm Queue / Controls (in left panel tray at bottom) --- */
+  .controls-tray {
+    background: #f8f8f8;
+    border-top: 2px dashed #bbb;
+    flex-shrink: 0;
+  }
+  .tray-tabs {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+  }
+  .tray-tab {
+    flex: 1;
+    padding: 5px;
+    font-size: 10px;
+    text-align: center;
+    border-right: 1px solid #ccc;
+    cursor: pointer;
+    background: #f0f0f0;
+  }
+  .tray-tab:last-child { border-right: none; }
+  .tray-tab.active { background: white; font-weight: bold; }
+  .tray-body {
+    padding: 8px;
+    display: flex;
+    gap: 6px;
+    align-items: flex-end;
+  }
+  .tray-input {
+    flex: 1;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    padding: 4px 6px;
+    font-family: inherit;
+    font-size: 11px;
+  }
+  .tray-select {
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    padding: 4px 6px;
+    font-family: inherit;
+    font-size: 11px;
+    min-width: 80px;
+    min-height: 32px;
+  }
+  .tray-btn-primary {
+    border: 2px solid #333;
+    border-radius: 3px;
+    padding: 6px 14px;
+    background: #333;
+    color: white;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+    min-height: 32px;
+  }
+  .tray-btn-ghost {
+    border: 2px solid #999;
+    border-radius: 3px;
+    padding: 6px 10px;
+    background: white;
+    font-family: inherit;
+    font-size: 11px;
+    cursor: pointer;
+    min-height: 32px;
+  }
+
+  /* --- Focus Mode overlay (conceptual) --- */
+  .focus-mode-note {
+    background: #fffde7;
+    border: 1px dashed #bbb;
+    border-radius: 3px;
+    padding: 4px 8px;
+    font-size: 10px;
+    color: #666;
+    margin: 4px 8px;
+    flex-shrink: 0;
+  }
+
+  /* --- Notes panel --- */
+  .annotation {
+    background: #fffde7;
+    border: 1px dashed #bbb;
+    border-radius: 3px;
+    padding: 10px 14px;
+    font-size: 11px;
+    color: #555;
+    margin-top: 12px;
+    max-width: 1300px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .annotation h3 { font-size: 13px; margin-bottom: 8px; color: #333; }
+  .annotation ul { padding-left: 18px; line-height: 1.7; }
+  .annotation li { margin-bottom: 4px; }
+
+  /* Scrollbar placeholder */
+  .scroll-indicator {
+    position: absolute;
+    right: 2px;
+    top: 20%;
+    width: 4px;
+    height: 40%;
+    background: #ccc;
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wireframe-title">🚀 SNAC-v2 Cockpit — Bento Grid Mission Control</div>
+<div class="wireframe-subtitle">
+  Wireframe Option: <strong>NemoClaw-inspired redesign</strong> — Icon sidebar + 3-column bento grid + compact header + Focus Mode + Multi-service health bar<br>
+  <em>Balsamiq-style lo-fi. Grayscale only. Final implementation will use electric cyan #00E5FF accent palette.</em>
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <strong>Component Tags:</strong>
+  <div class="legend-item"><div class="legend-dot" style="background:#4CAF50"></div> [REUSE] = existing component from src/</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#FF9800"></div> [NEW] = new component to create</div>
+</div>
+
+<!-- Cockpit Shell -->
+<div class="cockpit-shell">
+
+  <!-- ============ HEADER ============ -->
+  <!-- NEW COMPONENT: CompactHeader -->
+  <div class="bento-panel" style="position:relative; border-radius:0; border-left:none; border-right:none; border-top:none; flex-shrink:0; height:52px; min-height:52px;">
+    <span class="badge badge-new" style="top:-2px; right:80px;">[NEW] CompactHeader</span>
+    <div class="wf-header">
+      <!-- Logo + title -->
+      <div class="wf-header-logo">
+        <span class="rocket">🚀</span>
+        <strong>SNAC-v2</strong>
+        <span style="font-size:11px; color:#666;">Mission Control</span>
+      </div>
+
+      <!-- Multi-service health bar -->
+      <!-- NEW COMPONENT: ServiceHealthBar -->
+      <div class="badge-wrapper-block" style="position:relative; display:inline-flex; margin-left:8px;">
+        <span class="badge badge-new" style="top:-8px; right:-4px;">[NEW] ServiceHealthBar</span>
+        <div class="status-bar">
+          <div class="status-dot"><span class="dot dot-ok"></span> Backend</div>
+          <div class="status-dot"><span class="dot dot-ok"></span> Ollama</div>
+          <div class="status-dot"><span class="dot dot-ok"></span> Redis</div>
+          <div class="status-dot"><span class="dot dot-warn"></span> Qdrant</div>
+          <div class="status-dot" style="border-style:dashed;"><span class="dot" style="background:#bbb;"></span> FreeCoder</div>
+        </div>
+      </div>
+
+      <div class="wf-header-spacer"></div>
+
+      <!-- Model indicator -->
+      <div style="font-size:10px; color:#666; border:1px dashed #bbb; padding:2px 8px; border-radius:3px;">
+        Model: phi3:mini · RAM: 2.8GB free
+      </div>
+
+      <!-- High contrast toggle -->
+      <!-- NEW COMPONENT: ContrastToggle -->
+      <div class="badge-wrapper" style="margin-left:8px;">
+        <span class="badge badge-new">[NEW] ContrastToggle</span>
+        <button class="contrast-btn">◑ High Contrast</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BODY ============ -->
+  <div class="cockpit-body">
+
+    <!-- ============ ICON SIDEBAR ============ -->
+    <!-- NEW COMPONENT: IconSidebar (collapsible) -->
+    <div class="bento-panel" style="position:relative; border-radius:0; border-top:none; border-bottom:none; border-left:none; flex-shrink:0; width:64px; min-width:64px; display:flex; flex-direction:column; align-items:center; padding:10px 0; gap:6px; background:#e8e8e8; height:100%;">
+      <span class="badge badge-new" style="top:4px; right:-6px;">[NEW] IconSidebar</span>
+
+      <!-- Toggle collapse -->
+      <div class="sidebar-item">
+        <div class="sidebar-icon-btn" title="Expand sidebar">☰</div>
+        <div class="sidebar-label">Menu</div>
+      </div>
+
+      <hr class="sidebar-divider">
+
+      <!-- Agent Task -->
+      <div class="sidebar-item">
+        <div class="sidebar-icon-btn active" title="Agent Task">⚡</div>
+        <div class="sidebar-label">Agent</div>
+      </div>
+
+      <!-- Ingest -->
+      <div class="sidebar-item">
+        <div class="sidebar-icon-btn" title="Ingest Document">📄</div>
+        <div class="sidebar-label">Ingest</div>
+      </div>
+
+      <!-- Quick Thought -->
+      <div class="sidebar-item">
+        <div class="sidebar-icon-btn" title="Quick Thought">💭</div>
+        <div class="sidebar-label">Thought</div>
+      </div>
+
+      <hr class="sidebar-divider">
+
+      <!-- Swarm -->
+      <div class="sidebar-item">
+        <div class="sidebar-icon-btn" title="Swarm Queue">🐝</div>
+        <div class="sidebar-label">Swarm</div>
+      </div>
+
+      <!-- Memory -->
+      <div class="sidebar-item">
+        <div class="sidebar-icon-btn" title="Memory Injection">🧠</div>
+        <div class="sidebar-label">Memory</div>
+      </div>
+
+      <hr class="sidebar-divider">
+
+      <!-- Project Vault -->
+      <div class="sidebar-item">
+        <div class="sidebar-icon-btn" title="Project Vault">🗄️</div>
+        <div class="sidebar-label">Vault</div>
+      </div>
+
+      <!-- Settings -->
+      <div class="sidebar-item" style="margin-top:auto;">
+        <div class="sidebar-icon-btn" title="Settings">⚙️</div>
+        <div class="sidebar-label">Config</div>
+      </div>
+    </div>
+
+    <!-- ============ BENTO GRID MAIN CONTENT ============ -->
+    <!-- Grid: 3 columns × 2 rows. Panels snap to cell boundaries. -->
+    <div class="wf-main">
+
+      <!-- ===== CELL (1,1): FREE CODING AGENT ===== -->
+      <!-- REUSE: existing Free Coding Agent panel -->
+      <div class="bento-panel" style="grid-column:1; grid-row:1; position:relative;">
+        <span class="badge badge-reuse">[REUSE] FreeCodingAgentPanel</span>
+
+        <div class="bento-header">
+          <span>🔥</span>
+          <span class="bento-header-title" style="font-size:13px;">Free Coding Agent</span>
+          <span class="bento-header-badge ok">Connected</span>
+          <div class="bento-header-actions">
+            <div class="icon-btn-sm" title="Focus Mode">⛶</div>
+            <div class="icon-btn-sm" title="New Session">↺</div>
+          </div>
+        </div>
+
+        <!-- Agent chip selector (NEW) -->
+        <!-- NEW COMPONENT: AgentChipSelector -->
+        <div class="badge-wrapper-block" style="position:relative;">
+          <span class="badge badge-new" style="top:-2px; right:2px;">[NEW] AgentChipSelector</span>
+          <div class="agent-selector">
+            <span style="font-size:9px; color:#888; align-self:center;">Active:</span>
+            <span class="agent-chip selected">Code Gen</span>
+            <span class="agent-chip selected">Data Eng</span>
+            <span class="agent-chip">Analysis</span>
+            <span class="agent-chip">Planning</span>
+            <span class="agent-chip">Review</span>
+            <span class="agent-chip">+3 more</span>
+          </div>
+        </div>
+
+        <!-- Font size control (REUSE) -->
+        <!-- REUSE: existing FontSizeControl -->
+        <div class="font-control">
+          <span>Aa</span>
+          <input type="range" class="font-slider" min="14" max="48" value="32">
+          <span style="font-weight:bold;">32px</span>
+          <span style="flex:1"></span>
+          <span style="font-size:9px; color:#888;">Session: abc123...</span>
+        </div>
+
+        <!-- Chat messages (REUSE) -->
+        <!-- REUSE: existing ChatMessages component -->
+        <div class="chat-messages" style="font-size:14px;">
+          <div class="chat-msg user">
+            <div class="chat-msg-label">You · 4:22 PM</div>
+            test all connections
+          </div>
+          <div class="chat-msg agent">
+            <div class="chat-msg-label">Ensemble · 4:22 PM</div>
+            <div class="chat-msg-ensemble">
+              <div class="ensemble-agent-row">
+                <span class="ensemble-agent-name">⚡ Code Generation</span>
+                <span class="ensemble-status">→ analyzing stack...</span>
+              </div>
+              <div class="ensemble-agent-row">
+                <span class="ensemble-agent-name">📊 Data Engineering</span>
+                <span class="ensemble-status">→ checking pipelines...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat input (REUSE) -->
+        <div class="chat-input-bar">
+          <!-- REUSE: existing ChatInput -->
+          <textarea class="chat-input" placeholder="Task all 8 agents in parallel..."></textarea>
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <button class="send-btn">Send</button>
+            <button class="send-btn-ghost" style="font-size:10px;">Clear</button>
+          </div>
+        </div>
+
+        <!-- Controls tray at bottom (NEW: tabbed controls) -->
+        <!-- NEW COMPONENT: CollapsibleControlsTray -->
+        <div class="controls-tray">
+          <div class="tray-tabs">
+            <div class="tray-tab active">⚡ Agent Task</div>
+            <div class="tray-tab">📄 Ingest Doc</div>
+            <div class="tray-tab">💭 Thought</div>
+          </div>
+          <div class="tray-body">
+            <input class="tray-input" type="text" placeholder="Enter agent task...">
+            <button class="tray-btn-primary">Run Agent</button>
+            <button class="tray-btn-ghost">⛶</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== CELL (2,1): SNAC AGENT ===== -->
+      <!-- REUSE: existing SNAC Agent panel -->
+      <div class="bento-panel" style="grid-column:2; grid-row:1; position:relative;">
+        <span class="badge badge-reuse">[REUSE] SNACAgentPanel</span>
+
+        <div class="bento-header">
+          <span>🤖</span>
+          <span class="bento-header-title" style="font-size:13px;">SNAC Agent</span>
+          <span class="bento-header-badge ok">Connected</span>
+          <div class="bento-header-actions">
+            <div class="icon-btn-sm" title="Focus Mode">⛶</div>
+            <div class="icon-btn-sm" title="Reset">↺</div>
+          </div>
+        </div>
+
+        <!-- Font size control (REUSE) -->
+        <div class="font-control">
+          <span>Aa</span>
+          <input type="range" class="font-slider" min="14" max="48" value="32">
+          <span style="font-weight:bold;">32px</span>
+          <span style="flex:1;"></span>
+          <span style="font-size:9px; color:#888;">phi3:mini · local</span>
+        </div>
+
+        <!-- Chat messages -->
+        <div class="chat-messages" style="font-size:14px;">
+          <div class="chat-msg user">
+            <div class="chat-msg-label">You · 4:26 PM</div>
+            test
+          </div>
+          <div class="chat-msg agent">
+            <div class="chat-msg-label">SNAC · 4:26 PM</div>
+            <span style="color:#999; font-size:11px; font-style:italic;">⏳ Generating response via phi3:mini...</span>
+          </div>
+        </div>
+
+        <div class="chat-input-bar">
+          <textarea class="chat-input" placeholder="Ask your SNAC agent anything..."></textarea>
+          <button class="send-btn">Send</button>
+        </div>
+
+        <!-- Swarm queue tray -->
+        <!-- NEW COMPONENT: SwarmQueueTray -->
+        <div class="controls-tray" style="position:relative;">
+          <span class="badge badge-new" style="top:-2px;">[NEW] SwarmQueueTray</span>
+          <div class="tray-tabs">
+            <div class="tray-tab active">🐝 Swarm Queue</div>
+            <div class="tray-tab">🧠 Memory Inject</div>
+          </div>
+          <div class="tray-body">
+            <input class="tray-input" type="text" placeholder="Queue task description...">
+            <select class="tray-select">
+              <option>planner_worker</option>
+              <option>builder_worker</option>
+            </select>
+            <select class="tray-select" style="min-width:60px;">
+              <option>high</option>
+              <option>normal</option>
+              <option>low</option>
+            </select>
+            <button class="tray-btn-primary">Queue</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== CELL (3, 1+2): RIGHT COLUMN STATUS PANELS ===== -->
+      <!-- NEW COMPONENT: StatusSidebar -->
+      <div class="bento-panel" style="grid-column:3; grid-row:1 / span 2; position:relative; overflow-y:auto;">
+        <span class="badge badge-new">[NEW] StatusSidebar</span>
+
+        <div class="bento-header">
+          <span>📡</span>
+          <span class="bento-header-title">Live Status</span>
+          <div class="icon-btn-sm" title="Collapse status column">◀</div>
+        </div>
+
+        <div class="bento-body" style="overflow-y:auto;">
+
+          <!-- Token Cost Monitor (REUSE) -->
+          <div class="status-panel-section" style="position:relative;">
+            <span class="badge badge-reuse" style="top:0; right:0;">[REUSE] TokenCostMonitor</span>
+            <div class="status-section-title">💰 Token Cost Monitor</div>
+            <div class="stat-row">
+              <span>Total Spent</span>
+              <span class="stat-val">$0.0000</span>
+            </div>
+            <div class="stat-row">
+              <span>Alert at</span>
+              <span>$4.00</span>
+            </div>
+            <div class="stat-row" style="margin-top:6px;">
+              <span style="font-size:9px; color:#888;">$0 ───────── $4.50</span>
+            </div>
+            <div class="stat-bar-bg" style="margin-top:4px;">
+              <div class="stat-bar-fill" style="width:0%;"></div>
+            </div>
+            <div style="font-size:10px; color:#666; margin-top:4px;">Status: OK · No guardrail block</div>
+          </div>
+
+          <!-- Swarm Monitor (REUSE) -->
+          <div class="status-panel-section" style="position:relative;">
+            <span class="badge badge-reuse" style="top:0; right:0;">[REUSE] SwarmMonitor</span>
+            <div class="status-section-title">🐝 Swarm Monitor</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; margin-bottom:6px;">
+              <div style="border:1px dashed #bbb; padding:4px; border-radius:3px; text-align:center;">
+                <div style="font-size:18px; font-weight:bold;">0</div>
+                <div style="font-size:9px; color:#888;">Workers</div>
+              </div>
+              <div style="border:1px dashed #bbb; padding:4px; border-radius:3px; text-align:center;">
+                <div style="font-size:18px; font-weight:bold;">1</div>
+                <div style="font-size:9px; color:#888;">Queued</div>
+              </div>
+            </div>
+            <div class="stat-row"><span>CPU</span><span>19.1%</span></div>
+            <div class="stat-bar-bg" style="margin-top:2px; margin-bottom:6px;">
+              <div class="stat-bar-fill" style="width:19%;"></div>
+            </div>
+            <div style="font-size:9px; color:#888;">Recent: scaler.decision · task.created</div>
+            <button class="tray-btn-ghost" style="margin-top:6px; width:100%; font-size:10px;">⟳ Run Scaler Tick</button>
+          </div>
+
+          <!-- Swarm Topology (REUSE) -->
+          <div class="status-panel-section" style="position:relative;">
+            <span class="badge badge-reuse" style="top:0; right:0;">[REUSE] SwarmTopology</span>
+            <div class="status-section-title">🕸️ Swarm Topology</div>
+            <div style="border:1px dashed #ccc; border-radius:3px; height:80px; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:10px; background:#fafafa;">
+              [ topology graph — 0 workers ]
+            </div>
+          </div>
+
+          <!-- Swarm Intelligence (REUSE) -->
+          <div class="status-panel-section" style="position:relative;">
+            <span class="badge badge-reuse" style="top:0; right:0;">[REUSE] SwarmIntelligence</span>
+            <div class="status-section-title">🧬 Swarm Intelligence</div>
+            <div style="border:1px dashed #ccc; border-radius:3px; padding:8px; font-size:10px; color:#888; text-align:center; background:#fafafa;">
+              No task history yet.<br>Queue some swarm tasks.
+            </div>
+          </div>
+
+          <!-- Shared Knowledge (REUSE) -->
+          <div class="status-panel-section" style="position:relative;">
+            <span class="badge badge-reuse" style="top:0; right:0;">[REUSE] SharedKnowledge</span>
+            <div class="status-section-title">🧠 Shared Knowledge</div>
+            <div style="border:1px dashed #bbb; border-radius:3px; padding:6px; font-size:10px; background:#fafafa;">
+              <div style="font-weight:bold; margin-bottom:2px;">Swarm backpressure pattern</div>
+              <div style="color:#888; font-size:9px;">MEDIUM · 82% conf · from: gpt-4o-mini</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== CELL (1,2): MEMORY TIMELINE ===== -->
+      <!-- REUSE: existing MemoryTimeline panel -->
+      <div class="bento-panel" style="grid-column:1; grid-row:2; position:relative;">
+        <span class="badge badge-reuse">[REUSE] MemoryTimelinePanel</span>
+
+        <div class="bento-header">
+          <span>📋</span>
+          <span class="bento-header-title">Memory Timeline</span>
+          <span class="bento-header-badge ok" style="font-size:9px;">50 events</span>
+          <div class="bento-header-actions">
+            <div class="icon-btn-sm">⛶</div>
+            <div class="icon-btn-sm">↺</div>
+          </div>
+        </div>
+
+        <!-- Filter bar (NEW) -->
+        <!-- NEW COMPONENT: TimelineFilterBar -->
+        <div class="badge-wrapper-block" style="position:relative;">
+          <span class="badge badge-new" style="top:-2px; right:2px;">[NEW] TimelineFilterBar</span>
+          <div style="display:flex; gap:4px; padding:5px 8px; border-bottom:1px dashed #bbb; flex-shrink:0;">
+            <input style="flex:1; border:1px solid #bbb; border-radius:3px; padding:3px 6px; font-size:10px;" placeholder="Filter events...">
+            <select style="border:1px solid #bbb; border-radius:3px; padding:2px 4px; font-size:10px;">
+              <option>All types</option>
+              <option>agent_start</option>
+              <option>agent_complete</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="timeline-scroll">
+          <div class="timeline-event"><span class="tl-time">7:56 PM</span><span class="tl-dot"></span><span class="tl-type">agent_start</span></div>
+          <div class="timeline-event"><span class="tl-time">7:56 PM</span><span class="tl-dot" style="background:#555;"></span><span class="tl-type">agent_step</span></div>
+          <div class="timeline-event"><span class="tl-time">7:56 PM</span><span class="tl-dot"></span><span class="tl-type">agent_complete</span></div>
+          <div class="timeline-event"><span class="tl-time">8:00 PM</span><span class="tl-dot"></span><span class="tl-type">agent_start</span></div>
+          <div class="timeline-event"><span class="tl-time">8:01 PM</span><span class="tl-dot" style="background:#555;"></span><span class="tl-type">agent_step</span></div>
+          <div class="timeline-event"><span class="tl-time">8:01 PM</span><span class="tl-dot"></span><span class="tl-type">agent_complete</span></div>
+          <div class="timeline-event"><span class="tl-time">8:22 PM</span><span class="tl-dot"></span><span class="tl-type">agent_start</span></div>
+          <div class="timeline-event"><span class="tl-time">8:22 PM</span><span class="tl-dot" style="background:#555;"></span><span class="tl-type">agent_step</span></div>
+          <div class="timeline-event"><span class="tl-time">8:22 PM</span><span class="tl-dot"></span><span class="tl-type">agent_complete</span></div>
+          <div class="timeline-event"><span class="tl-time">8:26 PM</span><span class="tl-dot"></span><span class="tl-type">agent_start</span></div>
+          <div class="timeline-event"><span class="tl-time">...</span><span class="tl-dot" style="background:#ddd;"></span><span class="tl-type" style="color:#bbb;">42 more events ↓</span></div>
+        </div>
+        <div class="scroll-indicator"></div>
+      </div>
+
+      <!-- ===== CELL (2,2): PROJECT VAULT ===== -->
+      <!-- REUSE: existing ProjectVault panel -->
+      <div class="bento-panel" style="grid-column:2; grid-row:2; position:relative; overflow-y:auto;">
+        <span class="badge badge-reuse">[REUSE] ProjectVaultPanel</span>
+
+        <div class="bento-header">
+          <span>🗄️</span>
+          <span class="bento-header-title">Project Vault</span>
+          <div class="bento-header-actions">
+            <div class="icon-btn-sm">+</div>
+            <div class="icon-btn-sm">⛶</div>
+          </div>
+        </div>
+
+        <!-- Vault items (REUSE) -->
+        <div style="padding:6px; display:flex; flex-direction:column; gap:5px; overflow-y:auto; flex:1;">
+          <div style="border:1px solid #ccc; border-radius:3px; padding:6px 8px; background:#fafafa; position:relative;">
+            <div style="font-size:11px; font-weight:bold;">🎮 Quantum-Ahead Universe Game</div>
+            <div style="font-size:9px; color:#888; margin:2px 0;">/workspace/federation-game/index.html</div>
+            <div style="font-size:10px; color:#555; margin-bottom:6px;">Kid-friendly agent/universe game for son. Teaches AI through play.</div>
+            <div style="display:flex; gap:4px;">
+              <button class="tray-btn-ghost" style="font-size:9px; padding:2px 8px; min-height:24px;">💾 Save to Brain</button>
+              <button class="tray-btn-primary" style="font-size:9px; padding:2px 8px;">🚀 Open</button>
+            </div>
+          </div>
+          <div style="border:1px solid #ccc; border-radius:3px; padding:6px 8px; background:#fafafa;">
+            <div style="font-size:11px; font-weight:bold;">🧠 Memory Bank / Ensemble Storage</div>
+            <div style="font-size:9px; color:#888; margin:2px 0;">/workspace/ensemble_storage</div>
+            <div style="font-size:10px; color:#555; margin-bottom:6px;">Primary memory bank. Long-term knowledge across sessions.</div>
+            <div style="display:flex; gap:4px;">
+              <button class="tray-btn-ghost" style="font-size:9px; padding:2px 8px; min-height:24px;">💾 Save to Brain</button>
+            </div>
+          </div>
+          <div style="border:1px dashed #ccc; border-radius:3px; padding:6px 8px; display:flex; align-items:center; justify-content:center; color:#bbb; font-size:10px; height:40px;">
+            + 4 more workspace items
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /wf-main bento grid -->
+  </div><!-- /cockpit-body -->
+</div><!-- /cockpit-shell -->
+
+<!-- Annotation notes -->
+<div class="annotation" style="margin-top:16px;">
+  <h3>📐 Design Notes — Key Decisions</h3>
+  <ul>
+    <li><strong>Compact Header (52px vs 122px)</strong>: Saves 70px of vertical space. Multi-service health bar replaces single Backend badge — shows Ollama, Redis, Qdrant, FreeCoder individually.</li>
+    <li><strong>Icon-only Sidebar (64px)</strong>: Reclaims ~340px of horizontal space for agent panels. Clicking any icon expands to 240px drawer. Each section has its own icon with label — clear for low-vision users.</li>
+    <li><strong>Bento 3-column grid</strong>: Col 1 = Free Coding Agent + controls tray + Memory Timeline. Col 2 = SNAC Agent + Swarm Queue + Project Vault. Col 3 = persistent status sidebar (Token Cost, Swarm Monitor, Topology, Intelligence). No hidden panels.</li>
+    <li><strong>Controls Tray (tabbed)</strong>: Agent Task, Ingest Document, Quick Thought collapsed into a tabbed tray at the bottom of each agent panel — reduces sidebar clutter by 60%.</li>
+    <li><strong>Focus Mode (⛶ button)</strong>: Each panel has an expand button. Clicking it expands that panel to fill the full bento grid area. All other panels collapse. Clicking again restores the grid.</li>
+    <li><strong>Status Sidebar (right column, spans 2 rows)</strong>: All monitoring panels (Token Cost, Swarm Monitor, Topology, Intelligence, Shared Knowledge) live here permanently — always visible, always accessible.</li>
+    <li><strong>Timeline Filter Bar</strong>: New search + type dropdown for filtering 50+ events — essential for low-vision users who need to find specific agent_start events without reading every row.</li>
+    <li><strong>High Contrast Toggle</strong>: Header button that boosts all text to near-white, borders to full brightness, accent to pure electric cyan — one-click vision accessibility mode.</li>
+    <li><strong>Final color palette</strong>: Deep Space Navy #0a0f1e bg · Electric Cyan #00E5FF accent · Neural Green #00FF9D connected state · Near-white #F0F9FF text</li>
+  </ul>
+</div>
+
+</body>
+</html>

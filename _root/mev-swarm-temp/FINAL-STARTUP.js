@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 const { ethers } = require('ethers');
 require('dotenv/config');
 
@@ -7,7 +8,7 @@ require('dotenv/config');
  */
 
 const CONFIG = {
-  EXECUTOR_ADDRESS: '0xaC9d24032F5375625661fADA31902D10D25c55e7',
+  EXECUTOR_ADDRESS: 'REDACTED_ADDRESS',
   RPC_URL: 'https://eth.llamarpc.com',
   WALLET_PRIVATE_KEY: process.env.PRIVATE_KEY,
   TEST_AMOUNT: ethers.parseEther('0.001')

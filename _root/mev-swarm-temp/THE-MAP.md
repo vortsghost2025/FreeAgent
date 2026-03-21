@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # THE MAP - How MEV Swarm Actually Works
 
 ## This is the one picture your brain needs.
@@ -64,17 +65,17 @@ USER REQUEST → MEV SWARM EXECUTION
 
 1. **You export private key from MetaMask**
    - MetaMask UI → Account Details → Export Private Key
-   - Result: `0xb72bffb84bc27cc50e52c018703526a5ec67a0063c897e6677500f58c789d380`
+   - Result: `REDACTED_PRIVATE_KEY`
 
 2. **Key goes into .env file**
-   - `.env` line 12: `PRIVATE_KEY=0xb72bffb84bc27cc50e52c018703526a5ec67a0063c897e6677500f58c789d380`
+   - `.env` line 12: `PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 
 3. **Node.js reads .env**
-   - `process.env.PRIVATE_KEY` = `0xb72bffb84bc27cc50e52c018703526a5ec67a0063c897e6677500f58c789d380`
+   - `process.env.PRIVATE_KEY` = `REDACTED_PRIVATE_KEY`
 
 4. **Ethers.js creates wallet**
    - `new ethers.Wallet(process.env.PRIVATE_KEY)`
-   - Result: Wallet object with address `0x34769bE7087F1fE5B9ad5C50cC1526BC63217341`
+   - Result: Wallet object with address `REDACTED_ADDRESS`
 
 5. **Wallet signs transactions**
    - Every arbitrage execution is signed by this wallet
@@ -88,7 +89,7 @@ USER REQUEST → MEV SWARM EXECUTION
 **What you have RIGHT NOW:**
 - ✅ MetaMask key in `.env` (working)
 - ✅ RPC connection to Ethereum mainnet (working)
-- ✅ Contract deployed at `0xaC9d24032F5375625661fADA31902D10D25c55e7` (funded)
+- ✅ Contract deployed at `REDACTED_ADDRESS` (funded)
 - ✅ Detection layer operational
 - ✅ Execution layer operational
 - ✅ Guardrails active

@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # MEV Swarm - Active Watcher Configuration
 
 ## Entry Point
@@ -28,4 +29,4 @@ Expected profit: $3.12
 ## Configuration Required
 Add to `.env`:
 ```
-BOT_WALLET_PRIVATE_KEY=0xYOUR_64_CHAR_PRIVATE_KEY
+BOT_WALLET_PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER

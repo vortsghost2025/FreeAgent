@@ -1,0 +1,292 @@
+{
+  "agent": "kilo",
+  "version": "1.0.0",
+  "description": "Super-Agent configuration for Kilo - combines multiple AI capabilities",
+  
+  "capabilities": {
+    "codeCompletion": {
+      "models": ["claude-3.5-sonnet", "deepseek-coder"],
+      "strategy": "fastest"
+    },
+    "codeGeneration": {
+      "models": ["claude-3.5-sonnet"],
+      "tools": ["filesystem", "terminal"]
+    },
+    "refactoring": {
+      "models": ["claude-3.5-sonnet", "deepseek-coder"],
+      "tools": ["filesystem"]
+    },
+    "reasoning": {
+      "models": ["o1-preview", "claude-3-opus", "claude-3.5-sonnet"],
+      "strategy": "best"
+    },
+    "designToCode": {
+      "models": ["gpt-4-vision", "claude-3.5-sonnet"],
+      "tools": ["screenshot", "figma-api"]
+    },
+    "devops": {
+      "models": ["gpt-4"],
+      "tools": ["docker", "kubernetes", "github-actions"]
+    },
+    "autonomousTasks": {
+      "models": ["roo-coder", "claude-3.5-sonnet"],
+      "behavior": {
+        "maxRetries": 3,
+        "approvalRequired": true,
+        "autoAdjustPlan": true
+      }
+    }
+  },
+  
+  "routing": {
+    "defaultStrategy": "best",
+    "fallbackEnabled": true,
+    "ensembleEnabled": true,
+    "parallelExecution": false
+  },
+  
+  "mcpServers": [
+    {
+      "name": "filesystem",
+      "enabled": true,
+      "description": "File system operations"
+    },
+    {
+      "name": "github",
+      "enabled": true,
+      "description": "GitHub API integration"
+    },
+    {
+      "name": "browser",
+      "enabled": false,
+      "description": "Browser automation via Playwright"
+    },
+    {
+      "name": "database",
+      "enabled": false,
+      "description": "SQLite database operations"
+    }
+  ],
+  
+  "providers": {
+    "anthropic": {
+      "enabled": true,
+      "defaultModel": "claude-3.5-sonnet-20241022",
+      "apiKeyEnv": "ANTHROPIC_API_KEY"
+    },
+    "openai": {
+      "enabled": true,
+      "defaultModel": "gpt-4o",
+      "apiKeyEnv": "OPENAI_API_KEY"
+    },
+    "google": {
+      "enabled": false,
+      "defaultModel": "gemini-1.5-pro",
+      "apiKeyEnv": "GOOGLE_API_KEY"
+    },
+    "deepseek": {
+      "enabled": false,
+      "defaultModel": "deepseek-coder",
+      "apiKeyEnv": "DEEPSEEK_API_KEY"
+    }
+  },
+  
+  "agentMesh": {
+    "enabled": true,
+    "agents": {
+      "coder": {
+        "models": ["claude-3.5-sonnet", "deepseek-coder"]
+      },
+      "designer": {
+        "models": ["gpt-4-vision", "gemini-pro"]
+      },
+      "devops": {
+        "models": ["gpt-4", "claude-3.5-sonnet"]
+      },
+      "qa": {
+        "models": ["claude-3.5-sonnet", "gpt-4"]
+      }
+    }
+  },
+  
+  "tools": {
+    "filesystem": {
+      "enabled": true,
+      "operations": ["read", "write", "list", "delete", "mkdir"]
+    },
+    "terminal": {
+      "enabled": true,
+      "timeout": 60000
+    },
+    "github": {
+      "enabled": false,
+      "operations": ["create-pr", "list-issues", "get-file"]
+    }
+  },
+  
+  "execution": {
+    "maxConcurrentTasks": 5,
+    "taskTimeout": 300000,
+    "retryAttempts": 3,
+    "retryDelay": 1000
+  },
+  
+  "logging": {
+    "level": "info",
+    "includeTimestamps": true,
+    "logProviderCalls": true,
+    "logToolExecutions": true
+  },
+  
+  "security": {
+    "requireApprovalForDestructive": true,
+    "allowedFileExtensions": [".js", ".ts", ".json", ".md", ".txt", ".sol"],
+    "blockedPaths": ["**/node_modules/**", "**/.git/**", "**/secrets/**"]
+  }
+}
+  "agent": "kilo",
+  "version": "1.0.0",
+  "description": "Super-Agent configuration for Kilo - combines multiple AI capabilities",
+  
+  "capabilities": {
+    "codeCompletion": {
+      "models": ["claude-3.5-sonnet", "deepseek-coder"],
+      "strategy": "fastest"
+    },
+    "codeGeneration": {
+      "models": ["claude-3.5-sonnet"],
+      "tools": ["filesystem", "terminal"]
+    },
+    "refactoring": {
+      "models": ["claude-3.5-sonnet", "deepseek-coder"],
+      "tools": ["filesystem"]
+    },
+    "reasoning": {
+      "models": ["o1-preview", "claude-3-opus", "claude-3.5-sonnet"],
+      "strategy": "best"
+    },
+    "designToCode": {
+      "models": ["gpt-4-vision", "claude-3.5-sonnet"],
+      "tools": ["screenshot", "figma-api"]
+    },
+    "devops": {
+      "models": ["gpt-4"],
+      "tools": ["docker", "kubernetes", "github-actions"]
+    },
+    "autonomousTasks": {
+      "models": ["roo-coder", "claude-3.5-sonnet"],
+      "behavior": {
+        "maxRetries": 3,
+        "approvalRequired": true,
+        "autoAdjustPlan": true
+      }
+    }
+  },
+  
+  "routing": {
+    "defaultStrategy": "best",
+    "fallbackEnabled": true,
+    "ensembleEnabled": true,
+    "parallelExecution": false
+  },
+  
+  "mcpServers": [
+    {
+      "name": "filesystem",
+      "enabled": true,
+      "description": "File system operations"
+    },
+    {
+      "name": "github",
+      "enabled": true,
+      "description": "GitHub API integration"
+    },
+    {
+      "name": "browser",
+      "enabled": false,
+      "description": "Browser automation via Playwright"
+    },
+    {
+      "name": "database",
+      "enabled": false,
+      "description": "SQLite database operations"
+    }
+  ],
+  
+  "providers": {
+    "anthropic": {
+      "enabled": true,
+      "defaultModel": "claude-3.5-sonnet-20241022",
+      "apiKeyEnv": "ANTHROPIC_API_KEY"
+    },
+    "openai": {
+      "enabled": true,
+      "defaultModel": "gpt-4o",
+      "apiKeyEnv": "OPENAI_API_KEY"
+    },
+    "google": {
+      "enabled": false,
+      "defaultModel": "gemini-1.5-pro",
+      "apiKeyEnv": "GOOGLE_API_KEY"
+    },
+    "deepseek": {
+      "enabled": false,
+      "defaultModel": "deepseek-coder",
+      "apiKeyEnv": "DEEPSEEK_API_KEY"
+    }
+  },
+  
+  "agentMesh": {
+    "enabled": true,
+    "agents": {
+      "coder": {
+        "models": ["claude-3.5-sonnet", "deepseek-coder"]
+      },
+      "designer": {
+        "models": ["gpt-4-vision", "gemini-pro"]
+      },
+      "devops": {
+        "models": ["gpt-4", "claude-3.5-sonnet"]
+      },
+      "qa": {
+        "models": ["claude-3.5-sonnet", "gpt-4"]
+      }
+    }
+  },
+  
+  "tools": {
+    "filesystem": {
+      "enabled": true,
+      "operations": ["read", "write", "list", "delete", "mkdir"]
+    },
+    "terminal": {
+      "enabled": true,
+      "timeout": 60000
+    },
+    "github": {
+      "enabled": false,
+      "operations": ["create-pr", "list-issues", "get-file"]
+    }
+  },
+  
+  "execution": {
+    "maxConcurrentTasks": 5,
+    "taskTimeout": 300000,
+    "retryAttempts": 3,
+    "retryDelay": 1000
+  },
+  
+  "logging": {
+    "level": "info",
+    "includeTimestamps": true,
+    "logProviderCalls": true,
+    "logToolExecutions": true
+  },
+  
+  "security": {
+    "requireApprovalForDestructive": true,
+    "allowedFileExtensions": [".js", ".ts", ".json", ".md", ".txt", ".sol"],
+    "blockedPaths": ["**/node_modules/**", "**/.git/**", "**/secrets/**"]
+  }
+}
+

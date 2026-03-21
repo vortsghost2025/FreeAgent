@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this benchmark suite, please cite it as shown below."
+type: software
+title: "CUDA Kernel Parameter Launch Strategy Benchmark"
+authors:
+  - family-names: "YourName"
+    given-names: "YourFirstName"
+repository-code: "https://github.com/yourusername/cuda_param_sweep"
+license: Apache-2.0
+preferred-citation:
+  type: article
+  title: "Systematic Comparison of CUDA Kernel Launch Parameter Strategies"
+  year: 2025
+  doi: 10.5281/zenodo.XXXXXX

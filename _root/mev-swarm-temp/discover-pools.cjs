@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * Base Pool Discovery Script
  * Run: node discover-pools.js
@@ -14,13 +15,13 @@ const provider = new ethers.JsonRpcProvider(BASE_RPC_URL);
 console.log("🔍 Connecting to Base mainnet...\n");
 
 // ========== BASE TOKEN ADDRESSES ==========
-const WETH  = "0x4200000000000000000000000000000000000006";
-const USDC  = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
-const cbBTC = "0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf";
+const WETH  = "REDACTED_ADDRESS";
+const USDC  = "REDACTED_ADDRESS";
+const cbBTC = "REDACTED_ADDRESS";
 
 // ========== FACTORY ADDRESSES ==========
-const UNI_V3_FACTORY = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
-const AERODROME_FACTORY = "0x420DD381b31aEf6683db6B902084cB0FFECe40Da";
+const UNI_V3_FACTORY = "REDACTED_ADDRESS";
+const AERODROME_FACTORY = "REDACTED_ADDRESS";
 
 // ========== ABIs ==========
 const uniV3FactoryAbi = [

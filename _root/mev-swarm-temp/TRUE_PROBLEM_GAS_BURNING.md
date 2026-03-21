@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # MEV Bot - TRUE Problem: Gas-Burning Failed Attempts
 
 **Date**: March 3, 2026
@@ -381,7 +382,7 @@ This will tell us:
 
 For example:
 ```
-0x915b804b066e362041bbdc21a4cf71bee17c3eeace49c07beea509891a0ebc98
+REDACTED_PRIVATE_KEY
 ```
 
 **I will**:

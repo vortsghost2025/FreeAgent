@@ -1,13 +1,14 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 const { ethers } = require("ethers");
 
 const provider = new ethers.JsonRpcProvider("https://base-rpc.publicnode.com");
 
-const WETH  = "0x4200000000000000000000000000000000000006";
-const USDC  = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+const WETH  = "REDACTED_ADDRESS";
+const USDC  = "REDACTED_ADDRESS";
 
 // Your two main pools
-const UNI_V3_POOL = "0xd0b53D9277642d899DF5C87A3966A349A798F224";  // 0.05% fee
-const AERO_POOL   = "0xcDAC0d6c6C59727a65F871236188350531885C43";  // volatile
+const UNI_V3_POOL = "REDACTED_ADDRESS";  // 0.05% fee
+const AERO_POOL   = "REDACTED_ADDRESS";  // volatile
 
 async function main() {
   console.log("=== TEST 1: Uniswap V3 Pool ===");

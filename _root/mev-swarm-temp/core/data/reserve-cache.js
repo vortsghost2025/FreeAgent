@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import { ethers } from 'ethers';
 import { readFileSync } from 'fs';
 import path from 'path';
@@ -13,7 +14,7 @@ try {
   // multicall ABI optional; we'll fall back to per-pair reads
 }
 
-const DEFAULT_MULTICALL3 = process.env.MULTICALL3_ADDRESS || '0xcA11bde05977b3631167028862bE2a173976CA11';
+const DEFAULT_MULTICALL3 = process.env.MULTICALL3_ADDRESS || 'REDACTED_ADDRESS';
 
 export class ReserveCache {
   /**

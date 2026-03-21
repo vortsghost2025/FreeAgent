@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * Test Live Reserves Graph Integration (Direct Provider)
  * Demonstrates real-time arbitrage graph without dotenv dependency
@@ -11,7 +12,7 @@ const DIRECT_PROVIDER_URL = process.env.CHAINSTACK_URI || 'https://ethereum-main
 // Inline pool configurations (no imports)
 const POOLS = {
   'USDC/ETH': {
-    address: '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640',
+    address: 'REDACTED_ADDRESS',
     token0: 'USDC',
     token1: 'ETH',
     decimals0: 6,
@@ -21,7 +22,7 @@ const POOLS = {
     fee: 3000
   },
   'USDT/ETH': {
-    address: '0x4e68Ccd3E89f51C3074ca5072bbAC773960dFa36',
+    address: 'REDACTED_ADDRESS',
     token0: 'ETH',
     token1: 'USDT',
     decimals0: 18,
@@ -31,7 +32,7 @@ const POOLS = {
     fee: 3000
   },
   'WBTC/ETH': {
-    address: '0xcbcdf9626bc03e24f779434178a73a0b4bad62ed',
+    address: 'REDACTED_ADDRESS',
     token0: 'WBTC',
     token1: 'ETH',
     decimals0: 8,
@@ -41,7 +42,7 @@ const POOLS = {
     fee: 3000
   },
   'SushiSwap USDC/ETH': {
-    address: '0x397FF1542f962076d0BFE58eA045FfA2d347ACa0',
+    address: 'REDACTED_ADDRESS',
     token0: 'USDC',
     token1: 'ETH',
     decimals0: 6,

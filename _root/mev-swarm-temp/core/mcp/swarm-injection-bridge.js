@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * MEV Swarm - Swarm Injection Integration
  * 
@@ -36,7 +37,7 @@ class SwarmInjectionBridge {
     
     // Configuration from environment
     this.config = {
-      executorAddress: process.env.EXECUTOR_ADDRESS || '0x2809566Ee1491a6f3A80Ec7ad3d04a5527A52138',
+      executorAddress: process.env.EXECUTOR_ADDRESS || 'REDACTED_ADDRESS',
       rpcUrl: process.env.MAINNET_RPC_URL || process.env.ETHEREUM_RPC_URL,
       privateKey: process.env.PRIVATE_KEY
     };
@@ -471,8 +472,8 @@ export async function handleMCPExecuteArbitrage(args) {
   }
   
   const opportunity = {
-    tokenIn: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', // WETH
-    tokenOut: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
+    tokenIn: 'REDACTED_ADDRESS', // WETH
+    tokenOut: 'REDACTED_ADDRESS', // USDC
     amountIn: amount,
     expectedProfit: '0',
     profitRatio: '0',

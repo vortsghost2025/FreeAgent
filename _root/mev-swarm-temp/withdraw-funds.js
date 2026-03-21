@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * Withdraw Funds from MEV Swarm Contract
  * Run: node mev-swarm/withdraw-funds.js
@@ -6,7 +7,7 @@
 require('dotenv').config();
 const { ethers } = require('ethers');
 
-const CONTRACT_ADDRESS = '0x4fF5eF5d185195173b0B178eDe4A7679E7De272f';
+const CONTRACT_ADDRESS = 'REDACTED_ADDRESS';
 const RPC_URL = process.env.ETHEREUM_RPC_URL || process.env.MAINNET_RPC_URL;
 
 async function withdraw() {

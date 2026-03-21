@@ -1,11 +1,12 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 const { ethers } = require('ethers');
 
-const WALLET_1 = '0x34769bE7087F1fE5B9ad5C50cC1526BC63217341';
-const WALLET_2 = '0xC649A2F94AFc4E5649D3d575d16E739e70B2BA2F';
+const WALLET_1 = 'REDACTED_ADDRESS';
+const WALLET_2 = 'REDACTED_ADDRESS';
 
 // Token addresses
-const WETH_ETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
-const WETH_BASE = '0x4200000000000000000000000000000000000006';
+const WETH_ETH = 'REDACTED_ADDRESS';
+const WETH_BASE = 'REDACTED_ADDRESS';
 
 async function checkBalances() {
   console.log('=== Checking Wallet Balances ===\n');

@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * Debug script to test RPC issue
  */
@@ -28,7 +29,7 @@ async function test() {
   // Test 4: Test getReserves (the failing call)
   console.log('\n4. Testing getReserves (single call)...');
   const PAIR_ABI = ['function getReserves() view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)'];
-  const poolAddr = '0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc';
+  const poolAddr = 'REDACTED_ADDRESS';
   
   try {
     const contract = new ethers.Contract(poolAddr, PAIR_ABI, provider);
@@ -45,7 +46,7 @@ async function test() {
   try {
     const results = await Promise.all([
       new ethers.Contract(poolAddr, PAIR_ABI, provider).getReserves(),
-      new ethers.Contract('0x397ff1542f962076d0bfe58ea045ffa2d347aca0', PAIR_ABI, provider).getReserves()
+      new ethers.Contract('REDACTED_ADDRESS', PAIR_ABI, provider).getReserves()
     ]);
     console.log('   SUCCESS! Results:', results.length);
   } catch (e) {

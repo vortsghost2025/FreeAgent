@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 """
 MEV Swarm - AutoGen-based Multi-Agent System
 Microsoft AutoGen for MEV arbitrage detection and execution
@@ -15,7 +16,7 @@ from autogen_ext.models.openai import OpenAIChatCompletionClient
 api_key = os.getenv("OPENAI_API_KEY", "")
 if not api_key:
     print("⚠️ OPENAI_API_KEY not set. Demo will fail.")
-    print("Set it with: set OPENAI_API_KEY=your_key")
+    print("Set it with: set OPENAI_API_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 
 # Create model client
 model_client = OpenAIChatCompletionClient(
@@ -150,8 +151,8 @@ async def run_demo():
     
     if not api_key:
         print("❌ Please set OPENAI_API_KEY first!")
-        print("   Windows: set OPENAI_API_KEY=your_key")
-        print("   Mac/Linux: export OPENAI_API_KEY=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
+        print("   Windows: set OPENAI_API_KEY=REDACTED_SET_VIA_SECRET_MANAGER
+        print("   Mac/Linux: export OPENAI_API_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 ")
         return
     

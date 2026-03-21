@@ -1,7 +1,8 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import('ethers').then(async ({ ethers }) => {
   const provider = new ethers.JsonRpcProvider('https://ethereum-mainnet.core.chainstack.com/4eaab7e73e2a832024e11e41e6688733');
 
-  const SUSHI_PAIR = '0x397FF1542f962076d0BFE58eA045FfA2d347ACa0';
+  const SUSHI_PAIR = 'REDACTED_ADDRESS';
   const PAIR_ABI = [
     'function getReserves() view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)',
     'function token0() view returns (address)',
@@ -15,8 +16,8 @@ import('ethers').then(async ({ ethers }) => {
     pair.token1()
   ]);
 
-  const USDC = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
-  const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+  const USDC = 'REDACTED_ADDRESS';
+  const WETH = 'REDACTED_ADDRESS';
 
   const isUSDC0 = token0.toLowerCase() === USDC.toLowerCase();
   const isWETH0 = token0.toLowerCase() === WETH.toLowerCase();

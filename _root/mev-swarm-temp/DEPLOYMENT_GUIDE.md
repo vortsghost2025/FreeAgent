@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # MEV Swarm - Production Deployment Guide
 
 ## Status: PRODUCTION READY ✅
@@ -75,7 +76,7 @@ ETH_RPC_URL=https://your-rpc-endpoint.com
 ETH_RPC_WS=wss://your-ws-endpoint.com
 
 # Private Key (NEVER commit this!)
-PRIVATE_KEY=0x...
+PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 
 # Flashbots Configuration
 FLASHBOTS_ENDPOINT=https://relay.flashbots.net
@@ -146,9 +147,9 @@ console.log(`Initialized with ${tools.length} tools`);
 ```javascript
 // Refresh graph with live data
 const graph = await mcpServer.tools.get('mev_refreshGraph').handler({
-  tokens: ['0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', // WETH
-           '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
-           '0x6B175474E89094C44Da98b954EedeAC495271d0F'], // DAI
+  tokens: ['REDACTED_ADDRESS', // WETH
+           'REDACTED_ADDRESS', // USDC
+           'REDACTED_ADDRESS'], // DAI
   poolTypes: ['uniswap_v2', 'uniswap_v3'],
   provider: ethersProvider,
   useRealData: true // Enable live mainnet data

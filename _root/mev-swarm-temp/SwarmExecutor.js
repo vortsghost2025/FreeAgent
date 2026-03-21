@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import { ethers } from "ethers";
 
 // ============ Contract ABIs ============
@@ -44,7 +45,7 @@ export class SwarmExecutor {
     this.executorAddress = config.executorAddress || process.env.EXECUTOR_ADDRESS || process.env.ARBITRAGE_CONTRACT;
 
     // Mainnet canonical WETH
-    this.wethAddress = config.wethAddress || "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
+    this.wethAddress = config.wethAddress || "REDACTED_ADDRESS";
 
     // Internal state (uninitialized)
     this.provider = null;

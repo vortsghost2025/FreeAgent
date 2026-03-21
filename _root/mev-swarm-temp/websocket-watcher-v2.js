@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * MEV Swarm - WebSocket Mempool Watcher v2
  * Real-time DEX swap monitoring with arbitrage opportunity detection
@@ -48,33 +49,33 @@ const WS_URL = RPC_URL.replace('https://', 'wss://').replace('http://', 'ws://')
 const MIN_SPREAD_THRESHOLD = 0.005; // 0.5% minimum spread
 const MIN_TRADE_SIZE_ETH = 0.01; // Minimum 0.01 ETH trade size
 const MONITORED_PAIRS = [
-  ['0xC02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', '0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'], // WETH/USDC
-  ['0xC02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', '0x6B175474E89094C44Da98b954EedeAC495271d0F'], // WETH/DAI
-  ['0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', '0xdAC17F958D2ee523a2206206994597C13D831ec7'], // USDC/DAI
+  ['REDACTED_ADDRESS', 'REDACTED_ADDRESS'], // WETH/USDC
+  ['REDACTED_ADDRESS', 'REDACTED_ADDRESS'], // WETH/DAI
+  ['REDACTED_ADDRESS', 'REDACTED_ADDRESS'], // USDC/DAI
 ];
 
 // DEX Routers with their factory addresses
 const DEX_INFO = {
-  '0x7a250d5630b4cf539739df2c5dacb4c659f2488d': {
+  'REDACTED_ADDRESS': {
     name: 'Uniswap V2',
     factory: '0x5C69bee701ef814E2F6b3bee8ee2EbDc28e681d0e8d2', // Uniswap V2 Factory
     quoter: '0xd78eAd10EC5fa4a4AbAE4973F72', // Quoter V2 (optional)
-    router: '0x7a250d5630b4cf539739df2c5dacb4c659f2488d'
+    router: 'REDACTED_ADDRESS'
   },
-  '0xe592427a0aece92de3edee1f18e0157c05861564': {
+  'REDACTED_ADDRESS': {
     name: 'Uniswap V3',
     factory: '0x1F9840a85d5aF5bf1D1762F9259add09b51', // Uniswap V3 Factory
     quoter: '0xb27308f9F8d70Cb9450cA9d0b36c0332E279', // Quoter V3
-    router: '0xe592427a0aece92de3edee1f18e0157c05861564'
+    router: 'REDACTED_ADDRESS'
   },
-  '0xd9e1ce17f2641f24ae83637ab66a2cca9c378b9f': {
+  'REDACTED_ADDRESS': {
     name: 'Sushiswap',
     factory: '0xc0aEe7780D80676fCfcDB2c95f712D4F2AC9',
-    router: '0xd9e1ce17f2641f24ae83637ab66a2cca9c378b9f'
+    router: 'REDACTED_ADDRESS'
   },
-  '0x1111111254eeb25477b68fb85ed929f73a960582': {
+  'REDACTED_ADDRESS': {
     name: '1inch',
-    router: '0x1111111254eeb25477b68fb85ed929f73a960582'
+    router: 'REDACTED_ADDRESS'
   }
 };
 

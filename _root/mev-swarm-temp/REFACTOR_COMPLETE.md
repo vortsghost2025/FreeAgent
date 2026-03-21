@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # MEV-Swarm Watcher Refactor - Complete
 
 ## ✅ Status: PRODUCTION READY
@@ -150,9 +151,9 @@ When you restart the watcher, you should see:
 
 ### Token Resolution
 ```
-✅ Token Cache HIT: 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2
-💾 Token Cache SET: 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 → USDC
-💾 Token Cache SET: 0xdac17f958d2ee523a2206206994597c13d831ec7 → USDT
+✅ Token Cache HIT: REDACTED_ADDRESS
+💾 Token Cache SET: REDACTED_ADDRESS → USDC
+💾 Token Cache SET: REDACTED_ADDRESS → USDT
 🔍 Discovered new token: 0x123... → PEPE, 18 decimals
 ```
 

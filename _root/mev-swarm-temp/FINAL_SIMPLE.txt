@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 THE PROBLEM:
 Your wallet 0x3476... has only $0.03 - needs $5-10 for gas to withdraw.
 
@@ -6,9 +7,9 @@ YOUR OTHER WALLET (0x29F7...) HAS $64!
 WHAT TO DO:
 
 1. Open MetaMask
-2. Make sure you're on wallet 0x29F7830AfD1F612935cFAfC65BF7b02272E79E0F (the one with $64)
+2. Make sure you're on wallet REDACTED_ADDRESS (the one with $64)
 3. Click "Send"
-4. Send 0.005 ETH to: 0x34769bE7087F1fE5B9ad5C50cC1526BC63217341
+4. Send 0.005 ETH to: REDACTED_ADDRESS
 5. Wait 1 minute
 
 THEN tell me and I'll run the withdraw script.

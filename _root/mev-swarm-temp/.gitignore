@@ -1,3 +1,6 @@
+# Block any file with 'key' in the name (prevents accidental secret commits)
+*key*
+
 # Environment variables with sensitive data
 .env
 .env.local
@@ -59,3 +62,12 @@ NEW-WALLET-INFO.json
 *private_key*
 credentials.json
 secrets.json
+
+# OpenRouter per-user key file (local only)
+.openrouter_key
+
+# Evaluation harness outputs (do not commit recordings or results)
+we/eval/results.json
+we/eval/results-*.json
+we/eval/recordings/*.json
+!we/eval/recordings/.gitkeep

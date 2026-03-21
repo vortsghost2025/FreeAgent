@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # 🚨 SECURITY INCIDENT REPORT
 
 **Date:** 2026-03-02
@@ -12,8 +13,8 @@ During MEV Swarm deployment, a real Ethereum private key was written to local co
 
 **Exposed Key (COMPROMISED - DO NOT USE):**
 - Last 4 chars: `...d380`
-- Associated Wallet: `0x34769bE7087F1fE5B9ad5C50cC1526BC63217341`
-- Contract: `0xaC9d24032F5375625661fADA31902D10D25c55e7`
+- Associated Wallet: `REDACTED_ADDRESS`
+- Contract: `REDACTED_ADDRESS`
 
 ---
 
@@ -60,7 +61,7 @@ node -e "const { ethers } = require('ethers'); const wallet = ethers.Wallet.crea
 **Files to update with NEW key:**
 1. `mev-swarm/.env`
    ```bash
-   PRIVATE_KEY=0xYOUR_NEW_PRIVATE_KEY_HERE
+   PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
    ```
 
 2. `C:\Users\seand\AppData\Roaming\Code\User\globalStorage\kilocode.kilo-code\settings\mcp_settings.json`

@@ -1,0 +1,5 @@
+{
+  "best_total_params": 1024,
+  "peak_throughput": 1234.5,
+  "advice": "Set TOTAL_PARAMS to 1024 for best observed throughput"
+}
