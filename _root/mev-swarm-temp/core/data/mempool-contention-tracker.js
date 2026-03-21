@@ -1,5 +1,9 @@
 import { EventEmitter } from 'events';
 
+// Conditional debug logger - enable with DEBUG_MEMPOOL=true node your-script.js
+const DEBUG = process.env.DEBUG_MEMPOOL === 'true';
+const debug = DEBUG ? console.log.bind(console, '[MEMPOOL-TRACKER]') : () => {};
+
 export class MempoolContentionTracker extends EventEmitter {
   constructor(config = {}) {
     super();
@@ -24,16 +28,20 @@ export class MempoolContentionTracker extends EventEmitter {
   }
 
   processTx(tx) {
-    if (!tx || !tx.data || tx.data.length < 10) return null;
+    debug('Processing tx:', tx?.hash, 'data length:', tx?.data?.length);
+    if (!tx || !tx.data || tx.data.length < 10) { debug('FAIL - no tx/data'); return null; }
 
     const selector = tx.data.slice(0, 10).toLowerCase();
-    if (!this.config.arbSelectors.has(selector)) return null;
+    debug('Selector:', selector, 'valid:', this.config.arbSelectors.has(selector));
+    if (!this.config.arbSelectors.has(selector)) { debug('FAIL - bad selector'); return null; }
 
     const txHash = tx.hash?.toLowerCase();
-    if (!txHash || this.pendingTxs.has(txHash)) return null;
+    debug('TxHash:', txHash, 'duplicate:', this.pendingTxs.has(txHash));
+    if (!txHash || this.pendingTxs.has(txHash)) { debug('FAIL - no hash or duplicate'); return null; }
 
     const pathSig = this.extractPathSignature(tx, selector);
-    if (!pathSig) return null;
+    debug('Path signature:', pathSig);
+    if (!pathSig) { debug('FAIL - no path signature'); return null; }
 
     const entry = {
       hash: txHash,
