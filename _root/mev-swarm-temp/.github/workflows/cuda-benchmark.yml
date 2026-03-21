@@ -1,0 +1,45 @@
+name: CUDA Compiler Benchmark
+
+# Run nightly on a self‑hosted runner that has an NVIDIA GPU
+on:
+  schedule:
+    - cron: '0 2 * * *'   # 02:00 UTC daily
+
+jobs:
+  benchmark:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install CUDA Toolkit
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cuda-toolkit-12-9
+
+      - name: Make scripts executable (safe)
+        run: |
+          git update-index --add --chmod=+x benchmark_run.sh csv2md.py plot_times.py
+
+      - name: Run benchmarks on sample kernels
+        run: |
+          ./benchmark_run.sh kernels/simple.cu sm_80 || true
+          ./benchmark_run.sh kernels/medium.cu sm_80 || true
+          ./benchmark_run.sh kernels/large.cu "sm_70;sm_80;sm_90" || true
+
+      - name: Convert CSVs → Markdown tables
+        run: |
+          for f in *_report_logs/compile_times_t*.csv; do
+            python3 csv2md.py "$f" >> benchmark_report.md || true
+          done
+
+      - name: Render PDF (Pandoc)
+        run: |
+          pandoc -s benchmark_report.md -o benchmark_report.pdf || true
+
+      - name: Upload report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cuda-benchmark-report
+          path: |
+            benchmark_report.pdf
+            build_time_vs_threads.png
