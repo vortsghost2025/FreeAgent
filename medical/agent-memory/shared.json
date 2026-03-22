@@ -1,0 +1,99 @@
+{
+  "type": "shared",
+  "name": "Shared Memory Database",
+  "description": "Facts, decisions, and context that ALL agents can read and write",
+  "entries": [
+    {
+      "agent": "kilo",
+      "content": "Kilo learned: me? This is my first interaction with you, so I don't have any prior memory of our conversation",
+      "type": "learning",
+      "timestamp": "2026-02-25T20:56:07.262Z"
+    },
+    {
+      "agent": "kilo",
+      "content": "Kilo learned: me? This is actually my first conversation with you, so I don't have any prior memory of our interactions",
+      "type": "learning",
+      "timestamp": "2026-02-25T21:03:36.817Z"
+    },
+    {
+      "agent": "kilo",
+      "content": "Kilo learned: me This is the beginning of our conversation, so I don't have any prior interactions to recall",
+      "type": "learning",
+      "timestamp": "2026-02-25T21:04:07.001Z"
+    },
+    {
+      "agent": "kilo",
+      "content": "Kilo learned: me Hello Sean, I recall that we've had previous conversations about building a free medical AI system for the world",
+      "type": "learning",
+      "timestamp": "2026-02-25T21:07:05.630Z"
+    },
+    {
+      "agent": "kilo",
+      "content": "Kilo learned: in `cockpit-server; in `agent-memory/claw",
+      "type": "learning",
+      "timestamp": "2026-02-25T21:16:24.129Z"
+    },
+    {
+      "agent": "kilo",
+      "content": "Kilo learned: me I recall that we've had previous conversations about building a free medical AI system for the world",
+      "type": "learning",
+      "timestamp": "2026-02-25T23:33:05.932Z"
+    },
+    {
+      "agent": "kilo",
+      "content": "Kilo learned: me Hello",
+      "type": "learning",
+      "timestamp": "2026-02-25T23:44:19.213Z"
+    },
+    {
+      "agent": "test",
+      "content": "test: tests on a controlled environment that mimics as close as possible to the production environment",
+      "type": "learning",
+      "timestamp": "2026-02-25T23:47:43.292Z"
+    },
+    {
+      "agent": "kilo",
+      "content": "Kilo learned: to protect the data being shared, including encryption and access controls",
+      "type": "learning",
+      "timestamp": "2026-02-26T00:08:29.121Z"
+    },
+    {
+      "agent": "kilo",
+      "content": "Kilo learned: ME? Hello",
+      "type": "learning",
+      "timestamp": "2026-02-26T00:53:06.874Z"
+    },
+    {
+      "agent": "kilo",
+      "content": "Kilo learned: me Hello again",
+      "type": "learning",
+      "timestamp": "2026-02-26T05:03:54.688Z"
+    },
+    {
+      "agent": "kilo",
+      "content": "Kilo learned: KiloAgent class in free-coding-agent/src/agents/kilo-agent",
+      "type": "learning",
+      "timestamp": "2026-02-26T12:31:58.897Z"
+    },
+    {
+      "agent": "kilo",
+      "content": "Kilo learned: before the interruption",
+      "type": "learning",
+      "timestamp": "2026-02-26T13:40:39.130Z"
+    },
+    {
+      "agent": "devops",
+      "content": "devops: variant-caller agent: genomics-agent-0 [9:21:15 a",
+      "type": "learning",
+      "timestamp": "2026-02-26T14:22:50.029Z"
+    },
+    {
+      "agent": "code",
+      "content": "code: me  Hello! It seems like you're looking for help with coding and programming tasks",
+      "type": "learning",
+      "timestamp": "2026-03-02T02:04:48.760Z"
+    }
+  ],
+  "created": "2026-02-25T00:00:00.000Z",
+  "lastUpdated": "2026-03-02T02:04:48.760Z"
+}

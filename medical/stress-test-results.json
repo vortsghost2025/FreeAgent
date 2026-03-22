@@ -1,0 +1,35 @@
+{
+  "timestamp": "2026-02-26T14:19:33.434Z",
+  "totalTime": 3464,
+  "results": {
+    "loadBalance": {
+      "status": "pass",
+      "issues": []
+    },
+    "ensembleTiming": {
+      "status": "warning",
+      "issues": [
+        "Significant timing variance (359ms) could cause race conditions"
+      ]
+    },
+    "memoryEngine": {
+      "status": "pass",
+      "issues": []
+    },
+    "routeBinding": {
+      "status": "pass",
+      "issues": []
+    },
+    "swarmConcurrency": {
+      "status": "warning",
+      "issues": [
+        "Near concurrency ceiling (100/20)"
+      ]
+    }
+  },
+  "summary": {
+    "passes": 3,
+    "warnings": 2,
+    "status": "needs_attention"
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "name": "free-coding-agent",
+  "name": "free-coding-agent-vscode",
   "displayName": "Free Coding Agent",
   "description": "AI coding assistant with multiple LLM backends",
   "version": "1.0.0",

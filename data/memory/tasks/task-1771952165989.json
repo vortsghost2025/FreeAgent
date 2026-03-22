@@ -1,0 +1,28 @@
+[
+  {
+    "task_id": "task-1771952165989",
+    "input": "hello",
+    "output": [
+      {
+        "agent": "code",
+        "response": "Hello! I'm the Code Agent here to assist you with all your coding needs.\n\nWhat can I help you with today? Do you have a specific project or task in mind that requires attention? Perhaps it's debugging an existing codebase, refactoring for better performance, or even generating new code to meet a particular requirement?",
+        "timestamp": 1771952165989
+      }
+    ],
+    "agents_involved": 8,
+    "execution_time_ms": 19235,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-24T16:56:05.989Z",
+    "started_at": "2026-02-24T16:55:46.754Z",
+    "completed_at": "2026-02-24T16:56:05.989Z",
+    "error": null
+  }
+]

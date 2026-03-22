@@ -1,0 +1,50 @@
+/**
+ * MEV Swarm - Arbitrage Executor
+ * Executes arbitrage based on opportunities detected by the watcher
+ *
+ * Architecture:
+ * Watcher → Arb-Agent → Executor → (GO/NO-GO Decision)
+ *
+ * Flow:
+ * 1. Receive arbitrage opportunity from watcher
+ * 2. Build calldata for each hop in route
+ * 3. Simulate entire route using eth_call (dry run)
+ * 4. Compare simulated profit vs expected profit
+ * 5. Return GO/NO-GO decision
+ *
+ * Safety Features:
+ * - Net-profit guardrail
+ * - Gas cost estimation
+ * - DRY_RUN mode enforcement
+ * - Slippage protection
+ */
+
+import { ethers } from 'ethers';
+import 'dotenv/config';
+import fs from 'fs';
+
+// ============================================================
+// 🔒 SECURITY GUARDS - Bot will NOT start without passing
+// ============================================================
+
+// Kill switch check
+if (fs.existsSync('KILL_SWITCH')) {
+  console.error('\n🛑 KILL SWITCH ACTIVATED');
+  console.error('Create a file named "KILL_SWITCH" to stop the bot.');
+  console.error('Delete the file to re-enable.\n');
+  process.exit(1);
+}
+
+// Load security guard module
+import { initSecurity, getPrivateKey } from './security-guard.js';
+
+// Initialize security - this validates key format and enforces safety
+const security = initSecurity();
+if (!security.isValid) {
+  console.error('\n❌ Security initialization failed');
+  process.exit(1);
+}
+
+// Get validated private key through security guard
+const key = getPrivateKey();
+

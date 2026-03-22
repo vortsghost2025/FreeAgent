@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Pipeline Dashboard | 2ms Processing</title>
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --success: #00ff9d;
+            --warning: #ffa502;
+            --danger: #ff4757;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--dark), var(--darker));
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid var(--primary);
+        }
+        
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .performance-badge {
+            display: inline-block;
+            background: var(--success);
+            color: #000;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .status-complete { background: var(--success); box-shadow: 0 0 10px var(--success); }
+        .status-processing { background: var(--warning); box-shadow: 0 0 10px var(--warning); }
+        
+        .pipeline-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .step.completed {
+            background: rgba(0, 255, 157, 0.1);
+            border-left: 3px solid var(--success);
+        }
+        
+        .step-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: bold;
+        }
+        
+        .step-icon.complete {
+            background: var(--success);
+            color: #000;
+        }
+        
+        .step-info {
+            flex: 1;
+        }
+        
+        .step-name {
+            font-weight: bold;
+            color: var(--light);
+        }
+        
+        .step-time {
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .metric {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--success);
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .audit-log {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .log-entry {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+        
+        .log-timestamp {
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .log-agent {
+            color: var(--success);
+        }
+        
+        .risk-display {
+            padding: 15px;
+            background: rgba(255, 71, 87, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid var(--danger);
+        }
+        
+        .risk-score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--danger);
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .risk-factors {
+            margin-top: 15px;
+        }
+        
+        .factor {
+            padding: 8px;
+            margin: 5px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .factor-high { border-left: 3px solid var(--danger); }
+        .factor-medium { border-left: 3px solid var(--warning); }
+        .factor-low { border-left: 3px solid var(--success); }
+        
+        .summary-content {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary { background: var(--primary); color: #000; }
+        .btn-success { background: var(--success); color: #000; }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .timestamp {
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏥 MEDICAL PIPELINE DASHBOARD</h1>
+        <div class="performance-badge">⚡ 2ms END-TO-END PROCESSING</div>
+        <p>Real-time visualization of medical data pipeline execution</p>
+    </div>
+    
+    <div class="dashboard-grid">
+        <!-- Pipeline Execution -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Pipeline Execution</div>
+                <div class="status-indicator status-complete"></div>
+            </div>
+            <div class="pipeline-steps" id="pipelineSteps">
+                <!-- Steps will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Performance Metrics -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Performance Metrics</div>
+                <div class="status-indicator status-complete"></div>
+            </div>
+            <div class="metrics-grid">
+                <div class="metric">
+                    <div class="metric-value" id="processingTime">2ms</div>
+                    <div class="metric-label">Processing Time</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="agentsCount">5</div>
+                    <div class="metric-label">Agents Executed</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="confidence">30%</div>
+                    <div class="metric-label">Classification Confidence</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="completeness">0%</div>
+                    <div class="metric-label">Data Completeness</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Risk Assessment -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Risk Assessment</div>
+                <div class="status-indicator status-complete"></div>
+            </div>
+            <div class="risk-display">
+                <div class="risk-score" id="riskScore">0.9</div>
+                <div style="text-align: center; color: var(--danger); font-weight: bold;">HIGH RISK</div>
+                <div class="risk-factors" id="riskFactors">
+                    <!-- Factors will be populated -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Summary Output -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Human Summary</div>
+                <div class="status-indicator status-complete"></div>
+            </div>
+            <div class="summary-content" id="humanSummary">
+                Processed labs data with 30% classification confidence. Risk score: 0.9.
+            </div>
+        </div>
+        
+        <!-- Audit Log -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Execution Audit Log</div>
+                <div class="status-indicator status-complete"></div>
+            </div>
+            <div class="audit-log" id="auditLog">
+                <!-- Log entries will be populated -->
+            </div>
+        </div>
+        
+        <!-- Classification Details -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Classification</div>
+                <div class="status-indicator status-complete"></div>
+            </div>
+            <div style="padding: 15px;">
+                <div style="margin-bottom: 15px;">
+                    <strong>Type:</strong> <span id="classificationType">labs</span>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <strong>Confidence:</strong> <span id="classificationConfidence">30%</span>
+                </div>
+                <div>
+                    <strong>Indicators:</strong>
+                    <div id="classificationIndicators" style="margin-top: 8px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button class="btn btn-primary" onclick="simulateNewExecution()">🔄 Simulate New Execution</button>
+        <button class="btn btn-success" onclick="exportResults()">📥 Export Results</button>
+    </div>
+    
+    <div class="timestamp" id="lastUpdate">
+        Last updated: <span id="currentTime"></span>
+    </div>
+
+    <script>
+        // Sample pipeline data
+        const pipelineData = {
+            success: true,
+            output: {
+                humanSummary: "Processed labs data with 30% classification confidence. Risk score: 0.9.",
+                processingTime: 2,
+                pipeline: ["ingestion-001", "triage-001", "summarization-001", "risk-001"],
+                classification: {
+                    type: "labs",
+                    confidence: 0.3,
+                    indicators: ["keyword:test"]
+                },
+                summary: {
+                    completeness: 0
+                },
+                riskScore: {
+                    score: 0.9,
+                    severity: "high",
+                    factors: [
+                        {
+                            factor: "missing_required_fields",
+                            weight: 0.5,
+                            description: "Missing required fields: testName, results"
+                        },
+                        {
+                            factor: "partial_extraction",
+                            weight: 0.3,
+                            description: "Completeness 0 below threshold 0.6"
+                        },
+                        {
+                            factor: "missing_source",
+                            weight: 0.1,
+                            description: "Source metadata is missing or unknown"
+                        }
+                    ]
+                }
+            },
+            state: {
+                auditLog: [
+                    {
+                        agentId: "ingestion-001",
+                        role: "INGESTION",
+                        status: "success",
+                        timestamp: "2026-02-26T23:48:34.688Z",
+                        processingTime: 0
+                    },
+                    {
+                        agentId: "triage-001",
+                        role: "TRIAGE",
+                        status: "success",
+                        timestamp: "2026-02-26T23:48:34.689Z",
+                        processingTime: 1
+                    },
+                    {
+                        agentId: "summarization-001",
+                        role: "SUMMARIZATION",
+                        status: "success",
+                        timestamp: "2026-02-26T23:48:34.689Z",
+                        processingTime: 0
+                    },
+                    {
+                        agentId: "risk-001",
+                        role: "RISK",
+                        status: "success",
+                        timestamp: "2026-02-26T23:48:34.690Z",
+                        processingTime: 1
+                    },
+                    {
+                        agentId: "output-001",
+                        role: "OUTPUT",
+                        status: "success",
+                        timestamp: "2026-02-26T23:48:34.690Z",
+                        processingTime: 0
+                    }
+                ]
+            }
+        };
+
+        // Initialize dashboard
+        function initDashboard() {
+            updateTimestamp();
+            renderPipelineSteps();
+            renderMetrics();
+            renderRiskAssessment();
+            renderAuditLog();
+            renderClassification();
+        }
+
+        // Render pipeline steps
+        function renderPipelineSteps() {
+            const container = document.getElementById('pipelineSteps');
+            const steps = [
+                { name: 'Ingestion', icon: '📥', time: '0ms' },
+                { name: 'Normalize/Triage', icon: '🔄', time: '1ms' },
+                { name: 'Classify/Summarize', icon: '📋', time: '0ms' },
+                { name: 'Risk Scoring', icon: '⚠️', time: '1ms' },
+                { name: 'Output Formatting', icon: '📤', time: '0ms' }
+            ];
+            
+            container.innerHTML = steps.map((step, index) => `
+                <div class="step completed">
+                    <div class="step-icon complete">${step.icon}</div>
+                    <div class="step-info">
+                        <div class="step-name">${step.name}</div>
+                        <div class="step-time">${step.time}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render metrics
+        function renderMetrics() {
+            document.getElementById('processingTime').textContent = pipelineData.output.processingTime + 'ms';
+            document.getElementById('agentsCount').textContent = pipelineData.state.auditLog.length;
+            document.getElementById('confidence').textContent = (pipelineData.output.classification.confidence * 100) + '%';
+            document.getElementById('completeness').textContent = (pipelineData.output.summary.completeness * 100) + '%';
+        }
+
+        // Render risk assessment
+        function renderRiskAssessment() {
+            document.getElementById('riskScore').textContent = pipelineData.output.riskScore.score;
+            
+            const factorsContainer = document.getElementById('riskFactors');
+            factorsContainer.innerHTML = pipelineData.output.riskScore.factors.map(factor => `
+                <div class="factor factor-${factor.factor.includes('missing') ? 'high' : factor.factor.includes('partial') ? 'medium' : 'low'}">
+                    <strong>${factor.factor}</strong>: ${factor.description}
+                </div>
+            `).join('');
+        }
+
+        // Render audit log
+        function renderAuditLog() {
+            const container = document.getElementById('auditLog');
+            container.innerHTML = pipelineData.state.auditLog.map(entry => `
+                <div class="log-entry">
+                    <span class="log-timestamp">[${new Date(entry.timestamp).toLocaleTimeString()}]</span>
+                    <span class="log-agent">${entry.agentId}</span>
+                    <span style="color: var(--success)">✓ ${entry.role} (${entry.processingTime}ms)</span>
+                </div>
+            `).join('');
+        }
+
+        // Render classification
+        function renderClassification() {
+            document.getElementById('classificationType').textContent = pipelineData.output.classification.type;
+            document.getElementById('classificationConfidence').textContent = (pipelineData.output.classification.confidence * 100) + '%';
+            
+            const indicatorsContainer = document.getElementById('classificationIndicators');
+            indicatorsContainer.innerHTML = pipelineData.output.classification.indicators.map(indicator => 
+                `<span style="display: inline-block; background: rgba(0,212,255,0.2); padding: 4px 8px; border-radius: 4px; margin: 2px;">${indicator}</span>`
+            ).join('');
+        }
+
+        // Update timestamp
+        function updateTimestamp() {
+            document.getElementById('currentTime').textContent = new Date().toLocaleString();
+        }
+
+        // Simulate new execution
+        function simulateNewExecution() {
+            // In a real scenario, this would trigger a new pipeline execution
+            alert('In demo mode: Would trigger new medical pipeline execution');
+        }
+
+        // Export results
+        function exportResults() {
+            const dataStr = JSON.stringify(pipelineData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `medical-pipeline-results-${new Date().toISOString().slice(0,19)}.json`;
+            link.click();
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            initDashboard();
+            setInterval(updateTimestamp, 1000);
+        };
+    </script>
+</body>
+</html>

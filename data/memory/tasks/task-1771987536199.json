@@ -1,0 +1,28 @@
+[
+  {
+    "task_id": "task-1771987536198",
+    "input": "test",
+    "output": [
+      {
+        "agent": "test",
+        "response": "You've decided to run some tests! I'll get right on that.\n\n**Test Environment**: I'm currently running in a simulated environment with the following settings:\n- Programming language: Python 3.x\n- Framework: Pytest (by default)\n\nWhat type of test would you like me to generate? Would you like to:\n\n1. **Unit Test**: Focus on individual units of code, such as functions or methods.\n2. **Integration Test**: Verify how different parts of the codebase interact with each other.\n3. **Functional Test**: Ensure that the application behaves correctly based on its requirements.\n\nPlease respond with your choice to proceed!",
+        "timestamp": 1771987536198
+      }
+    ],
+    "agents_involved": 8,
+    "execution_time_ms": 7455,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-25T02:45:36.198Z",
+    "started_at": "2026-02-25T02:45:28.743Z",
+    "completed_at": "2026-02-25T02:45:36.199Z",
+    "error": null
+  }
+]

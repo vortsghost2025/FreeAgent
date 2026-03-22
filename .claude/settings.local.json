@@ -1,11 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(ls:*)",
-      "Bash(claude:*)",
-      "Bash(source /c/workspace/.venv/Scripts/activate && echo \"venv activated\" && python --version 2>&1)"
+      "Bash(findstr :54112)"
     ]
   }
 }

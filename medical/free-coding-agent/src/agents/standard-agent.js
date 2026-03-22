@@ -19,14 +19,18 @@ export class StandardAgent {
     console.log(`[${this.name}] Initialized`);
   }
 
-  async handleMessage(message, provider) {
+  async handleMessage(message, provider, options = {}) {
     const prompt = this.buildPrompt(message);
     console.log(`[${this.name}] Processing message`);
+
+    // Use provided model from options, or fall back to agent's default model
+    const modelToUse = options.model || this.model;
+    console.log(`[${this.name}] Using model: ${modelToUse}`);
 
     try {
       const response = await provider.generate({
         prompt,
-        model: this.model,
+        model: modelToUse,
       });
 
       const agentResponse = {
@@ -79,6 +83,8 @@ export class StandardAgent {
       "\n" +
       "User message: " +
       messageContent +
+      "\n" +
+      "IMPORTANT: Respond in natural language (plain English), NOT in JSON, code blocks, or structured formats. Just give a helpful, conversational response." +
       "\n" +
       "Respond as " +
       this.role +

@@ -1,0 +1,35 @@
+[
+  {
+    "task_id": "task-1772153692798",
+    "input": "{\"agent\":\"clinical\",\"test\":\"test_2\",\"intensity\":\"maximum\"}",
+    "output": [
+      {
+        "agent": "clinical",
+        "response": "**Clinical Reasoning Output**\n\nBased on the input data, I have determined that the patient requires a maximum intensity treatment for test 2.\n\n**Assessment Summary:**\n\n* Test: test_2\n* Intensity: Maximum\n\n**Treatment Recommendations:**\n\n1. Administer a high dose of medication to achieve optimal results.\n2. Monitor patient's response closely and adjust treatment plan as needed.\n\n**Structured Output:**\n\n| Field | Value |\n| --- | --- |\n| Patient ID | Not provided |\n| Test Name | test_2 |\n| Intensity Level | Maximum |\n\nPlease confirm or modify the above recommendations accordingly.",
+        "model": "llama3.1:8b",
+        "timestamp": 1772153574671
+      },
+      {
+        "agent": "test",
+        "response": "Error: The operation was aborted due to timeout",
+        "model": "deepseek-coder-v2:16b",
+        "timestamp": 1772153692798
+      }
+    ],
+    "agents_involved": 9,
+    "execution_time_ms": 180061,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-27T00:54:52.798Z",
+    "started_at": "2026-02-27T00:51:52.737Z",
+    "completed_at": "2026-02-27T00:54:52.798Z",
+    "error": null
+  }
+]

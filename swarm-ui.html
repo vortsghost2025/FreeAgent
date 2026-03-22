@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧠 WE4Free Swarm Cockpit</title>
+  <style>
+    #federation-visualization {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      z-index: 10000;
+    }
+  </style>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+      color: #fff;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding: 8px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 6px;
+    }
+
+    .metric-label {
+      color: #aaa;
+    }
+
+    .metric-value {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .metric-value.good {
+      color: #4ade80;
+    }
+
+    .metric-value.warning {
+      color: #fbbf24;
+    }
+
+    .metric-value.critical {
+      color: #ef4444;
+    }
+
+    .agent-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .agent-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+      border-left: 3px solid;
+    }
+
+    .agent-item.coordinator {
+      border-left-color: #3b82f6;
+    }
+
+    .agent-item.worker {
+      border-left-color: #10b981;
+    }
+
+    .agent-item.observer {
+      border-left-color: #f59e0b;
+    }
+
+    .agent-item.router {
+      border-left-color: #8b5cf6;
+    }
+
+    .agent-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .status-dot.healthy {
+      background: #4ade80;
+    }
+
+    .status-dot.degraded {
+      background: #fbbf24;
+    }
+
+    .status-dot.idle {
+      background: #60a5fa;
+    }
+
+    .status-dot.working {
+      background: #a78bfa;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    .workload-bar {
+      width: 100px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .workload-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4ade80, #fbbf24, #ef4444);
+      transition: width 0.3s ease;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+    }
+
+    .btn-warning {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .event-log {
+      max-height: 300px;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+      padding: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+    }
+
+    .event-log::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .event-log::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+
+    .event-log::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    .event-item {
+      margin-bottom: 8px;
+      padding: 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .event-timestamp {
+      color: #666;
+      margin-right: 8px;
+    }
+
+    .event-type {
+      font-weight: bold;
+      margin-right: 8px;
+    }
+
+    .event-type.spawn {
+      color: #4ade80;
+    }
+
+    .event-type.retire {
+      color: #ef4444;
+    }
+
+    .event-type.decision {
+      color: #3b82f6;
+    }
+
+    .event-type.task {
+      color: #a78bfa;
+    }
+
+    .event-type.health {
+      color: #fbbf24;
+    }
+
+    .chart {
+      height: 150px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 6px;
+      padding: 10px;
+      margin-top: 10px;
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .chart-bar {
+      flex: 1;
+      background: linear-gradient(180deg, #3b82f6, #1e40af);
+      border-radius: 2px 2px 0 0;
+      transition: height 0.3s ease;
+      min-height: 2px;
+    }
+
+    .version-badge {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-family: monospace;
+      font-size: 11px;
+      z-index: 9999;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #1e3a8a, #1e40af);
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-content h3 {
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #aaa;
+    }
+
+    .form-group select,
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.3);
+      color: white;
+      font-size: 14px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+  </style>
+</head>
+
+<body>
+  <div
+    style="background:#0f172a;border-bottom:1px solid #1e293b;padding:10px 24px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;position:sticky;top:0;z-index:9999;">
+    <span style="color:#4fc3f7;font-weight:bold;margin-right:8px;">🚀 Quick Nav:</span>
+    <a href="http://localhost:7771" target="_blank" rel="noopener"
+      style="color:#4fc3f7;background:#1e293b;padding:6px 14px;border-radius:6px;text-decoration:none;font-size:13px;">🧠
+      Cockpit</a>
+    <a href="http://localhost:3001/master" target="_blank" rel="noopener"
+      style="color:#f59e0b;background:#1e293b;padding:6px 14px;border-radius:6px;text-decoration:none;font-size:13px;">🎛️
+      Master Control</a>
+    <a href="http://localhost/swarm-ui.html" target="_blank" rel="noopener"
+      style="color:#10b981;background:#1e293b;padding:6px 14px;border-radius:6px;text-decoration:none;font-size:13px;">🐝
+      Swarm</a>
+    <a href="http://localhost/genomics-ui.html" target="_blank" rel="noopener"
+      style="color:#a78bfa;background:#1e293b;padding:6px 14px;border-radius:6px;text-decoration:none;font-size:13px;">🧬
+      Genomics</a>
+    <a href="http://localhost/medical-ui.html" target="_blank" rel="noopener"
+      style="color:#fb7185;background:#1e293b;padding:6px 14px;border-radius:6px;text-decoration:none;font-size:13px;">🏥
+      Medical</a>
+    <a href="http://localhost/compute-ui.html" target="_blank" rel="noopener"
+      style="color:#34d399;background:#1e293b;padding:6px 14px;border-radius:6px;text-decoration:none;font-size:13px;">💻
+      Compute</a>
+  </div>
+  <div class="header">
+    <h1>🧠 WE4Free Swarm Cockpit</h1>
+    <p>Track 4: Distributed Agent Swarm Layer</p>
+  </div>
+
+  <div class="grid">
+    <!-- Swarm Overview -->
+    <div class="card">
+      <h2>🌐 Swarm Overview</h2>
+      <div class="metric">
+        <span class="metric-label">Total Agents</span>
+        <span class="metric-value" id="total-agents">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Efficiency</span>
+        <span class="metric-value good" id="efficiency">0%</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Throughput</span>
+        <span class="metric-value good" id="throughput">0 tasks/s</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Avg Workload</span>
+        <span class="metric-value" id="avg-workload">0%</span>
+      </div>
+    </div>
+
+    <!-- Task Queue -->
+    <div class="card">
+      <h2>📋 Task Queue</h2>
+      <div class="metric">
+        <span class="metric-label">Pending</span>
+        <span class="metric-value" id="tasks-pending">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Running</span>
+        <span class="metric-value" id="tasks-running">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Completed</span>
+        <span class="metric-value good" id="tasks-completed">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Failed</span>
+        <span class="metric-value critical" id="tasks-failed">0</span>
+      </div>
+    </div>
+
+    <!-- Health Monitor -->
+    <div class="card">
+      <h2>🏥 Health Status</h2>
+      <div class="metric">
+        <span class="metric-label">Healthy Peers</span>
+        <span class="metric-value good" id="health-healthy">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Degraded</span>
+        <span class="metric-value warning" id="health-degraded">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Disconnected</span>
+        <span class="metric-value" id="health-disconnected">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Failed</span>
+        <span class="metric-value critical" id="health-failed">0</span>
+      </div>
+    </div>
+
+    <!-- Meta-Agent -->
+    <div class="card">
+      <h2>🤖 Meta-Agent</h2>
+      <div class="metric">
+        <span class="metric-label">Autonomous</span>
+        <span class="metric-value" id="meta-autonomous">❌ Inactive</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Decisions Made</span>
+        <span class="metric-value" id="meta-decisions">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Agents Spawned</span>
+        <span class="metric-value good" id="meta-spawned">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Agents Retired</span>
+        <span class="metric-value" id="meta-retired">0</span>
+      </div>
+    </div>
+
+    <!-- Gossip State -->
+    <div class="card">
+      <h2>📊 Gossip State</h2>
+      <div class="metric">
+        <span class="metric-label">State Size</span>
+        <span class="metric-value" id="gossip-size">0 keys</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Connected Peers</span>
+        <span class="metric-value" id="gossip-peers">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Merges</span>
+        <span class="metric-value" id="gossip-merges">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Conflicts</span>
+        <span class="metric-value" id="gossip-conflicts">0</span>
+      </div>
+    </div>
+
+    <!-- Throughput Chart -->
+    <div class="card">
+      <h2>📈 Throughput History</h2>
+      <div class="chart" id="throughput-chart">
+        <!-- Bars will be dynamically added -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Agents List -->
+  <div class="card">
+    <h2>👥 Active Agents</h2>
+    <div class="agent-list" id="agent-list">
+      <p style="color: #666; text-align: center; padding: 20px;">No agents spawned yet</p>
+    </div>
+  </div>
+
+  <!-- Diagnostics Panel - Track 6A -->
+  <div class="card" id="diagnostics-panel" style="display:none;">
+    <h2>🔬 Diagnostics</h2>
+    <div
+      style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:10px; margin-bottom:15px;">
+      <div class="metric">
+        <span class="metric-label">Avg Latency</span>
+        <span class="metric-value" id="diag-latency-avg">-</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">P95 Latency</span>
+        <span class="metric-value" id="diag-latency-p95">-</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Tasks/sec</span>
+        <span class="metric-value good" id="diag-throughput">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Errors</span>
+        <span class="metric-value critical" id="diag-errors">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Jobs Profiled</span>
+        <span class="metric-value" id="diag-jobs">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Events Traced</span>
+        <span class="metric-value" id="diag-events">0</span>
+      </div>
+    </div>
+    <div style="margin-bottom:10px;">
+      <strong>Recent Errors:</strong>
+      <div class="event-log" id="diag-error-log" style="max-height:120px; overflow-y:auto; font-size:0.85em;">
+        <div style="color:#666; padding:5px;">No errors</div>
+      </div>
+    </div>
+    <div>
+      <strong>Job Profiles:</strong>
+      <div id="diag-job-profiles" style="max-height:100px; overflow-y:auto; font-size:0.85em;">
+        <div style="color:#666; padding:5px;">No jobs profiled yet</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Log -->
+  <div class="card">
+    <h2>📜 Event Log</h2>
+    <div class="event-log" id="event-log">
+      <div class="event-item">
+        <span class="event-timestamp">[00:00:00]</span>
+        <span class="event-type decision">SYSTEM</span>
+        <span>Swarm Cockpit initialized</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="card">
+    <h2>🎮 Controls</h2>
+    <div class="controls">
+      <button class="btn btn-success" onclick="openInitModal()">
+        ✨ Initialize Swarm
+      </button>
+      <button class="btn btn-success" onclick="restoreSwarm()">
+        🔄 Restore Swarm
+      </button>
+      <button class="btn btn-primary" onclick="openCompute()">
+        💻 Open Compute
+      </button>
+      <button class="btn btn-primary" onclick="addComputeJob()">
+        ⚡ Add Compute Job
+      </button>
+      <button class="btn btn-primary" onclick="toggleAutonomous()">
+        🤖 Toggle Autonomous
+      </button>
+      <button class="btn btn-primary" onclick="openSpawnModal()">
+        ➕ Spawn Agent
+      </button>
+      <button class="btn btn-warning" onclick="addTestTask()">
+        📋 Add Test Task
+      </button>
+      <button class="btn btn-warning" onclick="rebalanceWork()">
+        ⚖️ Rebalance Work
+      </button>
+      <button class="btn btn-primary" onclick="optimizeSwarm()">
+        🔧 Optimize Swarm
+      </button>
+      <button class="btn btn-primary" onclick="dumpDiagnostics()">
+        🔬 Dump Diagnostics
+      </button>
+      <button class="btn btn-danger" onclick="shutdownSwarm()">
+        🛑 Shutdown All
+      </button>
+    </div>
+  </div>
+
+  <!-- Version Badge -->
+  <div class="version-badge">
+    v2.0.0-swarm
+  </div>
+
+  <!-- Initialize Modal -->
+  <div class="modal" id="init-modal">
+    <div class="modal-content">
+      <h3>✨ Initialize Swarm</h3>
+      <div class="form-group">
+        <label>Workers</label>
+        <input type="number" id="init-workers" value="4" min="1" max="20">
+      </div>
+      <div class="form-group">
+        <label>Routers</label>
+        <input type="number" id="init-routers" value="1" min="1" max="10">
+      </div>
+      <div class="form-group">
+        <label>Observers</label>
+        <input type="number" id="init-observers" value="1" min="1" max="10">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-success" onclick="confirmInit()">Initialize</button>
+        <button class="btn btn-warning" onclick="closeInitModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spawn Modal -->
+  <div class="modal" id="spawn-modal">
+    <div class="modal-content">
+      <h3>➕ Spawn Agent</h3>
+      <div class="form-group">
+        <label>Agent Role</label>
+        <select id="spawn-role">
+          <option value="worker">Worker</option>
+          <option value="coordinator">Coordinator</option>
+          <option value="observer">Observer</option>
+          <option value="router">Router</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" onclick="confirmSpawn()">Spawn</button>
+        <button class="btn btn-warning" onclick="closeSpawnModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compute Modal - Embedded Compute Interface -->
+  <div class="modal" id="compute-modal">
+    <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+      <h3>💻 Distributed Compute</h3>
+      <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+        <!-- Job Submission -->
+        <div class="card" style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
+          <h4 style="margin-bottom: 15px;">📋 Submit Job</h4>
+          <div class="form-group">
+            <label>Job Type:</label>
+            <select id="compute-job-type" onchange="updateComputeJobForm()">
+              <option value="map-reduce">Map/Reduce</option>
+              <option value="pipeline">Pipeline</option>
+              <option value="batch">Batch Processing</option>
+              <option value="transform">Parallel Transform</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Input Data (JSON):</label>
+            <textarea id="compute-job-input" placeholder='[1, 2, 3, 4, 5]' style="min-height: 60px;"></textarea>
+          </div>
+          <div class="form-group" id="compute-map-fn-group">
+            <label>Map Function:</label>
+            <textarea id="compute-job-map-fn" placeholder='(x) => x * 2' style="min-height: 50px;"></textarea>
+          </div>
+          <div class="form-group" id="compute-reduce-fn-group">
+            <label>Reduce Function:</label>
+            <textarea id="compute-job-reduce-fn" placeholder='(acc, val) => acc + val'
+              style="min-height: 50px;"></textarea>
+          </div>
+          <div class="form-group" id="compute-process-fn-group" style="display: none;">
+            <label>Process Function:</label>
+            <textarea id="compute-job-process-fn" placeholder='(item) => item.toUpperCase()'
+              style="min-height: 50px;"></textarea>
+          </div>
+          <div class="form-group" id="compute-transform-fn-group" style="display: none;">
+            <label>Transform Function:</label>
+            <textarea id="compute-job-transform-fn" placeholder='(x) => x * 3' style="min-height: 50px;"></textarea>
+          </div>
+          <div class="form-group" id="compute-stages-group" style="display: none;">
+            <label>Pipeline Stages (JSON):</label>
+            <textarea id="compute-job-stages" placeholder='[{"name": "double", "fn": "(x) => x * 2"}]'
+              style="min-height: 50px;"></textarea>
+          </div>
+          <button class="btn btn-primary" onclick="submitComputeJob()">🚀 Submit Job</button>
+          <button class="btn btn-secondary" onclick="loadComputeTestData()">⚡ Load Test Data</button>
+        </div>
+        <!-- Metrics -->
+        <div class="card" style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
+          <h4 style="margin-bottom: 15px;">📊 Compute Metrics</h4>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div style="background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px; text-align: center;">
+              <div id="compute-metric-total" style="font-size: 24px; font-weight: bold;">0</div>
+              <div style="font-size: 12px; color: #aaa;">Total Jobs</div>
+            </div>
+            <div style="background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px; text-align: center;">
+              <div id="compute-metric-completed" style="font-size: 24px; font-weight: bold; color: #10b981;">0</div>
+              <div style="font-size: 12px; color: #aaa;">Completed</div>
+            </div>
+            <div style="background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px; text-align: center;">
+              <div id="compute-metric-active" style="font-size: 24px; font-weight: bold; color: #f59e0b;">0</div>
+              <div style="font-size: 12px; color: #aaa;">Active</div>
+            </div>
+            <div style="background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px; text-align: center;">
+              <div id="compute-metric-latency" style="font-size: 24px; font-weight: bold; color: #3b82f6;">0ms</div>
+              <div style="font-size: 12px; color: #aaa;">Avg Latency</div>
+            </div>
+          </div>
+          <h4 style="margin: 15px 0 10px;">📜 Recent Jobs</h4>
+          <div id="compute-job-list" style="max-height: 200px; overflow-y: auto;">
+            <div style="color: #666; font-size: 12px;">No jobs yet</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions" style="margin-top: 20px;">
+        <button class="btn btn-warning" onclick="closeComputeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Include all Track 4 modules -->
+  <script src="agent-roles.js?v=4.0.0"></script>
+  <script src="gossip-state.js?v=4.0.0"></script>
+  <script src="task-queue.js?v=4.0.0"></script>
+  <script src="swarm-registry.js?v=4.0.0"></script>
+  <script src="self-healing.js?v=4.0.0"></script>
+  <script src="swarm-coordinator.js?v=4.0.0"></script>
+  <script src="meta-agent.js?v=4.0.0"></script>
+
+  <!-- Federation Upgrade: Compute Router for Phase 7 Isolation -->
+  <script src="swarm-coordinator-compute-router.js?v=4.0.0"></script>
+  <script src="distributed-compute-evolution.js?v=4.0.0"></script>
+
+  <!-- Include Track 5 modules (Persistent Agent Environment) -->
+  <script src="agent-persistence.js?v=4.0.0"></script>
+  <script src="swarm-snapshot.js?v=4.0.0"></script>
+  <script src="restore-manager.js?v=4.0.0"></script>
+
+  <!-- Include Track 6A module (Diagnostics) -->
+  <script src="swarm-diagnostics.js?v=4.0.0"></script>
+
+  <!-- Include Track 6C module (Distributed Compute) -->
+  <script src="distributed-compute.js?v=4.0.0"></script>
+
+  <script>
+    // Global swarm state
+    let agentFactory = null;
+    let swarmCoordinator = null;
+    let metaAgent = null;
+    let taskQueue = null;
+    let healthMonitor = null;
+    let gossipState = null;
+    let updateInterval = null;
+    let throughputHistory = [];
+
+    // Track 5: Persistence
+    let persistence = null;
+    let swarmSnapshot = null;
+    let restoreManager = null;
+
+    // Federation upgrade: Compute router for Phase 7 isolation
+    let computeRouter = null;
+    let computeEngine = null;
+    let diagnostics = null;
+
+    // Initialize swarm
+    async function initializeSwarm(workers = 200, routers = 10, observers = 5) {
+      if (agentFactory) {
+        logEvent('SYSTEM', 'Swarm already initialized');
+        return;
+      }
+
+      // Create factory
+      agentFactory = new AgentFactory();
+
+      // Create SwarmRegistry (Track 6C Fix: Stable connection state tracking)
+      const swarmRegistry = new SwarmRegistry();
+
+      // Create coordinator
+      swarmCoordinator = new SwarmCoordinator('swarm-0');
+
+      // Create meta-agent
+      metaAgent = new MetaAgent('meta-0');
+
+      // Create task queue
+      taskQueue = new TaskQueue('queue-0');
+
+      // Create health monitor with registry
+      healthMonitor = new SelfHealingMonitor('health-0', swarmRegistry);
+
+      // Create gossip state
+      gossipState = new GossipState('gossip-0');
+
+      // Federation upgrade: Initialize compute router with shared + Phase 7 engines
+      computeRouter = new window.ComputeRouter();
+      const sharedCompute = new window.DistributedCompute(null, null);
+      const phase7Compute = new window.DistributedComputeEvolution(null, null);
+      await computeRouter.initialize(sharedCompute, phase7Compute);
+      logEvent('SYSTEM', 'Compute Router initialized: Shared + Phase 7 engines');
+
+      // Initialize Track 5 persistence
+      persistence = new AgentPersistence('we4free-swarm');
+      swarmSnapshot = new SwarmSnapshot(persistence);
+      restoreManager = new RestoreManager(persistence, swarmSnapshot);
+
+      // Register components with Track 5
+      restoreManager.registerComponents({
+        webrtcManager: null, // No WebRTC in this UI
+        swarmCoordinator,
+        metaAgent,
+        gossipState,
+        taskQueue,
+        selfHealing: healthMonitor
+      });
+
+      // Configure persistence in meta-agent
+      metaAgent.configurePersistence(persistence, swarmSnapshot, restoreManager);
+
+      // Start periodic snapshots (every 60 seconds)
+      swarmSnapshot.startPeriodicSnapshots(60000);
+
+      // Initialize coordinator with registry and compute router (federation upgrade)
+      swarmCoordinator.initialize({
+        registry: swarmRegistry,
+        taskQueue,
+        gossipState,
+        healthMonitor,
+        computeRouter  // Federation upgrade: route Phase 7 jobs to isolated engine
+      });
+
+      // Initialize meta-agent
+      metaAgent.initialize({
+        agentFactory,
+        swarmCoordinator,
+        healthMonitor,
+        gossipState,
+        taskQueue
+      });
+
+      // Spawn initial agents with user-specified counts
+      const swarm = agentFactory.spawnSwarm({
+        coordinators: 1,
+        workers: workers,
+        observers: observers,
+        routers: routers
+      });
+
+      // Register agents with coordinator (and registry)
+      Object.values(swarm).forEach(agent => {
+        swarmCoordinator.registerAgent(agent);
+        healthMonitor.registerPeer(agent.id);
+
+        // Start task execution for workers (Track 6C)
+        if (agent.role === 'worker') {
+          agent.startTaskExecution(taskQueue);
+        }
+      });
+
+      // Start gossip
+      gossipState.startGossip(2000);
+
+      // Initialize Track 6C compute engine
+      computeEngine = new DistributedCompute(swarmCoordinator, taskQueue);
+      computeEngine.onJobComplete = (job) => {
+        logEvent('COMPUTE', `Job ${job.id} completed in ${job.getDuration()}ms`);
+      };
+      computeEngine.onJobFailed = (job) => {
+        logEvent('ERROR', `Job ${job.id} failed: ${job.error}`);
+      };
+      computeEngine.onProgress = (job) => {
+        logEvent('COMPUTE', `Job ${job.id} progress: ${job.progress}%`);
+      };
+
+      // Initialize Track 6A diagnostics
+      diagnostics = new SwarmDiagnostics();
+      diagnostics.attach({
+        coordinator: swarmCoordinator,
+        taskQueue,
+        registry: swarmRegistry,
+        healthMonitor,
+        computeEngine
+      });
+      document.getElementById('diagnostics-panel').style.display = '';
+
+      // Start UI updates
+      updateInterval = setInterval(updateUI, 1000);
+
+      // Setup cross-window job submission listener
+      setupComputeWindowListener();
+
+      logEvent('SYSTEM', `Swarm initialized with ${Object.keys(swarm).length} agents`);
+      updateUI();
+    }
+
+    // Listen for job submissions from compute window (via postMessage)
+    function setupComputeWindowListener() {
+      window.addEventListener('message', async (event) => {
+        // Security: verify origin (in production, check event.origin)
+        if (event.data.type === 'SUBMIT_JOB') {
+          const { jobType, input, mapFn, reduceFn, processFn, transformFn, stages } = event.data.payload;
+
+          try {
+            if (!computeEngine) {
+              throw new Error('Compute engine not initialized');
+            }
+
+            // Functions come as strings from postMessage, eval them here
+            let result;
+            switch (jobType) {
+              case 'map-reduce':
+                result = await computeEngine.submitMapReduce(input, eval(mapFn), eval(reduceFn));
+                break;
+              case 'pipeline':
+                // Eval function strings in stages
+                const stagesWithFns = stages.map(s => ({
+                  name: s.name,
+                  fn: eval(s.fn)
+                }));
+                result = await computeEngine.submitPipeline(input, stagesWithFns);
+                break;
+              case 'batch':
+                result = await computeEngine.submitBatch(input, eval(processFn));
+                break;
+              case 'transform':
+                result = await computeEngine.submitTransform(input, eval(transformFn));
+                break;
+              default:
+                throw new Error(`Unknown job type: ${jobType}`);
+            }
+
+            // Send success response
+            event.source.postMessage({
+              type: 'JOB_SUBMITTED',
+              success: true
+            }, '*');
+
+            logEvent('COMPUTE', `Job submitted from compute window: ${jobType}`);
+
+          } catch (error) {
+            // Send error response
+            event.source.postMessage({
+              type: 'JOB_SUBMITTED',
+              success: false,
+              error: error.message
+            }, '*');
+
+            logEvent('ERROR', `Job submission failed: ${error.message}`);
+          }
+        }
+      });
+
+      console.log('✅ Cross-window compute listener ready');
+    }
+
+    // Restore swarm from saved state - Track 5
+    async function restoreSwarm() {
+      if (agentFactory) {
+        logEvent('SYSTEM', 'Swarm already initialized. Shutdown first to restore.');
+        return;
+      }
+
+      logEvent('SYSTEM', '🔄 Attempting to restore swarm from saved state...');
+
+      try {
+        // Initialize Track 5 components
+        persistence = new AgentPersistence('we4free-swarm');
+        await persistence.initialize();
+
+        swarmSnapshot = new SwarmSnapshot(persistence);
+        restoreManager = new RestoreManager(persistence, swarmSnapshot);
+
+        // Create basic components for restoration
+        agentFactory = new AgentFactory();
+        swarmCoordinator = new SwarmCoordinator('swarm-0');
+        metaAgent = new MetaAgent('meta-0');
+        taskQueue = new TaskQueue('queue-0');
+        healthMonitor = new SelfHealingMonitor('health-0');
+        gossipState = new GossipState('gossip-0');
+
+        // Initialize coordinator
+        swarmCoordinator.initialize({
+          taskQueue,
+          gossipState,
+          healthMonitor
+        });
+
+        // Initialize meta-agent
+        metaAgent.initialize({
+          agentFactory,
+          swarmCoordinator,
+          healthMonitor,
+          gossipState,
+          taskQueue
+        });
+
+        // Register components with restore manager
+        restoreManager.registerComponents({
+          webrtcManager: null,
+          swarmCoordinator,
+          metaAgent,
+          gossipState,
+          taskQueue,
+          selfHealing: healthMonitor
+        });
+
+        // Configure persistence in meta-agent
+        metaAgent.configurePersistence(persistence, swarmSnapshot, restoreManager);
+
+        // Attempt restore
+        const restored = await restoreManager.restoreSwarm();
+
+        if (restored) {
+          // Start periodic snapshots
+          swarmSnapshot.startPeriodicSnapshots(60000);
+
+          // Start gossip
+          gossipState.startGossip(2000);
+
+          // Start UI updates
+          updateInterval = setInterval(updateUI, 1000);
+
+          const progress = restoreManager.getProgress();
+          logEvent('SYSTEM', `✅ Swarm restored! Agents: ${progress.agentsRestored}, Tasks: ${progress.tasksRestored}`);
+
+          if (progress.errors.length > 0) {
+            logEvent('WARN', `Restore had ${progress.errors.length} error(s)`);
+          }
+        } else {
+          logEvent('WARN', 'No saved state found. Use Initialize Swarm instead.');
+
+          // Clean up
+          agentFactory = null;
+          swarmCoordinator = null;
+          metaAgent = null;
+          taskQueue = null;
+          healthMonitor = null;
+          gossipState = null;
+        }
+
+        updateUI();
+
+      } catch (error) {
+        logEvent('ERROR', `Restore failed: ${error.message}`);
+        console.error('Restore error:', error);
+
+        // Clean up on error
+        agentFactory = null;
+        swarmCoordinator = null;
+        metaAgent = null;
+        taskQueue = null;
+        healthMonitor = null;
+        gossipState = null;
+      }
+    }
+
+    // Toggle autonomous mode
+    function toggleAutonomous() {
+      if (!metaAgent) {
+        logEvent('ERROR', 'Initialize swarm first');
+        return;
+      }
+
+      if (metaAgent.autonomousMode) {
+        metaAgent.stopAutonomousMode();
+        logEvent('META', 'Autonomous mode DISABLED');
+      } else {
+        metaAgent.startAutonomousMode(5000);
+        logEvent('META', 'Autonomous mode ENABLED');
+      }
+
+      updateUI();
+    }
+
+    // Init modal
+    function openInitModal() {
+      if (agentFactory) {
+        logEvent('SYSTEM', 'Swarm already initialized');
+        return;
+      }
+      document.getElementById('init-modal').classList.add('active');
+    }
+
+    function closeInitModal() {
+      document.getElementById('init-modal').classList.remove('active');
+    }
+
+    function confirmInit() {
+      const workers = parseInt(document.getElementById('init-workers').value) || 4;
+      const routers = parseInt(document.getElementById('init-routers').value) || 1;
+      const observers = parseInt(document.getElementById('init-observers').value) || 1;
+
+      closeInitModal();
+      initializeSwarm(workers, routers, observers);
+
+      logEvent('SYSTEM', `Swarm initialized: ${workers}W, ${routers}R, ${observers}O`);
+    }
+
+    // Spawn modal
+    function openSpawnModal() {
+      if (!agentFactory) {
+        logEvent('ERROR', 'Initialize swarm first');
+        return;
+      }
+      document.getElementById('spawn-modal').classList.add('active');
+    }
+
+    function closeSpawnModal() {
+      document.getElementById('spawn-modal').classList.remove('active');
+    }
+
+    function confirmSpawn() {
+      const role = document.getElementById('spawn-role').value;
+      metaAgent.manualSpawnAgent(role);
+      closeSpawnModal();
+      logEvent('SPAWN', `Manual spawn: ${role}`);
+      updateUI();
+    }
+
+    // Add test task
+    function addTestTask() {
+      if (!taskQueue) {
+        logEvent('ERROR', 'Initialize swarm first');
+        return;
+      }
+
+      const taskId = `task-${Date.now()}`;
+      const task = new Task(taskId, 'test', { data: 'test payload' }, {
+        priority: TaskPriority.NORMAL
+      });
+
+      // Override execute
+      task._run = async () => {
+        await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+        return { success: true };
+      };
+
+      taskQueue.addTask(task);
+      logEvent('TASK', `Added task: ${taskId}`);
+      updateUI();
+    }
+
+    // Add compute job
+    function addComputeJob() {
+      if (!computeEngine) {
+        logEvent('ERROR', 'Initialize swarm first');
+        return;
+      }
+
+      const jobId = `job-${Date.now()}`;
+
+      // Create a simple map/reduce job
+      const mapFn = (item) => ({ key: item % 10, value: item });
+      const reduceFn = (key, values) => values.reduce((sum, v) => sum + v.value, 0);
+      const input = Array.from({ length: 100 }, (_, i) => i);
+
+      computeEngine.submitMapReduce(input, mapFn, reduceFn, {
+        jobId,
+        description: 'Test compute job'
+      });
+
+      logEvent('COMPUTE', `Added job: ${jobId} (100 items map/reduce)`);
+      updateUI();
+    }
+
+    // Rebalance work
+    function rebalanceWork() {
+      if (!swarmCoordinator) {
+        logEvent('ERROR', 'Initialize swarm first');
+        return;
+      }
+
+      swarmCoordinator.rebalanceWork();
+      logEvent('COORDINATOR', 'Work rebalanced');
+      updateUI();
+    }
+
+    // Optimize swarm
+    function optimizeSwarm() {
+      if (!swarmCoordinator) {
+        logEvent('ERROR', 'Initialize swarm first');
+        return;
+      }
+
+      swarmCoordinator.optimize();
+      logEvent('COORDINATOR', 'Swarm optimized');
+      updateUI();
+    }
+
+    function dumpDiagnostics() {
+      if (!diagnostics) {
+        logEvent('ERROR', 'Initialize swarm first');
+        return;
+      }
+      const snapshot = diagnostics.getSnapshot();
+      console.log('🔬 DIAGNOSTICS SNAPSHOT:', snapshot);
+      logEvent('DIAG', `Snapshot dumped to console — ${snapshot.errors.total} errors, latency avg ${snapshot.latency.avg}ms, p95 ${snapshot.latency.p95}ms`);
+    }
+
+    // Open compute interface - Track 6C
+    function openCompute() {
+      if (!computeEngine) {
+        logEvent('ERROR', 'Initialize swarm first');
+        return;
+      }
+      // Show embedded compute modal instead of opening popup
+      document.getElementById('compute-modal').classList.add('active');
+      logEvent('SYSTEM', 'Opened embedded compute interface');
+    }
+
+    function closeComputeModal() {
+      document.getElementById('compute-modal').classList.remove('active');
+    }
+
+    // Update compute job form fields based on job type
+    function updateComputeJobForm() {
+      const jobType = document.getElementById('compute-job-type').value;
+      document.getElementById('compute-map-fn-group').style.display = (jobType === 'map-reduce') ? 'block' : 'none';
+      document.getElementById('compute-reduce-fn-group').style.display = (jobType === 'map-reduce') ? 'block' : 'none';
+      document.getElementById('compute-process-fn-group').style.display = (jobType === 'batch') ? 'block' : 'none';
+      document.getElementById('compute-transform-fn-group').style.display = (jobType === 'transform') ? 'block' : 'none';
+      document.getElementById('compute-stages-group').style.display = (jobType === 'pipeline') ? 'block' : 'none';
+    }
+
+    // Load test data for compute jobs
+    function loadComputeTestData() {
+      document.getElementById('compute-job-type').value = 'map-reduce';
+      updateComputeJobForm();
+      document.getElementById('compute-job-input').value = '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]';
+      document.getElementById('compute-job-map-fn').value = '(x) => x * 2';
+      document.getElementById('compute-job-reduce-fn').value = '(acc, val) => acc + val';
+    }
+
+    // Submit job to local compute engine (no postMessage needed!)
+    async function submitComputeJob() {
+      if (!computeEngine) {
+        logEvent('ERROR', 'Compute engine not initialized');
+        return;
+      }
+
+      const jobType = document.getElementById('compute-job-type').value;
+      const inputText = document.getElementById('compute-job-input').value;
+
+      if (!inputText.trim()) {
+        logEvent('ERROR', 'Please enter input data');
+        return;
+      }
+
+      let input;
+      try {
+        input = JSON.parse(inputText);
+      } catch (e) {
+        logEvent('ERROR', 'Invalid JSON input: ' + e.message);
+        return;
+      }
+
+      const jobId = 'job-' + Date.now();
+      const startTime = Date.now();
+
+      // Update metrics
+      document.getElementById('compute-metric-total').textContent =
+        parseInt(document.getElementById('compute-metric-total').textContent) + 1;
+      document.getElementById('compute-metric-active').textContent =
+        parseInt(document.getElementById('compute-metric-active').textContent) + 1;
+
+      // Add job to list
+      const jobList = document.getElementById('compute-job-list');
+      const jobItem = document.createElement('div');
+      jobItem.className = 'job-item running';
+      jobItem.id = 'compute-' + jobId;
+      jobItem.innerHTML = `<div style="display: flex; justify-content: space-between;"><span>${jobType}</span><span style="color: #f59e0b;">Running...</span></div>`;
+      jobList.insertBefore(jobItem, jobList.firstChild);
+
+      try {
+        let result;
+        switch (jobType) {
+          case 'map-reduce':
+            const mapFnStr = document.getElementById('compute-job-map-fn').value || '(x) => x';
+            const reduceFnStr = document.getElementById('compute-job-reduce-fn').value || '(a, b) => a';
+            result = await computeEngine.submitMapReduce(input, mapFnStr, reduceFnStr);
+            break;
+          case 'pipeline':
+            const stagesStr = document.getElementById('compute-job-stages').value || '[]';
+            const stages = JSON.parse(stagesStr);
+            result = await computeEngine.submitPipeline(input, stages);
+            break;
+          case 'batch':
+            const processFnStr = document.getElementById('compute-job-process-fn').value || '(x) => x';
+            result = await computeEngine.submitBatch(input, processFnStr);
+            break;
+          case 'transform':
+            const transformFnStr = document.getElementById('compute-job-transform-fn').value || '(x) => x';
+            result = await computeEngine.submitTransform(input, transformFnStr);
+            break;
+        }
+
+        const latency = Date.now() - startTime;
+
+        // Update job status
+        jobItem.className = 'job-item completed';
+        jobItem.innerHTML = `<div style="display: flex; justify-content: space-between;"><span>${jobType}</span><span style="color: #10b981;">✓ ${latency}ms</span></div><div style="font-size: 11px; color: #666; margin-top: 5px;">${JSON.stringify(result).substring(0, 100)}</div>`;
+
+        // Update metrics
+        document.getElementById('compute-metric-completed').textContent =
+          parseInt(document.getElementById('compute-metric-completed').textContent) + 1;
+        document.getElementById('compute-metric-active').textContent =
+          parseInt(document.getElementById('compute-metric-active').textContent) - 1;
+        document.getElementById('compute-metric-latency').textContent = latency + 'ms';
+
+        logEvent('COMPUTE', `Job ${jobType} completed in ${latency}ms`);
+
+      } catch (error) {
+        jobItem.className = 'job-item failed';
+        jobItem.innerHTML = `<div style="display: flex; justify-content: space-between;"><span>${jobType}</span><span style="color: #ef4444;">Failed</span></div><div style="font-size: 11px; color: #ef4444;">${error.message}</div>`;
+        document.getElementById('compute-metric-active').textContent =
+          parseInt(document.getElementById('compute-metric-active').textContent) - 1;
+        logEvent('ERROR', `Compute job failed: ${error.message}`);
+      }
+    }
+
+    // Shutdown swarm
+    function shutdownSwarm() {
+      if (!confirm('⚠️ Shutdown entire swarm?')) {
+        return;
+      }
+
+      if (updateInterval) {
+        clearInterval(updateInterval);
+        updateInterval = null;
+      }
+
+      if (metaAgent) {
+        metaAgent.shutdown();
+      }
+
+      if (swarmCoordinator) {
+        swarmCoordinator.shutdown();
+      }
+
+      if (taskQueue) {
+        taskQueue.shutdown();
+      }
+
+      if (healthMonitor) {
+        healthMonitor.shutdown();
+      }
+
+      if (gossipState) {
+        gossipState.shutdown();
+      }
+
+      if (agentFactory) {
+        agentFactory.shutdownAll();
+      }
+
+      if (diagnostics) {
+        diagnostics.shutdown();
+      }
+
+      agentFactory = null;
+      swarmCoordinator = null;
+      metaAgent = null;
+      taskQueue = null;
+      healthMonitor = null;
+      gossipState = null;
+      diagnostics = null;
+
+      document.getElementById('diagnostics-panel').style.display = 'none';
+      logEvent('SYSTEM', 'Swarm shutdown complete');
+      updateUI();
+    }
+
+    // Update UI
+    function updateUI() {
+      if (!swarmCoordinator) {
+        return;
+      }
+
+      // Swarm metrics
+      const swarmMetrics = swarmCoordinator.getSwarmMetrics();
+      document.getElementById('total-agents').textContent = swarmMetrics.totalAgents;
+      document.getElementById('efficiency').textContent = (swarmMetrics.efficiency * 100).toFixed(1) + '%';
+      document.getElementById('throughput').textContent = swarmMetrics.throughput.toFixed(2) + ' tasks/s';
+      document.getElementById('avg-workload').textContent = swarmMetrics.avgWorkload.toFixed(0) + '%';
+
+      // Task queue
+      if (taskQueue) {
+        const taskStatus = taskQueue.getStatus();
+        document.getElementById('tasks-pending').textContent = taskStatus.pending;
+        document.getElementById('tasks-running').textContent = taskStatus.running;
+        document.getElementById('tasks-completed').textContent = taskStatus.completed;
+        document.getElementById('tasks-failed').textContent = taskStatus.failed;
+      }
+
+      // Health monitor
+      if (healthMonitor) {
+        const healthSummary = healthMonitor.getSummary();
+        document.getElementById('health-healthy').textContent = healthSummary.healthy;
+        document.getElementById('health-degraded').textContent = healthSummary.degraded;
+        document.getElementById('health-disconnected').textContent = healthSummary.disconnected;
+        document.getElementById('health-failed').textContent = healthSummary.failed;
+      }
+
+      // Meta-agent
+      if (metaAgent) {
+        const metaStatus = metaAgent.getStatus();
+        document.getElementById('meta-autonomous').textContent =
+          metaStatus.autonomousMode ? '✅ Active' : '❌ Inactive';
+        document.getElementById('meta-decisions').textContent = metaStatus.metrics.decisionsMade;
+        document.getElementById('meta-spawned').textContent = metaStatus.metrics.agentsSpawned;
+        document.getElementById('meta-retired').textContent = metaStatus.metrics.agentsRetired;
+      }
+
+      // Gossip state
+      if (gossipState) {
+        const gossipMetrics = gossipState.getMetrics();
+        document.getElementById('gossip-size').textContent = gossipMetrics.stateSize + ' keys';
+        document.getElementById('gossip-peers').textContent = gossipMetrics.connectedPeers;
+        document.getElementById('gossip-merges').textContent = gossipMetrics.merges;
+        document.getElementById('gossip-conflicts').textContent = gossipMetrics.conflicts;
+      }
+
+      // Agent list
+      const agentStatus = swarmCoordinator.getAgentStatus();
+      const agentListEl = document.getElementById('agent-list');
+
+      if (agentStatus.length === 0) {
+        agentListEl.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No agents spawned yet</p>';
+      } else {
+        agentListEl.innerHTML = agentStatus.map(agent => `
+          <div class="agent-item ${agent.role}">
+            <div>
+              <strong>${agent.id}</strong>
+              <span style="color: #666; margin-left: 10px;">${agent.role}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+              <div class="agent-status">
+                <div class="status-dot ${agent.state}"></div>
+                <span>${agent.state}</span>
+              </div>
+              <div class="workload-bar">
+                <div class="workload-fill" style="width: ${agent.workload}%"></div>
+              </div>
+              <span style="font-size: 12px;">${agent.workload}%</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Throughput chart
+      throughputHistory.push(swarmMetrics.throughput);
+      if (throughputHistory.length > 20) {
+        throughputHistory.shift();
+      }
+
+      const chartEl = document.getElementById('throughput-chart');
+      const maxThroughput = Math.max(...throughputHistory, 1);
+      chartEl.innerHTML = throughputHistory.map(value => {
+        const height = (value / maxThroughput) * 100;
+        return `<div class="chart-bar" style="height: ${height}%"></div>`;
+      }).join('');
+
+      // Track 6A: Diagnostics panel
+      if (diagnostics) {
+        const latency = diagnostics.getLatencyStats();
+        const recentThroughput = diagnostics.getThroughputHistory(10);
+        const avgTps = recentThroughput.length > 0
+          ? (recentThroughput.reduce((s, t) => s + t.completed, 0) / recentThroughput.length).toFixed(1)
+          : '0';
+
+        document.getElementById('diag-latency-avg').textContent = latency.count > 0 ? latency.avg + 'ms' : '-';
+        document.getElementById('diag-latency-p95').textContent = latency.count > 0 ? latency.p95 + 'ms' : '-';
+        document.getElementById('diag-throughput').textContent = avgTps;
+        document.getElementById('diag-errors').textContent = diagnostics.errors.size;
+        document.getElementById('diag-jobs').textContent = diagnostics.jobProfiles.size;
+        document.getElementById('diag-events').textContent = diagnostics.events.size;
+
+        // Recent errors
+        const errors = diagnostics.getErrors(5);
+        const errorLogEl = document.getElementById('diag-error-log');
+        if (errors.length > 0) {
+          errorLogEl.innerHTML = errors.reverse().map(e => {
+            const ts = new Date(e.timestamp).toLocaleTimeString();
+            return `<div class="event-item"><span class="event-timestamp">[${ts}]</span> <span class="event-type error">${e.category}</span> ${e.message}${e.detail ? ' — ' + e.detail : ''}</div>`;
+          }).join('');
+        }
+
+        // Job profiles
+        const jobs = diagnostics.getJobProfiles(5);
+        const jobEl = document.getElementById('diag-job-profiles');
+        if (jobs.length > 0) {
+          jobEl.innerHTML = jobs.reverse().map(j =>
+            `<div style="padding:2px 5px; border-bottom:1px solid #333;">${j.jobId} — ${j.type} — ${j.duration}ms — ${j.completedSubtasks}/${j.subtasks} subtasks</div>`
+          ).join('');
+        }
+      }
+    }
+
+    // Event log
+    function logEvent(type, message) {
+      const logEl = document.getElementById('event-log');
+      const timestamp = new Date().toLocaleTimeString();
+
+      const eventItem = document.createElement('div');
+      eventItem.className = 'event-item';
+      eventItem.innerHTML = `
+        <span class="event-timestamp">[${timestamp}]</span>
+        <span class="event-type ${type.toLowerCase()}">${type}</span>
+        <span>${message}</span>
+      `;
+
+      logEl.insertBefore(eventItem, logEl.firstChild);
+
+      // Keep last 50 events
+      while (logEl.children.length > 50) {
+        logEl.removeChild(logEl.lastChild);
+      }
+    }
+
+    // Initialize on load
+    const SWARM_VERSION = '4.0.0';
+    const LOAD_TIME = new Date().toISOString();
+    console.log('🧠 WE4Free Swarm Cockpit loaded');
+    console.log(`📦 Version: ${SWARM_VERSION} | Loaded: ${LOAD_TIME}`);
+    console.log('📦 Track 4: Distributed Agent Swarm Layer');
+    console.log('💙 For WE. For the swarm. For the mesh.');
+
+    // Enhanced agent loading for local file access
+    function ensureAgentsLoaded() {
+      if (agentFactory && agentFactory.getAllAgents) {
+        const agents = agentFactory.getAllAgents();
+        if (agents && agents.length > 0) {
+          console.log('✅ Agents found:', agents.length);
+          updateAgentList(agents);
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function updateAgentList(agents) {
+      const agentListEl = document.getElementById('agent-list');
+      if (!agentListEl) return;
+      
+      if (agents.length === 0) {
+        agentListEl.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No agents spawned yet</p>';
+      } else {
+        agentListEl.innerHTML = agents.map(agent => `
+          <div class="agent-item ${agent.type || 'worker'}">
+            <div>
+              <strong>${agent.id}</strong>
+              <span style="color: #666; margin-left: 10px;">${agent.type || 'worker'}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+              <div class="agent-status">
+                <div class="status-dot ${agent.status || 'idle'}"></div>
+                <span>${agent.status || 'idle'}</span>
+              </div>
+              <div class="workload-bar">
+                <div class="workload-fill" style="width: ${agent.cpuUsage || 0}%"></div>
+              </div>
+              <span style="font-size: 12px;">${agent.cpuUsage || 0}%</span>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    // Try to update agent list periodically
+    let agentCheckInterval = setInterval(() => {
+      if (ensureAgentsLoaded()) {
+        clearInterval(agentCheckInterval);
+      }
+    }, 500);
+
+    // Display version in footer
+    const versionDiv = document.createElement('div');
+    versionDiv.style.cssText = 'position:fixed;bottom:10px;right:10px;background:rgba(0,0,0,0.7);color:#00ff00;padding:5px 10px;border-radius:4px;font-family:monospace;font-size:11px;z-index:10000';
+    versionDiv.textContent = `v${SWARM_VERSION} | ${LOAD_TIME.split('T')[1].split('.')[0]}`;
+    document.body.appendChild(versionDiv);
+  </script>
+
+  <div id="federation-visualization">
+    <canvas id="federation-map"></canvas>
+    <div id="federation-nodes"></div>
+  </div>
+</body>
+
+</html>

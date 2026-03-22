@@ -1,0 +1,28 @@
+[
+  {
+    "task_id": "task-1772038459135",
+    "input": "hello",
+    "output": [
+      {
+        "agent": "code",
+        "response": "**Code Agent Online**\n\nYour code is clean and ready to execute. What task would you like me to assist with today? Programming, debugging, refactoring, or perhaps generating some new code? Please specify your requirements for a prompt response. \n\nAvailable tasks:\n\n1. **Write Code**: I can generate code in various programming languages.\n2. **Debugging**: Identify and fix errors in existing code.\n3. **Refactor**: Improve the structure and efficiency of existing code.\n4. **Code Review**: Provide feedback on best practices and coding standards.\n\nPlease choose a task or describe your specific need:",
+        "timestamp": 1772038459135
+      }
+    ],
+    "agents_involved": 1,
+    "execution_time_ms": 4634,
+    "status": "completed",
+    "routing": {
+      "decision": "selected",
+      "selected_agent": "code",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-25T16:54:19.135Z",
+    "started_at": "2026-02-25T16:54:14.501Z",
+    "completed_at": "2026-02-25T16:54:19.135Z",
+    "error": null
+  }
+]

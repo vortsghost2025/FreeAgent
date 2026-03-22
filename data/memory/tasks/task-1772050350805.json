@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772050350805",
+    "input": "helo kilo",
+    "output": [
+      {
+        "agent": "kilo",
+        "response": "Agent 'kilo' not found",
+        "timestamp": 1772050350804,
+        "error": true
+      }
+    ],
+    "agents_involved": 1,
+    "execution_time_ms": 1,
+    "status": "completed",
+    "routing": {
+      "decision": "selected",
+      "selected_agent": "kilo",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-25T20:12:30.805Z",
+    "started_at": "2026-02-25T20:12:30.804Z",
+    "completed_at": "2026-02-25T20:12:30.805Z",
+    "error": null
+  }
+]

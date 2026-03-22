@@ -1,0 +1,38 @@
+{
+  "agents": [
+    "vscode-lingma",
+    "qwen-companion",
+    "claw-agent"
+  ],
+  "communication": {
+    "protocol": "websocket",
+    "retryAttempts": 3,
+    "port": 8765
+  },
+  "layers": {
+    "working": {
+      "retention": 0.7,
+      "capacity": 5000
+    },
+    "perceptual": {
+      "retention": 0.9,
+      "capacity": 1000
+    },
+    "associative": {
+      "retention": 0.85,
+      "capacity": 3000
+    },
+    "transcendent": {
+      "retention": 0.99,
+      "capacity": 1000
+    },
+    "longTerm": {
+      "retention": 0.95,
+      "capacity": 10000
+    },
+    "shortTerm": {
+      "retention": 0.8,
+      "capacity": 2000
+    }
+  }
+}

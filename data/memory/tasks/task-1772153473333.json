@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772153473333",
+    "input": "{\"agent\":\"clinical\",\"check\":\"health\"}",
+    "output": [
+      {
+        "agent": "clinical",
+        "response": "**Health Check**\n\nTo provide a comprehensive health check, I'll need to ask you a few questions. Please answer them in the order they appear.\n\n1. What is your main reason for seeking medical attention today? (Choose one)\n\t* Fever\n\t* Chest pain\n\t* Headache\n\t* Fatigue\n\t* Other (please specify)\n\nPlease respond with the number of your selected option or describe your reason if it's not listed.",
+        "model": "llama3.1:8b",
+        "timestamp": 1772153473333
+      }
+    ],
+    "agents_involved": 9,
+    "execution_time_ms": 33949,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-27T00:51:13.333Z",
+    "started_at": "2026-02-27T00:50:39.384Z",
+    "completed_at": "2026-02-27T00:51:13.333Z",
+    "error": null
+  }
+]

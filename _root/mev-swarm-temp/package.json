@@ -1,0 +1,41 @@
+{
+  "name": "mev-swarm-50-agent",
+  "version": "2.0.0",
+  "description": "50-Agent Parallel MEV Arbitrage Swarm System",
+  "main": "run-mev-swarm.js",
+  "type": "module",
+  "scripts": {
+    "start": "node run-mev-swarm.js",
+    "dev": "node run-mev-swarm.js",
+    "test": "echo \"No tests specified\"",
+    "lint": "echo \"No linting configured\"",
+    "clean": "rm -rf logs/*.log"
+  },
+  "keywords": [
+    "mev",
+    "arbitrage",
+    "blockchain",
+    "ethereum",
+    "defi",
+    "swarm",
+    "parallel",
+    "hft"
+  ],
+  "author": "MEV Swarm Team",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "ethers": "^6.12.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/mev-swarm-50-agent.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/mev-swarm-50-agent/issues"
+  },
+  "homepage": "https://github.com/your-org/mev-swarm-50-agent#readme"
+}

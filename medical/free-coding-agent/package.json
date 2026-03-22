@@ -10,13 +10,19 @@
     "distributed": "./bin/distributed-cli.js"
   },
   "scripts": {
+    "predev": "npx kill-port 3000 4000 3002 || echo 'No ports to kill'",
+    "dev": "concurrently \"npm:web\" \"npm:cockpit\"",
     "start": "node bin/cli.js",
     "web": "node bin/web.js",
-    "ensemble": "node bin/ensemble-cli.js",
+    "memory": "node bin/memory-server.js",
+    "ensemble-web": "node bin/ensemble-web-fixed.js",
+    "ensemble": "node bin/ensemble-cli-v8.js",
+    "cockpit": "node public/backend/server.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "lint": "eslint src/"
   },
   "dependencies": {
+    "@google-cloud/vertexai": "^1.1.0",
     "agentkeepalive": "^4.2.1",
     "chalk": "^5.3.0",
     "commander": "^12.0.0",
@@ -34,7 +40,9 @@
     "ws": "^8.16.0"
   },
   "devDependencies": {
-    "jest": "^29.7.0"
+    "concurrently": "^9.2.1",
+    "jest": "^29.7.0",
+    "kill-port": "^2.0.1"
   },
   "keywords": [
     "coding-agent",
@@ -44,6 +52,7 @@
     "groq",
     "openrouter",
     "huggingface",
+    "gemini",
     "free",
     "ensemble",
     "multi-agent",

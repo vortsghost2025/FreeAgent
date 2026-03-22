@@ -12,11 +12,13 @@ import {
   ValidationError,
   AgentError
 } from '../utils/validators.js';
+import RateLimitManager from '../utils/rate-limit-manager.js';
 
 class IngestionAgent {
   constructor(agentId) {
     this.agentId = agentId;
     this.role = 'INGESTION';
+    this.rateLimitManager = new RateLimitManager();
   }
 
   /**
@@ -31,6 +33,16 @@ class IngestionAgent {
       validateTask(task, this.agentId);
       validateState(state, this.agentId);
       validateIngestionInput(task.data, this.agentId);
+      
+      // Check rate limits before processing
+      const rateLimitStatus = this.rateLimitManager.checkRateLimit(this.agentId);
+      if (!rateLimitStatus.allowed) {
+        throw new AgentError(
+          `Rate limit exceeded: ${rateLimitStatus.reason}`,
+          this.agentId,
+          'rate_limit'
+        );
+      }
 
       console.log(`[${this.agentId}] Ingesting raw input...`);
 

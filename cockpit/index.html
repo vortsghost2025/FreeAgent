@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FreeAgent Cockpit</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">
+          <div class="logo-icon">🎛️</div>
+          <h1>FreeAgent</h1>
+        </div>
+      </div>
+      
+      <div class="header-right">
+        <div class="status-badges">
+          <div class="badge" id="badge-server">
+            <span class="badge-dot"></span>
+            Server
+          </div>
+        </div>
+        
+        <div class="header-stats">
+          <div class="stat">
+            <span>Uptime:</span>
+            <span class="stat-value" id="uptime">0s</span>
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Sidebar - Agents -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Agents & Services</h2>
+      </div>
+      
+      <div class="sidebar-content">
+        <div class="agent-list">
+          <div class="agent-card active" data-agent="orchestrator">
+            <div class="agent-card-header">
+              <span class="agent-name">🧠 Orchestrator</span>
+            </div>
+            <div class="agent-status connected">
+              <span class="agent-status-dot"></span>
+              Active
+            </div>
+          </div>
+          
+          <div class="agent-card" data-agent="claude">
+            <div class="agent-card-header">
+              <span class="agent-name">📘 Claude</span>
+            </div>
+            <div class="agent-status disconnected" id="status-agent-claude">
+              <span class="agent-status-dot"></span>
+              Disconnected
+            </div>
+          </div>
+          
+          <div class="agent-card" data-agent="gemini">
+            <div class="agent-card-header">
+              <span class="agent-name">⚡ Gemini</span>
+            </div>
+            <div class="agent-status disconnected" id="status-agent-gemini">
+              <span class="agent-status-dot"></span>
+              Disconnected
+            </div>
+          </div>
+          
+          <div class="agent-card" data-agent="local">
+            <div class="agent-card-header">
+              <span class="agent-name">💻 Local Model</span>
+            </div>
+            <div class="agent-status disconnected" id="status-agent-local">
+              <span class="agent-status-dot"></span>
+              Disconnected
+            </div>
+          </div>
+          
+          <div class="agent-card" data-agent="minimax">
+            <div class="agent-card-header">
+              <span class="agent-name">🔷 Minimax</span>
+            </div>
+            <div class="agent-status disconnected" id="status-agent-minimax">
+              <span class="agent-status-dot"></span>
+              Disconnected
+            </div>
+          </div>
+          
+          <div class="agent-card" data-agent="memory">
+            <div class="agent-card-header">
+              <span class="agent-name">🗄️ Vector Memory</span>
+            </div>
+            <div class="agent-status disconnected" id="status-agent-memory">
+              <span class="agent-status-dot"></span>
+              Disconnected
+            </div>
+          </div>
+          
+          <!-- NEW: Claw Agent -->
+          <div class="agent-card" data-agent="claw">
+            <div class="agent-card-header">
+              <span class="agent-name">🦞 Claw</span>
+            </div>
+            <div class="agent-status disconnected" id="status-agent-claw">
+              <span class="agent-status-dot"></span>
+              Offline
+            </div>
+            <div class="agent-details">
+              <span class="last-task" id="claw-last-task">No tasks</span>
+            </div>
+          </div>
+
+          <!-- NEW: Kilo Agent -->
+          <div class="agent-card" data-agent="kilo">
+            <div class="agent-card-header">
+              <span class="agent-name">⚖️ Kilo (Planning)</span>
+            </div>
+            <div class="agent-status disconnected" id="status-agent-kilo">
+              <span class="agent-status-dot"></span>
+              Offline
+            </div>
+            <div class="agent-details">
+              <span class="last-task" id="kilo-last-task">No tasks</span>
+            </div>
+          </div>
+
+          <!-- NEW: Coder Agent -->
+          <div class="agent-card" data-agent="coder">
+            <div class="agent-card-header">
+              <span class="agent-name">💻 Coder</span>
+            </div>
+            <div class="agent-status disconnected" id="status-agent-coder">
+              <span class="agent-status-dot"></span>
+              Offline
+            </div>
+            <div class="agent-details">
+              <span class="last-task" id="coder-last-task">No tasks</span>
+            </div>
+          </div>
+
+          <!-- NEW: Researcher Agent -->
+          <div class="agent-card" data-agent="researcher">
+            <div class="agent-card-header">
+              <span class="agent-name">🔍 Researcher</span>
+            </div>
+            <div class="agent-status disconnected" id="status-agent-researcher">
+              <span class="agent-status-dot"></span>
+              Offline
+            </div>
+            <div class="agent-details">
+              <span class="last-task" id="researcher-last-task">No tasks</span>
+            </div>
+          </div>
+
+          <!-- NEW: Claude Code Agent -->
+          <div class="agent-card" data-agent="claude_code">
+            <div class="agent-card-header">
+              <span class="agent-name">🤖 Claude Code</span>
+            </div>
+            <div class="agent-status disconnected" id="status-agent-claude_code">
+              <span class="agent-status-dot"></span>
+              Offline
+            </div>
+            <div class="agent-details">
+              <span class="last-task" id="claude_code-last-task">No tasks</span>
+            </div>
+          </div>
+          
+          <div class="agent-card" data-agent="sessions">
+            <div class="agent-card-header">
+              <span class="agent-name">📋 Sessions</span>
+            </div>
+            <div class="agent-status disconnected" id="status-agent-sessions">
+              <span class="agent-status-dot"></span>
+              Disconnected
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="toolbar">
+        <div class="toolbar-group">
+          <label class="toolbar-label" for="model-select">Model:</label>
+          <select id="model-select" aria-label="Select AI model">
+            <option value="auto">🤖 Auto (Orchestrator)</option>
+            <option value="claude">📘 Claude</option>
+            <option value="gemini">⚡ Gemini</option>
+            <option value="minimax">🔷 Minimax</option>
+            <option value="local">💻 Local</option>
+          </select>
+        </div>
+        
+        <div class="toolbar-group">
+          <label class="toolbar-label" for="agent-select">Agent:</label>
+          <select id="agent-select" aria-label="Select agent">
+            <option value="orchestrator">Orchestrator</option>
+            <option value="code">Code Agent</option>
+            <option value="data">Data Agent</option>
+            <option value="clinical">Clinical Agent</option>
+            <option value="devops">DevOps Agent</option>
+            <option value="security">Security Agent</option>
+          </select>
+        </div>
+        
+        <div class="toolbar-spacer"></div>
+        
+        <div class="session-controls">
+          <button class="btn btn-secondary" id="session-btn">
+            + New Session
+          </button>
+        </div>
+      </div>
+      
+      <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+          <div class="message assistant">
+            <div class="message-header">
+              <span class="message-agent">Assistant</span>
+              <span class="message-time">Now</span>
+            </div>
+            <div class="message-content">
+              Welcome to FreeAgent Cockpit! I'm connected and ready to help. 
+              Select a model or agent from the toolbar, or start chatting directly.
+              The system status on the right shows which services are available.
+            </div>
+          </div>
+        </div>
+        
+        <div class="chat-input-container">
+          <textarea 
+            class="chat-input" 
+            id="chat-input" 
+            placeholder="Type your message..."
+            rows="1"
+          ></textarea>
+          <button class="send-btn" id="send-btn">Send</button>
+        </div>
+      </div>
+    </main>
+    
+    <!-- Right Panel -->
+    <aside class="right-panel">
+      <!-- Status Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">System Status</span>
+        </div>
+        <div class="panel-content">
+          <div class="status-grid">
+            <div class="status-item">
+              <div class="status-item-label">Local</div>
+              <div class="status-item-value disconnected" id="status-local">○</div>
+            </div>
+            <div class="status-item">
+              <div class="status-item-label">Claude</div>
+              <div class="status-item-value disconnected" id="status-claude">○</div>
+            </div>
+            <div class="status-item">
+              <div class="status-item-label">Gemini</div>
+              <div class="status-item-value disconnected" id="status-gemini">○</div>
+            </div>
+            <div class="status-item">
+              <div class="status-item-label">Minimax</div>
+              <div class="status-item-value disconnected" id="status-minimax">○</div>
+            </div>
+            <div class="status-item">
+              <div class="status-item-label">Memory</div>
+              <div class="status-item-value disconnected" id="status-memory">○</div>
+            </div>
+            <div class="status-item">
+              <div class="status-item-label">Sessions</div>
+              <div class="status-item-value disconnected" id="status-sessions">○</div>
+            </div>
+          </div>
+          <!-- Fallback Toggle -->
+          <div class="fallback-toggle">
+            <label class="toggle-label">
+              <input type="checkbox" id="fallback-toggle">
+              <span class="toggle-text">Prefer Kilo on failure</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Memory Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Vector Memory</span>
+          <span class="panel-toggle" id="memory-count">0 memories</span>
+        </div>
+        <div class="panel-content">
+          <div class="memory-list" id="memory-list">
+            <div class="empty-state">
+              <div class="empty-state-icon">🧠</div>
+              <div class="empty-state-text">No memories</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Sessions Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Sessions</span>
+        </div>
+        <div class="panel-content">
+          <div class="session-list" id="session-list">
+            <div class="empty-state">
+              <div class="empty-state-icon">📋</div>
+              <div class="empty-state-text">No sessions</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Logs Panel -->
+      <div class="panel" style="flex: 1; display: flex; flex-direction: column;">
+        <div class="panel-header">
+          <span class="panel-title">Activity Log</span>
+        </div>
+        <div class="log-container" id="log-container">
+          <!-- Logs will be populated by JavaScript -->
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-left">
+        <div class="connection-status" id="connection-status">
+          <span class="connection-dot" id="connection-dot"></span>
+          <span>Connected</span>
+        </div>
+      </div>
+      <div>
+        FreeAgent v1.0.0
+      </div>
+    </footer>
+  </div>
+  
+  <script src="index.js"></script>
+</body>
+</html>

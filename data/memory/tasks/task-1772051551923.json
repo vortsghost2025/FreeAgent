@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772051551922",
+    "input": "helo kilo\n\n--- CONTEXT FROM PREVIOUS SESSIONS ---\nYour past sessions:\nSession 1 (2026-02-25T20:29:09.667Z):\nuser: hello kilo\nassistant: Agent 'kilo' not found\n\n---\nSession 2 (2026-02-25T20:32:07.996Z):\nuser: hello kilo\nassistant: Agent 'kilo' not found\n\nUse this context to provide more informed responses.\n",
+    "output": [
+      {
+        "agent": "kilo",
+        "response": "Agent 'kilo' not found",
+        "timestamp": 1772051551922,
+        "error": true
+      }
+    ],
+    "agents_involved": 1,
+    "execution_time_ms": 0,
+    "status": "completed",
+    "routing": {
+      "decision": "selected",
+      "selected_agent": "kilo",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-25T20:32:31.922Z",
+    "started_at": "2026-02-25T20:32:31.922Z",
+    "completed_at": "2026-02-25T20:32:31.923Z",
+    "error": null
+  }
+]

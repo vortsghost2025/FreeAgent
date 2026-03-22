@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical AI Ensemble - Boot Sequence</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --neon-cyan: #00fff5;
+      --neon-magenta: #ff00ff;
+      --neon-yellow: #ffff00;
+      --neon-green: #00ff41;
+      --neon-red: #ff3333;
+      --neon-orange: #ff9500;
+      --bg-dark: #0a0a0f;
+      --bg-panel: #12121a;
+      --bg-card: #1a1a25;
+      --border-glow: rgba(0, 255, 245, 0.3);
+      --text-dim: #666680;
+    }
+    
+    body {
+      font-family: 'Share Tech Mono', monospace;
+      background: var(--bg-dark);
+      color: var(--neon-cyan);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    /* Cyberpunk grid background */
+    .grid-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        linear-gradient(90deg, rgba(0,255,245,0.03) 1px, transparent 1px),
+        linear-gradient(rgba(0,255,245,0.03) 1px, transparent 1px),
+        radial-gradient(ellipse at 50% 0%, rgba(0,255,245,0.1) 0%, transparent 70%);
+      background-size: 50px 50px, 50px 50px, 100% 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    /* Scanline effect */
+    .scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.1) 0px,
+        rgba(0, 0, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.3;
+    }
+    
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 30px 0;
+      border-bottom: 2px solid var(--border-glow);
+      margin-bottom: 30px;
+    }
+    
+    .header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 8px;
+      text-shadow: 
+        0 0 10px var(--neon-cyan),
+        0 0 20px var(--neon-cyan),
+        0 0 40px var(--neon-cyan);
+      animation: flicker 4s infinite;
+    }
+    
+    .header .subtitle {
+      font-size: 1rem;
+      color: var(--text-dim);
+      margin-top: 10px;
+      letter-spacing: 4px;
+    }
+    
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      92% { opacity: 1; }
+      93% { opacity: 0.8; }
+      94% { opacity: 1; }
+      97% { opacity: 0.9; }
+      98% { opacity: 1; }
+    }
+    
+    /* Progress bar */
+    .progress-container {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-glow);
+      border-radius: 4px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .progress-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    
+    .progress-stats {
+      font-size: 0.85rem;
+      color: var(--neon-green);
+    }
+    
+    .progress-bar {
+      height: 8px;
+      background: var(--bg-dark);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+      width: 0%;
+      transition: width 0.5s ease-out;
+      box-shadow: 0 0 15px var(--neon-cyan);
+      position: relative;
+    }
+    
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 20px;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8));
+      animation: shimmer 1.5s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(500%); }
+    }
+    
+    /* Phase indicator */
+    .phase-indicator {
+      text-align: center;
+      margin: 20px 0;
+      padding: 15px;
+      background: var(--bg-panel);
+      border: 1px solid var(--neon-magenta);
+      border-radius: 4px;
+    }
+    
+    .phase-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      color: var(--neon-magenta);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    
+    .phase-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 10px var(--neon-cyan);
+    }
+    
+    /* Systems grid */
+    .systems-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    
+    .phase-section {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-glow);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .phase-header {
+      background: linear-gradient(90deg, rgba(0,255,245,0.1), transparent);
+      padding: 12px 15px;
+      border-bottom: 1px solid var(--border-glow);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .phase-number {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      color: var(--neon-magenta);
+      background: rgba(255,0,255,0.2);
+      padding: 3px 8px;
+      border-radius: 3px;
+    }
+    
+    .phase-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    
+    .system-list {
+      padding: 10px;
+    }
+    
+    .system-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      margin: 5px 0;
+      background: var(--bg-card);
+      border-radius: 3px;
+      border-left: 3px solid var(--text-dim);
+      transition: all 0.3s ease;
+    }
+    
+    .system-item.pending {
+      border-left-color: var(--text-dim);
+      opacity: 0.6;
+    }
+    
+    .system-item.initializing {
+      border-left-color: var(--neon-yellow);
+      opacity: 1;
+      animation: pulse 1s infinite;
+    }
+    
+    .system-item.online {
+      border-left-color: var(--neon-green);
+      opacity: 1;
+    }
+    
+    .system-item.failed {
+      border-left-color: var(--neon-red);
+      opacity: 1;
+    }
+    
+    .system-item.skipped {
+      border-left-color: var(--neon-orange);
+      opacity: 0.7;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { background: var(--bg-card); }
+      50% { background: rgba(255,255,0,0.1); }
+    }
+    
+    .system-name {
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+    
+    .system-status {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .system-status.pending { color: var(--text-dim); }
+    .system-status.initializing { color: var(--neon-yellow); background: rgba(255,255,0,0.1); }
+    .system-status.online { color: var(--neon-green); background: rgba(0,255,65,0.1); }
+    .system-status.failed { color: var(--neon-red); background: rgba(255,51,51,0.1); }
+    .system-status.skipped { color: var(--neon-orange); background: rgba(255,149,0,0.1); }
+    
+    /* Status indicator lights */
+    .status-light {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 10px;
+      box-shadow: 0 0 5px currentColor;
+    }
+    
+    .status-light.pending { background: var(--text-dim); box-shadow: none; }
+    .status-light.initializing { background: var(--neon-yellow); animation: blink 0.5s infinite; }
+    .status-light.online { background: var(--neon-green); }
+    .status-light.failed { background: var(--neon-red); animation: blink 1s infinite; }
+    .status-light.skipped { background: var(--neon-orange); }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    /* Launch complete overlay */
+    .launch-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    
+    .launch-overlay.active {
+      display: flex;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .launch-message {
+      text-align: center;
+      animation: launchPulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes launchPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+    
+    .launch-message h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      color: var(--neon-green);
+      text-shadow: 
+        0 0 20px var(--neon-green),
+        0 0 40px var(--neon-green);
+      letter-spacing: 5px;
+      margin-bottom: 20px;
+    }
+    
+    .launch-message p {
+      font-size: 1.2rem;
+      color: var(--neon-cyan);
+      letter-spacing: 2px;
+    }
+    
+    /* Controls */
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    
+    .btn {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 15px 30: 2pxpx;
+      border solid var(--neon-cyan);
+      background: transparent;
+      color: var(--neon-cyan);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+      background: var(--neon-cyan);
+      color: var(--bg-dark);
+      box-shadow: 0 0 20px var(--neon-cyan);
+    }
+    
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .btn.primary {
+      border-color: var(--neon-magenta);
+      color: var(--neon-magenta);
+    }
+    
+    .btn.primary:hover {
+      background: var(--neon-magenta);
+      color: var(--bg-dark);
+      box-shadow: 0 0 20px var(--neon-magenta);
+    }
+    
+    /* System details popup */
+    .system-details {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-top: 3px;
+    }
+    
+    /* Diagnostic readout */
+    .diagnostic-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-glow);
+      border-radius: 4px;
+      padding: 20px;
+      margin-top: 30px;
+    }
+    
+    .diagnostic-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 3px;
+      color: var(--neon-magenta);
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-glow);
+    }
+    
+    .diagnostic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    
+    .diagnostic-item {
+      background: var(--bg-card);
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 3px solid var(--neon-cyan);
+    }
+    
+    .diagnostic-label {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 5px;
+    }
+    
+    .diagnostic-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      color: var(--neon-green);
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-bg"></div>
+  <div class="scanlines"></div>
+  
+  <div class="container">
+    <header class="header">
+      <h1>Medical AI Ensemble</h1>
+      <div class="subtitle">Spaceship Boot Sequence // Cyberpunk Diagnostic Grid</div>
+    </header>
+    
+    <div class="progress-container">
+      <div class="progress-header">
+        <span class="progress-title">Boot Progress</span>
+        <span class="progress-stats" id="progressStats">0% // 0/0 Systems</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+    
+    <div class="phase-indicator" id="phaseIndicator">
+      <div class="phase-label">Current Phase</div>
+      <div class="phase-name" id="phaseName">Awaiting Ignition...</div>
+    </div>
+    
+    <div class="systems-grid" id="systemsGrid">
+      <!-- Phase 1: Core Ignition -->
+      <div class="phase-section" id="phase1">
+        <div class="phase-header">
+          <span class="phase-number">01</span>
+          <span class="phase-title">Core Ignition</span>
+        </div>
+        <div class="system-list" id="phase1-systems"></div>
+      </div>
+      
+      <!-- Phase 2: Agent Activation -->
+      <div class="phase-section" id="phase2">
+        <div class="phase-header">
+          <span class="phase-number">02</span>
+          <span class="phase-title">Agent Activation</span>
+        </div>
+        <div class="system-list" id="phase2-systems"></div>
+      </div>
+      
+      <!-- Phase 3: Provider Links -->
+      <div class="phase-section" id="phase3">
+        <div class="phase-header">
+          <span class="phase-number">03</span>
+          <span class="phase-title">Provider Links</span>
+        </div>
+        <div class="system-list" id="phase3-systems"></div>
+      </div>
+      
+      <!-- Phase 4: Optimization Layer -->
+      <div class="phase-section" id="phase4">
+        <div class="phase-header">
+          <span class="phase-number">04</span>
+          <span class="phase-title">Optimization Layer</span>
+        </div>
+        <div class="system-list" id="phase4-systems"></div>
+      </div>
+      
+      <!-- Phase 5: Cockpit Modules -->
+      <div class="phase-section" id="phase5">
+        <div class="phase-header">
+          <span class="phase-number">05</span>
+          <span class="phase-title">Cockpit Modules</span>
+        </div>
+        <div class="system-list" id="phase5-systems"></div>
+      </div>
+      
+      <!-- Phase 6: Final Diagnostics -->
+      <div class="phase-section" id="phase6">
+        <div class="phase-header">
+          <span class="phase-number">06</span>
+          <span class="phase-title">Final Diagnostics</span>
+        </div>
+        <div class="system-list" id="phase6-systems"></div>
+      </div>
+    </div>
+    
+    <div class="diagnostic-panel" id="diagnosticPanel" style="display: none;">
+      <div class="diagnostic-title">⬡ System Diagnostics</div>
+      <div class="diagnostic-grid" id="diagnosticGrid"></div>
+    </div>
+    
+    <div class="controls">
+      <button class="btn primary" id="startBtn" onclick="startBoot()">▶ Initialize Launch</button>
+      <button class="btn" id="abortBtn" onclick="abortBoot()" disabled>◼ Abort</button>
+    </div>
+  </div>
+  
+  <div class="launch-overlay" id="launchOverlay">
+    <div class="launch-message">
+      <h2>⬡ All Systems Nominal ⬡</h2>
+      <p>Medical AI Ensemble is now Operational.</p>
+    </div>
+  </div>
+
+  <script>
+    // Boot sequence configuration
+    const PHASE_NAMES = {
+      core_ignition: 'Core Ignition',
+      agent_activation: 'Agent Activation',
+      provider_links: 'Provider Link Checks',
+      optimization_layer: 'Optimization Layer',
+      cockpit_modules: 'Cockpit Modules',
+      final_diagnostics: 'Final Diagnostics',
+      launch: 'Launch Complete'
+    };
+
+    const PHASE_SYSTEMS = {
+      core_ignition: ['backend', 'event_bus', 'websocket', 'memory_baseline', 'cpu_baseline'],
+      agent_activation: ['kilo_agent', 'claw_agent', 'memory_agent', 'routing_agent'],
+      provider_links: ['ollama', 'groq', 'openai', 'latency_baseline'],
+      optimization_layer: ['cache', 'batching', 'rate_limit', 'token_reducer', 'load_balancer'],
+      cockpit_modules: ['ide_workers', 'logs_stream', 'dashboard_stream', 'terminal_bus', 'simulation_engine'],
+      final_diagnostics: ['memory_footprint', 'cpu_load', 'zombie_processes', 'duplicate_workers', 'retry_storms', 'websocket_collisions']
+    };
+
+    const SYSTEM_DISPLAY_NAMES = {
+      backend: 'Backend Server',
+      event_bus: 'Event Bus',
+      websocket: 'WebSocket Spine',
+      memory_baseline: 'Memory Baseline',
+      cpu_baseline: 'CPU Baseline',
+      kilo_agent: 'Kilo Agent',
+      claw_agent: 'Claw Agent',
+      memory_agent: 'Memory Agent',
+      routing_agent: 'Routing Agent',
+      ollama: 'Ollama',
+      groq: 'Groq',
+      openai: 'OpenAI (GPT-4)',
+      latency_baseline: 'Latency Baseline',
+      cache: 'Cache',
+      batching: 'Batching Engine',
+      rate_limit: 'Rate Limit Guard',
+      token_reducer: 'Token Reducer',
+      load_balancer: 'Load Balancer',
+      ide_workers: 'IDE Workers',
+      logs_stream: 'Logs Stream',
+      dashboard_stream: 'Dashboard Stream',
+      terminal_bus: 'Terminal Bus',
+      simulation_engine: 'Simulation Engine',
+      memory_footprint: 'Memory Footprint',
+      cpu_load: 'CPU Load',
+      zombie_processes: 'Zombie Processes',
+      duplicate_workers: 'Duplicate Workers',
+      retry_storms: 'Retry Storms',
+      websocket_collisions: 'WebSocket Collisions'
+    };
+
+    // System state
+    let systemStates = {};
+    let bootRunning = false;
+    let totalSystems = 0;
+
+    // Initialize system displays
+    function initializeSystems() {
+      totalSystems = 0;
+      for (const phase in PHASE_SYSTEMS) {
+        const container = document.getElementById(`${phase.replace('_', '')}-systems`);
+        if (container) {
+          container.innerHTML = '';
+          PHASE_SYSTEMS[phase].forEach(system => {
+            totalSystems++;
+            systemStates[system] = 'pending';
+            const item = document.createElement('div');
+            item.className = 'system-item pending';
+            item.id = `system-${system}`;
+            item.innerHTML = `
+              <div style="display:flex;align-items:center;">
+                <div class="status-light pending" id="light-${system}"></div>
+                <span class="system-name">${SYSTEM_DISPLAY_NAMES[system] || system}</span>
+              </div>
+              <span class="system-status pending" id="status-${system}">PENDING</span>
+            `;
+            container.appendChild(item);
+          });
+        }
+      }
+      updateProgress();
+    }
+
+    // Update system status
+    function updateSystem(system, status, message = '', details = {}) {
+      systemStates[system] = status;
+      const item = document.getElementById(`system-${system}`);
+      const light = document.getElementById(`light-${system}`);
+      const statusEl = document.getElementById(`status-${system}`);
+      
+      if (item) {
+        item.className = `system-item ${status}`;
+      }
+      if (light) {
+        light.className = `status-light ${status}`;
+      }
+      if (statusEl) {
+        statusEl.className = `system-status ${status}`;
+        statusEl.textContent = status.toUpperCase();
+      }
+      
+      updateProgress();
+    }
+
+    // Update progress bar
+    function updateProgress() {
+      let completed = 0;
+      for (const system in systemStates) {
+        if (systemStates[system] === 'online' || systemStates[system] === 'skipped') {
+          completed++;
+        }
+      }
+      
+      const percentage = totalSystems > 0 ? Math.round((completed / totalSystems) * 100) : 0;
+      document.getElementById('progressFill').style.width = `${percentage}%`;
+      document.getElementById('progressStats').textContent = `${percentage}% // ${completed}/${totalSystems} Systems`;
+    }
+
+    // Update phase indicator
+    function updatePhase(phase) {
+      const phaseName = PHASE_NAMES[phase] || 'Unknown Phase';
+      document.getElementById('phaseName').textContent = phaseName;
+    }
+
+    // Show launch complete overlay
+    function showLaunchComplete() {
+      document.getElementById('launchOverlay').classList.add('active');
+      showDiagnostics();
+    }
+
+    // Show diagnostic panel
+    function showDiagnostics() {
+      const panel = document.getElementById('diagnosticPanel');
+      const grid = document.getElementById('diagnosticGrid');
+      
+      panel.style.display = 'block';
+      grid.innerHTML = `
+        <div class="diagnostic-item">
+          <div class="diagnostic-label">Memory Usage</div>
+          <div class="diagnostic-value" id="diag-memory">--</div>
+        </div>
+        <div class="diagnostic-item">
+          <div class="diagnostic-label">CPU Load</div>
+          <div class="diagnostic-value" id="diag-cpu">--</div>
+        </div>
+        <div class="diagnostic-item">
+          <div class="diagnostic-label">Active Agents</div>
+          <div class="diagnostic-value">4</div>
+        </div>
+        <div class="diagnostic-item">
+          <div class="diagnostic-label">Providers Online</div>
+          <div class="diagnostic-value">3</div>
+        </div>
+        <div class="diagnostic-item">
+          <div class="diagnostic-label">Boot Duration</div>
+          <div class="diagnostic-value" id="diag-duration">--</div>
+        </div>
+        <div class="diagnostic-item">
+          <div class="diagnostic-label">System Status</div>
+          <div class="diagnostic-value" style="color:var(--neon-green)">OPERATIONAL</div>
+        </div>
+      `;
+      
+      // Update real values
+      const mem = performance.memory;
+      if (mem) {
+        document.getElementById('diag-memory').textContent = Math.round(mem.usedJSHeapSize / 1024 / 1024) + ' MB';
+      }
+      document.getElementById('diag-cpu').textContent = require ? require('os').loadavg()[0].toFixed(2) : 'N/A';
+      document.getElementById('diag-duration').textContent = document.getElementById('progressStats').textContent.includes('%') ? 
+        (parseInt(document.getElementById('progressStats').textContent) / 10).toFixed(1) + 's' : '--';
+    }
+
+    // Simulate boot sequence (for demo purposes)
+    async function simulateBoot() {
+      const phases = Object.keys(PHASE_SYSTEMS);
+      
+      for (const phase of phases) {
+        if (!bootRunning) break;
+        
+        updatePhase(phase);
+        
+        // Activate each system in the phase
+        for (const system of PHASE_SYSTEMS[phase]) {
+          if (!bootRunning) break;
+          
+          // Initializing
+          updateSystem(system, 'initializing');
+          await sleep(300);
+          
+          // Online
+          updateSystem(system, 'online');
+          await sleep(200);
+        }
+        
+        // Wait before next phase
+        await sleep(500);
+      }
+      
+      if (bootRunning) {
+        // Launch complete
+        updatePhase('launch');
+        await sleep(500);
+        showLaunchComplete();
+        
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('abortBtn').disabled = true;
+        bootRunning = false;
+      }
+    }
+
+    // Sleep helper
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Start boot sequence
+    function startBoot() {
+      bootRunning = true;
+      document.getElementById('startBtn').disabled = true;
+      document.getElementById('abortBtn').disabled = false;
+      document.getElementById('launchOverlay').classList.remove('active');
+      document.getElementById('diagnosticPanel').style.display = 'none';
+      
+      initializeSystems();
+      simulateBoot();
+    }
+
+    // Abort boot sequence
+    function abortBoot() {
+      bootRunning = false;
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('abortBtn').disabled = true;
+      updatePhase('launch');
+      document.getElementById('phaseName').textContent = 'ABORTED';
+    }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', () => {
+      initializeSystems();
+    });
+  </script>
+</body>
+</html>

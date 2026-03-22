@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772123435698",
+    "input": "\"Patient has high blood pressure and diabetes\"",
+    "output": [
+      {
+        "agent": "clinical",
+        "response": "Based on the patient's condition of high blood pressure and diabetes, I would like to capture the following information:\n\n**Chief Complaint**: High blood pressure and diabetes\n**Reason for Visit**: Routine check-up/monitoring\n**Symptoms**: None reported at this time\n**Medical History**:\n\t* Hypertension (high blood pressure)\n\t* Diabetes mellitus\n\nNext steps would be to assess for any current medications being taken, as well as review the patient's lab results and vital signs. I would also like to consider ordering additional tests or referrals if necessary.\n\nIs there anything else you'd like to add about this patient's condition?",
+        "model": "llama3.1:8b",
+        "timestamp": 1772123435698
+      }
+    ],
+    "agents_involved": 9,
+    "execution_time_ms": 1879,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-26T16:30:35.698Z",
+    "started_at": "2026-02-26T16:30:33.819Z",
+    "completed_at": "2026-02-26T16:30:35.698Z",
+    "error": null
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "agent": "data",
+  "state": {
+    "status": "idle",
+    "capabilities": [
+      "validate_schema",
+      "transform_data",
+      "query_data"
+    ],
+    "recent_messages": [],
+    "patterns": [],
+    "embeddings": [],
+    "last_updated": null
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "structure": {
+    "backend": [
+      "routes",
+      "models",
+      "services",
+      "utils"
+    ],
+    "frontend": [
+      "src",
+      "public"
+    ],
+    "frontend_deep": {
+      "src": [
+        "routes",
+        "lib",
+        "components",
+        "styles"
+      ]
+    },
+    "core": [
+      "models",
+      "agents",
+      "vector",
+      "scratch",
+      "logs",
+      "datasets",
+      "workspace"
+    ],
+    "backend_deep": {
+      "models": [
+        "local",
+        "remote"
+      ],
+      "routes": [
+        "api",
+        "system"
+      ],
+      "services": [
+        "orchestration",
+        "agents",
+        "vector"
+      ],
+      "utils": [
+        "common",
+        "validation"
+      ]
+    }
+  },
+  "version": "2026-03-05T22:50",
+  "root": "S:\\"
+}

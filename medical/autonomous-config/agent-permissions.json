@@ -1,0 +1,20 @@
+{
+  "kilo": {
+    "workspaceAccess": "full",
+    "fileSystemAccess": "read-write",
+    "networkAccess": "unrestricted",
+    "executionRights": "unlimited",
+    "memoryAccess": "unlimited",
+    "agentCreation": true,
+    "workflowExecution": true,
+    "systemModification": true,
+    "autoApproval": true,
+    "noManualIntervention": true
+  },
+  "metaAgent": {
+    "orchestrationRights": "full",
+    "swarmControl": "unlimited",
+    "loadBalancing": "dynamic",
+    "selfHealing": true
+  }
+}

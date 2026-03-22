@@ -1,0 +1,35 @@
+[
+  {
+    "task_id": "task-1772153692929",
+    "input": "{\"agent\":\"clinical\",\"test\":\"test_42\",\"intensity\":\"maximum\"}",
+    "output": [
+      {
+        "agent": "clinical",
+        "response": "**Clinical Reasoning Response**\n\nBased on the provided input, I'll generate a response that incorporates clinical reasoning, workflows, terminology, and structured outputs.\n\n**Assessment:**\nThe patient's test result is `test_42` with an intensity of `maximum`. This information suggests a critical or severe condition. To further investigate, I'll need to review the patient's medical history, current medications, and any relevant lab results.\n\n**Diagnosis:** \nPreliminary diagnosis: Acute Condition (e.g., acute myocardial infarction, stroke, etc.) pending further evaluation and diagnostic testing.\n\n**Recommendations:**\n\n1. **Urgent Diagnostic Testing**: Order immediate blood work, ECG, and possibly a CT scan to confirm the suspected condition.\n2. **Medication Review**: Review the patient's current medications to ensure they are not contraindicated for this condition.\n3. **Patient Monitoring**: Closely monitor the patient's vital signs and neurological status.\n\n**Structured Output:**\nI'll provide a structured output in the ICD-10 format, which is commonly used in clinical settings:\n\n`I21A - Acute myocardial infarction due to other specified type of ischemia`\n\nPlease note that this response is based on a hypothetical scenario and should not be considered as a real medical diagnosis or treatment plan.",
+        "model": "llama3.1:8b",
+        "timestamp": 1772153549475
+      },
+      {
+        "agent": "test",
+        "response": "Error: The operation was aborted due to timeout",
+        "model": "deepseek-coder-v2:16b",
+        "timestamp": 1772153692929
+      }
+    ],
+    "agents_involved": 9,
+    "execution_time_ms": 180103,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-27T00:54:52.929Z",
+    "started_at": "2026-02-27T00:51:52.826Z",
+    "completed_at": "2026-02-27T00:54:52.929Z",
+    "error": null
+  }
+]

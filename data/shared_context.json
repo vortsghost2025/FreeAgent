@@ -1,0 +1,112 @@
+{
+  "claude_code_context": {
+    "current_operation": "metrics_collection",
+    "system_metrics": {
+      "timestamp": 1773098197739,
+      "system": {
+        "cpu": {
+          "user": 734000,
+          "system": 765000
+        },
+        "memory": {
+          "rss": 11874304,
+          "heapTotal": 15806464,
+          "heapUsed": 13903824,
+          "external": 2428018,
+          "arrayBuffers": 35291
+        },
+        "uptime": 1087.0294159
+      },
+      "dashboard": {
+        "system": {
+          "uptime": 1087.0294248,
+          "agents": 0,
+          "tasks": {
+            "total": 0,
+            "completed": 0,
+            "in_progress": []
+          },
+          "coordination": {
+            "active_agents": 0,
+            "recent_activity": [
+              {
+                "type": "context_update",
+                "agent": "claude_code",
+                "timestamp": 1773093368774,
+                "summary": "Context updated by claude_code"
+              },
+              {
+                "type": "context_update",
+                "agent": "claude_code",
+                "timestamp": 1773093363773,
+                "summary": "Context updated by claude_code"
+              },
+              {
+                "type": "context_update",
+                "agent": "claude_code",
+                "timestamp": 1773093358769,
+                "summary": "Context updated by claude_code"
+              },
+              {
+                "type": "context_update",
+                "agent": "claude_code",
+                "timestamp": 1773093353755,
+                "summary": "Context updated by claude_code"
+              },
+              {
+                "type": "context_update",
+                "agent": "claude_code",
+                "timestamp": 1773093348741,
+                "summary": "Context updated by claude_code"
+              },
+              {
+                "type": "context_update",
+                "agent": "claude_code",
+                "timestamp": 1773093343727,
+                "summary": "Context updated by claude_code"
+              },
+              {
+                "type": "context_update",
+                "agent": "claude_code",
+                "timestamp": 1773093338724,
+                "summary": "Context updated by claude_code"
+              },
+              {
+                "type": "context_update",
+                "agent": "claude_code",
+                "timestamp": 1773093333719,
+                "summary": "Context updated by claude_code"
+              },
+              {
+                "type": "context_update",
+                "agent": "claude_code",
+                "timestamp": 1773093328720,
+                "summary": "Context updated by claude_code"
+              },
+              {
+                "type": "context_update",
+                "agent": "claude_code",
+                "timestamp": 1773093323712,
+                "summary": "Context updated by claude_code"
+              }
+            ]
+          },
+          "system_health": {
+            "cpu": {
+              "user": 734000,
+              "system": 765000
+            },
+            "memory": {
+              "rss": 11874304,
+              "heapTotal": 15806464,
+              "heapUsed": 13913160,
+              "external": 2428018,
+              "arrayBuffers": 35291
+            },
+            "uptime": 1087.0294526
+          }
+        }
+      },
+      "agent_states": []
+    },
+    "updated_at": 1773098197739

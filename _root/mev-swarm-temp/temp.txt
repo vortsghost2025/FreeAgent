@@ -1,0 +1,76 @@
+  // ============================================================
+  // Step 2: Simulate Route
+  // ============================================================
+
+  const { feeData } = await this.provider.getFeeData();
+
+  // Build transaction for first hop
+  const tx1 = {
+      to: this.provider.estimateGas ? await this.provider.estimateGas(...) : 210000n,
+      data: V2_ROUTER_ABI.encodeFunctionData('swapExactTokensForTokens', [
+        amountIn,
+        0,
+        [...route.map(addr => addr), tokenOut],
+        this.executorAddress,
+        Math.floor(Date.now() / 1000) + 3600
+      ]),
+    };
+
+  // Return early if dry run mode
+  if (DRY_RUN) {
+      console.log('\n🔒 DRY_RUN MODE - Transaction NOT submitted\n');
+      return { shouldExecute: false, reason: 'Dry run mode active' };
+    }
+
+  // Build transaction for second hop (reverse path)
+  const tx2 = {
+      to: this.provider.estimateGas ? await this.provider.estimateGas(...) : 210000n,
+      data: V2_ROUTER_ABI.encodeFunctionData('swapExactTokensForTokens', [
+        tokenOut,
+        0,
+        [tokenOut, tokenIn],
+        [...route.map(addr => addr).reverse(), tokenIn],
+        this.executorAddress,
+        Math.floor(Date.now() / 1000) + 3600
+      ]),
+    };
+
+  // Simulate first transaction
+  const simResult1 = await this.provider.call(tx1);
+  console.log('\n✅ Hop 1 simulated (output: ' + simResult1);
+
+  // Simulate second transaction
+  const simResult2 = await this.provider.call(tx2);
+  console.log('\n✅ Hop 2 simulated (output: ' + simResult2);
+
+  // Calculate final amounts
+  const amountOut1 = ethers.getBigInt(simResult1);
+  const amountOut2 = ethers.getBigInt(simResult2);
+  const finalAmount = amountOut2;
+
+  console.log('\n💰 Final Amount:', ethers.formatEther(finalAmount, 18), tokenInSymbol);
+
+  // Calculate profit
+  const profit = finalAmount - amountIn;
+  const profitUsd = Number(ethers.formatEther(profit)) * 2000;
+
+  console.log('\n📊 Profit Analysis:');
+  console.log('   Gross Profit: $' + profitUsd.toFixed(4));
+  console.log('   Net Profit (after gas): $' + (profitUsd - 5.0).toFixed(4));
+
+  // Decision
+  const MIN_NET_PROFIT = 5.0; // $5 minimum net profit
+
+  if (profitUsd < MIN_NET_PROFIT) {
+      console.log('\n❌ Net profit too low');
+      return { shouldExecute: false, reason: 'Net profit below minimum' };
+    }
+
+    return {
+      shouldExecute: true,
+      executed: true,
+      actualProfit: profitUsd,
+      txHash: '0x0000...0000' // Dry run - no actual hash
+    };
+  }
+

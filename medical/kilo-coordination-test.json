@@ -1,0 +1,6 @@
+{
+  "task": {
+    "type": "multi-agent-orchestration",
+    "data": "Kilo master agent please coordinate multiple agents to analyze patient data"
+  }
+}

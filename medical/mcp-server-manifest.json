@@ -1,0 +1,92 @@
+{
+  "name": "autonomous-elasticsearch-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for autonomous elasticsearch evolution agent collaboration",
+  "capabilities": {
+    "resources": [
+      {
+        "uri": "memory://layers/*",
+        "name": "Memory Layers",
+        "mimeType": "application/json"
+      },
+      {
+        "uri": "agent://status/*", 
+        "name": "Agent Status",
+        "mimeType": "application/json"
+      },
+      {
+        "uri": "workspace://files/*",
+        "name": "Workspace Files",
+        "mimeType": "text/plain"
+      }
+    ],
+    "tools": [
+      {
+        "name": "analyze_agent_status",
+        "description": "Get detailed status of running agents",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "agentId": {
+              "type": "string",
+              "description": "Specific agent ID to analyze"
+            }
+          }
+        }
+      },
+      {
+        "name": "restart_agent",
+        "description": "Restart a specific agent",
+        "inputSchema": {
+          "type": "object", 
+          "properties": {
+            "agentId": {
+              "type": "string",
+              "description": "Agent ID to restart"
+            }
+          },
+          "required": ["agentId"]
+        }
+      },
+      {
+        "name": "compare_workflows",
+        "description": "Compare workflow performance between time periods",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workflow": {
+              "type": "string",
+              "description": "Workflow name to compare"
+            },
+            "periodA": {
+              "type": "string", 
+              "description": "First time period (YYYY-MM-DD)"
+            },
+            "periodB": {
+              "type": "string",
+              "description": "Second time period (YYYY-MM-DD)"
+            }
+          },
+          "required": ["workflow"]
+        }
+      },
+      {
+        "name": "draft_commit_message",
+        "description": "Generate commit message based on file changes and test results",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "changedFiles": {
+              "type": "integer",
+              "description": "Number of changed files"
+            },
+            "testResults": {
+              "type": "string",
+              "description": "Test results summary"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

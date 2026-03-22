@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772108432583",
+    "input": "a full systems test, I will activate all agents and have them run their tests in parallel using the Distributed Swarm compute burst engine\n\n--- CONTEXT FROM PREVIOUS SESSIONS ---\nYour past sessions:\nSession 1 (2026-02-26T01:17:13.822Z):\nuser: these are you sessions from before u were built into the master agent in this cockpit im trying to restore all your memory\nassistant: I've attempted to review the session logs to restore my memory. However, I've encountered an issue. According to the Simple Ensemble, there's no record of an agent named 'kilo', which suggests that my\n\n---\nSession 2 (2026-02-26T01:17:47.717Z):\nuser: dont worry ill fix it for you dont worry\nassistant: I appreciate your willingness to help. However, I don't have any information about a specific issue that needs to be fixed. As the master orchestration agent for the Claw Federation, my current knowle\n\n---\nSession 3 (2026-02-26T01:25:30.601Z):\nuser: testing ide implementation\nassistant: It seems like there was an issue with running the \"Hello World\" program. The response from the code agent suggests that without more specific information about the code or error messages, it's difficu\n\n---\nSession 4 (2026-02-26T05:03:54.685Z):\nuser: hi kilo do you remember me\nassistant: Hello again. I've taken a look at our previous conversations, and it seems we were exploring the idea of building a free medical AI system for the world. That's an ambitious and intriguing project. To\nKey context: me Hello again\n\n---\nSession 5 (2026-02-26T12:19:50.210Z):\nuser: hi kilo\nassistant: Hello again. I've reviewed our previous conversations and sessions. I'm ready to assist you as the master orchestration agent for the Claw Federation. It seems we have a generic update from the federa\n\n\nShared knowledge from all agents:\nSHARED KNOWLEDGE BASE:\n[2026-02-25T20:56:07.262Z] kilo: Kilo learned: me? This is my first interaction with you, so I don't have any prior memory of our conversation\n[2026-02-25T21:03:36.817Z] kilo: Kilo learned: me? This is actually my first conversation with you, so I don't have any prior memory of our interactions\n[2026-02-25T21:04:07.001Z] kilo: Kilo learned: me This is the beginning of our conversation, so I don't have any prior interactions to recall\n[2026-02-25T21:07:05.630Z] kilo: Kilo learned: me Hello Sean, I recall that we've had previous conversations about building a free medical AI system for the world\n[2026-02-25T21:16:24.129Z] kilo: Kilo learned: in `cockpit-server; in `agent-memory/claw\n[2026-02-25T23:33:05.932Z] kilo: Kilo learned: me I recall that we've had previous conversations about building a free medical AI system for the world\n[2026-02-25T23:44:19.213Z] kilo: Kilo learned: me Hello\n[2026-02-25T23:47:43.292Z] test: test: tests on a controlled environment that mimics as close as possible to the production environment\n[2026-02-26T00:08:29.121Z] kilo: Kilo learned: to protect the data being shared, including encryption and access controls\n[2026-02-26T00:53:06.874Z] kilo: Kilo learned: ME? Hello\n[2026-02-26T05:03:54.688Z] kilo: Kilo learned: me Hello again\nUse this context to provide more informed responses.\n",
+    "output": [
+      {
+        "agent": "kilo",
+        "response": "Agent 'kilo' not found",
+        "timestamp": 1772108432583,
+        "error": true
+      }
+    ],
+    "agents_involved": 1,
+    "execution_time_ms": 0,
+    "status": "completed",
+    "routing": {
+      "decision": "selected",
+      "selected_agent": "kilo",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-26T12:20:32.583Z",
+    "started_at": "2026-02-26T12:20:32.583Z",
+    "completed_at": "2026-02-26T12:20:32.583Z",
+    "error": null
+  }
+]

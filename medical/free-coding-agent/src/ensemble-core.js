@@ -12,6 +12,7 @@
 import { EventEmitter } from 'events';
 import { createProvider } from './providers/index.js';
 import { HybridProviderManager } from './providers/hybrid-manager.js';
+import { RateLimitGovernor } from './rate-limit-governor.js';
 
 // Agent Role Definitions
 export const AGENT_ROLES = {
@@ -98,6 +99,8 @@ export class EnsembleCoordinator extends EventEmitter {
       defaultAgents: config.defaultAgents || [AGENT_ROLES.CODE_GENERATION, AGENT_ROLES.DATA_ENGINEERING],
       maxParallelAgents: config.maxParallelAgents || 2,
       collaborationMode: config.collaborationMode || COLLABORATION_MODE.PARALLEL,
+      rateLimiting: config.rateLimiting !== false,  // Default to enabled
+      preferLocal: config.preferLocal !== false,  // Default to local-first
       timeout: config.timeout || 30000,
       agents: config.agents || {},
       ...config
@@ -105,6 +108,7 @@ export class EnsembleCoordinator extends EventEmitter {
 
     this.agents = new Map(); // agentId -> Agent instance
     this.providerManager = new HybridProviderManager(this.config);
+    this.rateLimitGovernor = this.config.rateLimiting ? new RateLimitGovernor(config.rateLimitConfig) : null;
     this.conversationHistory = new Map(); // conversationId -> history
     this.activeConversations = new Map(); // conversationId -> { agents: [], state: {} }
     this.metrics = {
@@ -118,6 +122,8 @@ export class EnsembleCoordinator extends EventEmitter {
     console.log('🎼 Ensemble Coordinator initialized');
     console.log(`   Default agents: ${this.config.defaultAgents.join(', ')}`);
     console.log(`   Collaboration mode: ${this.config.collaborationMode}`);
+    console.log(`   Rate limiting: ${this.config.rateLimiting ? 'ENABLED' : 'DISABLED'}`);
+    console.log(`   Local-first: ${this.config.preferLocal ? 'YES' : 'NO'}`);
   }
 
   /**
@@ -144,8 +150,25 @@ export class EnsembleCoordinator extends EventEmitter {
     const agentConfig = this.config.agents[role] || {};
     const agentId = `agent-${role}-${Date.now()}`;
 
-    // Get provider configuration
-    const providerConfig = this.providerManager.getProviderConfig(role);
+    // Select provider with rate-limit consideration
+    let providerConfig;
+    if (this.rateLimitGovernor && this.config.preferLocal) {
+      const recommendedProvider = this.rateLimitGovernor.getRecommendedProvider(role, {
+        preferLocal: true,
+        estimatedTokens: 1000  // Rough estimate
+      });
+      console.log(`🔀 Rate-limit governor recommends: ${recommendedProvider} for ${role}`);
+
+      // Map recommended provider to role's actual config
+      providerConfig = this.providerManager.getProviderConfig(role);
+      if (providerConfig.provider !== recommendedProvider) {
+        console.log(`⚠️  Overriding to ${recommendedProvider} (rate limit protection)`);
+        providerConfig.provider = recommendedProvider;
+        providerConfig.model = recommendedProvider === 'ollama' ? 'llama3.2' : providerConfig.model;
+      }
+    } else {
+      providerConfig = this.providerManager.getProviderConfig(role);
+    }
 
     // Get system prompt for role
     const systemPrompt = agentConfig.systemPrompt || ROLE_SYSTEM_PROMPTS[role];
@@ -177,7 +200,7 @@ export class EnsembleCoordinator extends EventEmitter {
     this.agents.set(agentId, agent);
     this.metrics.agentUsage[role] = (this.metrics.agentUsage[role] || 0) + 1;
 
-    console.log(`➕ Agent created: ${agentId} (${role})`);
+    console.log(`➕ Agent created: ${agentId} (${role}, provider: ${providerConfig.provider})`);
 
     // Emit event
     this.emit('agent:created', { agentId, role });

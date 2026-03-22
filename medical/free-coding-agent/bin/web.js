@@ -19,9 +19,47 @@ const port = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, "../public")));
 app.use(express.json());
 
+// Prevent favicon 404 errors
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 // API endpoints
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", version: packageJson.version });
+});
+
+// Health check endpoint (root)
+app.get('/health', (req, res) => {
+  res.json({ status: 'healthy', uptime: process.uptime() });
+});
+
+// Agent task manager HTML page
+app.get('/agent-task-manager.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/boot-sequence.html'));
+});
+
+// HTTP Chat endpoint for external integrations
+app.post("/api/chat", async (req, res) => {
+  const { message, provider, model } = req.body;
+  
+  try {
+    const agent = new (await import('../src/agent.js')).CodingAgent({
+      provider: provider || "ollama",
+      model: model || "llama3.1:8b",
+      requiresApproval: false
+    });
+    
+    let response = '';
+    for await (const chunk of agent.process(message)) {
+      if (chunk.type === 'chunk') {
+        response += chunk.content;
+      }
+    }
+    
+    res.json({ response });
+  } catch (err) {
+    console.error('Chat error:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Create WebSocket server

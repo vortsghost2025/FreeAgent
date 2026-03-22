@@ -1,0 +1,43 @@
+{
+  "timestamp": "2026-03-08T04:26:26.420Z",
+  "performance": {
+    "claude": {
+      "successRate": 0.5,
+      "totalTasks": 0,
+      "successfulTasks": 0,
+      "failedTasks": 0,
+      "avgLatency": 0,
+      "errorCounts": {},
+      "lastSuccess": null,
+      "lastFailure": null,
+      "currentWorkload": 0
+    },
+    "gemini": {
+      "successRate": 0.5,
+      "totalTasks": 0,
+      "successfulTasks": 0,
+      "failedTasks": 0,
+      "avgLatency": 0,
+      "errorCounts": {},
+      "lastSuccess": null,
+      "lastFailure": null,
+      "currentWorkload": 0
+    },
+    "local": {
+      "successRate": 0.5,
+      "totalTasks": 0,
+      "successfulTasks": 0,
+      "failedTasks": 0,
+      "avgLatency": 0,
+      "errorCounts": {},
+      "lastSuccess": null,
+      "lastFailure": null,
+      "currentWorkload": 0
+    }
+  },
+  "errorLog": [],
+  "learning": {
+    "errorPatterns": [],
+    "taskPatterns": []
+  }
+}

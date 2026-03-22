@@ -1,0 +1,6 @@
+{
+  "task": {
+    "type": "medical_analysis",
+    "data": "Patient has high blood pressure and diabetes"
+  }
+}

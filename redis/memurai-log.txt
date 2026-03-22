@@ -1,0 +1,44 @@
+[8872] 08 Mar 08:24:27.157 # --- Memurai is starting ---
+[8872] 08 Mar 08:24:27.166 # License file: S:\workspace\memurai-license-dev.txt
+[8872] 08 Mar 08:24:27.175 # Memurai licensed to Memurai DEV Team with license ID 74652472-17e8-4c9d-8706-dc246aa85af2
+[8872] 08 Mar 08:24:27.176 # Memurai Developer version=4.2.2, API=7.4.7, instance-name=, pid=8872, just started
+[8872] 08 Mar 08:24:27.177 # Service-name=Memurai
+[8872] 08 Mar 08:24:27.178 # Production use is NOT allowed under this license.
+[8872] 08 Mar 08:24:27.179 # This Memurai license enforces automatic shutdown after 10 days. For more details see: https://www.memurai.com/faq
+[8872] 08 Mar 08:24:27.180 * Configuration loaded
+[8872] 08 Mar 08:24:27.181 * monotonic clock: Windows QueryPerformanceCounter
+[8872] 08 Mar 08:24:27.182 * Running mode=standalone, port=6379.
+[8872] 08 Mar 08:24:27.182 # Memurai license key:
+143,94,109,70,144,71,152,224,24,80,105,124,156,58,158,81,110,184,178,229,81,100,146,73,59,140,175,141,186,212,220,255,251,244,123,69,69,174,56,232,83,71,194,45,247,183,136,160,200,178,62,144,221,35,226,143,159,252,80,45,15,30,153,63,210,94,121,252,93,248,62,139,238,101,59,108,57,154,70,223,236,195,212,5,67,237,68,93,167,0,233,83,30,220,118,176,49,48,68,126,108,208,39,202,68,168,108,155,133,227,160,93,161,237,109,60,34,177,246,66,113,100,134,236,150,77,44,41,23,174,4,94,144,123,130,228,239,190,84,132,133,226,78,42,8,206,168,169,205,206,247,183,7,183,194,147,186,252,212,115,69,118,255,38,28,177,149,160,143,7,128,150,139,44,151,220,229,69,197,77,235,68,5,146,22,179,115,52,40,52,120,179,102,61,71,169,133,239,89,103,129,141,60,211,98,78,209,218,234,37,85,126,22,39,92,59,89,2,228,194,197,65,163,21,98,105,145,239,191,202,37,150,226,63,86,160,138,77,185,173,74,168,112,35,83,17,92,226,37,121,91,238,73,228,96,49,228,88,164,18,133,83,154,0,92,195,161,43,26,127,234[...]
+[8872] 08 Mar 08:24:27.186 # Memurai QID = 9B86E25F35308B84;FD0C45DD092D8FFD;2596C156E431024B;684E76EB8963DCEF;FD0C44DD092D8E4A
+[8872] 08 Mar 08:24:27.188 * Server initialized
+[8872] 08 Mar 08:24:27.188 * Ready to accept connections tcp
+[8872] 08 Mar 09:24:28.046 * 1 changes in 3600 seconds. Saving...
+[8872] 08 Mar 09:24:28.063 * Background saving started by pid 32364
+[32364] 08 Mar 09:24:28.140 * DB saved on disk
+[8872] 08 Mar 09:24:28.171 * Background saving terminated with success
+[8872] 08 Mar 22:30:51.428 * Service stopping
+[8872] 08 Mar 22:30:51.506 * User requested shutdown...
+[8872] 08 Mar 22:30:51.506 * Saving the final RDB snapshot before exiting.
+[8872] 08 Mar 22:30:51.506 * DB saved on disk
+[8872] 08 Mar 22:30:52.252 # Memurai is now ready to exit, bye bye...
+[4592] 08 Mar 22:31:18.567 # --- Memurai is starting ---
+[4592] 08 Mar 22:31:18.569 # License file: S:\workspace\memurai-license-dev.txt
+[4592] 08 Mar 22:31:18.573 # Memurai licensed to Memurai DEV Team with license ID 74652472-17e8-4c9d-8706-dc246aa85af2
+[4592] 08 Mar 22:31:18.573 # Memurai Developer version=4.2.2, API=7.4.7, instance-name=, pid=4592, just started
+[4592] 08 Mar 22:31:18.575 # Service-name=Memurai
+[4592] 08 Mar 22:31:18.575 # Production use is NOT allowed under this license.
+[4592] 08 Mar 22:31:18.575 # This Memurai license enforces automatic shutdown after 10 days. For more details see: https://www.memurai.com/faq
+[4592] 08 Mar 22:31:18.577 * Configuration loaded
+[4592] 08 Mar 22:31:18.577 * monotonic clock: Windows QueryPerformanceCounter
+[4592] 08 Mar 22:31:18.583 * Running mode=standalone, port=6379.
+[4592] 08 Mar 22:31:18.585 # Memurai license key:
+143,94,109,70,144,71,152,224,24,80,105,124,156,58,158,81,110,184,178,229,81,100,146,73,59,140,175,141,186,212,220,255,251,244,123,69,69,174,56,232,83,71,194,45,247,183,136,160,200,178,62,144,221,35,226,143,159,252,80,45,15,30,153,63,210,94,121,252,93,248,62,139,238,101,59,108,57,154,70,223,236,195,212,5,67,237,68,93,167,0,233,83,30,220,118,176,49,48,68,126,108,208,39,202,68,168,108,155,133,227,160,93,161,237,109,60,34,177,246,66,113,100,134,236,150,77,44,41,23,174,4,94,144,123,130,228,239,190,84,132,133,226,78,42,8,206,168,169,205,206,247,183,7,183,194,147,186,252,212,115,69,118,255,38,28,177,149,160,143,7,128,150,139,44,151,220,229,69,197,77,235,68,5,146,22,179,115,52,40,52,120,179,102,61,71,169,133,239,89,103,129,141,60,211,98,78,209,218,234,37,85,126,22,39,92,59,89,2,228,194,197,65,163,21,98,105,145,239,191,202,37,150,226,63,86,160,138,77,185,173,74,168,112,35,83,17,92,226,37,121,91,238,73,228,96,49,228,88,164,18,133,83,154,0,92,195,161,43,26,127,234[...]
+[4592] 08 Mar 22:31:18.589 # Memurai QID = 9B86E25F35308B84;FD0C45DD092D8FFD;FD0C44DD092D8E4A
+[4592] 08 Mar 22:31:18.589 * Server initialized
+[4592] 08 Mar 22:31:18.593 * Loading RDB produced by version 7.4.7
+[4592] 08 Mar 22:31:18.593 * RDB age 27 seconds
+[4592] 08 Mar 22:31:18.593 * RDB memory usage when created 0.90 Mb
+[4592] 08 Mar 22:31:18.593 * Done loading RDB, keys loaded: 2, keys expired: 0.
+[4592] 08 Mar 22:31:18.597 * DB loaded from disk: 0.005 seconds
+[4592] 08 Mar 22:31:18.597 * Ready to accept connections tcp

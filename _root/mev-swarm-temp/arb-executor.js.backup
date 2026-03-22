@@ -1,0 +1,652 @@
+/**
+ * MEV Swarm - Arbitrage Executor
+ * Executes arbitrage based on opportunities detected by the watcher
+ *
+ * Architecture:
+ * Watcher → Arb-Agent → Executor → (GO/NO-GO Decision)
+ *
+ * Flow:
+ * 1. Receive arbitrage opportunity from watcher
+ * 2. Build calldata for each hop in route
+ * 3. Simulate entire route using eth_call (dry run)
+ * 4. Compare simulated profit vs expected profit
+ * 5. Return GO/NO-GO decision
+ *
+ * Safety Features:
+ * - Net-profit guardrail
+ * - Gas cost estimation
+ * - DRY_RUN mode enforcement
+ * - Slippage protection
+ */
+
+import { ethers } from 'ethers';
+import 'dotenv/config';
+import fs from 'fs';
+
+// ============================================================
+// 🔒 SECURITY GUARDS - Bot will NOT start without passing
+// ============================================================
+
+// Kill switch check
+if (fs.existsSync('KILL_SWITCH')) {
+  console.error('\n🛑 KILL SWITCH ACTIVATED');
+  console.error('Create a file named "KILL_SWITCH" to stop the bot.');
+  console.error('Delete the file to re-enable.\n');
+  process.exit(1);
+}
+
+// Load security guard module
+import { initSecurity, getPrivateKey } from './security-guard.js';
+
+// Initialize security - this validates key format and enforces safety
+const security = initSecurity();
+if (!security.isValid) {
+  console.error('\n❌ Security initialization failed');
+  process.exit(1);
+}
+
+// Get validated private key through security guard
+const key = getPrivateKey();
+
+
+console.log('✅ Security checks passed.');
+
+// ============================================================
+// 🏷️ PROCESS LABELING - Windows PowerShell
+// ============================================================
+if (process.platform === 'win32') {
+  try {
+    // Set process title for Windows Task Manager / PowerShell
+    process.title = 'EXECUTOR - Arbitrage Executor (Simulation Mode)';
+    console.log('🏷️  Process Label: EXECUTOR (SIMULATION)');
+  } catch (e) {
+    // Ignore if not supported
+  }
+}
+// Note: Security guard enforces simulation mode via LIVE_TRADING=false
+// No misleading "LIVE TRADING" banner needed - guard handles it correctly
+
+// ============================================================
+// Configuration
+// ============================================================
+const DRY_RUN = !security.isLive; // Use security guard's isLive
+
+// Router Addresses
+const UNISWAP_V2_ROUTER = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
+const UNISWAP_V3_ROUTER = '0xe592427a0aece92de3edee1f18e0157c05861564';
+
+// ABI Definitions
+const V2_ROUTER_ABI = [
+  'function swapExactTokensForTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external returns (uint[] memory amounts)',
+];
+
+const V3_ROUTER_ABI = [
+  'function exactInput((address tokenIn, uint24 fee, address recipient, uint256 deadline, uint256 amountIn, uint256 amountOutMinimum, uint160 sqrtPriceLimitX96, uint160 sqrtPriceLimitX96)) external payable returns (uint256 amountOut)',
+  'function exactInput(bytes path, address recipient, uint256 deadline, uint256 amountIn, uint256 amountOutMinimum) external payable returns (uint256 amountOut)',
+];
+
+// ERC20 ABI (for approvals)
+const ERC20_ABI = [
+  'function approve(address spender, uint256 amount) external returns (bool)',
+];
+
+// ============================================================
+// Token Helper Functions
+// ============================================================
+
+// Known token addresses to symbols
+const KNOWN_TOKENS = {
+  '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2': 'WETH',
+  '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48': 'USDC',
+  '0x6B175474E89094C44Da98b954EedeAC495271d0F': 'DAI',
+  '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599': 'WBTC',
+  '0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9': 'AAVE',
+  '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984': 'UNI',
+};
+
+function getTokenSymbol(address) {
+  return KNOWN_TOKENS[address.toLowerCase()] || address.slice(0, 6) + '...';
+}
+/**
+ * Structure of arbitrage opportunity from watcher
+ * {
+ *   route: ['0x...', '0x...', '0x...'],  // Full path including start/end token
+ *   routeType: '2-hop' | '3-hop',              // Number of hops
+ *   dexes: ['Uniswap V2', 'Sushiswap'],         // DEXes used
+ *   amountIn: BigInt,                          // Input amount (in wei)
+ *   expectedProfitUsd: number,                  // Expected profit in USD
+ *   tokenInSymbol: string,                      // Token symbol
+ *   tokenInDecimals: number                    // Token decimals
+ *   gasPrice: BigInt                          // Current gas price
+ *   timestamp: number                          // When opportunity was detected
+ * }
+ */
+
+// ============================================================
+// Calldata Builder Functions
+// ============================================================
+
+/**
+ * Build Uniswap V2 swap calldata
+ */
+function buildV2SwapCalldata(path, amountIn, amountOutMin, to, deadline) {
+  const iface = new ethers.Interface(V2_ROUTER_ABI);
+  const calldata = iface.encodeFunctionData('swapExactTokensForTokens', [
+    amountIn,
+    amountOutMin,
+    path,
+    to,
+    deadline
+  ]);
+
+  return {
+    calldata,
+    routerAddress: UNISWAP_V2_ROUTER,
+    functionName: 'swapExactTokensForTokens'
+  };
+}
+
+/**
+ * Build Uniswap V3 swap calldata (exactInput)
+ */
+function buildV3SwapCalldata(path, amountIn, amountOutMin, recipient, deadline, fee = 3000) {
+  const iface = new ethers.Interface(V3_ROUTER_ABI);
+
+  if (path.length === 2) {
+    // Single hop
+    const calldata = iface.encodeFunctionData('exactInput', [
+      path,
+      recipient,
+      deadline,
+      amountIn,
+      amountOutMinimum
+    ]);
+
+    return {
+      calldata,
+      routerAddress: UNISWAP_V3_ROUTER,
+      functionName: 'exactInput'
+    };
+  } else {
+    // Multi-hop - V3 uses packed path
+    const calldata = iface.encodeFunctionData('exactInput', [
+      path,
+      recipient,
+      deadline,
+      amountIn,
+      amountOutMinimum
+    ]);
+
+    return {
+      calldata,
+      routerAddress: UNISWAP_V3_ROUTER,
+      functionName: 'exactInput',
+      isMultiHop: true
+    };
+  }
+}
+
+// ============================================================
+// Route Simulator
+// ============================================================
+
+/**
+ * Simulate an arbitrage route across multiple hops
+ * Uses eth_call to dry-run the entire transaction
+ */
+async function simulateRoute(provider, route, amountIn, executorAddress) {
+  console.log('\n🔄 Simulating arbitrage route...');
+
+  const simulationResults = [];
+
+  let currentAmount = amountIn;
+  const routeDetails = [];
+
+  for (let i = 0; i < route.hops.length; i++) {
+    const hop = route.hops[i];
+
+    console.log(`\n   📍 Hop ${i + 1}/${route.hops.length}`);
+    console.log(`      DEX: ${hop.dex}`);
+    console.log(`      Tokens: ${hop.tokenInSymbol} → ${hop.tokenOutSymbol}`);
+    console.log(`      Amount: ${ethers.formatUnits(currentAmount, hop.tokenInDecimals)} ${hop.tokenInSymbol}`);
+
+    // Build calldata for this hop
+    let calldata;
+    let routerAddress;
+
+    if (hop.dex === 'Uniswap V2') {
+      ({ calldata, routerAddress } = buildV2SwapCalldata(
+        [hop.tokenInAddress, hop.tokenOutAddress],
+        currentAmount,
+        0, // No slippage for simulation
+        executorAddress,
+        Math.floor(Date.now() / 1000) + 3600
+      ));
+    } else if (hop.dex === 'Uniswap V3') {
+      ({ calldata, routerAddress } = buildV3SwapCalldata(
+        [hop.tokenInAddress, hop.tokenOutAddress],
+        currentAmount,
+        0, // No slippage for simulation
+        executorAddress,
+        Math.floor(Date.now() / 1000) + 3600,
+        hop.fee // Use fee tier from hop
+      ));
+    } else {
+      console.log(`   ⚠️  Unsupported DEX: ${hop.dex}`);
+      simulationResults.push({
+        hop: i + 1,
+        success: false,
+        error: `Unsupported DEX: ${hop.dex}`
+      });
+      return simulationResults;
+    }
+
+    // Simulate the hop using eth_call
+    console.log(`      🧪 Simulating swap on ${hop.dex}...`);
+
+    try {
+      const result = await provider.call({
+        to: routerAddress,
+        data: calldata,
+        from: executorAddress
+      });
+
+      // Parse the result to get actual output amount
+      let outputAmount;
+      if (hop.dex === 'Uniswap V2') {
+        const iface = new ethers.Interface(V2_ROUTER_ABI);
+        const decoded = iface.decodeFunctionResult('swapExactTokensForTokens', result);
+        outputAmount = decoded.amounts[decoded.amounts.length - 1]; // Final output
+      } else if (hop.dex === 'Uniswap V3') {
+        const iface = new ethers.Interface(V3_ROUTER_ABI);
+        const decoded = iface.decodeFunctionResult('exactInput', result);
+        outputAmount = decoded[0]; // exactInput returns amountOut directly
+      }
+
+      const outputFormatted = ethers.formatUnits(outputAmount, hop.tokenOutDecimals);
+      console.log(`      ✅ Simulated output: ${outputFormatted} ${hop.tokenOutSymbol}`);
+
+      simulationResults.push({
+        hop: i + 1,
+        success: true,
+        dex: hop.dex,
+        tokenIn: hop.tokenInSymbol,
+        tokenOut: hop.tokenOutSymbol,
+        amountIn: currentAmount,
+        amountOut: outputAmount,
+        calldata: calldata,
+        routerAddress: routerAddress
+      });
+
+      // Update current amount for next hop
+      currentAmount = outputAmount;
+
+    } catch (error) {
+      console.log(`      ❌ Simulation failed: ${error.message}`);
+      simulationResults.push({
+        hop: i + 1,
+        success: false,
+        error: error.message
+      });
+      return simulationResults;
+    }
+  }
+
+  console.log(`\n   📊 Final Output Amount: ${ethers.formatUnits(currentAmount, route.hops[route.hops.length - 1].tokenOutDecimals)} ${route.hops[route.hops.length - 1].tokenOutSymbol}`);
+
+  return {
+    success: simulationResults.every(r => r.success),
+    finalAmount: currentAmount,
+    initialAmount: amountIn,
+    profit: currentAmount - amountIn,
+    simulationResults
+  };
+}
+
+// ============================================================
+// Profit Calculator
+// ============================================================
+
+/**
+ * Calculate net profit after gas costs
+ */
+async function calculateNetProfit(provider, finalAmount, initialAmount, routeType, gasPrice) {
+  // Estimate gas for the entire route
+  const gasEstimate = routeType === '2-hop' ? 250000n : 400000n;
+  const gasCostWei = gasPrice * gasEstimate;
+  const gasCostEth = Number(ethers.formatEther(gasCostWei));
+  const gasCostUsd = gasCostEth * 2000; // ETH price $2000
+
+  // Calculate profit
+  const initialEth = Number(ethers.formatEther(initialAmount));
+  const finalEth = Number(ethers.formatEther(finalAmount));
+  const profitEth = finalEth - initialEth;
+  const profitUsd = profitEth * 2000;
+
+  return {
+    gasCostWei,
+    gasCostEth,
+    gasCostUsd,
+    profitEth,
+    profitUsd,
+    netProfit: profitUsd - gasCostUsd
+  };
+}
+
+// ============================================================
+// Main Executor Class
+// ============================================================
+
+class ArbitrageExecutor {
+  constructor(provider, wallet) {
+    this.provider = provider;
+    this.wallet = wallet;
+    this.executorAddress = wallet.address;
+  }
+
+  /**
+   * Execute arbitrage based on opportunity
+   */
+  async execute(opportunity) {
+    console.log('\n' + '='.repeat(60));
+    console.log('🚀 ARBITRAGE EXECUTOR');
+    console.log('='.repeat(60) + '\n');
+
+    console.log(`📊 Opportunity Details:`);
+    console.log(`   Route: ${opportunity.route.join(' → ')}`);
+    console.log(`   Type: ${opportunity.routeType}`);
+    console.log(`   Input: ${ethers.formatUnits(opportunity.amountIn, opportunity.tokenInDecimals)} ${opportunity.tokenInSymbol}`);
+    console.log(`   Expected Profit: $${opportunity.expectedProfitUsd.toFixed(2)}\n`);
+
+    // Build hops from route - route has N tokens, we need N-1 swaps
+    // Example: [WETH, USDC, WETH] = 2 swaps: WETH→USDC, USDC→WETH
+    const numHops = opportunity.route.length - 1;
+    const hops = [];
+
+    for (let i = 0; i < numHops; i++) {
+      const tokenIn = opportunity.route[i];
+      const tokenOut = opportunity.route[i + 1];
+
+      // Get token symbols - default to address if not available
+      const tokenInSymbol = i === 0 ? opportunity.tokenInSymbol : getTokenSymbol(tokenIn);
+      const tokenOutSymbol = i === numHops - 1 ? opportunity.tokenInSymbol : getTokenSymbol(tokenOut);
+
+      // Get token decimals for this hop
+      const tokenInDecimals = i === 0 ? opportunity.tokenInDecimals : 18; // Default to 18 if unknown
+
+      hops.push({
+        dex: opportunity.dexes[i % opportunity.dexes.length],
+        tokenInAddress: tokenIn,
+        tokenOutAddress: tokenOut,
+        tokenInSymbol: tokenInSymbol,
+        tokenOutSymbol: tokenOutSymbol,
+        tokenInDecimals: tokenInDecimals,
+        tokenOutDecimals: i === numHops - 1 ? opportunity.tokenInDecimals : 18,
+        amountIn: opportunity.amountIn, // Will be updated after each hop
+        fee: 3000 // Default fee (V3)
+      });
+    }
+
+    console.log(`📍 Route Hops: ${hops.length}`);
+    hops.forEach((hop, idx) => {
+      console.log(`   ${idx + 1}. ${hop.dex}: ${hop.tokenInSymbol} → ${hop.tokenOutSymbol}`);
+    });
+
+    // ============================================================
+    // Step 2: Simulate Route
+    // ============================================================
+    const { feeData } = await this.provider.getFeeData();
+    const gasPrice = feeData.gasPrice;
+
+    const simulation = await simulateRoute(this.provider, { hops }, opportunity.amountIn, this.executorAddress);
+
+    if (!simulation.success) {
+      console.log(`\n❌ Route simulation failed!`);
+      simulation.simulationResults.forEach(r => {
+        if (!r.success) {
+          console.log(`   Hop ${r.hop}: ${r.error}`);
+        }
+      });
+      return { shouldExecute: false, reason: 'Simulation failed' };
+    }
+
+    console.log(`\n✅ Route Simulation Successful!`);
+    console.log(`   Initial: ${ethers.formatUnits(simulation.initialAmount, opportunity.tokenInDecimals)} ${opportunity.tokenInSymbol}`);
+    console.log(`   Final:   ${ethers.formatUnits(simulation.finalAmount, opportunity.tokenInDecimals)} ${opportunity.tokenInSymbol}`);
+    console.log(`   Profit:   ${ethers.formatUnits(simulation.profit, opportunity.tokenInDecimals)} ${opportunity.tokenInSymbol}`);
+
+    const profitPercent = (Number(simulation.profit) / Number(opportunity.amountIn)) * 100;
+    console.log(`   Profit %:  ${profitPercent.toFixed(4)}%\n`);
+
+    // ============================================================
+    // Step 3: Calculate Net Profit
+    // ============================================================
+    const profitData = await calculateNetProfit(
+      this.provider,
+      simulation.finalAmount,
+      simulation.initialAmount,
+      opportunity.routeType,
+      gasPrice
+    );
+
+    console.log(`\n💰 Profit Analysis:`);
+    console.log(`   Gross Profit: $${profitData.profitUsd.toFixed(4)}`);
+    console.log(`   Gas Cost:    $${profitData.gasCostUsd.toFixed(4)}`);
+    console.log(`   Net Profit:  $${profitData.netProfit.toFixed(4)}\n`);
+
+    // ============================================================
+    // Step 4: Make Decision
+    // ============================================================
+    const MIN_NET_PROFIT_USD = 1.0; // Minimum $1.00 net profit
+
+    const shouldExecute = profitData.netProfit >= MIN_NET_PROFIT_USD && !DRY_RUN;
+
+    console.log(`\n🎯 Decision:`);
+    console.log(`   Net Profit: $${profitData.netProfit.toFixed(4)}`);
+    console.log(`   Minimum:    $${MIN_NET_PROFIT_USD.toFixed(2)}`);
+    console.log(`   Decision:    ${shouldExecute ? '✅ GO' : '❌ NO-GO'}`);
+    console.log(`   Mode:       ${DRY_RUN ? '🔒 DRY_RUN' : '⚡ LIVE'}\n`);
+
+    // ============================================================
+    // Step 5: Execute (if approved)
+    // ============================================================
+    if (shouldExecute) {
+      console.log(`\n⚡ EXECUTING ARBITRAGE...`);
+
+      // Approve tokens if needed (simplified - assumes already approved)
+      console.log(`   Tokens are approved, proceeding with execution...`);
+
+      // Build final transaction
+      const finalHop = simulation.simulationResults[simulation.simulationResults.length - 1];
+      const calldata = finalHop.calldata;
+      const routerAddress = finalHop.routerAddress;
+
+      if (!calldata) {
+        console.log(`   ⚠️ No calldata available for final hop`);
+        return { shouldExecute: false, reason: 'No calldata' };
+      }
+
+      // Send transaction
+      try {
+        const gasEstimate = opportunity.routeType === '2-hop' ? 250000n : 400000n;
+
+        const tx = await this.wallet.sendTransaction({
+          to: routerAddress,
+          data: calldata,
+          gasLimit: gasEstimate
+        });
+
+        console.log(`\n✅ Transaction Sent!`);
+        console.log(`   Hash:  ${tx.hash}`);
+        console.log(`   Waiting for confirmation...\n`);
+
+        const receipt = await tx.wait();
+        console.log(`✅ Confirmed in block ${receipt.blockNumber}\n`);
+        console.log(`   Gas Used:  ${receipt.gasUsed.toString()}\n`);
+
+        return {
+          shouldExecute: true,
+          executed: true,
+          txHash: tx.hash,
+          blockNumber: receipt.blockNumber,
+          gasUsed: receipt.gasUsed,
+          actualProfit: profitData.netProfit
+        };
+      } catch (error) {
+        console.log(`\n❌ Execution failed: ${error.message}\n`);
+        return {
+          shouldExecute: true,
+          executed: false,
+          error: error.message
+        };
+      }
+    } else {
+      console.log(`\n🛑 SKIPPING EXECUTION - Net profit below minimum\n`);
+      return {
+        shouldExecute: false,
+        reason: 'Net profit below minimum',
+        executed: false
+      };
+    }
+  }
+}
+
+// ============================================================
+// Main Execution
+// ============================================================
+
+async function main() {
+  console.log(`
+╔════════════════════════════════════════════════════════╗
+║        MEV SWARM - ARBITRAGE EXECUTOR                    ║
+║   Watches for arbitrage opportunities and executes them    ║
+║   Safety: Net-profit guardrail, DRY_RUN mode             ║
+╚═════════════════════════════════════════════════════════╝
+`);
+
+  // Connect to provider
+  const provider = new ethers.JsonRpcProvider(process.env.ETH_RPC_URL);
+
+  // Create wallet
+  const wallet = new ethers.Wallet(getPrivateKey(), provider);
+
+  console.log(`\n🔌 Connecting to Ethereum...`);
+  const balance = await provider.getBalance(wallet.address);
+  console.log(`✅ Connected! Wallet: ${wallet.address}`);
+  console.log(`   Balance: ${ethers.formatEther(balance)} ETH\n`);
+
+  const executor = new ArbitrageExecutor(provider, wallet);
+
+  // ============================================================
+  // Event: Listen for arbitrage opportunities
+  // ============================================================
+  // In a real system, this would come from the watcher via IPC/Redis
+  // For this demo, we'll simulate a fixed opportunity
+
+  console.log('\n📡 Waiting for arbitrage opportunities...\n');
+  console.log('   Watching for opportunities in mempool...\n');
+
+  // In simulation mode, just wait a bit then exit
+  if (!security.isLive) {
+    console.log('\nℹ️  Running in simulation mode - will watch for 60 seconds then exit\n');
+    console.log('   (Use LIVE_TRADING=true to enable continuous execution)\n');
+
+    // Watch for 60 seconds
+    await new Promise(resolve => setTimeout(resolve, 60000));
+
+    console.log('\n⏸️  Watch time elapsed - exiting simulation mode\n');
+    console.log('   Set LIVE_TRADING=true in .env.local to run continuously\n');
+    process.exit(0);
+  }
+
+  // In live mode, run continuously
+  console.log('\n⚠️  LIVE TRADING MODE - Running continuously');
+  console.log('   Press Ctrl+C to stop\n');
+
+  // Simulate opportunity (in production, this comes from watcher)
+  const simulatedOpportunity = {
+    route: ['0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'],
+    routeType: '2-hop',
+    dexes: ['Uniswap V2', 'Uniswap V2'],
+    amountIn: ethers.parseEther('0.1'),
+    expectedProfitUsd: 5.00,
+    tokenInSymbol: 'WETH',
+    tokenInDecimals: 18
+  };
+
+  // Execute
+  const result = await executor.execute(simulatedOpportunity);
+
+  console.log('\n' + '='.repeat(60));
+  console.log('🎯 EXECUTION COMPLETE');
+  console.log('='.repeat(60) + '\n');
+
+  if (result.executed) {
+    console.log(`✅ Arbitrage Executed Successfully!`);
+    console.log(`   Profit: $${result.actualProfit.toFixed(2)}`);
+    console.log(`   Tx Hash: ${result.txHash}`);
+  } else if (result.shouldExecute) {
+    console.log(`ℹ️  Arbitrage Skipped: ${result.reason}`);
+  } else {
+    console.log(`❌ Arbitrage Failed: ${result.reason || 'Unknown error'}`);
+  }
+  // In a real system, this would come from the watcher via IPC/Redis
+  // For this demo, we'll simulate an opportunity
+
+  console.log(`\n📡 Waiting for arbitrage opportunities...\n`);
+
+  // Simulate opportunity (in production, this comes from watcher)
+  const simulatedOpportunity = {
+    route: ['0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'],
+    routeType: '2-hop',
+    dexes: ['Uniswap V2', 'Uniswap V2'],
+    amountIn: ethers.parseEther('0.1'),
+    expectedProfitUsd: 5.00,
+    tokenInSymbol: 'WETH',
+    tokenInDecimals: 18
+  };
+
+  // Execute
+  const result = await executor.execute(simulatedOpportunity);
+
+  console.log(`\n${'='.repeat(60)}`);
+  console.log(`🎯 EXECUTION COMPLETE`);
+  console.log('='.repeat(60) + '\n');
+
+  if (result.executed) {
+    console.log(`✅ Arbitrage Executed Successfully!`);
+    console.log(`   Profit: $${result.actualProfit.toFixed(2)}`);
+    console.log(`   Tx Hash: ${result.txHash}`);
+  } else if (result.shouldExecute) {
+    console.log(`ℹ️  Arbitrage Skipped: ${result.reason}`);
+  } else {
+    console.log(`❌ Arbitrage Failed: ${result.reason || 'Unknown error'}`);
+  }
+}
+
+main().catch(console.error);
+// Check simulation mode
+if (!security.isLive) {
+  console.log('\n🔒 SIMULATION MODE - No real trades will be executed\n');
+} else {
+  console.log('\n⚠️  LIVE TRADING MODE - Real money at risk!\n');
+}
+console.log('✅ Security checks passed.');
+
+// ============================================================
+// 🏷️ PROCESS LABELING - Windows PowerShell
+// ============================================================
+if (process.platform === 'win32') {
+  try {
+    // Set process title for Windows Task Manager / PowerShell
+    process.title = 'EXECUTOR - Arbitrage Executor (Simulation Mode)';
+    console.log('🏷️  Process Label: EXECUTOR (SIMULATION)');
+  } catch (e) {
+    // Ignore if not supported
+  }
+}
+
+// ============================================================
+// Configuration
+// ============================================================
+const PRIVATE_KEY = process.env.PRIVATE_KEY;

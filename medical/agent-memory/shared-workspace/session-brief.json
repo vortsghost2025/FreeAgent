@@ -1,0 +1,1 @@
+{"from":"cloud-ai","to":"local-qwen","type":"CONTEXT_SYNC","summary":"MEV swarm with mode switching fixes, penny hunting active (DRY_RUN), LMStudio Qwen running on localhost:1234","active_files":["mev-swarm/*","scripts/lmstudio-mcp-server.js"],"config":{"DRY_RUN":"true"},"hackathon_targets":["Gemini","Airia"],"timestamp":"2026-02-28T12:11:51.316Z"} 

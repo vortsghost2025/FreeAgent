@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hover Reveal Cards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #0a0a0b;
+      font-family: 'DM Sans', sans-serif;
+      padding: 60px 40px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      color: #fafafa;
+      margin-bottom: 16px;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      color: #737373;
+      font-size: 1.1rem;
+      margin-bottom: 60px;
+      max-width: 500px;
+      line-height: 1.6;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 32px;
+    }
+
+    /* Card 1: Glass Morphism */
+    .card-glass {
+      position: relative;
+      height: 380px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .card-glass:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 30px 60px -12px rgba(255,255,255,0.15), 0 0 0 1px rgba(255,255,255,0.1);
+    }
+
+    .card-glass::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.08) 100%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .card-glass:hover::before {
+      opacity: 1;
+    }
+
+    .card-glass-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 32px;
+      transform: translateY(60px);
+      transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .card-glass:hover .card-glass-content {
+      transform: translateY(0);
+    }
+
+    .card-glass-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .card-glass h3 {
+      color: #fafafa;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .card-glass p {
+      color: #a3a3a3;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease 0.1s, transform 0.4s ease 0.1s;
+    }
+
+    .card-glass:hover p {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card-glass .card-tag {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      padding: 6px 14px;
+      background: rgba(249, 115, 22, 0.2);
+      color: #fb923c;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* Card 2: Cinematic Slide */
+    .card-cinematic {
+      position: relative;
+      height: 380px;
+      background: #18181b;
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .card-cinematic-image {
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80') center/cover;
+      transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .card-cinematic:hover .card-cinematic-image {
+      transform: scale(1.1);
+    }
+
+    .card-cinematic-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+      transition: opacity 0.5s ease;
+    }
+
+    .card-cinematic-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 32px;
+      transform: translateY(80px);
+      transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .card-cinematic:hover .card-cinematic-content {
+      transform: translateY(0);
+    }
+
+    .card-cinematic h3 {
+      color: #fff;
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .card-cinematic .meta {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .card-cinematic .meta span {
+      color: #a1a1aa;
+      font-size: 0.85rem;
+    }
+
+    .card-cinematic p {
+      color: #d4d4d8;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease 0.15s, transform 0.4s ease 0.15s;
+    }
+
+    .card-cinematic:hover p {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card-cinematic .play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      width: 72px;
+      height: 72px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .card-cinematic:hover .play-btn {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .card-cinematic .play-btn svg {
+      width: 24px;
+      height: 24px;
+      margin-left: 4px;
+    }
+
+    /* Card 3: Minimal Expand */
+    .card-minimal {
+      position: relative;
+      height: 380px;
+      background: #f5f5f4;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: background 0.4s ease;
+    }
+
+    .card-minimal:hover {
+      background: #fff;
+    }
+
+    .card-minimal-number {
+      position: absolute;
+      top: 32px;
+      left: 32px;
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem;
+      color: #e7e5e4;
+      font-weight: 600;
+      line-height: 1;
+      transition: color 0.4s ease;
+    }
+
+    .card-minimal:hover .card-minimal-number {
+      color: #f97316;
+    }
+
+    .card-minimal-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 32px;
+    }
+
+    .card-minimal h3 {
+      color: #1c1917;
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .card-minimal:hover h3 {
+      transform: translateY(-40px);
+    }
+
+    .card-minimal p {
+      color: #78716c;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.5s ease, opacity 0.4s ease 0.1s;
+    }
+
+    .card-minimal:hover p {
+      max-height: 100px;
+      opacity: 1;
+    }
+
+    .card-minimal .arrow {
+      position: absolute;
+      bottom: 32px;
+      right: 32px;
+      width: 40px;
+      height: 40px;
+      background: #1c1917;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), background 0.4s ease;
+    }
+
+    .card-minimal:hover .arrow {
+      transform: translateY(-60px) rotate(-45deg);
+      background: #f97316;
+    }
+
+    .card-minimal .arrow svg {
+      width: 18px;
+      height: 18px;
+      color: #fff;
+    }
+
+    /* Card 4: Dark Reveal */
+    .card-dark {
+      position: relative;
+      height: 380px;
+      background: #111;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .card-dark-visual {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
+      opacity: 0.8;
+      transition: opacity 0.5s ease;
+    }
+
+    .card-dark:hover .card-dark-visual {
+      opacity: 1;
+    }
+
+    .card-dark-shapes {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .card-dark-shapes::before {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+      top: -100px;
+      right: -100px;
+      transform: scale(0);
+      transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .card-dark:hover .card-dark-shapes::before {
+      transform: scale(1);
+    }
+
+    .card-dark-shapes::after {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      bottom: -50px;
+      left: -50px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1) 0.2s, opacity 0.4s ease 0.2s;
+    }
+
+    .card-dark:hover .card-dark-shapes::after {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .card-dark-content {
+      position: absolute;
+      inset: 0;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .card-dark h3 {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      transform: translateY(0);
+      transition: transform 0.4s ease;
+    }
+
+    .card-dark:hover h3 {
+      transform: translateY(-20px);
+    }
+
+    .card-dark .stats {
+      display: flex;
+      gap: 24px;
+      margin-top: 20px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease 0.1s, transform 0.4s ease 0.1s;
+    }
+
+    .card-dark:hover .stats {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card-dark .stat {
+      text-align: center;
+    }
+
+    .card-dark .stat-value {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .card-dark .stat-label {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* Card 5: Spotlight */
+    .card-spotlight {
+      position: relative;
+      height: 380px;
+      background: #09090b;
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .card-spotlight::before {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(34, 197, 94, 0.4) 0%, transparent 70%);
+      top: -150px;
+      left: -150px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+    }
+
+    .card-spotlight:hover::before {
+      opacity: 1;
+      animation: spotlight 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes spotlight {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(100px, 100px); }
+    }
+
+    .card-spotlight-content {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .card-spotlight-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      transform: translateY(60px);
+      opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease;
+    }
+
+    .card-spotlight:hover .card-spotlight-icon {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .card-spotlight h3 {
+      color: #fafafa;
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .card-spotlight p {
+      color: #71717a;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.5s ease, opacity 0.4s ease;
+    }
+
+    .card-spotlight:hover p {
+      max-height: 80px;
+      opacity: 1;
+    }
+
+    .card-spotlight .progress-bar {
+      margin-top: 24px;
+      height: 4px;
+      background: #27272a;
+      border-radius: 2px;
+      overflow: hidden;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .card-spotlight:hover .progress-bar {
+      transform: scaleX(1);
+    }
+
+    .card-spotlight .progress-fill {
+      height: 100%;
+      width: 75%;
+      background: linear-gradient(90deg, #22c55e 0%, #4ade80 100%);
+      border-radius: 2px;
+    }
+
+    /* Card 6: Flip 3D */
+    .card-flip {
+      position: relative;
+      height: 380px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .card-flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+      transform-style: preserve-3d;
+    }
+
+    .card-flip:hover .card-flip-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-flip-front,
+    .card-flip-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .card-flip-front {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-flip-front-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+
+    .card-flip-front h3 {
+      color: #f8fafc;
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+
+    .card-flip-front .hint {
+      color: #64748b;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-flip-back {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transform: rotateY(180deg);
+    }
+
+    .card-flip-back h3 {
+      color: #fff;
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .card-flip-back p {
+      color: rgba(255,255,255,0.85);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .card-flip-back .features {
+      margin-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .card-flip-back .feature-tag {
+      padding: 4px 12px;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      border-radius: 12px;
+      font-size: 0.75rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body {
+        padding: 40px 20px;
+      }
+      
+      .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .card-glass, 
+      .card-cinematic, 
+      .card-minimal, 
+      .card-dark, 
+      .card-spotlight, 
+      .card-flip {
+        height: 320px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Hover Interactions</h1>
+    <p class="subtitle">Explore these card designs that reveal dynamic content on hover. Each card uses unique animations and transitions.</p>
+    
+    <div class="cards-grid">
+      <!-- Glass Morphism Card -->
+      <div class="card-glass">
+        <span class="card-tag">Premium</span>
+        <div class="card-glass-content">
+          <div class="card-glass-icon">✦</div>
+          <h3>Crystal Glass</h3>
+          <p>Experience the elegance of frosted glass effects with subtle blurs and luminous borders that create depth and dimension.</p>
+        </div>
+      </div>
+
+      <!-- Cinematic Slide Card -->
+      <div class="card-cinematic">
+        <div class="card-cinematic-image"></div>
+        <div class="card-cinematic-overlay"></div>
+        <div class="play-btn">
+          <svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <div class="card-cinematic-content">
+          <h3>Mountain Vista</h3>
+          <div class="meta">
+            <span>4K</span>
+            <span>•</span>
+            <span>12:34</span>
+            <span>•</span>
+            <span>Nature</span>
+          </div>
+          <p>A breathtaking journey through alpine landscapes, captured in stunning detail with cinematic excellence.</p>
+        </div>
+      </div>
+
+      <!-- Minimal Expand Card -->
+      <div class="card-minimal">
+        <span class="card-minimal-number">01</span>
+        <div class="card-minimal-content">
+          <h3>Minimal Design</h3>
+          <p>Stripped back to essentials. Clean typography, ample whitespace, and purposeful negative space create timeless appeal.</p>
+          <div class="arrow">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dark Reveal Card -->
+      <div class="card-dark">
+        <div class="card-dark-visual"></div>
+        <div class="card-dark-shapes"></div>
+        <div class="card-dark-content">
+          <h3>Analytics Pro</h3>
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-value">2.4M</div>
+              <div class="stat-label">Views</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">89%</div>
+              <div class="stat-label">Growth</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">12K</div>
+              <div class="stat-label">Users</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spotlight Card -->
+      <div class="card-spotlight">
+        <div class="card-spotlight-content">
+          <div class="card-spotlight-icon">⚡</div>
+          <h3>Performance</h3>
+          <p>Lightning-fast load times with optimized asset delivery and intelligent caching strategies.</p>
+          <div class="progress-bar">
+            <div class="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flip 3D Card -->
+      <div class="card-flip">
+        <div class="card-flip-inner">
+          <div class="card-flip-front">
+            <div class="card-flip-front-icon">🔄</div>
+            <div>
+              <h3>3D Flip Card</h3>
+              <p style="color: #94a3b8; margin-top: 8px; font-size: 0.9rem;">Hover to reveal more</p>
+            </div>
+            <div class="hint">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
+              </svg>
+              Hover me
+            </div>
+          </div>
+          <div class="card-flip-back">
+            <h3>Key Features</h3>
+            <p>Full 3D rotation reveals hidden content on the backface, creating an engaging interactive experience.</p>
+            <div class="features">
+              <span class="feature-tag">3D Transform</span>
+              <span class="feature-tag">Backface</span>
+              <span class="feature-tag">Perspective</span>
+              <span class="feature-tag">Smooth</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

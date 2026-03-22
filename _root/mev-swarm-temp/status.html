@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MEV Swarm Monitor</title>
+  <meta http-equiv="refresh" content="5">
+  <style>
+    body { 
+      font-family: 'Courier New', monospace; 
+      background: #0d1117; 
+      color: #00ff00;
+      padding: 20px;
+    }
+    .status { font-size: 14px; }
+    .green { color: #00ff00; }
+    .yellow { color: #ffff00; }
+    .red { color: #ff0000; }
+    .cyan { color: #00ffff; }
+    h1 { color: #00ff00; border-bottom: 1px solid #00ff00; }
+    pre { background: #161b22; padding: 10px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>🔄 MEV Swarm Status</h1>
+  <div class="status">
+    <p><span class="cyan">Last Updated:</span> <span id="time"></span></p>
+    <p><span class="green">✓ Bot is RUNNING</span></p>
+    <p>Check VSCode Terminal 1 for live output</p>
+    <hr>
+    <h3>Current State:</h3>
+    <ul>
+      <li>Wallet has 0.01 WETH (from wrap)</li>
+      <li>PoolWatcher: Active</li>
+      <li>Spread threshold: 0.1%</li>
+      <li>Last detected spread: ~0.05%</li>
+    </ul>
+    <hr>
+    <p class="yellow">📊 Open VSCode Terminal 1 to see live pool data</p>
+  </div>
+  <script>
+    document.getElementById('time').textContent = new Date().toLocaleTimeString();
+  </script>
+</body>
+</html>

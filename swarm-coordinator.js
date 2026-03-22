@@ -28,6 +28,7 @@ class SwarmCoordinator {
     this.taskQueue = null; // TaskQueue instance
     this.gossipState = null; // GossipState instance
     this.healthMonitor = null; // SelfHealingMonitor instance
+    this.computeRouter = null; // ComputeRouter instance (federation upgrade)
     this.loadBalancingStrategy = LoadBalancingStrategy.LEAST_LOADED;
     this.roundRobinIndex = 0;
     this.metrics = {
@@ -51,28 +52,35 @@ class SwarmCoordinator {
   initialize(options = {}) {
     // Create registry if not provided
     this.registry = options.registry || (window.SwarmRegistry ? new window.SwarmRegistry() : null);
-    
+
     this.taskQueue = options.taskQueue;
     this.gossipState = options.gossipState;
     this.healthMonitor = options.healthMonitor;
-    
+    this.computeRouter = options.computeRouter; // Federation upgrade: compute router
+
     // Pass registry to health monitor if both exist
     if (this.healthMonitor && this.registry) {
       this.healthMonitor.registry = this.registry;
       this.healthMonitor._setupRegistryListeners?.();
     }
-    
+
     if (this.taskQueue) {
       this._setupTaskQueueListeners();
     }
-    
+
     if (this.healthMonitor) {
       this._setupHealthMonitorListeners();
     }
-    
+
+    // Federation upgrade: Log compute router status
+    if (this.computeRouter) {
+      console.log('✅ Compute Router attached to SwarmCoordinator');
+      console.log(`   Current routing: ${this.computeRouter.getCurrentRouting()}`);
+    }
+
     // Start metrics collection
     this.startMetricsCollection(options.metricsInterval || 5000);
-    
+
     console.log('✅ Swarm Coordinator initialized with dependencies');
   }
 
@@ -147,7 +155,7 @@ class SwarmCoordinator {
     }
     
     try {
-      targetAgent.assignTask(targetAgent.id, task);
+      targetAgent.executeTask(task);
       targetAgent.updateWorkload(targetAgent.workload + 10);
       this.metrics.tasksAssigned++;
       
@@ -471,13 +479,36 @@ class SwarmCoordinator {
   }
 
   /**
+   * Route compute job through federation router (Phase 7 isolation)
+   */
+  async routeComputeJob(jobType, payload) {
+    if (this.computeRouter) {
+      console.log(`[Coordinator] Routing job type: ${jobType}`);
+      try {
+        const result = await this.computeRouter.routeJob(jobType, payload);
+        console.log(`[Coordinator] Job routed successfully`);
+        return result;
+      } catch (error) {
+        console.error(`[Coordinator] Job routing failed:`, error);
+        // Check circuit breaker status
+        const circuitStatus = this.computeRouter.getCircuitBreakerStatus();
+        console.error(`[Coordinator] Circuit breaker: ${circuitStatus.isOpen ? 'OPEN' : 'CLOSED'}`);
+        throw error;
+      }
+    } else {
+      console.warn(`[Coordinator] No compute router, job will not be routed`);
+      return null;
+    }
+  }
+
+  /**
    * Shutdown coordinator
    */
   shutdown() {
     this.stopMetricsCollection();
     this.agents.clear();
     this.metricsHistory = [];
-    
+
     console.log('🛑 Swarm Coordinator shutdown');
   }
 }

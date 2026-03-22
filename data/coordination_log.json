@@ -1,0 +1,2576 @@
+[
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093323712
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093328720
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093333719
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093338724
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093343727
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093348741
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093353755
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093358769
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093363773
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093368774
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093373777
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093378793
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093383800
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093388812
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093393816
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093398827
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093403831
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093408841
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093413851
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093418859
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093423872
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093428886
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093433893
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093438903
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093443910
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093448912
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093453925
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093458933
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093463941
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093468947
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093473951
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093478962
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093483968
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093488979
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093493987
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093499001
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093504002
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093509012
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093514025
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093519029
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093524042
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093529047
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093534056
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093539057
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093544071
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093549091
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093554094
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093559096
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093564107
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093569120
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093574120
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093579128
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093584136
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093589138
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093594144
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093599147
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093604159
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093609162
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093614166
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093619170
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093624177
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093629176
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093634191
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093639193
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093644192
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093649196
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093654205
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093659209
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093664212
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093669219
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093674223
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093679225
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093684240
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093689246
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093694253
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093699267
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093704275
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093709275
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093714283
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093719283
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093724294
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093729307
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093734316
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093739319
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093744325
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093749337
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093754345
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093759346
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093764352
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093769362
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093774364
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093779374
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093784380
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093789389
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093794392
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093799402
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093804407
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093809405
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093814417
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093819430
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093824430
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093829443
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093834453
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093839461
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093844473
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093849474
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093854482
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093859483
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093864485
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093869497
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093874507
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093879514
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093884522
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093889528
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093894540
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093899545
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093904552
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093909564
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093914573
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093919580
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093924583
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093929587
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093934598
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093939610
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093944626
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093949626
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093954633
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093959643
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093964654
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093969658
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093974672
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093979680
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093984683
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093989686
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093994688
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773093999696
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773095924736
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773095929722
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773095934727
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773095939736
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773095944750
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773095949766
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773095954766
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773095959778
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773095964785
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773095969786
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773095974798
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773095979810
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773095984813
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773095989817
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773095994819
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773095999830
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096004843
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096009846
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096014852
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096019858
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096024869
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096029882
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096034891
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096039894
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096044905
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096049922
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096054930
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096059933
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096064943
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096069956
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096074959
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096079967
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096084975
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096089977
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096094983
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096099992
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096105002
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096110005
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096115007
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096120013
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096125029
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096130034
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096135036
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096140050
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096145060
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096150068
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096155071
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096160082
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096165084
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096170097
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096175121
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096180126
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096185138
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096190140
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096195152
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096200161
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096205169
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096210170
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096215183
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096220196
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096225205
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096230209
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096235218
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096240228
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096245235
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096250247
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096255250
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096260263
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096265269
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096270275
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096275283
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096280293
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096285295
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096290296
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096295311
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096300323
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096305330
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096310336
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096315345
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096320347
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096325354
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096330367
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096335380
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096340390
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096345407
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096350413
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096355419
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096360433
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096365440
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096370447
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096375464
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096380476
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096385477
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096390494
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096395508
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096400510
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096405526
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096410533
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096415535
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096420540
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096425552
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096430568
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096435578
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096440580
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096445581
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096450591
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096455604
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096460609
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096465610
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096470619
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096475634
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096480637
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096485655
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096490659
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096495669
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096500674
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096505678
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096510683
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096515693
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096520704
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096525717
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096530727
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096535735
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096540741
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096545745
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096550758
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096555766
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096560768
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096565783
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096570785
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096575793
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096580798
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096585798
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096590801
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096651096
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096656108
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096661123
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096666128
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096671139
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096676139
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096681159
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096686167
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096691176
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096696184
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096701192
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096706193
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096711204
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096716218
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096721231
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096726236
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096731240
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096744089
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096749103
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096754104
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096759120
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096764134
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096769138
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096774148
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096779157
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096784167
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096789178
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096794182
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096799189
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096804199
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096809209
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096841175
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096846187
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096851185
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096856196
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096861200
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096866208
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096871220
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096876222
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096881227
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096886227
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096891239
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096896238
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096901254
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096906262
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096911271
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096916284
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096921283
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096942101
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096947102
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096952109
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096957120
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096962131
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096967132
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096972137
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096977150
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096982153
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096987170
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096992182
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773096997184
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097002193
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097007194
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097115978
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097120981
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097125985
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097130999
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097136010
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097141024
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097146026
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097151042
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097156059
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097161059
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097166070
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097171073
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097176074
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097181088
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097186091
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097191095
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097196100
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097201100
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097206114
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097211126
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097216129
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097221143
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097226144
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097231154
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097236159
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097241169
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097246182
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097251189
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097256203
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097261214
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097266225
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097271231
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097276246
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097281249
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097286258
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097291258
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097296268
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097301274
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097306275
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097311277
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097316282
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097321294
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097326308
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097331318
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097336326
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097341336
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097346348
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097351362
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097356365
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097361371
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097366372
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097371385
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097376397
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097381410
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097386424
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097391436
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097396443
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097401456
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097406464
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097411472
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097416473
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097421488
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097426499
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097431509
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097436515
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097441523
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097446536
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097451559
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097456553
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097461553
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097466565
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097471568
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097476582
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097481588
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097486597
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097491605
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097496609
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097501613
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097506617
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097511628
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097516645
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097521646
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097526655
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097531665
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097536676
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097541688
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097546696
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097551697
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097557801
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097561721
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097566731
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097571733
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097576739
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097581745
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097586760
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097591774
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097596780
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097601786
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097606799
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097611805
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097616805
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097621810
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097626823
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097631841
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097636846
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097641847
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097646847
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097651852
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097656859
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097661863
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097666864
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097671880
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097676889
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097681898
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097686912
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097691927
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097696940
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097701940
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097706955
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097711969
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097716982
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097721981
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097726989
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097732000
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097737014
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097742026
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097747030
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097752039
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097757042
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097762044
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097767056
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097772070
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097777072
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097782086
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097787086
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097792101
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097797102
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097802106
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097807120
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097812130
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097817141
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097822157
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097827157
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097832169
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097837179
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097842180
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097847190
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097852207
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097857213
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097862222
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097867235
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097872238
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097877241
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097882255
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097887263
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097892268
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097897281
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097902293
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097907297
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097912306
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097917313
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097922321
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097927338
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097932345
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097937353
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097942368
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097947380
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097952386
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097957394
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097962409
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097967418
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097972419
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097977422
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097982426
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097987429
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097992434
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773097997435
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773098002451
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773098007458
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773098012459
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773098017474
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773098022483
+  },
+  {
+    "type": "context_update",
+    "agent": "claude_code",
+    "timestamp": 1773098027490
+  },

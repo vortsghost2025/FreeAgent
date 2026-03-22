@@ -1,0 +1,57 @@
+  console.log(`\n📡 Waiting for arbitrage opportunities...\n`);
+
+  // Simulate opportunity (in production, this comes from watcher)
+  const simulatedOpportunity = {
+    route: ['0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'],
+    routeType: '2-hop',
+    dexes: ['Uniswap V2', 'Uniswap V2'],
+    amountIn: ethers.parseEther('0.1'),
+    expectedProfitUsd: 5.00,
+    tokenInSymbol: 'WETH',
+    tokenInDecimals: 18
+  };
+
+  // Execute
+  const result = await executor.execute(simulatedOpportunity);
+
+  console.log(`\n${'='.repeat(60)}`);
+  console.log(`🎯 EXECUTION COMPLETE`);
+  console.log('='.repeat(60) + '\n');
+
+  if (result.executed) {
+    console.log(`✅ Arbitrage Executed Successfully!`);
+    console.log(`   Profit: $${result.actualProfit.toFixed(2)}`);
+    console.log(`   Tx Hash: ${result.txHash}`);
+  } else if (result.shouldExecute) {
+    console.log(`ℹ️  Arbitrage Skipped: ${result.reason}`);
+  } else {
+    console.log(`❌ Arbitrage Failed: ${result.reason || 'Unknown error'}`);
+  }
+}
+
+main().catch(console.error);
+// Check simulation mode
+if (!security.isLive) {
+  console.log('\n🔒 SIMULATION MODE - No real trades will be executed\n');
+} else {
+  console.log('\n⚠️  LIVE TRADING MODE - Real money at risk!\n');
+}
+console.log('✅ Security checks passed.');
+
+// ============================================================
+// 🏷️ PROCESS LABELING - Windows PowerShell
+// ============================================================
+if (process.platform === 'win32') {
+  try {
+    // Set process title for Windows Task Manager / PowerShell
+    process.title = 'EXECUTOR - Arbitrage Executor (Simulation Mode)';
+    console.log('🏷️  Process Label: EXECUTOR (SIMULATION)');
+  } catch (e) {
+    // Ignore if not supported
+  }
+}
+
+// ============================================================
+// Configuration
+// ============================================================
+const PRIVATE_KEY = process.env.PRIVATE_KEY;

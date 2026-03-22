@@ -1,0 +1,35 @@
+[
+  {
+    "task_id": "task-1772153692858",
+    "input": "{\"agent\":\"clinical\",\"test\":\"test_17\",\"intensity\":\"maximum\"}",
+    "output": [
+      {
+        "agent": "clinical",
+        "response": "**Clinical Assessment Response**\n\n**Patient Information:**\n* Test ID: test_17\n* Intensity: maximum\n\n**Clinical Reasoning:**\n\nBased on the provided information, I will perform a clinical assessment to determine the next course of action.\n\n**Assessment:**\n\nGiven that the intensity is set to \"maximum\", I will assume this indicates a high level of severity or urgency. However, without additional context or patient-specific information, it's challenging to provide a definitive diagnosis or treatment plan.\n\nTo proceed, I would like to clarify some aspects:\n\n1. **Test Purpose:** What is the primary goal of conducting test_17 at maximum intensity?\n2. **Patient Symptoms/History:** Are there any relevant medical history, allergies, or current symptoms that might impact the assessment?\n\nPlease provide this information to enable me to perform a more comprehensive clinical evaluation and offer a structured response.\n\n**Awaiting Additional Information...**",
+        "model": "llama3.1:8b",
+        "timestamp": 1772153567602
+      },
+      {
+        "agent": "test",
+        "response": "Error: The operation was aborted due to timeout",
+        "model": "deepseek-coder-v2:16b",
+        "timestamp": 1772153692858
+      }
+    ],
+    "agents_involved": 9,
+    "execution_time_ms": 180079,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-27T00:54:52.858Z",
+    "started_at": "2026-02-27T00:51:52.779Z",
+    "completed_at": "2026-02-27T00:54:52.858Z",
+    "error": null
+  }
+]

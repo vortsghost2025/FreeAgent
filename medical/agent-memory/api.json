@@ -1,0 +1,8 @@
+{
+  "agent": "api",
+  "name": "API Integration Agent",
+  "description": "Expert in API design, integration, and REST/GraphQL services",
+  "sessions": [],
+  "created": "2026-02-25T00:00:00.000Z",
+  "lastUpdated": "2026-02-25T00:00:00.000Z"
+}

@@ -1,0 +1,1 @@
+  console.log('   From:', sessionBrief.from, '-, sessionBrief.to); 

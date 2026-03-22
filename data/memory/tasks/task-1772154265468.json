@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772154265468",
+    "input": "{\"batch\":2078,\"agent\":\"clinical\",\"intensity\":\"maximum\"}",
+    "output": [
+      {
+        "agent": "clinical",
+        "response": "Error: Ollama API error: 503 - {\"error\":\"server busy, please try again.  maximum pending requests exceeded\"}",
+        "model": "llama3.1:8b",
+        "timestamp": 1772154265468
+      }
+    ],
+    "agents_involved": 9,
+    "execution_time_ms": 17014,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-27T01:04:25.468Z",
+    "started_at": "2026-02-27T01:04:08.454Z",
+    "completed_at": "2026-02-27T01:04:25.468Z",
+    "error": null
+  }
+]

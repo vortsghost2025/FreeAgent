@@ -1,0 +1,8 @@
+{
+  "description": "Generate a Python function to calculate fibonacci sequence",
+  "type": "code_generation",
+  "complexity": "medium",
+  "urgency": "normal",
+  "capabilities": ["code", "math"],
+  "agent": "code"
+}

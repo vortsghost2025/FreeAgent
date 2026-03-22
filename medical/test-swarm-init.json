@@ -1,0 +1,5 @@
+{
+  "workers": 3,
+  "routers": 2,
+  "observers": 1
+}

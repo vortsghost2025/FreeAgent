@@ -1,0 +1,8 @@
+[credential]
+	helper = manager
+[pull]
+	rebase = false
+[fetch]
+	prune = false
+[confirm]
+	auto = false

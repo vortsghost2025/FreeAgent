@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772041219568",
+    "input": "[TaskRouter] Agent 'code' using model: deepseek-coder-v2:16b\n[code] Using model: deepseek-coder-v2:16b\n[Ollama] Generating with model: deepseek-coder-v2:16b",
+    "output": [
+      {
+        "agent": "code",
+        "response": " Sure, I'm ready to help you with your coding needs using the model `deepseek-coder-v2:16b`. What do you need assistance with?",
+        "model": "deepseek-coder-v2:16b",
+        "timestamp": 1772041219568
+      }
+    ],
+    "agents_involved": 1,
+    "execution_time_ms": 11632,
+    "status": "completed",
+    "routing": {
+      "decision": "selected",
+      "selected_agent": "code",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-25T17:40:19.568Z",
+    "started_at": "2026-02-25T17:40:07.936Z",
+    "completed_at": "2026-02-25T17:40:19.570Z",
+    "error": null
+  }
+]

@@ -1,0 +1,53 @@
+{
+  "agent": "claw-standalone",
+  "name": "Claw Standalone Agent",
+  "description": "Independent Claw agent for external platforms like ClawAI",
+  "sessions": [
+    {
+      "timestamp": "2026-02-26T05:16:48.509Z",
+      "message": "Can you work without the cockpit running?",
+      "response": "I notice you mentioned the cockpit. As a standalone agent, I work completely independently. I have my own memory, no shared workspace dependencies, and no need for the cockpit server to be running.",
+      "sessionId": "standalone-1772083008510-2yg8whymj"
+    },
+    {
+      "timestamp": "2026-02-26T05:18:51.310Z",
+      "message": "hello",
+      "response": "Hello! I'm Claw Standalone, your independent AI assistant. I can work anywhere - with or without the cockpit running.",
+      "sessionId": "standalone-1772083131310-ude2w4lcs"
+    },
+    {
+      "timestamp": "2026-02-26T05:42:55.408Z",
+      "message": "test",
+      "response": "I understand you're saying: 'test'. As your standalone assistant, I'm ready to help with any tasks or questions you have. I work independently of the cockpit infrastructure.",
+      "sessionId": "standalone-1772084575409-e4no6azj7"
+    },
+    {
+      "timestamp": "2026-02-26T05:43:08.081Z",
+      "message": "is this claw?",
+      "response": "Hello! I'm Claw Standalone, your independent AI assistant. I can work anywhere - with or without the cockpit running.",
+      "sessionId": "standalone-1772084588081-qxuztw0rc"
+    },
+    {
+      "timestamp": "2026-02-26T05:43:20.737Z",
+      "message": "do you have access to all you sessiobn info",
+      "response": "I understand you're saying: 'do you have access to all you sessiobn info'. As your standalone assistant, I'm ready to help with any tasks or questions you have. I work independently of the cockpit infrastructure.",
+      "sessionId": "standalone-1772084600737-1nco4ag9i"
+    },
+    {
+      "timestamp": "2026-02-26T14:32:26.952Z",
+      "message": "node agent-task-manager.js interactive",
+      "response": "I understand you're saying: 'node agent-task-manager.js interactive'. As your standalone assistant, I'm ready to help with any tasks or questions you have. I work independently of the cockpit infrastructure.",
+      "sessionId": "standalone-1772116346957-40ns08zq0"
+    }
+  ],
+  "created": "2026-02-26T05:00:00.000Z",
+  "lastUpdated": "2026-02-26T14:32:26.957Z",
+  "settings": {
+    "memoryIsolation": true,
+    "noSharedWorkspace": true,
+    "noCommitLocks": true,
+    "noOvermind": true,
+    "noRouter": true,
+    "independentRuntime": true
+  }
+}

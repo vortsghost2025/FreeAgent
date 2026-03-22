@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  consensus-hub:
+    build: 
+      context: .
+      dockerfile: Dockerfile.hub
+    ports:
+      - "8765:8765"
+    environment:
+      - NODE_ENV=production
+      - CONSENSUS_THRESHOLD=67
+      - WS_PORT=8765
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    restart: unless-stopped
+    networks:
+      - swarm-network
+
+  agent-manager:
+    build:
+      context: .
+      dockerfile: Dockerfile.agents
+    depends_on:
+      - consensus-hub
+    environment:
+      - HUB_URL=ws://consensus-hub:8765
+      - AGENT_COUNT=100
+      - PERFORMANCE_MONITORING=true
+    restart: unless-stopped
+    networks:
+      - swarm-network
+
+  telemetry-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.telemetry
+    ports:
+      - "3000:3000"
+    depends_on:
+      - consensus-hub
+    environment:
+      - HUB_URL=ws://consensus-hub:8765
+      - REFRESH_INTERVAL=1000
+    restart: unless-stopped
+    networks:
+      - swarm-network
+
+  stress-tester:
+    build:
+      context: .
+      dockerfile: Dockerfile.stress
+    depends_on:
+      - consensus-hub
+    environment:
+      - TARGET_AGENTS=1000
+      - TEST_DURATION=300
+      - CREDIT_PROVIDER=alibaba
+    profiles:
+      - stress-testing
+
+networks:
+  swarm-network:
+    driver: bridge
+
+volumes:
+  swarm-data:
+  swarm-logs:

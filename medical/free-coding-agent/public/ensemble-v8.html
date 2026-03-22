@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>8-Agent Medical Ensemble</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: #0f0f23;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      padding: 30px 0;
+      border-bottom: 1px solid #2a2a4a;
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      color: #00d9ff;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      color: #888;
+      font-size: 1.1rem;
+    }
+
+/* Master Ensemble Tab */
+    .master-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #2a2a4a;
+    }
+
+    .tab {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      color: #888;
+      cursor: pointer;
+      font-size: 14px;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .tab:hover {
+      color: #00d9ff;
+    }
+
+    .tab.active {
+      color: #00d9ff;
+      border-bottom-color: #00d9ff;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .main-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 20px;
+    }
+
+    .side-panel {
+      background: #1a1a2e;
+      border-radius: 8px;
+      padding: 20px;
+      height: fit-content;
+    }
+
+    .side-panel h3 {
+      color: #00d9ff;
+      margin-bottom: 15px;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .agent-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .agent-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background: #16213e;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+      border: 1px solid transparent;
+    }
+
+    .agent-checkbox:hover {
+      background: #1e2a4a;
+      border-color: #00d9ff;
+    }
+
+    .agent-checkbox input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #00d9ff;
+    }
+
+    .agent-checkbox .info {
+      flex: 1;
+    }
+
+    .agent-checkbox .name {
+      font-weight: 500;
+      font-size: 14px;
+      color: #e0e0e0;
+    }
+
+    .agent-checkbox .description {
+      font-size: 11px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .agent-checkbox .badge {
+      font-size: 10px;
+      padding: 3px 8px;
+      background: #00d9ff;
+      color: #0f0f23;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .quick-select {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #2a2a4a;
+    }
+
+    .quick-select button {
+      flex: 1;
+      padding: 8px 12px;
+      background: #16213e;
+      color: #888;
+      border: 1px solid #2a2a4a;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s;
+    }
+
+    .quick-select button:hover {
+      background: #1e2a4a;
+      color: #00d9ff;
+    }
+
+    .mode-selector {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #2a2a4a;
+    }
+
+    .mode-selector label {
+      display: block;
+      margin-bottom: 10px;
+      color: #888;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .mode-selector select {
+      width: 100%;
+      padding: 10px;
+      background: #16213e;
+      border: 1px solid #2a2a4a;
+      border-radius: 6px;
+      color: #e0e0e0;
+      font-size: 14px;
+    }
+
+    .config-section {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #2a2a4a;
+    }
+
+    .config-section h4 {
+      color: #888;
+      font-size: 11px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .toggle-switch {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 13px;
+    }
+
+    .toggle-switch label {
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .toggle-switch input {
+      width: 40px;
+      height: 20px;
+      accent-color: #00d9ff;
+    }
+
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .agent-response {
+      background: #1a1a2e;
+      border-radius: 8px;
+      overflow: hidden;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #2a2a4a;
+    }
+
+    .agent-response.inactive {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .agent-header {
+      padding: 12px 15px;
+      background: #16213e;
+      border-bottom: 1px solid #2a2a4a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .agent-header .title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .agent-header h3 {
+      color: #00d9ff;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .agent-header .badge {
+      font-size: 9px;
+      padding: 2px 6px;
+      background: #00d9ff;
+      color: #0f0f23;
+      border-radius: 3px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .agent-status {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #555;
+    }
+
+    .agent-status.working {
+      background: #00d9ff;
+      animation: pulse 1s infinite;
+    }
+
+    .agent-status.complete {
+      background: #44ff44;
+    }
+
+    .agent-status.error {
+      background: #ff4444;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .agent-content {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      font-size: 13px;
+      line-height: 1.6;
+      max-height: 350px;
+    }
+
+    .agent-content pre {
+      background: #0f0f23;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+
+    .agent-content code {
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 12px;
+      color: #00d9ff;
+    }
+
+    .agent-metrics {
+      padding: 8px 15px;
+      background: #16213e;
+      border-top: 1px solid #2a2a4a;
+      font-size: 11px;
+      color: #888;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .agent-metrics span {
+      color: #e0e0e0;
+    }
+
+    .chat-area {
+      background: #1a1a2e;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .messages {
+      max-height: 300px;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .message {
+      margin-bottom: 15px;
+      padding: 12px 15px;
+      border-radius: 8px;
+    }
+
+    .message.user {
+      background: #0f3460;
+      margin-left: auto;
+      max-width: 70%;
+    }
+
+    .message.ensemble {
+      background: #1a1a2e;
+      border: 1px solid #2a2a4a;
+    }
+
+    .message.system {
+      background: #1a2a1e;
+      border-left: 3px solid #44ff44;
+    }
+
+    .message .role {
+      font-weight: bold;
+      font-size: 11px;
+      margin-bottom: 5px;
+      color: #00d9ff;
+      text-transform: uppercase;
+    }
+
+    .message.user .role {
+      color: #ff9f43;
+    }
+
+    .message.system .role {
+      color: #44ff44;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+      padding: 15px;
+      background: #16213e;
+      border-top: 1px solid #2a2a4a;
+    }
+
+    .input-area textarea {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #2a2a4a;
+      border-radius: 8px;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-size: 14px;
+      resize: none;
+      min-height: 50px;
+      font-family: inherit;
+    }
+
+    .input-area textarea:focus {
+      outline: none;
+      border-color: #00d9ff;
+    }
+
+    .input-area button {
+      padding: 12px 25px;
+      background: #00d9ff;
+      color: #0f0f23;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .input-area button:hover {
+      background: #00b8d9;
+    }
+
+    .input-area button:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+
+    .terminal-panel {
+      background: #1a1a2e;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .terminal-panel h3 {
+      padding: 12px 15px;
+      background: #16213e;
+      color: #00d9ff;
+      font-size: 0.9rem;
+      border-bottom: 1px solid #2a2a4a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .terminal-output {
+      background: #0f0f23;
+      padding: 15px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .terminal-line {
+      margin-bottom: 5px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .terminal-prompt {
+      color: #00d9ff;
+    }
+
+    .terminal-error {
+      color: #ff4444;
+    }
+
+    .terminal-success {
+      color: #44ff44;
+    }
+
+    .terminal-input {
+      display: flex;
+      gap: 10px;
+      padding: 10px 15px;
+      background: #16213e;
+      border-top: 1px solid #2a2a4a;
+    }
+
+    .terminal-input input {
+      flex: 1;
+      padding: 8px 12px;
+      background: #1a1a2e;
+      border: 1px solid #2a2a4a;
+      border-radius: 4px;
+      color: #e0e0e0;
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 13px;
+    }
+
+    .terminal-input select {
+      padding: 8px;
+      background: #16213e;
+      border: 1px solid #2a2a4a;
+      border-radius: 4px;
+      color: #e0e0e0;
+    }
+
+    .memory-browser {
+      background: #1a1a2e;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .memory-browser h3 {
+      padding: 12px 15px;
+      background: #16213e;
+      color: #00d9ff;
+      font-size: 0.9rem;
+      border-bottom: 1px solid #2a2a4a;
+    }
+
+    .memory-content {
+      padding: 15px;
+    }
+
+    .memory-search {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .memory-search input {
+      flex: 1;
+      padding: 10px;
+      background: #1a1a2e;
+      border: 1px solid #2a2a4a;
+      border-radius: 6px;
+      color: #e0e0e0;
+      font-size: 14px;
+    }
+
+    .memory-search button {
+      padding: 10px 20px;
+      background: #00d9ff;
+      color: #0f0f23;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .memory-results {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .memory-item {
+      padding: 12px;
+      background: #16213e;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      border-left: 3px solid #00d9ff;
+    }
+
+    .memory-item .description {
+      font-size: 13px;
+      margin-bottom: 5px;
+      color: #e0e0e0;
+    }
+
+    .memory-item .meta {
+      font-size: 11px;
+      color: #888;
+      display: flex;
+      gap: 15px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: #16213e;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid #2a2a4a;
+    }
+
+    .stat-card .value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #00d9ff;
+    }
+
+    .stat-card .label {
+      color: #888;
+      font-size: 11px;
+      text-transform: uppercase;
+      margin-top: 5px;
+    }
+
+    .connection-status {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 15px;
+      border-radius: 6px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .connection-status.connected {
+      background: #1a2a1e;
+      color: #44ff44;
+      border: 1px solid #44ff44;
+    }
+
+    .connection-status.disconnected {
+      background: #2a1a1e;
+      color: #ff4444;
+      border: 1px solid #ff4444;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+  </style>
+</head>
+<body>
+  <div class="connection-status disconnected" id="connectionStatus">
+    <div class="status-dot"></div>
+    <span>Disconnected</span>
+  </div>
+
+  <div class="container">
+    <header>
+      <h1>🎼 8-Agent Medical Ensemble</h1>
+      <p>Multi-agent collaborative system for medical coding tasks</p>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('ensemble')">Ensemble</button>
+      <button class="tab" onclick="switchTab('terminal')">Terminal</button>
+      <button class="tab" onclick="switchTab('memory')">Memory</button>
+      <button class="tab" onclick="switchTab('stats')">Statistics</button>
+    </div>
+
+    <!-- Ensemble Tab -->
+    <div id="ensemble-tab" class="tab-content active">
+      <div class="main-layout">
+        <div class="side-panel">
+          <h3>🤖 Agent Selection</h3>
+          <div class="agent-selector">
+            <div class="agent-checkbox" data-agent="code_generation" data-id="ag1">
+              <input type="checkbox" id="ag1" checked>
+              <div class="info">
+                <div class="name">Code Generation</div>
+                <div class="description">Write & modify code</div>
+              </div>
+              <span class="badge">AG1</span>
+            </div>
+
+            <div class="agent-checkbox" data-agent="data_engineering" data-id="ag2">
+              <input type="checkbox" id="ag2" checked>
+              <div class="info">
+                <div class="name">Data Engineering</div>
+                <div class="description">Schema & validation</div>
+              </div>
+              <span class="badge">AG2</span>
+            </div>
+
+            <div class="agent-checkbox" data-agent="clinical_analysis" data-id="ag3">
+              <input type="checkbox" id="ag3">
+              <div class="info">
+                <div class="name">Clinical Analysis</div>
+                <div class="description">Medical reasoning</div>
+              </div>
+              <span class="badge">AG3</span>
+            </div>
+
+            <div class="agent-checkbox" data-agent="testing" data-id="ag4">
+              <input type="checkbox" id="ag4">
+              <div class="info">
+                <div class="name">Testing</div>
+                <div class="description">Test generation</div>
+              </div>
+              <span class="badge">AG4</span>
+            </div>
+
+            <div class="agent-checkbox" data-agent="security" data-id="ag5">
+              <input type="checkbox" id="ag5">
+              <div class="info">
+                <div class="name">Security</div>
+                <div class="description">Vulnerability scan</div>
+              </div>
+              <span class="badge">AG5</span>
+            </div>
+
+            <div class="agent-checkbox" data-agent="api_integration" data-id="ag6">
+              <input type="checkbox" id="ag6">
+              <div class="info">
+                <div class="name">API Integration</div>
+                <div class="description">REST/GraphQL APIs</div>
+              </div>
+              <span class="badge">AG6</span>
+            </div>
+
+            <div class="agent-checkbox" data-agent="database" data-id="ag7">
+              <input type="checkbox" id="ag7">
+              <div class="info">
+                <div class="name">Database</div>
+                <div class="description">SQL & schemas</div>
+              </div>
+              <span class="badge">AG7</span>
+            </div>
+
+            <div class="agent-checkbox" data-agent="devops" data-id="ag8">
+              <input type="checkbox" id="ag8">
+              <div class="info">
+                <div class="name">DevOps</div>
+                <div class="description">CI/CD & deployment</div>
+              </div>
+              <span class="badge">AG8</span>
+            </div>
+          </div>
+
+          <div class="quick-select">
+            <button onclick="selectAllAgents()">Select All (8)</button>
+            <button onclick="selectDefaultAgents()">Default (2)</button>
+            <button onclick="clearAllAgents()">Clear</button>
+          </div>
+
+          <div class="mode-selector">
+            <label>Collaboration Mode</label>
+            <select id="collabMode">
+              <option value="parallel">⚡ Parallel (Simultaneous)</option>
+              <option value="sequential">🔄 Sequential (Chain)</option>
+              <option value="independent">🔀 Independent (No Coordination)</option>
+            </select>
+          </div>
+
+          <div class="config-section">
+            <h4>Configuration</h4>
+            <div class="toggle-switch">
+              <label>Auto-fix errors</label>
+              <input type="checkbox" id="autoFix" checked>
+            </div>
+            <div class="toggle-switch">
+              <label>Enable terminal</label>
+              <input type="checkbox" id="enableTerminal" checked>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="chat-area">
+            <div class="messages" id="messages">
+              <div class="message system">
+                <div class="role">System</div>
+                <div>Welcome to the 8-Agent Medical Ensemble! Select agents (1-8) and enter a task to start.</div>
+              </div>
+            </div>
+            <div class="input-area">
+              <textarea id="userInput" placeholder="Enter your task... (e.g., 'Build a patient data validation API with CDC/WHO compliance')" rows="2"></textarea>
+              <button id="sendBtn" onclick="sendEnsembleMessage()">🚀 Run Ensemble</button>
+            </div>
+          </div>
+
+          <div class="agent-grid" id="agentGrid">
+            <!-- AG1: Code Generation -->
+            <div class="agent-response" id="agent-ag1">
+              <div class="agent-header">
+                <div class="title">
+                  <h3>Code Generation</h3>
+                  <span class="badge">AG1</span>
+                </div>
+                <div class="agent-status" id="status-ag1"></div>
+              </div>
+              <div class="agent-content" id="content-ag1"></div>
+              <div class="agent-metrics">
+                Time: <span id="time-ag1">0ms</span>
+              </div>
+            </div>
+
+            <!-- AG2: Data Engineering -->
+            <div class="agent-response" id="agent-ag2">
+              <div class="agent-header">
+                <div class="title">
+                  <h3>Data Engineering</h3>
+                  <span class="badge">AG2</span>
+                </div>
+                <div class="agent-status" id="status-ag2"></div>
+              </div>
+              <div class="agent-content" id="content-ag2"></div>
+              <div class="agent-metrics">
+                Time: <span id="time-ag2">0ms</span>
+              </div>
+            </div>
+
+            <!-- AG3: Clinical Analysis -->
+            <div class="agent-response" id="agent-ag3">
+              <div class="agent-header">
+                <div class="title">
+                  <h3>Clinical Analysis</h3>
+                  <span class="badge">AG3</span>
+                </div>
+                <div class="agent-status" id="status-ag3"></div>
+              </div>
+              <div class="agent-content" id="content-ag3"></div>
+              <div class="agent-metrics">
+                Time: <span id="time-ag3">0ms</span>
+              </div>
+            </div>
+
+            <!-- AG4: Testing -->
+            <div class="agent-response" id="agent-ag4">
+              <div class="agent-header">
+                <div class="title">
+                  <h3>Testing</h3>
+                  <span class="badge">AG4</span>
+                </div>
+                <div class="agent-status" id="status-ag4"></div>
+              </div>
+              <div class="agent-content" id="content-ag4"></div>
+              <div class="agent-metrics">
+                Time: <span id="time-ag4">0ms</span>
+              </div>
+            </div>
+
+            <!-- AG5: Security -->
+            <div class="agent-response" id="agent-ag5">
+              <div class="agent-header">
+                <div class="title">
+                  <h3>Security</h3>
+                  <span class="badge">AG5</span>
+                </div>
+                <div class="agent-status" id="status-ag5"></div>
+              </div>
+              <div class="agent-content" id="content-ag5"></div>
+              <div class="agent-metrics">
+                Time: <span id="time-ag5">0ms</span>
+              </div>
+            </div>
+
+            <!-- AG6: API Integration -->
+            <div class="agent-response" id="agent-ag6">
+              <div class="agent-header">
+                <div class="title">
+                  <h3>API Integration</h3>
+                  <span class="badge">AG6</span>
+                </div>
+                <div class="agent-status" id="status-ag6"></div>
+              </div>
+              <div class="agent-content" id="content-ag6"></div>
+              <div class="agent-metrics">
+                Time: <span id="time-ag6">0ms</span>
+              </div>
+            </div>
+
+            <!-- AG7: Database -->
+            <div class="agent-response" id="agent-ag7">
+              <div class="agent-header">
+                <div class="title">
+                  <h3>Database</h3>
+                  <span class="badge">AG7</span>
+                </div>
+                <div class="agent-status" id="status-ag7"></div>
+              </div>
+              <div class="agent-content" id="content-ag7"></div>
+              <div class="agent-metrics">
+                Time: <span id="time-ag7">0ms</span>
+              </div>
+            </div>
+
+            <!-- AG8: DevOps -->
+            <div class="agent-response" id="agent-ag8">
+              <div class="agent-header">
+                <div class="title">
+                  <h3>DevOps</h3>
+                  <span class="badge">AG8</span>
+                </div>
+                <div class="agent-status" id="status-ag8"></div>
+              </div>
+              <div class="agent-content" id="content-ag8"></div>
+              <div class="agent-metrics">
+                Time: <span id="time-ag8">0ms</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Terminal Tab -->
+    <div id="terminal-tab" class="tab-content">
+      <div class="terminal-panel">
+        <h3>💻 Terminal Execution</h3>
+        <div class="terminal-output" id="terminalOutput">
+          <div class="terminal-line">
+            <span class="terminal-prompt">$</span>
+            <span>Ready for commands...</span>
+          </div>
+        </div>
+        <div class="terminal-input">
+          <select id="terminalShell">
+            <option value="auto">Auto-detect</option>
+            <option value="powershell">PowerShell</option>
+            <option value="bash">Bash</option>
+          </select>
+          <input type="text" id="terminalCommand" placeholder="Enter command..." onkeydown="if(event.key === 'Enter') executeTerminal()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Memory Tab -->
+    <div id="memory-tab" class="tab-content">
+      <div class="memory-browser">
+        <h3>📊 Memory Browser</h3>
+        <div class="memory-content">
+          <div class="memory-search">
+            <input type="text" id="memoryQuery" placeholder="Search learned patterns...">
+            <button onclick="searchMemory()">Search</button>
+          </div>
+          <div class="memory-results" id="memoryResults">
+            <div class="message system">
+              <div class="role">System</div>
+              <div>Enter a search query to browse learned patterns and fixed code.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Tab -->
+    <div id="stats-tab" class="tab-content">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="value" id="statTasks">0</div>
+          <div class="label">Tasks Completed</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" id="statAgents">0</div>
+          <div class="label">Active Agents</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" id="statPatterns">0</div>
+          <div class="label">Learned Patterns</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" id="statConformance">0%</div>
+          <div class="label">Schema Conformance</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" id="statErrors">0</div>
+          <div class="label">Errors Fixed</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" id="statUptime">0s</div>
+          <div class="label">Session Uptime</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // WebSocket connection
+    let ws = null;
+    let connected = false;
+    let sessionStartTime = Date.now();
+
+    // Agent mapping
+    const AGENTS = {
+      ag1: 'code_generation',
+      ag2: 'data_engineering',
+      ag3: 'clinical_analysis',
+      ag4: 'testing',
+      ag5: 'security',
+      ag6: 'api_integration',
+      ag7: 'database',
+      ag8: 'devops'
+    };
+
+    const AGENT_NAMES = {
+      code_generation: 'Code Generation',
+      data_engineering: 'Data Engineering',
+      clinical_analysis: 'Clinical Analysis',
+      testing: 'Testing',
+      security: 'Security',
+      api_integration: 'API Integration',
+      database: 'Database',
+      devops: 'DevOps'
+    };
+
+    // Initialize WebSocket connection
+    function initWebSocket() {
+      const wsUrl = `ws://localhost:${window.location.port || 3000}`;
+      console.log(`Connecting to ${wsUrl}...`);
+
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        connected = true;
+        updateConnectionStatus();
+        console.log('WebSocket connected');
+
+        // Initialize ensemble
+        ws.send(JSON.stringify({
+          type: 'init_ensemble',
+          config: {
+            defaultAgents: ['code_generation', 'data_engineering'],
+            maxParallelAgents: 8,
+            collaborationMode: 'parallel',
+            timeout: 60000,
+            autoFixErrors: document.getElementById('autoFix').checked,
+            terminalEnabled: document.getElementById('enableTerminal').checked
+          }
+        }));
+
+        addMessage('system', 'Connected to 8-Agent Medical Ensemble System');
+      };
+
+      ws.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        console.log('Received:', message.type);
+
+        handleWebSocketMessage(message);
+      };
+
+      ws.onclose = () => {
+        connected = false;
+        updateConnectionStatus();
+        console.log('WebSocket disconnected');
+        addMessage('system', 'Disconnected from ensemble. Reconnecting in 5s...');
+
+        setTimeout(initWebSocket, 5000);
+      };
+
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        addMessage('system', 'Connection error. Ensure ensemble web server is running.');
+      };
+    }
+
+    // Handle WebSocket messages
+    function handleWebSocketMessage(message) {
+      switch (message.type) {
+        case 'ensemble_ready':
+          onEnsembleReady(message);
+          break;
+
+        case 'ensemble_started':
+          onEnsembleStarted(message);
+          break;
+
+        case 'ensemble_event':
+          onEnsembleEvent(message);
+          break;
+
+        case 'ensemble_complete':
+          onEnsembleComplete(message);
+          break;
+
+        case 'ensemble_error':
+          onEnsembleError(message);
+          break;
+
+        case 'agent_created':
+          onAgentCreated(message);
+          break;
+
+        case 'terminal_complete':
+          onTerminalComplete(message);
+          break;
+
+        case 'terminal_error':
+          onTerminalError(message);
+          break;
+
+        case 'memory_search_complete':
+          onMemorySearchComplete(message);
+          break;
+
+        case 'metrics':
+          updateStatistics(message.metrics);
+          break;
+
+        case 'error':
+          onError(message);
+          break;
+
+        default:
+          console.log('Unhandled message type:', message.type);
+      }
+    }
+
+    // Event handlers
+    function onEnsembleReady(message) {
+      console.log('Ensemble ready:', message);
+      addMessage('system', `Ensemble initialized with ${message.agents.length} agents`);
+      updateAgentDisplay();
+    }
+
+    function onEnsembleStarted(message) {
+      console.log('Ensemble started:', message);
+      addMessage('ensemble', `Started ${message.agents.length}-agent ensemble in ${message.mode} mode`);
+      setAgentsWorking(message.agents);
+    }
+
+    function onEnsembleEvent(message) {
+      console.log('Ensemble event:', message.event);
+
+      if (message.event.type === 'agent_complete') {
+        onAgentComplete(message.event);
+      } else if (message.event.type === 'agent_chunk') {
+        onAgentChunk(message.event);
+      }
+    }
+
+    function onAgentComplete(event) {
+      const agentId = getAgentIdByRole(event.role);
+      if (!agentId) return;
+
+      document.getElementById(`status-${agentId}`).className = 'agent-status complete';
+      document.getElementById(`time-${agentId}`).textContent = `${event.processingTime}ms`;
+
+      if (event.responses) {
+        const content = event.responses
+          .filter(r => r.type === 'complete')
+          .map(r => r.content)
+          .join('\n');
+        document.getElementById(`content-${agentId}`).innerHTML = formatContent(content);
+      }
+    }
+
+    function onAgentChunk(event) {
+      const agentId = getAgentIdByRole(event.role);
+      if (!agentId) return;
+
+      if (event.content) {
+        const currentContent = document.getElementById(`content-${agentId}`).innerHTML;
+        document.getElementById(`content-${agentId}`).innerHTML = currentContent + event.content;
+      }
+    }
+
+    function onEnsembleComplete(message) {
+      console.log('Ensemble complete:', message);
+      addMessage('system', `Ensemble completed in ${message.totalProcessingTime}ms`);
+      resetAgentsStatus();
+      updateStatistics();
+    }
+
+    function onEnsembleError(message) {
+      console.error('Ensemble error:', message);
+      addMessage('system', `Ensemble error: ${message.error}`);
+      resetAgentsStatus();
+    }
+
+    function onAgentCreated(message) {
+      console.log('Agent created:', message);
+      const agentId = getAgentIdByRole(message.role);
+      if (agentId) {
+        document.getElementById(`agent-${agentId}`).classList.remove('inactive');
+      }
+    }
+
+    function onTerminalComplete(message) {
+      console.log('Terminal complete:', message);
+      const output = document.getElementById('terminalOutput');
+      const line = document.createElement('div');
+      line.className = 'terminal-line';
+      line.innerHTML = `<span class="terminal-prompt">$</span><span>${message.result.stdout || message.result.output || 'Command executed'}</span>`;
+      output.appendChild(line);
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function onTerminalError(message) {
+      console.error('Terminal error:', message);
+      const output = document.getElementById('terminalOutput');
+      const line = document.createElement('div');
+      line.className = 'terminal-line terminal-error';
+      line.innerHTML = `<span class="terminal-prompt">$</span><span>Error: ${message.error}</span>`;
+      output.appendChild(line);
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function onMemorySearchComplete(message) {
+      console.log('Memory search complete:', message);
+      const results = document.getElementById('memoryResults');
+      results.innerHTML = '';
+
+      if (message.patterns.length === 0) {
+        results.innerHTML = '<div class="message system"><div class="role">System</div><div>No patterns found.</div></div>';
+        return;
+      }
+
+      message.patterns.forEach(pattern => {
+        const item = document.createElement('div');
+        item.className = 'memory-item';
+        item.innerHTML = `
+          <div class="description">${pattern.description}</div>
+          <div class="meta">
+            <span>Type: ${pattern.patternType}</span>
+            <span>Success: ${pattern.successCount}</span>
+            <span>Used: ${pattern.lastUsed || 'Never'}</span>
+          </div>
+        `;
+        results.appendChild(item);
+      });
+    }
+
+    function onError(message) {
+      console.error('Error:', message);
+      addMessage('system', `Error: ${message.error}`);
+    }
+
+    // Helper functions
+    function getAgentIdByRole(role) {
+      return Object.entries(AGENTS).find(([id, r]) => r === role)?.[0];
+    }
+
+    function formatContent(content) {
+      return content
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\n/g, '<br>')
+        .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>');
+    }
+
+    function addMessage(role, content) {
+      const messages = document.getElementById('messages');
+      const msg = document.createElement('div');
+      msg.className = `message ${role}`;
+      msg.innerHTML = `<div class="role">${role}</div><div>${content.replace(/\n/g, '<br>')}</div>`;
+      messages.appendChild(msg);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function setAgentsWorking(agents) {
+      agents.forEach(role => {
+        const agentId = getAgentIdByRole(role);
+        if (agentId) {
+          document.getElementById(`status-${agentId}`).className = 'agent-status working';
+        }
+      });
+    }
+
+    function resetAgentsStatus() {
+      Object.keys(AGENTS).forEach(agentId => {
+        document.getElementById(`status-${agentId}`).className = 'agent-status';
+      });
+    }
+
+    function updateAgentDisplay() {
+      Object.keys(AGENTS).forEach(agentId => {
+        const checkbox = document.getElementById(agentId);
+        const responsePanel = document.getElementById(`agent-${agentId}`);
+        if (checkbox.checked) {
+          responsePanel.classList.remove('inactive');
+        } else {
+          responsePanel.classList.add('inactive');
+        }
+      });
+    }
+
+    function updateConnectionStatus() {
+      const status = document.getElementById('connectionStatus');
+      if (connected) {
+        status.className = 'connection-status connected';
+        status.innerHTML = '<div class="status-dot"></div><span>Connected</span>';
+      } else {
+        status.className = 'connection-status disconnected';
+        status.innerHTML = '<div class="status-dot"></div><span>Disconnected</span>';
+      }
+    }
+
+    function updateStatistics(metrics) {
+      if (!metrics) return;
+
+      if (metrics.ensemble) {
+        document.getElementById('statTasks').textContent = metrics.ensemble.tasksCompleted || 0;
+        document.getElementById('statAgents').textContent = metrics.ensemble.activeAgents || 0;
+      }
+
+      if (metrics.memory) {
+        document.getElementById('statPatterns').textContent = metrics.memory.patterns || 0;
+      }
+
+      const uptime = Math.floor((Date.now() - sessionStartTime) / 1000);
+      document.getElementById('statUptime').textContent = `${uptime}s`;
+    }
+
+    function getSelectedAgents() {
+      const agents = [];
+      Object.entries(AGENTS).forEach(([id, role]) => {
+        if (document.getElementById(id).checked) {
+          agents.push(role);
+        }
+      });
+      return agents;
+    }
+
+    // UI functions
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById(`${tabName}-tab`).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function sendEnsembleMessage() {
+      const input = document.getElementById('userInput');
+      const message = input.value.trim();
+      const agents = getSelectedAgents();
+      const mode = document.getElementById('collabMode').value;
+
+      if (!message) return;
+      if (agents.length === 0) {
+        alert('Please select at least one agent');
+        return;
+      }
+
+      addMessage('user', message);
+
+      // Reset agent outputs
+      Object.keys(AGENTS).forEach(agentId => {
+        document.getElementById(`content-${agentId}`).innerHTML = '';
+        document.getElementById(`time-${agentId}`).textContent = '0ms';
+        document.getElementById(`status-${agentId}`).className = 'agent-status';
+      });
+
+      if (ws && connected) {
+        ws.send(JSON.stringify({
+          type: 'ensemble_chat',
+          task: message,
+          agents: agents,
+          mode: mode
+        }));
+      } else {
+        addMessage('system', 'Not connected to ensemble. Please wait...');
+      }
+
+      input.value = '';
+    }
+
+    function executeTerminal() {
+      const commandInput = document.getElementById('terminalCommand');
+      const command = commandInput.value.trim();
+      const shell = document.getElementById('terminalShell').value;
+
+      if (!command) return;
+
+      const output = document.getElementById('terminalOutput');
+      const line = document.createElement('div');
+      line.className = 'terminal-line';
+      line.innerHTML = `<span class="terminal-prompt">$</span><span>${command}</span>`;
+      output.appendChild(line);
+
+      if (ws && connected) {
+        ws.send(JSON.stringify({
+          type: 'terminal_execute',
+          command: command,
+          shell: shell
+        }));
+      }
+
+      commandInput.value = '';
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function searchMemory() {
+      const query = document.getElementById('memoryQuery').value.trim();
+
+      if (!query) return;
+
+      if (ws && connected) {
+        ws.send(JSON.stringify({
+          type: 'memory_search',
+          query: query
+        }));
+      }
+    }
+
+    function selectAllAgents() {
+      Object.keys(AGENTS).forEach(id => {
+        document.getElementById(id).checked = true;
+      });
+      updateAgentDisplay();
+    }
+
+    function selectDefaultAgents() {
+      Object.keys(AGENTS).forEach(id => {
+        document.getElementById(id).checked = (id === 'ag1' || id === 'ag2');
+      });
+      updateAgentDisplay();
+    }
+
+    function clearAllAgents() {
+      Object.keys(AGENTS).forEach(id => {
+        document.getElementById(id).checked = false;
+      });
+      updateAgentDisplay();
+    }
+
+    // Event listeners
+    Object.keys(AGENTS).forEach(id => {
+      document.getElementById(id).addEventListener('change', updateAgentDisplay);
+    });
+
+    document.getElementById('userInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendEnsembleMessage();
+      }
+    });
+
+    document.getElementById('memoryQuery').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        searchMemory();
+      }
+    });
+
+    // Initialize
+    window.addEventListener('load', () => {
+      initWebSocket();
+      updateAgentDisplay();
+
+      // Update uptime every second
+      setInterval(updateStatistics, 1000);
+    });
+  </script>
+</body>
+</html>

@@ -4,7 +4,16 @@
       "Bash(findstr:*)",
       "Bash(python3:*)",
       "Bash(cmd //c \"taskkill /F /IM node.exe /T 2>NUL && node cockpit-server.js\")",
-      "Bash(ollama list:*)"
+      "Bash(ollama list:*)",
+      "Read(//tmp/**)",
+      "Bash(npx hardhat run:*)",
+      "Bash(npx hardhat compile:*)",
+      "Bash(pkill:*)",
+      "Bash(Get-Process)",
+      "Bash(Where-Object {$_Name -like \"*node*\"})",
+      "Bash(Stop-Process -Force)",
+      "Bash(powershell -NoExit -Command \"Get-Content bot-output.log -Wait\")",
+      "Bash(ls:*)"
     ]
   }
 }

@@ -1,5 +1,5 @@
 // FILE: __tests__/triage_agent.test.js
-const { createTriageAgent } = require('../agents/triage_agent');
+import { createTriageAgent } from '../agents/triage_agent.js';
 
 test('triage factory and contract', async () => {
   const agent = createTriageAgent('triage-001');

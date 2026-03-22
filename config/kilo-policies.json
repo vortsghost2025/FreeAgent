@@ -1,0 +1,37 @@
+{
+  "name": "Kilo Code Stability Policies",
+  "version": "1.0.0",
+  "policies": {
+    "httpRequests": {
+      "alwaysUseCurlExe": true,
+      "neverUsePowerShellAlias": true,
+      "alwaysIncludeTimeout": true,
+      "defaultTimeoutSeconds": 10,
+      "treatNon200AsUnhealthy": true,
+      "neverRetryEndlessly": true,
+      "neverQueueHealthChecks": true,
+      "runIndependentlyNonBlocking": true
+    },
+    "healthCheck": {
+      "enabled": false,
+      "endpoint": "http://localhost:54112/api/health",
+      "timeout": 3,
+      "onFailure": "logAndContinue",
+      "maxRetries": 0,
+      "blocking": false
+    },
+    "backgroundLoops": {
+      "nonBlocking": true,
+      "maxConcurrentTasks": 5,
+      "failGracefully": true,
+      "logErrors": true,
+      "neverBlockMainThread": true
+    },
+    "commandExecution": {
+      "preferSpawnOverExec": true,
+      "alwaysDetached": true,
+      "timeoutEnabled": true,
+      "defaultCommandTimeout": 30
+    }
+  }
+}

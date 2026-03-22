@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772154081806",
+    "input": "{\"batch\":611,\"agent\":\"data\",\"intensity\":\"maximum\"}",
+    "output": [
+      {
+        "agent": "data",
+        "response": "Error: fetch failed",
+        "model": "llama3.1:8b",
+        "timestamp": 1772154081806
+      }
+    ],
+    "agents_involved": 9,
+    "execution_time_ms": 4543,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-27T01:01:21.806Z",
+    "started_at": "2026-02-27T01:01:17.263Z",
+    "completed_at": "2026-02-27T01:01:21.806Z",
+    "error": null
+  }
+]

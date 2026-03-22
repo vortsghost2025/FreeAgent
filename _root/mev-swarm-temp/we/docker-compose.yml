@@ -1,0 +1,196 @@
+# MEV Swarm Docker Compose
+# Production-ready deployment for MEV trading system
+# 
+# Usage:
+#   docker-compose up -d          # Start all services
+#   docker-compose logs -f        # View logs
+#   docker-compose down           # Stop all services
+#
+# Environment Variables Required:
+#   - PRIVATE_KEY: Wallet private key for trading
+#   - BASE_RPC_URL: Base network RPC endpoint
+#   - ETHEREUM_RPC_URL: Ethereum mainnet RPC endpoint
+
+version: '3.8'
+
+services:
+  # ============================================
+  # Phase 1: MEV Data Collector
+  # Collects blockchain state data for ML training
+  # ============================================
+  mev-data-collector:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: collector
+    container_name: mev-data-collector
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - COLLECTION_INTERVAL=2000
+      - DATA_FILE=/data/mev-training-data.jsonl
+      - BASE_RPC_URL=${BASE_RPC_URL:-https://base-rpc.publicnode.com}
+      - ETHEREUM_RPC_URL=${ETHEREUM_RPC_URL:-https://eth.llamarpc.com}
+      - AZURITE_CONNECTION_STRING=DefaultEndpointsProtocol=http;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;AccountName=devstoreaccount;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+    volumes:
+      - mev-data:/data
+    networks:
+      - mev-swarm-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('ok')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ============================================
+  # Phase 2: MEV ML Predictor
+  # TensorFlow.js-based opportunity prediction
+  # ============================================
+  mev-predictor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: predictor
+    container_name: mev-predictor
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - BASE_RPC_URL=${BASE_RPC_URL:-https://base-rpc.publicnode.com}
+      - MODEL_DIR=/data/models
+      - PREDICTION_INTERVAL=2000
+      - MIN_PROFIT_THRESHOLD=0.01
+      - AZURITE_CONNECTION_STRING=DefaultEndpointsProtocol=http;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;AccountName=devstoreaccount;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+    volumes:
+      - mev-data:/data
+    networks:
+      - mev-swarm-network
+    depends_on:
+      mev-data-collector:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('ok')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ============================================
+  # Phase 3: MEV Pre-Signer
+  # Pre-signs transactions for instant submission
+  # ============================================
+  mev-pre-signer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: presigner
+    container_name: mev-pre-signer
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PRIVATE_KEY=${PRIVATE_KEY}
+      - BASE_RPC_URL=${BASE_RPC_URL:-https://base-rpc.publicnode.com}
+      - TRADE_SIZE_ETH=0.0015
+      - MIN_PROFIT_USD=0.01
+      - AZURITE_CONNECTION_STRING=DefaultEndpointsProtocol=http;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;AccountName=devstoreaccount;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+    volumes:
+      - mev-data:/data
+    networks:
+      - mev-swarm-network
+    depends_on:
+      mev-predictor:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('ok')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    # Security: Don't restart on failure to prevent rapid retry loops
+    # restart: on-failure:3
+
+  # ============================================
+  # Azurite (Azure Storage Emulator)
+  # For blob/queue storage - cross-service data persistence
+  # ============================================
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: mev-azurite
+    restart: unless-stopped
+    ports:
+      - "10000:10000"  # Blob service
+      - "10001:10001"  # Queue service
+      - "10002:10002"  # Table service
+    environment:
+      - AZURITE_ACCOUNTS=devstoreaccount:DefaultEndpointsProtocol=http;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;
+    volumes:
+      - azurite-data:/data
+    networks:
+      - mev-swarm-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:10000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ============================================
+  # Redis Cache (Optional)
+  # For cross-service state management
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: mev-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    networks:
+      - mev-swarm-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ============================================
+  # Monitoring Dashboard (Optional)
+  # Simple stats server
+  # ============================================
+  mev-monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: monitor
+    container_name: mev-monitor
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - mev-data:/data
+    networks:
+      - mev-swarm-network
+    depends_on:
+      redis:
+        condition: service_healthy
+
+# ============================================
+# Networks
+# ============================================
+networks:
+  mev-swarm-network:
+    driver: bridge
+
+# ============================================
+# Volumes
+# ============================================
+volumes:
+  mev-data:
+    driver: local
+  redis-data:
+    driver: local
+  azurite-data:
+    driver: local

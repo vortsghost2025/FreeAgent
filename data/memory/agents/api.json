@@ -1,0 +1,15 @@
+{
+  "agent": "api",
+  "state": {
+    "status": "idle",
+    "capabilities": [
+      "api_design",
+      "openapi_spec",
+      "mock_server"
+    ],
+    "recent_messages": [],
+    "patterns": [],
+    "embeddings": [],
+    "last_updated": null
+  }
+}

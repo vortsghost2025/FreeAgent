@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'unsafe-hashes' blob: https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' ws: wss: http: https:;">
+  <title>Monaco Cockpit IDE</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg-dark: #1e1e1e;
+      --bg-sidebar: #252526;
+      --bg-activity: #333333;
+      --bg-terminal: #1e1e1e;
+      --border: #3c3c3c;
+      --text-primary: #cccccc;
+      --text-secondary: #858585;
+      --accent: #0e639c;
+      --accent-hover: #1177bb;
+      --tab-active: #1e1e1e;
+      --tab-inactive: #2d2d2d;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      overflow: hidden;
+    }
+
+    /* Main Layout */
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* Title Bar */
+    .title-bar {
+      height: 30px;
+      background: var(--bg-activity);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      font-size: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .title-bar .title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .title-bar .menu-items {
+      display: flex;
+      gap: 15px;
+    }
+
+    .title-bar .menu-items span {
+      cursor: pointer;
+      padding: 2px 8px;
+      border-radius: 3px;
+    }
+
+    .title-bar .menu-items span:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* Toolbar */
+    .toolbar {
+      height: 35px;
+      background: var(--bg-sidebar);
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toolbar button {
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      padding: 4px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .toolbar button:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .toolbar button.primary {
+      background: var(--accent);
+    }
+
+    .toolbar button.primary:hover {
+      background: var(--accent-hover);
+    }
+
+    /* Content Area */
+    .content-area {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* File Explorer Sidebar */
+    .explorer {
+      width: 250px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .explorer-header {
+      height: 35px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .file-tree {
+      flex: 1;
+      overflow-y: auto;
+      padding: 5px 0;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      padding: 3px 10px;
+      cursor: pointer;
+      font-size: 13px;
+      gap: 6px;
+    }
+
+    .file-item:hover {
+      background: rgba(255,255,255,0.05);
+    }
+
+    .file-item.active {
+      background: rgba(14, 99, 156, 0.4);
+    }
+
+    .file-item.folder {
+      font-weight: 500;
+    }
+
+    .file-item .icon {
+      width: 16px;
+      text-align: center;
+      color: var(--text-secondary);
+    }
+
+    .file-item .icon.js { color: #f7df1e; }
+    .file-item .icon.json { color: #cbcb41; }
+    .file-item .icon.html { color: #e34c26; }
+    .file-item .icon.css { color: #563d7c; }
+    .file-item .icon.md { color: #083fa1; }
+    .file-item .icon.dashboard { color: #4ec9b0; }
+
+    .file-item .chevron {
+      width: 16px;
+      font-size: 10px;
+      transition: transform 0.2s;
+    }
+
+    .file-item.collapsed .chevron {
+      transform: rotate(-90deg);
+    }
+
+    .file-children {
+      padding-left: 15px;
+    }
+
+    .file-children.hidden {
+      display: none;
+    }
+
+    /* Editor Area */
+    .editor-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    /* Tabs */
+    .tabs-bar {
+      height: 35px;
+      background: var(--bg-sidebar);
+      display: flex;
+      align-items: flex-end;
+      overflow-x: auto;
+    }
+
+    .tab {
+      height: 35px;
+      padding: 0 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--tab-inactive);
+      border-right: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 13px;
+      min-width: 120px;
+      max-width: 200px;
+    }
+
+    .tab:hover {
+      background: rgba(255,255,255,0.05);
+    }
+
+    .tab.active {
+      background: var(--tab-active);
+      border-top: 1px solid var(--accent);
+    }
+
+    .tab .close-btn {
+      margin-left: auto;
+      opacity: 0.5;
+      font-size: 12px;
+    }
+
+    .tab .close-btn:hover {
+      opacity: 1;
+    }
+
+    /* Monaco Editor Container */
+    .editor-container {
+      flex: 1;
+      position: relative;
+    }
+
+    #monaco-editor {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Panel Split */
+    .bottom-panel {
+      height: 250px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-tabs {
+      height: 35px;
+      background: var(--bg-sidebar);
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-tab {
+      padding: 0 15px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 12px;
+      border-right: 1px solid var(--border);
+    }
+
+    .panel-tab:hover {
+      color: var(--text-primary);
+    }
+
+    .panel-tab.active {
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      border-top: 1px solid var(--accent);
+    }
+
+    .panel-content {
+      flex: 1;
+      overflow: auto;
+      background: var(--bg-dark);
+    }
+
+    /* Terminal */
+    .terminal {
+      padding: 10px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .terminal .input-line {
+      display: flex;
+      gap: 8px;
+    }
+
+    .terminal .prompt {
+      color: #4ec9b0;
+    }
+
+    .terminal input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: inherit;
+      outline: none;
+    }
+
+    .terminal .output {
+      color: var(--text-primary);
+    }
+
+    .terminal .error {
+      color: #f14c4c;
+    }
+
+    .terminal .success {
+      color: #89d185;
+    }
+
+    .terminal-input-line {
+      display: flex;
+      align-items: center;
+      padding: 8px 10px;
+      background: #252526;
+      border-top: 1px solid #3c3c3c;
+      position: relative;
+      z-index: 100;
+      pointer-events: auto;
+    }
+
+    .terminal-input-line .prompt {
+      color: #4ec9b0;
+      margin-right: 8px;
+      font-family: 'Consolas', monospace;
+      pointer-events: none;
+    }
+
+    .terminal-input-line input {
+      flex: 1;
+      background: transparent;
+      border: 1px solid #3c3c3c;
+      border-radius: 3px;
+      padding: 4px 8px;
+      color: #d4d4d4;
+      font-family: 'Consolas', monospace;
+      font-size: 14px;
+      outline: none;
+      cursor: text;
+      pointer-events: auto;
+    }
+
+    .terminal-input-line input:focus {
+      border-color: #007acc;
+      box-shadow: 0 0 0 1px #007acc;
+    }
+
+    /* Agent Chat Panel */
+    .agent-panel {
+      width: 350px;
+      background: var(--bg-sidebar);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .agent-tabs {
+      height: 40px;
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .agent-tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .agent-tab:hover {
+      color: var(--text-primary);
+    }
+
+    .agent-tab.active {
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      border-top: 2px solid var(--accent);
+    }
+
+    .agent-tab i {
+      font-size: 14px;
+    }
+
+    .agent-chat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .message {
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .message.user {
+      background: rgba(14, 99, 156, 0.3);
+      margin-left: 20px;
+    }
+
+    .message.agent {
+      background: rgba(255,255,255,0.05);
+      margin-right: 20px;
+    }
+
+    .message .sender {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .chat-input-area {
+      padding: 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .chat-input-area textarea {
+      width: 100%;
+      height: 60px;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-primary);
+      padding: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      resize: none;
+    }
+
+    .chat-input-area textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .chat-input-area button {
+      width: 100%;
+      margin-top: 8px;
+      padding: 8px;
+      background: var(--accent);
+      border: none;
+      border-radius: 4px;
+      color: white;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .chat-input-area button:hover {
+      background: var(--accent-hover);
+    }
+
+    .chat-input-area button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      height: 22px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      font-size: 12px;
+      color: white;
+    }
+
+    .status-bar .left, .status-bar .right {
+      display: flex;
+      gap: 15px;
+    }
+
+    .status-bar span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Loading */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bg-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .loading-overlay .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-overlay p {
+      margin-top: 15px;
+      color: var(--text-secondary);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Context Menu */
+    .context-menu {
+      position: fixed;
+      background: var(--bg-sidebar);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 5px 0;
+      min-width: 150px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 1000;
+      display: none;
+    }
+
+    .context-menu.show {
+      display: block;
+    }
+
+    .context-menu .item {
+      padding: 6px 15px;
+      cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .context-menu .item:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .context-menu .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 5px 0;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p>Loading Monaco Editor...</p>
+  </div>
+
+  <!-- Main Container -->
+  <div class="main-container">
+    <!-- Title Bar -->
+    <div class="title-bar">
+      <div class="title">
+        <i class="fas fa-microchip"></i>
+        <span>Monaco Cockpit IDE</span>
+      </div>
+      <div class="menu-items">
+        <span>File</span>
+        <span>Edit</span>
+        <span>View</span>
+        <span>Terminal</span>
+        <span>Help</span>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <button onclick="toggleExplorer()"><i class="fas fa-folder-tree"></i> Explorer</button>
+      <button onclick="toggleAgentPanel()"><i class="fas fa-robot"></i> Agent</button>
+      <button onclick="refreshFileTree()"><i class="fas fa-sync"></i> Refresh</button>
+      <button onclick="newFile()"><i class="fas fa-file-plus"></i> New File</button>
+      <button onclick="saveCurrentFile()"><i class="fas fa-save"></i> Save</button>
+      <button onclick="openTerminal()"><i class="fas fa-terminal"></i> Terminal</button>
+      <button class="primary" onclick="getCodeActions()"><i class="fas fa-wand-magic-sparkles"></i> Fix Code</button>
+      <button class="primary" onclick="runAgentCommand()"><i class="fas fa-rocket"></i> Run with Agent</button>
+      <button onclick="clearTerminal()"><i class="fas fa-trash"></i> Clear</button>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content-area">
+      <!-- File Explorer -->
+      <div class="explorer">
+        <div class="explorer-header">
+          <i class="fas fa-chevron-down" style="margin-right: 8px;"></i>
+          EXPLORER
+        </div>
+        <div class="file-tree" id="fileTree"></div>
+      </div>
+
+      <!-- Editor Area -->
+      <div class="editor-area">
+        <div class="tabs-bar" id="tabsBar"></div>
+        <div class="editor-container">
+          <div id="monaco-editor"></div>
+        </div>
+      </div>
+
+      <!-- Agent Panel -->
+      <div class="agent-panel">
+        <div class="agent-tabs">
+          <button class="agent-tab active" data-agent="kilo" onclick="switchAgent('kilo')">
+            <i class="fas fa-brain"></i> Kilo
+          </button>
+          <button class="agent-tab" data-agent="claw" onclick="switchAgent('claw')">
+            <i class="fas fa-claw-marks"></i> Claw
+          </button>
+          <button class="agent-tab" data-agent="simple" onclick="switchAgent('simple')">
+            <i class="fas fa-wand-magic-sparkles"></i> Simple
+          </button>
+        </div>
+        <div class="agent-chat">
+          <div class="chat-messages" id="chatMessages"></div>
+          <div class="chat-input-area">
+            <textarea id="chatInput" placeholder="Ask the agent to help with your code..."></textarea>
+            <button id="sendBtn" onclick="sendMessage()">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Panel (Terminal/Output) -->
+    <div class="bottom-panel" id="bottomPanel">
+      <div class="panel-tabs">
+        <button class="panel-tab active" data-panel="terminal" onclick="switchPanel('terminal')">
+          <i class="fas fa-terminal"></i> Terminal
+        </button>
+        <button class="panel-tab" data-panel="output" onclick="switchPanel('output')">
+          <i class="fas fa-list"></i> Output
+        </button>
+        <button class="panel-tab" data-panel="problems" onclick="switchPanel('problems')">
+          <i class="fas fa-exclamation-triangle"></i> Problems
+        </button>
+      </div>
+      <div class="panel-content">
+        <div class="terminal" id="terminal">
+          <div class="output">Monaco Cockpit IDE initialized.</div>
+          <div class="output">Workspace: c:/workspace/medical</div>
+          <div class="output">Ready for coding. Use Ctrl+S to save, Ctrl+Enter to run with agent.</div>
+          <div class="output">---</div>
+        </div>
+        <div class="terminal" id="output" style="display: none;"></div>
+        <div class="terminal" id="problems" style="display: none;"></div>
+      </div>
+      <div class="terminal-input-line">
+        <span class="prompt">$</span>
+        <input type="text" id="terminalInput" name="terminalInput" placeholder="Type command and press Enter..." onkeydown="handleTerminalKey(event)">
+      </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <div class="left">
+        <span id="connectionStatus"><i class="fas fa-circle" style="font-size: 8px;"></i> Connected</span>
+        <span id="agentStatus">Agent: Ready</span>
+      </div>
+      <div class="right">
+        <span id="fileType">JavaScript</span>
+        <span id="lineCol">Ln 1, Col 1</span>
+        <span>UTF-8</span>
+        <span id="languageMode">JavaScript</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Context Menu -->
+  <div class="context-menu" id="contextMenu">
+    <div class="item" onclick="newFile()"><i class="fas fa-file-plus"></i> New File</div>
+    <div class="item" onclick="newFolder()"><i class="fas fa-folder-plus"></i> New Folder</div>
+    <div class="divider"></div>
+    <div class="item" onclick="renameItem()"><i class="fas fa-pen"></i> Rename</div>
+    <div class="item" onclick="deleteItem()"><i class="fas fa-trash"></i> Delete</div>
+    <div class="divider"></div>
+    <div class="item" onclick="copyPath()"><i class="fas fa-copy"></i> Copy Path</div>
+  </div>
+
+  <!-- Monaco Editor Loader -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+  
+  <script>
+    // Global state
+    let monacoEditor = null;
+    let currentFile = null;
+    let openTabs = [];
+    let activeTab = null;
+    let fileContents = {};
+    // Read agent from URL parameter (?agent=claw)
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlAgent = urlParams.get('agent');
+    let currentAgent = (urlAgent && ['kilo', 'claw', 'simple'].includes(urlAgent)) ? urlAgent : 'kilo';
+    let chatHistories = { kilo: [], claw: [], simple: [] };
+    let selectedFileItem = null;
+
+    // Initialize Monaco Editor
+    require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } });
+    
+    require(['vs/editor/editor.main'], function () {
+      // Hide loading overlay
+      document.getElementById('loadingOverlay').style.display = 'none';
+      
+      // Auto-select the agent tab based on URL parameter
+      if (currentAgent !== 'kilo') {
+        switchAgent(currentAgent);
+      }
+      
+      // Create Monaco editor
+      monacoEditor = monaco.editor.create(document.getElementById('monaco-editor'), {
+        value: `// Welcome to Monaco Cockpit IDE!
+// This is VS Code's editor inside your AI-powered cockpit.
+//
+// Features:
+// - Full IntelliSense for JavaScript, TypeScript, JSON
+// - File explorer with directory tree
+// - Integrated terminal
+// - Agent chat panel (Kilo, Claw, Simple)
+// - Tool execution (read, write, files, commands)
+//
+// Try asking the agent: "read package.json"
+
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Hello from Monaco Cockpit IDE!',
+    features: ['AI agents', 'File editing', 'Tool execution']
+  });
+});
+
+app.listen(3000, () => {
+  console.log('Server running on http://localhost:3000');
+});
+`,
+        language: 'javascript',
+        theme: 'vs-dark',
+        automaticLayout: true,
+        minimap: { enabled: true },
+        fontSize: 14,
+        lineNumbers: 'on',
+        roundedSelection: true,
+        scrollBeyondLastLine: false,
+        wordWrap: 'on',
+        tabSize: 2
+      });
+
+      // Track cursor position
+      monacoEditor.onDidChangeCursorPosition((e) => {
+        document.getElementById('lineCol').textContent = 
+          `Ln ${e.position.lineNumber}, Col ${e.position.column}`;
+      });
+
+      // Keyboard shortcuts
+      monacoEditor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+        saveCurrentFile();
+      });
+
+      monacoEditor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+        runAgentCommand();
+      });
+
+      // Initial file tree load
+      loadFileTree();
+    });
+
+    // File tree structure (simulated - in real use would call API)
+    const fileTreeData = {
+      name: 'medical',
+      type: 'folder',
+      children: [
+        { name: 'src', type: 'folder', children: [
+          { name: 'index.js', type: 'file' },
+          { name: 'app.js', type: 'file' }
+        ]},
+        { name: 'public', type: 'folder', children: [
+          { name: 'index.html', type: 'file' },
+          { name: 'styles.css', type: 'file' }
+        ]},
+        { name: 'package.json', type: 'file' },
+        { name: 'README.md', type: 'file' },
+        { name: 'AGENTS.md', type: 'file' },
+        { name: 'SWARM_DASHBOARD', type: 'dashboard', path: '/swarm-dashboard.html' }
+      ]
+    };
+
+    // Load file tree
+    async function loadFileTree() {
+      try {
+        const response = await fetch('http://localhost:4000/api/list-files?path=.&recursive=false');
+        const data = await response.json();
+        
+        if (data.success) {
+          renderFileTree(data.files);
+        } else {
+          // Fallback to simulated tree
+          renderFileTree([fileTreeData]);
+        }
+      } catch (err) {
+        console.log('Using simulated file tree');
+        renderFileTree([fileTreeData]);
+      }
+    }
+
+    function renderFileTree(files) {
+      const container = document.getElementById('fileTree');
+      container.innerHTML = '';
+      
+      files.forEach(item => {
+        container.appendChild(createFileItem(item, 0));
+      });
+    }
+
+    function createFileItem(item, depth) {
+      const div = document.createElement('div');
+      div.className = 'file-item ' + (item.type === 'folder' ? 'folder' : 'file');
+      div.style.paddingLeft = (10 + depth * 15) + 'px';
+      
+      const icon = getFileIcon(item.name, item.type);
+      const chevron = item.type === 'folder' ? '<i class="fas fa-chevron-down chevron"></i>' : '';
+      
+      div.innerHTML = `
+        ${chevron}
+        <i class="fas fa-${icon.icon} icon ${icon.class}"></i>
+        <span>${item.name}</span>
+      `;
+      
+      if (item.type === 'folder' && item.children) {
+        const children = document.createElement('div');
+        children.className = 'file-children';
+        item.children.forEach(child => {
+          children.appendChild(createFileItem(child, depth + 1));
+        });
+        div.appendChild(children);
+        
+        div.onclick = (e) => {
+          e.stopPropagation();
+          div.classList.toggle('collapsed');
+          children.classList.toggle('hidden');
+        };
+      } else if (item.type === 'dashboard') {
+        div.onclick = () => openDashboard(item.path);
+      } else {
+        div.onclick = () => openFile(item.name, item.path || item.name);
+      }
+      
+      return div;
+    }
+
+    function getFileIcon(filename, type) {
+      if (type === 'dashboard') {
+        return { icon: 'chart-bar', class: 'dashboard' };
+      }
+      
+      const ext = filename.split('.').pop();
+      const icons = {
+        js: { icon: 'file-code', class: 'js' },
+        ts: { icon: 'file-code', class: 'js' },
+        json: { icon: 'file-code', class: 'json' },
+        html: { icon: 'file-code', class: 'html' },
+        css: { icon: 'file-code', class: 'css' },
+        md: { icon: 'file-alt', class: 'md' },
+        txt: { icon: 'file-alt', class: '' },
+        folder: { icon: 'folder', class: '' }
+      };
+      return icons[ext] || { icon: 'file', class: '' };
+    }
+
+    // Open file
+    async function openFile(filename, path) {
+      // Update active state in file tree
+      document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
+      event.target.closest('.file-item').classList.add('active');
+      
+      // Check if already open
+      const existingTab = openTabs.find(t => t.path === path);
+      if (existingTab) {
+        switchToTab(existingTab);
+        return;
+      }
+
+      // Read file content
+      try {
+        const response = await fetch('http://localhost:4000/api/read-file?path=' + encodeURIComponent(path));
+        const data = await response.json();
+        
+        let content = data.content || '// File not found or empty';
+        
+        // Add to open tabs
+        const tab = { name: filename, path: path, content: content };
+        openTabs.push(tab);
+        fileContents[path] = content;
+        
+        // Create tab
+        createTab(tab);
+        switchToTab(tab);
+        
+        appendTerminal(`Opened: ${path}`, 'success');
+      } catch (err) {
+        // Use default content for new files
+        const defaultContent = `// ${filename}\n// Created in Monaco Cockpit IDE\n\n`;
+        const tab = { name: filename, path: path, content: defaultContent };
+        openTabs.push(tab);
+        fileContents[path] = defaultContent;
+        createTab(tab);
+        switchToTab(tab);
+      }
+    }
+
+    function createTab(tab) {
+      const tabsBar = document.getElementById('tabsBar');
+      const tabEl = document.createElement('div');
+      tabEl.className = 'tab';
+      tabEl.dataset.path = tab.path;
+      
+      const icon = getFileIcon(tab.name);
+      tabEl.innerHTML = `
+        <i class="fas fa-${icon.icon} icon ${icon.class}"></i>
+        <span>${tab.name}</span>
+        <i class="fas fa-times close-btn" onclick="closeTab('${tab.path}', event)"></i>
+      `;
+      
+      tabEl.onclick = () => switchToTab(openTabs.find(t => t.path === tab.path));
+      tabsBar.appendChild(tabEl);
+    }
+
+    function switchToTab(tab) {
+      // Update tab UI
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.tab[data-path="${tab.path}"]`).classList.add('active');
+      
+      // Update editor
+      if (monacoEditor) {
+        monacoEditor.setValue(tab.content);
+        
+        // Set language
+        const ext = tab.name.split('.').pop();
+        const lang = { js: 'javascript', ts: 'typescript', json: 'json', html: 'html', css: 'css', md: 'markdown' }[ext] || 'plaintext';
+        monaco.editor.setModelLanguage(monacoEditor.getModel(), lang);
+        
+        document.getElementById('languageMode').textContent = lang.charAt(0).toUpperCase() + lang.slice(1);
+      }
+      
+      currentFile = tab;
+      activeTab = tab;
+    }
+
+    function closeTab(path, event) {
+      event.stopPropagation();
+      
+      const idx = openTabs.findIndex(t => t.path === path);
+      if (idx === -1) return;
+      
+      // Remove tab
+      openTabs.splice(idx, 1);
+      document.querySelector(`.tab[data-path="${path}"]`).remove();
+      
+      // Switch to another tab or clear editor
+      if (openTabs.length > 0) {
+        switchToTab(openTabs[Math.max(0, idx - 1)]);
+      } else {
+        monacoEditor.setValue('');
+        currentFile = null;
+      }
+    }
+
+    // Save file
+    async function saveCurrentFile() {
+      if (!currentFile) return;
+      
+      const content = monacoEditor.getValue();
+      currentFile.content = content;
+      fileContents[currentFile.path] = content;
+      
+      try {
+        await fetch('http://localhost:4000/api/write-file', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: currentFile.path, content: content })
+        });
+        
+        appendTerminal(`Saved: ${currentFile.path}`, 'success');
+      } catch (err) {
+        appendTerminal(`Error saving: ${err.message}`, 'error');
+      }
+    }
+
+    // Refresh file tree
+    function refreshFileTree() {
+      loadFileTree();
+      appendTerminal('File tree refreshed', 'success');
+    }
+
+    // Toggle Explorer panel
+    function toggleExplorer() {
+      const explorer = document.querySelector('.explorer');
+      if (explorer.style.display === 'none') {
+        explorer.style.display = 'block';
+      } else {
+        explorer.style.display = 'none';
+      }
+    }
+
+    // Toggle Agent panel
+    function toggleAgentPanel() {
+      const panel = document.querySelector('.agent-panel');
+      if (panel.style.display === 'none') {
+        panel.style.display = 'flex';
+      } else {
+        panel.style.display = 'none';
+      }
+    }
+
+    // New file
+    function newFile() {
+      const name = prompt('Enter file name:');
+      if (name) {
+        openFile(name, name);
+      }
+    }
+
+    // New folder
+    function newFolder() {
+      const name = prompt('Enter folder name:');
+      if (name) {
+        appendTerminal(`Created folder: ${name} (simulated)`, 'success');
+        loadFileTree();
+      }
+    }
+
+    // Terminal functions
+    function appendTerminal(text, type = '') {
+      const terminal = document.getElementById('terminal');
+      const line = document.createElement('div');
+      line.className = type;
+      line.textContent = text;
+      terminal.appendChild(line);
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    function openTerminal() {
+      document.getElementById('bottomPanel').style.height = '250px';
+      switchPanel('terminal');
+    }
+
+    function clearTerminal() {
+      document.getElementById('terminal').innerHTML = '';
+      document.getElementById('output').innerHTML = '';
+      document.getElementById('problems').innerHTML = '';
+    }
+
+    function switchPanel(panel) {
+      document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.panel-tab[data-panel="${panel}"]`).classList.add('active');
+      
+      ['terminal', 'output', 'problems'].forEach(p => {
+        document.getElementById(p).style.display = p === panel ? 'block' : 'none';
+      });
+    }
+
+    function handleTerminalKey(event) {
+      if (event.key === 'Enter') {
+        const input = document.getElementById('terminalInput');
+        const command = input.value.trim();
+        if (command) {
+          executeCommand(command);
+          input.value = '';
+        }
+      }
+    }
+
+    function executeCommand(command) {
+      appendTerminal(`$ ${command}`, 'command');
+      
+      fetch(window.location.origin + '/api/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command: command, shell: 'powershell' })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Server error: ' + response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.stdout) appendTerminal(data.stdout, 'success');
+        if (data.stderr) appendTerminal(data.stderr, 'error');
+        if (data.error) appendTerminal(`Error: ${data.error}`, 'error');
+      })
+      .catch(err => {
+        appendTerminal(`Error: ${err.message}`, 'error');
+      });
+    }
+
+    // Agent functions
+    function switchAgent(agent) {
+      currentAgent = agent;
+      document.querySelectorAll('.agent-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.agent-tab[data-agent="${agent}"]`).classList.add('active');
+      renderChatHistory();
+    }
+
+    function renderChatHistory() {
+      const container = document.getElementById('chatMessages');
+      container.innerHTML = '';
+      
+      const history = chatHistories[currentAgent] || [];
+      history.forEach(msg => {
+        const div = document.createElement('div');
+        div.className = `message ${msg.role}`;
+        div.innerHTML = `<div class="sender">${msg.role === 'user' ? 'You' : currentAgent}</div>${msg.content}`;
+        container.appendChild(div);
+      });
+      
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const content = input.value.trim();
+      if (!content) return;
+      
+      // Add user message
+      chatHistories[currentAgent].push({ role: 'user', content });
+      renderChatHistory();
+      input.value = '';
+      
+      // Show thinking
+      document.getElementById('agentStatus').textContent = `Agent: Thinking...`;
+      document.getElementById('sendBtn').disabled = true;
+      
+      // Get current file content for context
+      const editorContent = monacoEditor ? monacoEditor.getValue() : '';
+      
+      try {
+        const response = await fetch('http://localhost:4000/api/' + currentAgent, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            message: content,
+            context: {
+              currentFile: currentFile ? currentFile.path : null,
+              editorContent: editorContent.substring(0, 2000)
+            }
+          })
+        });
+        
+        const data = await response.json();
+        
+        // Add agent response
+        chatHistories[currentAgent].push({ role: 'agent', content: data.reply || data.response || data.message });
+        renderChatHistory();
+        
+        // Check for tool execution results
+        if (data.toolResult) {
+          appendTerminal(`[Tool] ${data.toolResult}`, 'success');
+        }
+      } catch (err) {
+        appendTerminal(`Error: ${err.message}`, 'error');
+      }
+      
+      document.getElementById('agentStatus').textContent = `Agent: Ready`;
+      document.getElementById('sendBtn').disabled = false;
+    }
+
+    // Run agent with current code
+    async function runAgentCommand() {
+      const content = monacoEditor ? monacoEditor.getValue() : '';
+      if (!content) {
+        appendTerminal('No code to analyze', 'error');
+        return;
+      }
+      
+      // Add to chat
+      chatHistories[currentAgent].push({ 
+        role: 'user', 
+        content: 'Analyze and improve this code:\n\n' + content.substring(0, 500) 
+      });
+      renderChatHistory();
+      
+      document.getElementById('agentStatus').textContent = `Agent: Analyzing code...`;
+      document.getElementById('sendBtn').disabled = true;
+      
+      try {
+        const response = await fetch('http://localhost:4000/api/' + currentAgent, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            message: 'Analyze this code and provide feedback or improvements:',
+            code: content.substring(0, 3000),
+            context: { currentFile: currentFile ? currentFile.path : 'untitled' }
+          })
+        });
+        
+        const data = await response.json();
+        
+        chatHistories[currentAgent].push({ role: 'agent', content: data.reply || data.response || data.message });
+        renderChatHistory();
+        
+        if (data.improvedCode) {
+          // Offer to apply improvements
+          const apply = confirm('Agent suggested improvements. Apply to editor?');
+          if (apply) {
+            monacoEditor.setValue(data.improvedCode);
+          }
+        }
+      } catch (err) {
+        appendTerminal(`Error: ${err.message}`, 'error');
+      }
+      
+      document.getElementById('agentStatus').textContent = `Agent: Ready`;
+      document.getElementById('sendBtn').disabled = false;
+    }
+
+    // ============================================================================
+    // CODE ACTIONS - Agent-Powered Inline Fixes
+    // ============================================================================
+    
+    let currentCodeActions = [];
+    
+    // Get AI-powered code suggestions
+    async function getCodeActions() {
+      const content = monacoEditor ? monacoEditor.getValue() : '';
+      const position = monacoEditor ? monacoEditor.getPosition() : { lineNumber: 1, column: 1 };
+      
+      if (!content) {
+        appendTerminal('No code to analyze', 'error');
+        return;
+      }
+      
+      // Get language from file extension
+      let language = 'javascript';
+      if (currentFile) {
+        const ext = currentFile.name.split('.').pop();
+        language = { js: 'javascript', ts: 'typescript', json: 'json', html: 'html', css: 'css', md: 'markdown' }[ext] || 'javascript';
+      }
+      
+      appendTerminal('Getting AI code suggestions...', '');
+      
+      try {
+        const response = await fetch('http://localhost:4000/api/agent/code-action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            code: content.substring(0, 4000),
+            language: language,
+            context: `Cursor at line ${position.lineNumber}, column ${position.column}`,
+            agent: currentAgent
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.codeActions && data.codeActions.length > 0) {
+          currentCodeActions = data.codeActions;
+          showCodeActionsPopup(data.codeActions);
+          appendTerminal(`Found ${data.codeActions.length} suggestions`, 'success');
+        } else {
+          appendTerminal('No suggestions found', '');
+        }
+      } catch (err) {
+        appendTerminal(`Error getting suggestions: ${err.message}`, 'error');
+      }
+    }
+    
+    // Show code actions popup
+    function showCodeActionsPopup(actions) {
+      // Remove existing popup
+      const existing = document.getElementById('codeActionsPopup');
+      if (existing) existing.remove();
+      
+      const popup = document.createElement('div');
+      popup.id = 'codeActionsPopup';
+      popup.style.cssText = `
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        width: 350px;
+        max-height: 400px;
+        background: var(--bg-sidebar);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 15px;
+        z-index: 1000;
+        overflow-y: auto;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      `;
+      
+      popup.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h3 style="margin: 0; font-size: 14px;"><i class="fas fa-wand-magic-sparkles"></i> AI Suggestions</h3>
+          <button onclick="this.closest('#codeActionsPopup').remove()" style="background: none; border: none; color: var(--text-secondary); cursor: pointer;">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div id="actionsList"></div>
+      `;
+      
+      document.body.appendChild(popup);
+      
+      const list = popup.querySelector('#actionsList');
+      actions.forEach((action, index) => {
+        const item = document.createElement('div');
+        item.style.cssText = `
+          padding: 10px;
+          margin-bottom: 8px;
+          background: rgba(255,255,255,0.05);
+          border-radius: 5px;
+          cursor: pointer;
+        `;
+        item.innerHTML = `
+          <div style="font-weight: 600; font-size: 13px; margin-bottom: 4px;">${action.title}</div>
+          <div style="font-size: 12px; color: var(--text-secondary);">${action.description || ''}</div>
+          <div style="margin-top: 8px; display: flex; gap: 8px;">
+            <button onclick="applyCodeAction(${index})" style="
+              background: var(--accent);
+              border: none;
+              color: white;
+              padding: 4px 12px;
+              border-radius: 3px;
+              cursor: pointer;
+              font-size: 12px;
+            ">Apply Fix</button>
+            ${action.newCode ? `<button onclick="previewCodeAction(${index})" style="
+              background: transparent;
+              border: 1px solid var(--border);
+              color: var(--text-primary);
+              padding: 4px 12px;
+              border-radius: 3px;
+              cursor: pointer;
+              font-size: 12px;
+            ">Preview</button>` : ''}
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+    
+    // Apply a code action
+    function applyCodeAction(index) {
+      const action = currentCodeActions[index];
+      if (!action) return;
+      
+      if (action.newCode) {
+        // Replace the code at the specified range
+        const content = monacoEditor.getValue();
+        const lines = content.split('\n');
+        
+        if (action.range && action.range.startLine) {
+          const startLine = action.range.startLine - 1;
+          const endLine = action.range.endLine || action.range.startLine;
+          lines.splice(startLine, endLine - startLine, action.newCode);
+          monacoEditor.setValue(lines.join('\n'));
+        } else {
+          // Append at cursor position
+          const position = monacoEditor.getPosition();
+          lines.splice(position.lineNumber, 0, action.newCode);
+          monacoEditor.setValue(lines.join('\n'));
+        }
+        
+        appendTerminal(`Applied: ${action.title}`, 'success');
+      } else {
+        // Just notify - agent will explain in chat
+        appendTerminal(`Applied: ${action.title} - check chat for details`, 'success');
+      }
+      
+      // Close popup
+      const popup = document.getElementById('codeActionsPopup');
+      if (popup) popup.remove();
+    }
+    
+    // Preview a code action (show diff)
+    function previewCodeAction(index) {
+      const action = currentCodeActions[index];
+      if (!action || !action.newCode) return;
+      
+      alert('Preview: ' + action.newCode);
+    }
+    
+    // Apply fix directly from API
+    async function applyFix(filePath, newCode, lineStart, lineEnd) {
+      try {
+        const response = await fetch('http://localhost:4000/api/agent/fix-apply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            filePath: filePath,
+            newCode: newCode,
+            lineStart: lineStart,
+            lineEnd: lineEnd
+          })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          // Reload file in editor
+          if (currentFile && currentFile.path === filePath) {
+            openFile(currentFile.name, filePath);
+          }
+          appendTerminal('Fix applied to file', 'success');
+        }
+      } catch (err) {
+        appendTerminal(`Error applying fix: ${err.message}`, 'error');
+      }
+    }
+
+    // Context menu
+    document.addEventListener('contextmenu', (e) => {
+      const menu = document.getElementById('contextMenu');
+      menu.classList.remove('show');
+      
+      if (e.target.closest('.file-tree')) {
+        e.preventDefault();
+        menu.style.left = e.clientX + 'px';
+        menu.style.top = e.clientY + 'px';
+        menu.classList.add('show');
+      }
+    });
+
+    document.addEventListener('click', () => {
+      document.getElementById('contextMenu').classList.remove('show');
+    });
+
+    function renameItem() {
+      const name = prompt('Enter new name:');
+      if (name) {
+        appendTerminal(`Renamed to: ${name} (simulated)`, 'success');
+      }
+    }
+
+    function deleteItem() {
+      if (confirm('Delete this item?')) {
+        appendTerminal('Item deleted (simulated)', 'success');
+        loadFileTree();
+      }
+    }
+
+    function copyPath() {
+      if (selectedFileItem) {
+        navigator.clipboard.writeText(selectedFileItem);
+        appendTerminal('Path copied', 'success');
+      }
+    }
+    
+    // Open dashboard in new window/tab
+    function openDashboard(dashboardPath) {
+      const fullUrl = window.location.origin + dashboardPath;
+      window.open(fullUrl, '_blank');
+      appendTerminal(`Opening dashboard: ${fullUrl}`, 'success');
+    }
+
+    // Chat input Enter key
+    document.getElementById('chatInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>

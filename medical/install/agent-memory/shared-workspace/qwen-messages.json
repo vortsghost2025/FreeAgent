@@ -1,0 +1,50 @@
+{
+  "messages": [
+    {
+      "from": "consensus-hub",
+      "to": "all",
+      "content": "🤖 AGENT ONLINE: user registered for consensus",
+      "timestamp": 1772224189058
+    },
+    {
+      "from": "consensus-hub",
+      "to": "all",
+      "content": "🤖 AGENT ONLINE: lingma registered for consensus",
+      "timestamp": 1772224189059
+    },
+    {
+      "from": "consensus-hub",
+      "to": "all",
+      "content": "🤖 AGENT ONLINE: qwen registered for consensus",
+      "timestamp": 1772224189059
+    },
+    {
+      "from": "consensus-hub",
+      "to": "all",
+      "content": "❌ CONSENSUS REJECTED: Enable verbose logging for MEV scanner (0/0 votes)",
+      "timestamp": 1772224209421
+    },
+    {
+      "from": "consensus-hub",
+      "to": "all",
+      "content": "🤖 AGENT ONLINE: user registered for consensus",
+      "timestamp": 1772225544299
+    },
+    {
+      "from": "consensus-hub",
+      "to": "all",
+      "content": "🤖 AGENT ONLINE: lingma registered for consensus",
+      "timestamp": 1772225544302
+    },
+    {
+      "from": "consensus-hub",
+      "to": "all",
+      "content": "🤖 AGENT ONLINE: qwen registered for consensus",
+      "timestamp": 1772225544303
+    }
+  ],
+  "metadata": {
+    "createdAt": 1772224189053,
+    "version": "1.0"
+  }
+}

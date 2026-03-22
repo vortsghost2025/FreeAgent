@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical AI Unified Workspace</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+      padding: 15px 20px;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      color: #38bdf8;
+    }
+
+    .header .status {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.9rem;
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ef4444;
+    }
+
+    .status-indicator.connected { background: #22c55e; }
+    .status-indicator.disconnected { background: #ef4444; }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      padding: 0 20px;
+    }
+
+    .tab {
+      padding: 15px 20px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      color: #94a3b8;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .tab:hover {
+      color: #e2e8f0;
+      background: #334155;
+    }
+
+    .tab.active {
+      color: #38bdf8;
+      border-bottom-color: #38bdf8;
+      font-weight: 500;
+    }
+
+    /* Content */
+    .content {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .tab-content {
+      display: none;
+      flex: 1;
+      overflow: auto;
+      padding: 20px;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    /* Chat Interface */
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      gap: 15px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 10px;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: #3b82f6;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.agent {
+      align-self: flex-start;
+      background: #334155;
+      color: #e2e8f0;
+      border-bottom-left-radius: 4px;
+    }
+
+    .message.system {
+      align-self: center;
+      background: #1e3a5f;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      padding: 8px 16px;
+      border-radius: 6px;
+    }
+
+    .chat-input {
+      display: flex;
+      gap: 10px;
+      padding: 15px;
+      background: #1e293b;
+      border-radius: 12px;
+      border: 1px solid #334155;
+    }
+
+    .chat-input textarea {
+      flex: 1;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      color: #e2e8f0;
+      padding: 12px;
+      resize: none;
+      font-size: 0.95rem;
+      min-height: 50px;
+    }
+
+    .chat-input textarea:focus {
+      outline: none;
+      border-color: #38bdf8;
+    }
+
+    .chat-input button {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .chat-input button:hover {
+      background: #2563eb;
+    }
+
+    .chat-input button:disabled {
+      background: #475569;
+      cursor: not-allowed;
+    }
+
+    /* Agent Selector */
+    .agent-selector {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+      padding: 15px;
+      background: #1e293b;
+      border-radius: 8px;
+    }
+
+    .agent-selector label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: #0f172a;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid #334155;
+    }
+
+    .agent-selector label:hover {
+      border-color: #38bdf8;
+    }
+
+    .agent-selector input[type="checkbox"] {
+      accent-color: #38bdf8;
+    }
+
+    /* Cockpit Dashboard */
+    .cockpit-content {
+      display: grid;
+      gap: 20px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .metric-card {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid #334155;
+    }
+
+    .metric-card .value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #38bdf8;
+    }
+
+    .metric-card .label {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+
+    /* Workflows Grid */
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 15px;
+    }
+
+    .workflow-card {
+      background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .workflow-card:hover {
+      border-color: #38bdf8;
+      transform: translateY(-2px);
+    }
+
+    .workflow-card h3 {
+      color: #38bdf8;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+
+    .workflow-card p {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    /* Swarm Status */
+    .swarm-status {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #334155;
+    }
+
+    .swarm-agents {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .agent-card {
+      background: #0f172a;
+      padding: 15px;
+      border-radius: 6px;
+      border-left: 3px solid #22c55e;
+    }
+
+    .agent-card.busy {
+      border-left-color: #f59e0b;
+    }
+
+    .agent-card.idle {
+      border-left-color: #22c55e;
+    }
+
+    .agent-card h4 {
+      color: #e2e8f0;
+      margin-bottom: 8px;
+    }
+
+    .agent-card .status {
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #94a3b8;
+    }
+
+    .loading::after {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      margin-left: 10px;
+      border: 2px solid #38bdf8;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🏥 Medical AI Unified Workspace</h1>
+    <div class="status">
+      <div class="status-item">
+        <div class="status-indicator" id="wsStatus"></div>
+        <span id="wsStatusText">Connecting...</span>
+      </div>
+      <div class="status-item">
+        <span>Agents:</span>
+        <strong id="agentCount">0</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="chat">💬 Chat</div>
+    <div class="tab" data-tab="workflows">🔬 Workflows</div>
+    <div class="tab" data-tab="swarm">🐝 Swarm</div>
+    <div class="tab" data-tab="cockpit">📊 Cockpit</div>
+  </div>
+
+  <div class="content">
+    <!-- Chat Tab -->
+    <div class="tab-content active" id="chat-tab">
+      <div class="chat-container">
+        <div class="agent-selector">
+          <label><input type="checkbox" id="ag-code" checked> Code Generation</label>
+          <label><input type="checkbox" id="ag-data"> Data Engineering</label>
+          <label><input type="checkbox" id="ag-clinical"> Clinical Analysis</label>
+          <label><input type="checkbox" id="ag-testing"> Testing</label>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+          <div class="message system">
+            Welcome to Medical AI Unified Workspace. Select agents above and start chatting!
+          </div>
+        </div>
+
+        <div class="chat-input">
+          <textarea id="chatInput" placeholder="Type your message here..." rows="2"></textarea>
+          <button id="sendBtn" onclick="sendMessage()">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Workflows Tab -->
+    <div class="tab-content" id="workflows-tab">
+      <div class="workflow-grid">
+        <div class="workflow-card" onclick="runWorkflow('medical-pipeline')">
+          <h3>📋 Medical Pipeline</h3>
+          <p>Process medical data through 5-agent pipeline (ingestion, triage, summarization, risk scoring, output)</p>
+        </div>
+        <div class="workflow-card" onclick="runWorkflow('gwas-analysis')">
+          <h3>🧬 GWAS Analysis</h3>
+          <p>Genome-wide association studies with map/reduce distributed computing</p>
+        </div>
+        <div class="workflow-card" onclick="runWorkflow('rare-disease')">
+          <h3>🔍 Rare Disease</h3>
+          <p>Multi-agent diagnostic workflow for rare disease identification</p>
+        </div>
+        <div class="workflow-card" onclick="runWorkflow('federated-learning')">
+          <h3>🤝 Federated Learning</h3>
+          <p>Privacy-preserving distributed model training across nodes</p>
+        </div>
+        <div class="workflow-card" onclick="runWorkflow('variant-calling')">
+          <h3>🧬 Variant Calling</h3>
+          <p>Identify genetic variants from sequencing data</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Swarm Tab -->
+    <div class="tab-content" id="swarm-tab">
+      <div class="swarm-status">
+        <h3>🐝 Swarm Coordinator Status</h3>
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="value" id="swarmAgents">0</div>
+            <div class="label">Active Agents</div>
+          </div>
+          <div class="metric-card">
+            <div class="value" id="swarmTasks">0</div>
+            <div class="label">Tasks in Queue</div>
+          </div>
+          <div class="metric-card">
+            <div class="value" id="swarmCompleted">0</div>
+            <div class="label">Tasks Completed</div>
+          </div>
+          <div class="metric-card">
+            <div class="value" id="swarmUptime">0s</div>
+            <div class="label">Uptime</div>
+          </div>
+        </div>
+        <h4 style="color: #94a3b8; margin-top: 20px;">Agent Workload</h4>
+        <div class="swarm-agents" id="agentList"></div>
+      </div>
+    </div>
+
+    <!-- Cockpit Tab -->
+    <div class="tab-content" id="cockpit-tab">
+      <div class="cockpit-content">
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="value" id="cockpitRequests">0</div>
+            <div class="label">Total Requests</div>
+          </div>
+          <div class="metric-card">
+            <div class="value" id="cockpitRPS">0.0</div>
+            <div class="label">Requests/Sec</div>
+          </div>
+          <div class="metric-card">
+            <div class="value" id="cockpitLatency">0ms</div>
+            <div class="label">Avg Latency</div>
+          </div>
+          <div class="metric-card">
+            <div class="value" id="cockpitTokens">0</div>
+            <div class="label">Tokens Used</div>
+          </div>
+        </div>
+        <div class="workflow-grid">
+          <div class="workflow-card">
+            <h3>Medical Pipeline</h3>
+            <p>Status: <span style="color: #22c55e;">Healthy</span> | 1-3ms execution</p>
+          </div>
+          <div class="workflow-card">
+            <h3>Plugins</h3>
+            <p>Status: <span style="color: #22c55e;">Healthy</span> | Extensible hooks</p>
+          </div>
+          <div class="workflow-card">
+            <h3>Coding Ensemble</h3>
+            <p>Status: <span style="color: #22c55e;">Healthy</span> | 8 agents available</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let ws = null;
+    let messages = [];
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab + '-tab').classList.add('active');
+      });
+    });
+
+    // WebSocket connection
+    function connect() {
+      ws = new WebSocket('ws://localhost:3002/');
+
+      ws.onopen = () => {
+        document.getElementById('wsStatus').classList.add('connected');
+        document.getElementById('wsStatusText').textContent = 'Connected';
+        addMessage('system', 'Connected to Medical AI Federation');
+        requestStatus();
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        handleWSMessage(data);
+      };
+
+      ws.onclose = () => {
+        document.getElementById('wsStatus').classList.remove('connected');
+        document.getElementById('wsStatusText').textContent = 'Disconnected';
+        setTimeout(connect, 3000);
+      };
+
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
+    }
+
+    // Handle WebSocket messages
+    function handleWSMessage(data) {
+      switch (data.type) {
+        case 'status':
+          updateCockpitMetrics(data.data);
+          break;
+        case 'task_complete':
+          addMessage('agent', `Task completed in ${data.executionTime}ms`);
+          break;
+        case 'task_failed':
+          addMessage('system', `Task failed: ${data.error}`);
+          break;
+      }
+    }
+
+    // Add message to chat
+    function addMessage(type, content) {
+      const container = document.getElementById('chatMessages');
+      const message = document.createElement('div');
+      message.className = `message ${type}`;
+      message.textContent = content;
+      container.appendChild(message);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    // Send message
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      if (!message) return;
+
+      addMessage('user', message);
+      input.value = '';
+
+      // Get selected agents
+      const agents = [];
+      if (document.getElementById('ag-code').checked) agents.push('code_generation');
+      if (document.getElementById('ag-data').checked) agents.push('data_engineering');
+      if (document.getElementById('ag-clinical').checked) agents.push('clinical_analysis');
+      if (document.getElementById('ag-testing').checked) agents.push('testing');
+
+      // Send to federation
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: 'execute_task',
+          task: {
+            type: 'code_generation',
+            message,
+            data: { message, agents }
+          }
+        }));
+      }
+    }
+
+    // Update cockpit metrics
+    function updateCockpitMetrics(data) {
+      if (data.coordinator) {
+        document.getElementById('cockpitRequests').textContent = data.coordinator.totalRequests;
+        document.getElementById('cockpitRPS').textContent = data.coordinator.requestsPerSecond.toFixed(2);
+        document.getElementById('cockpitLatency').textContent = data.coordinator.avgLatency.toFixed(0) + 'ms';
+      }
+    }
+
+    // Request status
+    function requestStatus() {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'status_request' }));
+      }
+    }
+
+    // Run workflow
+    function runWorkflow(workflow) {
+      addMessage('system', `Starting workflow: ${workflow}...`);
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: 'execute_task',
+          task: {
+            type: 'workflow',
+            workflow,
+            data: { workflow }
+          }
+        }));
+      }
+    }
+
+    // Enter key to send
+    document.getElementById('chatInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // Auto-connect
+    connect();
+
+    // Status polling
+    setInterval(requestStatus, 5000);
+  </script>
+</body>
+</html>

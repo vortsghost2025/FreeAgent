@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772123437311",
+    "input": "\"Patient has high blood pressure and diabetes\"",
+    "output": [
+      {
+        "agent": "clinical",
+        "response": "\"Based on the patient's presentation of high blood pressure and diabetes, I would like to conduct a review of their cardiovascular risk factors.\n\nCan you please provide me with more information about the patient's current medications, including any antihypertensive agents or oral hypoglycemics they are currently taking?\n\nAdditionally, have there been any recent changes in their lifestyle habits or activity level that may be contributing to their blood pressure and glucose control?\"",
+        "model": "llama3.1:8b",
+        "timestamp": 1772123437311
+      }
+    ],
+    "agents_involved": 9,
+    "execution_time_ms": 1379,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-26T16:30:37.311Z",
+    "started_at": "2026-02-26T16:30:35.932Z",
+    "completed_at": "2026-02-26T16:30:37.311Z",
+    "error": null
+  }
+]

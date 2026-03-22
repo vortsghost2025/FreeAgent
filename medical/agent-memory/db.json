@@ -1,0 +1,8 @@
+{
+  "agent": "db",
+  "name": "Database Agent",
+  "description": "Expert in database design, optimization, and SQL",
+  "sessions": [],
+  "created": "2026-02-25T00:00:00.000Z",
+  "lastUpdated": "2026-02-25T00:00:00.000Z"
+}

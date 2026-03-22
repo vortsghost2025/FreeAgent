@@ -1,0 +1,29 @@
+[
+  {
+    "task_id": "task-1772154288965",
+    "input": "{\"batch\":715,\"agent\":\"test\",\"intensity\":\"maximum\"}",
+    "output": [
+      {
+        "agent": "test",
+        "response": "Error: The operation was aborted due to timeout",
+        "model": "deepseek-coder-v2:16b",
+        "timestamp": 1772154288965
+      }
+    ],
+    "agents_involved": 9,
+    "execution_time_ms": 180262,
+    "status": "completed",
+    "routing": {
+      "decision": "all",
+      "selected_agent": "all",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-27T01:04:48.965Z",
+    "started_at": "2026-02-27T01:01:48.703Z",
+    "completed_at": "2026-02-27T01:04:48.965Z",
+    "error": null
+  }
+]

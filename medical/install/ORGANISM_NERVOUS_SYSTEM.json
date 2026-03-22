@@ -1,0 +1,105 @@
+{
+  "timestamp": "2026-02-28T07:30:00.000Z",
+  "sensors": {
+    "mev_organism": {
+      "type": "core_processor",
+      "capabilities": ["mode_management", "strategy_coordination", "health_monitoring"],
+      "connected": "2026-02-28T07:30:00.000Z",
+      "sensitivity": 1.0,
+      "last_signal": null
+    },
+    "arb_agent": {
+      "type": "opportunity_detector",
+      "capabilities": ["arbitrage_scanning", "profit_calculation", "dex_monitoring"],
+      "connected": "2026-02-28T07:30:00.000Z",
+      "sensitivity": 1.0,
+      "last_signal": null
+    },
+    "strategy_worker_1": {
+      "type": "execution_unit",
+      "capabilities": ["task_processing", "strategy_execution", "feedback_reporting"],
+      "connected": "2026-02-28T07:30:00.000Z",
+      "sensitivity": 0.8,
+      "last_signal": null
+    },
+    "strategy_worker_2": {
+      "type": "execution_unit",
+      "capabilities": ["task_processing", "strategy_execution", "feedback_reporting"],
+      "connected": "2026-02-28T07:30:00.000Z",
+      "sensitivity": 0.8,
+      "last_signal": null
+    },
+    "lm_studio_server": {
+      "type": "reasoning_engine",
+      "capabilities": ["llm_processing", "chat_completions", "model_inference"],
+      "connected": "2026-02-28T07:30:00.000Z",
+      "sensitivity": 1.0,
+      "last_signal": null
+    },
+    "vscode_agent_sean": {
+      "type": "human_interface",
+      "capabilities": ["command_input", "decision_making", "system_control"],
+      "connected": "2026-02-8T07:30:00.000Z",
+      "sensitivity": 1.0,
+      "last_signal": null
+    },
+    "vscode_agent_kilo": {
+      "type": "code_architect",
+      "capabilities": ["code_review", "architecture_design", "implementation"],
+      "connected": "2026-02-28T07:30:00.000Z",
+      "sensitivity": 1.0,
+      "last_signal": null
+    }
+  },
+  "signals": [
+    {
+      "id": "signal_initial_activation",
+      "type": "system_boot",
+      "payload": {
+        "status": "neural_network_online",
+        "sensors_registered": 7,
+        "broadcast_ready": true
+      },
+      "priority": "normal",
+      "timestamp": "2026-02-28T07:30:01.000Z",
+      "origin": "neural_bus",
+      "broadcast_to": "all_sensors"
+    }
+  ],
+  "impulses": [],
+  "reflexes": [
+    {
+      "id": "reflex_001",
+      "type": "mode_propagation_reflex",
+      "trigger": "mode_change_detected",
+      "action": "broadcast_to_all_workers",
+      "created": "2026-02-28T07:30:02.000Z"
+    },
+    {
+      "id": "reflex_002", 
+      "type": "opportunity_response_reflex",
+      "trigger": "arbitrage_opportunity_detected",
+      "action": "activate_all_strategies",
+      "created": "2026-02-28T07:30:03.000Z"
+    },
+    {
+      "id": "reflex_003",
+      "type": "health_alert_reflex",
+      "trigger": "stress_threshold_exceeded",
+      "action": "enter_defensive_mode",
+      "created": "2026-02-28T07:30:04.000Z"
+    }
+  ],
+  "consciousness": {
+    "mode": "economic",
+    "sub_mode": "aggressive",
+    "health": "stable",
+    "opportunities": [],
+    "stress_level": 0,
+    "collective_awareness": {
+      "all_sensors_active": true,
+      "communication_latency": "sub_millisecond",
+      "decision_consensus": "emergent"
+    }
+  }
+}

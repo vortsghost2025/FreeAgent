@@ -1,0 +1,39 @@
+{
+  "workspace": {
+    "autonomousMode": true,
+    "yoloEnabled": true,
+    "maxDurationHours": 24,
+    "autoRecovery": true,
+    "remoteAccess": {
+      "teamviewer": true,
+      "apiEndpoints": ["localhost:8889"],
+      "mobileMonitoring": true
+    }
+  },
+  "kiloAgent": {
+    "fullAccess": true,
+    "noManualApproval": true,
+    "autoScaling": true,
+    "selfHealing": true,
+    "memoryLimit": "10MB",
+    "concurrentTasks": 50,
+    "priorityQueue": true
+  },
+  "swarmSystem": {
+    "autoExpand": true,
+    "agentPoolSize": 200,
+    "loadBalancing": "dynamic",
+    "providerRouting": "adaptive"
+  },
+  "security": {
+    "allowlist": ["kilo", "claw", "meta-agent", "federation-core"],
+    "blocklist": [],
+    "executionSandbox": false
+  },
+  "monitoring": {
+    "realTimeMetrics": true,
+    "emailAlerts": true,
+    "phoneNotifications": true,
+    "healthCheckInterval": 30
+  }
+}

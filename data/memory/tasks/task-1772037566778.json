@@ -1,0 +1,28 @@
+[
+  {
+    "task_id": "task-1772037566778",
+    "input": "test",
+    "output": [
+      {
+        "agent": "test",
+        "response": "Test Generation Initiated.\n\nI'm ready to assist you with generating tests, measuring code coverage, or validating results. What type of testing would you like me to perform? \n\nChoose from the following options:\nA) Unit Testing\nB) Integration Testing\nC) End-to-End Testing\nD) Code Coverage Analysis\n\nPlease respond with the corresponding letter to proceed.",
+        "timestamp": 1772037566778
+      }
+    ],
+    "agents_involved": 1,
+    "execution_time_ms": 6883,
+    "status": "completed",
+    "routing": {
+      "decision": "selected",
+      "selected_agent": "test",
+      "selected_subsystem": "simple_ensemble",
+      "estimated_cost": 0,
+      "actual_cost": 0,
+      "confidence": 0.9
+    },
+    "created_at": "2026-02-25T16:39:26.778Z",
+    "started_at": "2026-02-25T16:39:19.895Z",
+    "completed_at": "2026-02-25T16:39:26.778Z",
+    "error": null
+  }
+]

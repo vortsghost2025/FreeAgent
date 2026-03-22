@@ -1,0 +1,88 @@
+╔══════════════════════════════════════════════════════════════╗
+║        MEV Swarm - DEX Swap Monitor + Price Impact         ║
+║   Filtering: Uniswap V2/V3, Sushiswap, Curve                ║
+║   Features: Price Impact, Cross-DEX Comparison              ║
+╚══════════════════════════════════════════════════════════════╝
+
+🔌 Connecting to Ethereum RPC (polling mode)...
+[DEBUG] Using RPC: https://ethereum-mainnet.core.chainstack.com/4eaab7e73e2a832024e11e41e6688733
+[dotenv@17.3.1] injecting env (4) from ..\.env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+
+==================================================
+🚀 MEV Swarm - Real-Time Arbitrage Detection
+==================================================
+[Config] Dry run: false
+[Config] Test mode: false
+[Config] Check interval: 0ms
+[Pools] Watching: USDC/ETH, USDT/ETH, WBTC/ETH
+
+[MEV Swarm] 📊 Initial price fetch...
+[RpcManager] Initialized with Chainstack only (no fallbacks)
+[RpcManager]   [1] https://ethereum-mainnet.core.chainstack.com/***
+[PoolWatcher] Using unified RpcManager with Chainstack (forced chainId: 1)
+[Pool USDC/ETH] Block #latest | USDC per ETH: 1964.690187 | ETH per USDC: 0.00050899 | Tick: 200489
+✅ Connected! Current block: #24566360
+📡 Polling mempool every 1s for pending transactions...
+
+✅ Price Impact Calculator initialized
+
+
+📡 Watching for pending transactions... (Ctrl+C to stop)
+
+[Pool USDT/ETH] Block #latest | USDT per ETH: 0.000000 | ETH per USDT: Infinity | Tick: -200493
+[Pool WBTC/ETH] Block #latest | ETH per ETH: 0.000000 | ETH per ETH: 3.3850043817410633e+21 | Tick: 265491
+[MEV Swarm] ✓ Fetched 3 pool(s)
+[Pool USDC/ETH] Block #latest | USDC per ETH: 1964.690187 | ETH per USDC: 0.00050899 | Tick: 200489
+[Pool USDT/ETH] Block #latest | USDT per ETH: 0.000000 | ETH per USDT: Infinity | Tick: -200493
+[Pool WBTC/ETH] Block #latest | ETH per ETH: 0.000000 | ETH per ETH: 3.3850043817410633e+21 | Tick: 265491
+[MEV Swarm] Connecting to wss://ethereum-mainnet.core.chainstack.com/4eaab7e...
+[MEV Swarm] ✓ WebSocket connected
+[MEV Swarm] ✓ Subscribed to newHeads
+[MEV Swarm] ✓ Periodic checks disabled (CHECK_INTERVAL=0) - using WebSocket only
+
+[MEV Swarm] ✅ Swarm is running! Press Ctrl+C to stop.
+
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V2] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0x0000... → 0x0000... (0.0000) | 0 ETH | exactInputSingle
+   ⚠️  Price impact unavailable: Pool not found
+🔄 DEX SWAP [Uniswap V2] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V2] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V2] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V2] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V2] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V2] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V2] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V2] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V2] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V2] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V2] | 0 ETH | unknown
+🔄 DEX SWAP [Uniswap V3] | 0 ETH | unknown

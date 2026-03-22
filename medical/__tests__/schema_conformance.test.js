@@ -1,9 +1,11 @@
 // FILE: __tests__/schema_conformance.test.js
-const Ajv = require('ajv');
+import Ajv from 'ajv';
+import { createIngestionAgent } from '../agents/ingestion_agent.js';
+import { createTriageAgent } from '../agents/triage_agent.js';
+import { createRiskAgent } from '../agents/risk_agent.js';
 const ajv = new Ajv({ allErrors: true });
 
 test('normalized data conforms to minimal schema', async () => {
-  const { createIngestionAgent } = require('../agents/ingestion_agent');
   const agent = createIngestionAgent('test-schema');
   const task = { id: 't-schema', timestamp: new Date().toISOString(), data: { raw: 'x' } };
   const state = { pipelineStart: new Date().toISOString(), processedBy: [] };
@@ -37,7 +39,6 @@ test('normalized data conforms to minimal schema', async () => {
 });
 
 test('classification conforms to schema', async () => {
-  const { createTriageAgent } = require('../agents/triage_agent');
   const agent = createTriageAgent('test-class');
   const task = {
     id: 't-class',
@@ -71,7 +72,6 @@ test('classification conforms to schema', async () => {
 });
 
 test('risk score conforms to schema', async () => {
-  const { createRiskAgent } = require('../agents/risk_agent');
   const agent = createRiskAgent('test-risk');
   const task = {
     id: 't-risk',

@@ -1,5 +1,5 @@
 // FILE: __tests__/ingestion_agent.test.js
-const { createIngestionAgent } = require('../agents/ingestion_agent');
+import { createIngestionAgent } from '../agents/ingestion_agent.js';
 
 test('ingestion factory and contract', async () => {
   const agent = createIngestionAgent('test-001');

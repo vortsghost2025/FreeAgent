@@ -12,6 +12,7 @@ import { SecurityAgent } from "./agents/security-agent.js";
 import { ApiAgent } from "./agents/api-agent.js";
 import { DbAgent } from "./agents/db-agent.js";
 import { DevOpsAgent } from "./agents/devops-agent.js";
+import { KiloAgent, kiloAgent } from "./agents/kilo-agent.js";
 
 /**
  * Model priority list - higher priority = preferred first
@@ -148,7 +149,8 @@ export async function loadAgents() {
     security: new SecurityAgent(model),
     api: new ApiAgent(model),
     db: new DbAgent(model),
-    devops: new DevOpsAgent(model)
+    devops: new DevOpsAgent(model),
+    kilo: kiloAgent  // Master orchestration agent
   };
 }
 
