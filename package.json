@@ -14,6 +14,7 @@
     "build": "npm run build:frontend",
     "build:frontend": "npm run build --workspace=frontend",
     "start": "npm run start --workspace=backend",
+    "test": "echo 'No tests specified'",
     "release": "standard-version"
   },
   "devDependencies": {
