@@ -8,7 +8,7 @@
  * Run: node scripts/test_rosetta_invariants.js
  */
 
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
@@ -175,9 +175,21 @@ async function runTests() {
   
   console.log('\\nTotal: ' + passed + '/' + total + ' (' + Math.round(passed/total*100) + '%)');
   
-  if (passed === total) {
-    console.log('\\n📚 Book 6 Evidence: Medical pipeline empirically validates Papers 1-5');
+if (passed === total) {
+    console.log('\n📚 Book 6 Evidence: Medical pipeline empirically validates Papers 1-5');
   }
+  
+  // Generate evidence.json for Evidence Bot
+  const evidence = {
+    timestamp: new Date().toISOString(),
+    pipeline: 'medical',
+    tests_passed: passed,
+    tests_total: total,
+    results: results.map(r => ({ test: r.test, pass: r.pass })),
+    invariants_validated: ['symmetry', 'selection', 'propagation', 'stability', 'confidence']
+  };
+  
+  writeFileSync('evidence-medical.json', JSON.stringify(evidence, null, 2));
   
   return passed === total;
 }

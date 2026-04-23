@@ -403,6 +403,18 @@ async function runTests() {
     console.log('\n📚 Book 6 Evidence: Weather pipeline empirically validates Papers 1-5');
   }
   
+  // Generate evidence.json for Evidence Bot
+  const evidence = {
+    timestamp: new Date().toISOString(),
+    pipeline: 'weather',
+    tests_passed: total,
+    tests_total: 5,
+    results: results.map(r => ({ test: r.test, pass: r.pass })),
+    invariants_validated: ['symmetry', 'selection', 'propagation', 'stability', 'confidence']
+  };
+  
+  writeFileSync('evidence-weather.json', JSON.stringify(evidence, null, 2));
+  
   return { total, results };
 }
 

@@ -1,0 +1,100 @@
+# Evidence Bot - Automated Rosetta Invariants Validation
+name: Rosetta Evidence Bot
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  rosetta-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Medical Pipeline Rosetta Tests
+        id: medical
+        run: |
+          node scripts/test_rosetta_invariants.mjs 2>&1 | tee /tmp/medical.log
+          echo "medical_result=$(grep 'Total:' /tmp/medical.log | awk '{print $2}')" >> $GITHUB_OUTPUT
+
+      - name: Run Weather Pipeline Rosetta Tests
+        id: weather
+        run: |
+          node scripts/test_weather_rosetta.mjs 2>&1 | tee /tmp/weather.log
+          echo "weather_result=$(grep 'Total:' /tmp/weather.log | awk '{print $2}')" >> $GITHUB_OUTPUT
+
+      - name: Generate Evidence Artifacts
+        run: |
+          # Get results from logs
+          MEDICAL=$(grep 'Total:' /tmp/medical.log | awk '{print $2}')
+          WEATHER=$(grep 'Total:' /tmp/weather.log | awk '{print $2}')
+          
+          # Generate evidence.json
+          cat > evidence.json << EOF
+          {
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "workflow": "rosetta-evidence-bot",
+            "tests": {
+              "medical": {
+                "result": "$MEDICAL",
+                "pipeline": "medical",
+                "invariants": ["symmetry", "selection", "propagation", "stability", "confidence"]
+              },
+              "weather": {
+                "result": "$WEATHER",
+                "pipeline": "weather", 
+                "invariants": ["symmetry", "selection", "propagation", "stability", "confidence"]
+              }
+            },
+            "commit": "${{ github.sha }}",
+            "branch": "${{ github.ref_name }}"
+          }
+          EOF
+          
+          # Determine PASS/FAIL
+          if [[ "$MEDICAL" == "5/5" ]] && [[ "$WEATHER" == "5/5" ]]; then
+            STATUS="PASS"
+          else
+            STATUS="FAIL"
+          fi
+          
+          cat > verdict.json << EOF
+          {
+            "status": "$STATUS",
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "commit": "${{ github.sha }}",
+            "details": {
+              "medical": "$MEDICAL",
+              "weather": "$WEATHER"
+            }
+          }
+          EOF
+
+      - name: Upload Evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: rosetta-evidence
+          path: |
+            evidence.json
+            verdict.json
+          retention-days: 30
+
+      - name: Check Verdict
+        run: |
+          STATUS=$(cat verdict.json | grep -o '"status": "[^"]*"' | cut -d'"' -f4)
+          if [[ "$STATUS" == "PASS" ]]; then
+            echo "✅ **ALL INVARIANTS VALIDATED**"
+            exit 0
+          else
+            echo "❌ **INVARIANTS FAILED**"
+            exit 1
+          fi
