@@ -16,7 +16,11 @@ let cachedKey = null;
 
 function getApiKey() {
   if (!cachedKey) {
-    cachedKey = readFileSync(KEY_FILE, 'utf8').trim();
+    cachedKey = readFileSync(KEY_FILE, 'utf8')
+      .split('\n')
+      .find(l => l.startsWith('Token:'))
+      ?.split('Token:')[1]?.trim();
+    if (!cachedKey) throw new Error('NOAA API key not found in ' + KEY_FILE);
   }
   return cachedKey;
 }
