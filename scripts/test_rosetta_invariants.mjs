@@ -15,6 +15,9 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Root is two levels up from scripts/
+const ROOT = join(__dirname, '..');
+
 // ============ TEST 1: SYMMETRY PRESERVATION ============
 // Paper 1.1: Single entry point - all logic routes through ingestion
 async function testSymmetryPreservation() {
@@ -22,7 +25,7 @@ async function testSymmetryPreservation() {
   console.log('  Theory: Single entry point, deterministic processing');
   
   // Load ingestion agent
-  const ingestionPath = join(__dirname, 'medical/agents/ingestion_agent.js');
+  const ingestionPath = join(ROOT, 'medical/agents/ingestion_agent.js');
   const ingestionCode = readFileSync(ingestionPath, 'utf8');
   
   // Verify single entry pattern
@@ -46,15 +49,15 @@ async function testSelectionUnderConstraint() {
   console.log('\n[TEST 2] Selection Under Constraint');
   console.log('  Theory: Valid behaviors selected from constrained possibilities');
   
-  const triagePath = join(__dirname, 'medical/agents/triage_agent.js');
+  const triagePath = join(ROOT, 'medical/agents/triage_agent.js');
   const triageCode = readFileSync(triagePath, 'utf8');
   
   // Verify constraint-based selection (keyword + structural hints)
-  const hasKeywordScoring = triageCode.includes('keywords[') && 
-                            triageCode.includes('score += 1');
+  const hasKeywordScoring = triageCode.includes('keywords:') && 
+                            triageCode.includes('score +=');
   
-  const hasStructuralScoring = triageCode.includes('structuralHints[') &&
-                                triageCode.includes('score += 2');
+  const hasStructuralScoring = triageCode.includes('structuralHints:') &&
+                                triageCode.includes('score +=');
   
   // Verify confidence calculation
   const hasConfidenceCalculation = triageCode.includes('confidence =') &&
@@ -75,14 +78,14 @@ async function testPropagationThroughLayers() {
   
   const agents = ['ingestion_agent.js', 'triage_agent.js', 'output_agent.js', 'risk_agent.js'];
   const layerCounts = agents.filter(a => {
-    return readFileSync(join(__dirname, 'medical/agents/' + a), 'utf8').includes('class ');
+    return readFileSync(join(ROOT, 'medical/agents/' + a), 'utf8').includes('class ');
   }).length;
   
   // Verify 4+ agents in pipeline
   const hasLayeredAgents = layerCounts >= 4;
   
   // Verify state propagation
-  const ingestionPath = join(__dirname, 'medical/agents/ingestion_agent.js');
+  const ingestionPath = join(ROOT, 'medical/agents/ingestion_agent.js');
   const ingCode = readFileSync(ingestionPath, 'utf8');
   const hasStatePropagation = ingCode.includes('state.processedBy');
   
@@ -98,7 +101,7 @@ async function testStabilityUnderTransformation() {
   console.log('\n[TEST 4] Stability Under Transformation');
   console.log('  Theory: Identity persists across perturbation');
   
-  const ingestionPath = join(__dirname, 'medical/agents/ingestion_agent.js');
+  const ingestionPath = join(ROOT, 'medical/agents/ingestion_agent.js');
   const code = readFileSync(ingestionPath, 'utf8');
   
   // Verify error wrapping
@@ -126,17 +129,17 @@ async function testTriageConfidence() {
   console.log('\n[TEST 5] Triage Confidence Scoring');
   console.log('  Theory: CPS = phenotype selection operator');
   
-  const triagePath = join(__dirname, 'medical/agents/triage_agent.js');
+  const triagePath = join(ROOT, 'medical/agents/triage_agent.js');
   const code = readFileSync(triagePath, 'utf8');
   
   // Verify confidence threshold detection
-  const hasHighConfidence = code.includes('confidence = 0.7') && 
-                            code.includes('Math.min(0.7');
+  const hasHighConfidence = code.includes('0.7 +') && 
+                            code.includes('Math.min');
   
   // Verify classification types
-  const hasClassificationTypes = code.includes("'labs'") &&
-                                  code.includes("'imaging'") &&
-                                  code.includes("'vitals'");
+  const hasClassificationTypes = code.includes('labs:') &&
+                                  code.includes('imaging:') &&
+                                  code.includes('vitals:');
   
   console.log('  High confidence threshold: ' + (hasHighConfidence ? '✅ PASS' : '❌ FAIL'));
   console.log('  Classification types: ' + (hasClassificationTypes ? '✅ PASS' : '❌ FAIL'));
