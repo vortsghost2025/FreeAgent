@@ -1,0 +1,1 @@
+{"test_name": "Medical Pipeline Rosetta Stone", "description": "End-to-end validation of medical data processing pipeline, ensuring schema compatibility and correct transformations.", "steps": ["Load sample patient record", "Run pipeline transformation", "Validate output against expected schema and values"], "expected_outcome": "All assertions pass, no data loss or corruption."}
