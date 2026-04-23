@@ -24,8 +24,7 @@ function testSymmetryPreservation() {
   }
   
   const code = readFileSync(weatherPath, 'utf8');
-  const hasSingleEntry = code.includes('async run(task, state)') || 
-                        code.includes('function run(');
+  const hasSingleEntry = code.includes('async run') && (code.includes('task') || code.includes('state '));
   const hasTransform = code.includes('transformWeather') ||
                       code.includes('normalize');
   
