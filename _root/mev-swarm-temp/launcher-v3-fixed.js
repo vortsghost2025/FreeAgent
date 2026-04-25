@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * WORKING LAUNCHER V3 - Fixed version
  * Fixes: Syntax errors, proper arbitrage execution
@@ -24,9 +25,9 @@ class WorkingLauncherV3 {
     };
 
     this.tokens = {
-      WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-      USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-      DAI: '0x6B175474E89094C44Da98b954EedeAC495271d0F'
+      WETH: 'REDACTED_ADDRESS',
+      USDC: 'REDACTED_ADDRESS',
+      DAI: 'REDACTED_ADDRESS'
     };
 
     this.stats = { cycles: 0, opportunities: 0, trades: 0, successes: 0 };
@@ -36,9 +37,9 @@ class WorkingLauncherV3 {
 
     // Pool addresses
     this.pools = {
-      UNI_V2_WETH_USDC: '0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc',
-      SUSHI_WETH_USDC: '0x397ff1542f962076d0bfe58ea045ffa2d347aca0',
-      UNI_V2_WETH_DAI: '0xa478c2975ab1ea89e8196811f51a7b7ade33eb8e'
+      UNI_V2_WETH_USDC: 'REDACTED_ADDRESS',
+      SUSHI_WETH_USDC: 'REDACTED_ADDRESS',
+      UNI_V2_WETH_DAI: 'REDACTED_ADDRESS'
     };
   }
 
@@ -187,7 +188,7 @@ class WorkingLauncherV3 {
       ];
 
       const uniRouter = new ethers.Contract(
-        '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D', // Uniswap V2 Router
+        'REDACTED_ADDRESS', // Uniswap V2 Router
         routerABI,
         this.wallet
       );

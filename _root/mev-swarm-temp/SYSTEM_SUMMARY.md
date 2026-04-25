@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # MEV Swarm 50-Agent System - Implementation Complete
 
 ## 🎉 Project Status: COMPLETE
@@ -146,7 +147,7 @@ npm start
 Create a `.env` file with your RPC endpoints and wallet configuration:
 ```env
 ETH_RPC_URL=https://mainnet.infura.io/v3/YOUR_PROJECT_ID
-PRIVATE_KEY=your_private_key_here
+PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 MIN_PROFIT_THRESHOLD=0.001
 MAX_GAS_PRICE=100
 ```

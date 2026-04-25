@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * MEV Swarm - Solver MCP Tools (Chambers 1-5)
  * Step-based MCP tools for solver intelligence layer
@@ -49,25 +50,25 @@ export async function refreshGraph(args = {}) {
       // Example real pool addresses (these would come from configuration)
       const realPools = [
         {
-          address: '0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc', // WETH/USDC V2
-          token0: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', // WETH
-          token1: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
+          address: 'REDACTED_ADDRESS', // WETH/USDC V2
+          token0: 'REDACTED_ADDRESS', // WETH
+          token1: 'REDACTED_ADDRESS', // USDC
           type: 'uniswap_v2',
           reserves: { reserve0: 0n, reserve1: 0n }, // Would be populated from RPC
           lastUpdated: Date.now()
         },
         {
           address: '0xA478c2975Ab1Ea89e8196811F51A7B7Ade33eB8', // WETH/DAI V2
-          token0: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', // WETH
-          token1: '0x6B175474E89094C44Da98b954EedeAC495271d0F', // DAI
+          token0: 'REDACTED_ADDRESS', // WETH
+          token1: 'REDACTED_ADDRESS', // DAI
           type: 'uniswap_v2',
           reserves: { reserve0: 0n, reserve1: 0n },
           lastUpdated: Date.now()
         },
         {
           address: '0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6', // WETH/USDC V3 0.05%
-          token0: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', // WETH
-          token1: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
+          token0: 'REDACTED_ADDRESS', // WETH
+          token1: 'REDACTED_ADDRESS', // USDC
           type: 'uniswap_v3',
           fee: 500,
           sqrtPriceX96: 0n,
@@ -102,21 +103,21 @@ export async function refreshGraph(args = {}) {
     // Real Uniswap V2 and V3 pool addresses on Ethereum mainnet
     pools = [
       // Uniswap V2: USDC/ETH
-      { address: '0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc', token0: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', token1: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', type: 'uniswap_v2' },
+      { address: 'REDACTED_ADDRESS', token0: 'REDACTED_ADDRESS', token1: 'REDACTED_ADDRESS', type: 'uniswap_v2' },
       // Uniswap V2: ETH/DAI
-      { address: '0xA478c2975AB1EA89e8196811F51A7C7cE3C5C3e3', token0: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', token1: '0x6B175474E89094C44Da98b954EedeAC495271d0F', type: 'uniswap_v2' },
+      { address: 'REDACTED_ADDRESS', token0: 'REDACTED_ADDRESS', token1: 'REDACTED_ADDRESS', type: 'uniswap_v2' },
       // Uniswap V3: USDC/ETH (3000 fee tier)
-      { address: '0x88e6A0c2d26E5bCFEB7B64B5e6EED5522DB7Ed2', token0: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', token1: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', type: 'uniswap_v3', fee: 3000 }
+      { address: '0x88e6A0c2d26E5bCFEB7B64B5e6EED5522DB7Ed2', token0: 'REDACTED_ADDRESS', token1: 'REDACTED_ADDRESS', type: 'uniswap_v3', fee: 3000 }
     ];
 
     // Map token symbols to addresses
     const tokenAddresses = {
-      'ETH': '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-      'WETH': '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-      'USDC': '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-      'DAI': '0x6B175474E89094C44Da98b954EedeAC495271d0F',
-      'WBTC': '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
-      'USDT': '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+      'ETH': 'REDACTED_ADDRESS',
+      'WETH': 'REDACTED_ADDRESS',
+      'USDC': 'REDACTED_ADDRESS',
+      'DAI': 'REDACTED_ADDRESS',
+      'WBTC': 'REDACTED_ADDRESS',
+      'USDT': 'REDACTED_ADDRESS'
     };
 
     nodes = Object.keys(tokenAddresses);
@@ -167,11 +168,11 @@ export async function evaluateAllPaths(args = {}) {
 
   // This would integrate with Chamber 2 SlippageModel
   // Real Ethereum mainnet addresses
-  const USDC = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
-  const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
-  const DAI = '0x6B175474E89094C44Da98b954EedeAC495271d0F';
-  const USDC_ETH_POOL = '0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc';
-  const ETH_DAI_POOL = '0xA478c2975AB1EA89e8196811F51A7C7cE3C5C3e3';
+  const USDC = 'REDACTED_ADDRESS';
+  const WETH = 'REDACTED_ADDRESS';
+  const DAI = 'REDACTED_ADDRESS';
+  const USDC_ETH_POOL = 'REDACTED_ADDRESS';
+  const ETH_DAI_POOL = 'REDACTED_ADDRESS';
 
   const mockPaths = [
     {

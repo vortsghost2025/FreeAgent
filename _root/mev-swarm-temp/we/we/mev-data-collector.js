@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * MEV Data Collector
  * Phase 1: Collects blockchain state data for ML training
@@ -44,9 +45,9 @@ const POOLS = {
 
 // Token addresses on Base
 const TOKENS = {
-  'WETH': '0x4200000000000000000000000000000000000006',
-  'USDC': '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
-  'DAI': '0x50c5725949A6F0C65E6064bC8D76e8da0D5e4C7b'
+  'WETH': 'REDACTED_ADDRESS',
+  'USDC': 'REDACTED_ADDRESS',
+  'DAI': 'REDACTED_ADDRESS'
 };
 
 // Uniswap V3 Pool ABI (simplified)

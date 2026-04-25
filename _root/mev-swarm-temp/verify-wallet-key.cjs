@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * Wallet Key Verification Script
  * 
@@ -43,9 +44,9 @@ for (const { key, label } of testKeys) {
     
     // Check against known wallets
     const knownWallets = {
-      '0x29F7830AfD1F612935cFAfC65BF7b02272E79E0F': 'Trading Wallet (has $)',
-      '0xC649A2F94AFc4E5649D3d575d16E739e70B2BA2F': 'WETH Holder Wallet',
-      '0x34769bE7087F1fE5B9ad5C50cC1526BC63217341': 'Funding Wallet'
+      'REDACTED_ADDRESS': 'Trading Wallet (has $)',
+      'REDACTED_ADDRESS': 'WETH Holder Wallet',
+      'REDACTED_ADDRESS': 'Funding Wallet'
     };
     
     const matches = Object.entries(knownWallets).filter(([addr]) => 

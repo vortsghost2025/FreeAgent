@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import { ethers } from 'ethers';
 import 'dotenv/config';
 import fs from 'fs';
@@ -54,8 +55,8 @@ if (process.platform === 'win32') {
 const DRY_RUN = !security.isLive; // Use security guard's isLive
 
 // Router Addresses
-const UNISWAP_V2_ROUTER = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
-const UNISWAP_V3_ROUTER = '0xe592427a0aece92de3edee1f18e0157c05861564';
+const UNISWAP_V2_ROUTER = 'REDACTED_ADDRESS';
+const UNISWAP_V3_ROUTER = 'REDACTED_ADDRESS';
 
 // ABI Definitions
 const V2_ROUTER_ABI = [
@@ -78,13 +79,15 @@ const ERC20_ABI = [
 
 // Known token addresses to symbols
 const KNOWN_TOKENS = {
-  '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2': 'WETH',
-  '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48': 'USDC',
-  '0x6B175474E89094C44Da98b954EedeAC495271d0F': 'DAI',
-  '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599': 'AAVE',
-  '0x1f9840a85d5af4bf268e6780FC7d5D3': 'UNI',
-  '0x514910771af9ca65edaf1c32b1ae252ff333f2071d50a214062F324438': 'LINK',
-  '0xdAC17F958D2ee515eab848b4a1B3d2080b60F2e5FcB': 'USDT'
+  // All keys are lowercase to match address.toLowerCase() in getTokenSymbol
+  '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee': 'WETH', // placeholder WETH
+  '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48': 'USDC', // USDC
+  '0x6b175474e89094c44da98b954edeac495271d0f': 'DAI',  // DAI
+  '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599': 'WBTC', // WBTC
+  '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984': 'UNI',  // UNI
+  '0x514910771af9ca656af840dff83e8264ecf986ca': 'LINK', // LINK (mainnet)
+  '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9': 'AAVE', // AAVE (mainnet)
+  '0xdac17f958d2ee523a2206206994597c13d831ec7': 'USDT'  // USDT
 };
 
 function getTokenSymbol(address) {
@@ -112,7 +115,7 @@ class ArbitrageExecutor {
     console.log('\n📊 Opportunity Details:');
     console.log('   Route:', route.map(addr => getTokenSymbol(addr)).join(' → '));
     console.log('   Type:', opportunity.routeType);
-    console.log('   Input:', ethers.formatEther(amountIn, tokenInDecimals), tokenInSymbol);
+    console.log('   Input:', ethers.formatUnits(amountIn, tokenInDecimals), tokenInSymbol);
     console.log('   Expected Profit: $' + expectedProfitUsd.toFixed(2));
 
     // Build hops from route
@@ -132,7 +135,7 @@ class ArbitrageExecutor {
     // ============================================================
     console.log('\n🔄 Simulating arbitrage route...');
 
-    const { feeData } = await this.provider.getFeeData();
+    const feeData = await this.provider.getFeeData();
 
     // Build transaction for first hop
     const tx1 = {

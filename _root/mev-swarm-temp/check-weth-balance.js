@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import 'dotenv/config';
 import { ethers } from 'ethers';
 
@@ -5,7 +6,7 @@ const RPC_URL = process.env.ETHEREUM_RPC_URL || 'https://ethereum-mainnet.core.c
 const provider = new ethers.JsonRpcProvider(RPC_URL);
 
 // WETH contract
-const WETH_ADDRESS = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+const WETH_ADDRESS = 'REDACTED_ADDRESS';
 const WETH_ABI = [
   'function balanceOf(address) view returns (uint256)',
   'function deposit() payable',
@@ -21,10 +22,10 @@ async function main() {
 
   console.log(`📍 Wallet Address: ${address}`);
 
-  if (!process.env.PRIVATE_KEY || process.env.PRIVATE_KEY === '') {
+  if (!process.env.PRIVATE_KEY || process.env.PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
     console.log('\n❌ No private key in .env.local');
     console.log('💡 Add your private key to check balance:');
-    console.log('   PRIVATE_KEY=0x...\n');
+    console.log('   PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
     return;
   }
 

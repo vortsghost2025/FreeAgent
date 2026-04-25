@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * Withdraw ETH from MEV Swarm Contract
  * Run: node mev-swarm/withdraw-eth.js
@@ -6,7 +7,7 @@
 import { ethers } from 'ethers';
 import 'dotenv/config';
 
-const CONTRACT_ADDRESS = '0x4fF5eF5d185195173b0B178eDe4A7679E7De272f';
+const CONTRACT_ADDRESS = 'REDACTED_ADDRESS';
 const RPC_URL = process.env.ETHEREUM_RPC_URL || 'https://ethereum-mainnet.core.chainstack.com/4eaab7e73e2a832024e11e41e6688733';
 
 async function withdraw() {

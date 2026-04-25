@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # Historical Baseline Reconstruction
 
 Date: 2026-03-19
@@ -8,8 +9,8 @@ This note identifies the file/env/runtime combination that most closely matches 
 
 The strongest historical execution path was:
 
-- Trading wallet: `0x29F7830AfD1F612935cFAfC65BF7b02272E79E0F`
-- Active executor contract: `0x4FF5eF5d185195173b0B178eDe4A7679E7De272f`
+- Trading wallet: `REDACTED_ADDRESS`
+- Active executor contract: `REDACTED_ADDRESS`
 
 On-chain evidence:
 

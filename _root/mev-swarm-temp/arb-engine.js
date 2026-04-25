@@ -85,7 +85,7 @@ export class ArbitrageEngine {
       timestamp: Date.now(),
       tokenPair: `${tA}/${tB}`,
       amountIn: parseFloat(amountIn),
-      currentPrice: currentPrice.toFixed(6),
+      currentPrice: currentPrice.price.toFixed(6),
       bestPrice: bestPrice.toFixed(6),
       bestDex,
       currentDex: swap.dex,
@@ -112,7 +112,7 @@ export class ArbitrageEngine {
     } else if (opportunity.confidence < MIN_CONFIDENCE) {
       // Low confidence opportunity, skip
       opportunity.type = 'low_confidence';
-      console.log(`⚠️  Low confidence (${confidence.toFixed(2)}), skipping execution`);
+      console.log(`⚠️  Low confidence (${opportunity.confidence.toFixed(2)}), skipping execution`);
     }
 
     this.lastEvaluated.set(cacheKey, Date.now());

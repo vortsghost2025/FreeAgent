@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import dotenv from 'dotenv';
 import { ethers } from 'ethers';
 
@@ -13,7 +14,7 @@ async function testConnection() {
     console.log('Connected to block:', blockNumber);
     
     // Test USDT/ETH pool
-    const usdtEthAddress = '0x4e68Ccd3E89f51C3074ca5072bbAC773960dFa36';
+    const usdtEthAddress = 'REDACTED_ADDRESS';
     const pool = new ethers.Contract(usdtEthAddress, [
       'function token0() view returns (address)',
       'function token1() view returns (address)',
@@ -33,7 +34,7 @@ async function testConnection() {
     console.log('  tick:', slot0.tick);
     
     // Test WBTC/ETH pool
-    const wbtcEthAddress = '0xcbcdf9626bc03e24f779434178a73a0b4bad62ed';
+    const wbtcEthAddress = 'REDACTED_ADDRESS';
     const pool2 = new ethers.Contract(wbtcEthAddress, [
       'function token0() view returns (address)',
       'function token1() view returns (address)',

@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # MEV Bot Trade Analysis - Yesterday's Run
 
 **Date**: March 2, 2026
@@ -11,7 +12,7 @@
 
 ### Trade 1: WETH Wrapping (Initial Setup)
 
-**Transaction Hash**: `0xaf3f877f282bf3855bdaedc366c086c1439a6b41394a45014c19462fd49e7bf4`
+**Transaction Hash**: `REDACTED_PRIVATE_KEY`
 
 **Details**:
 - **Type**: WETH Wrapping (initial buffer)
@@ -287,9 +288,9 @@ You need to:
 
 ### Etherscan Contract Address
 
-**Your Contract**: `0x4FF5eF5d185195173b0B178eDe4A7679E7De272f`
+**Your Contract**: `REDACTED_ADDRESS`
 
-**Etherscan URL**: https://etherscan.io/address/0x4FF5eF5d185195173b0B178eDe4A7679E7De272f
+**Etherscan URL**: https://etherscan.io/address/REDACTED_ADDRESS
 
 **Look For**:
 - `ArbitrageExecuted` events

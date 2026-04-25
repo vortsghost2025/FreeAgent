@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # EMERGENCY RECOVERY PROCEDURES
 
 ## Status: 4 Zombie Node Processes Detected
@@ -103,7 +104,7 @@ node arb-executor.js
 
 ⚠️ **CRITICAL:** Your private key was exposed in the chat log:
 ```
-0xe06a93e9b9ddb2350632aa4e6e9e20e931f40e7d288475cceec2a46654723193
+REDACTED_PRIVATE_KEY
 ```
 
 **Immediate actions:**

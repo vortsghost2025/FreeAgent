@@ -1,8 +1,9 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 const { ethers } = require('ethers');
 
 async function checkBalance() {
   const provider = new ethers.JsonRpcProvider('https://eth.llamarpc.com');
-  const wallet = new ethers.Wallet('0xb72bffb84bc27cc50e52c018703526a5ec67a0063c897e6677500f58c789d380', provider);
+  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
   console.log('🔍 Checking wallet balance...\n');
 
@@ -39,7 +40,7 @@ async function checkBalance() {
   }
 
   // Check contract balance
-  const contractAddress = '0xaC9d24032F5375625661fADA31902D10D25c55e7';
+  const contractAddress = 'REDACTED_ADDRESS';
   const contractBalance = await provider.getBalance(contractAddress);
   console.log(`📦 Contract Balance: ${ethers.formatEther(contractBalance)} ETH\n`);
 

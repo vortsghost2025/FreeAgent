@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 // mev-predictor.cjs - Phase 2: ML-powered opportunity prediction
 // Uses TensorFlow.js to predict when arbitrage opportunities will appear
 // Can leverage GPU via WebGL for fast inference
@@ -255,9 +256,9 @@ async function runPredictionLoop(model) {
   
   // Pool addresses (same as data collector)
   const POOLS = [
-    { name: "UniV3-0.05%", addr: "0xd0b53D9277642d899DF5C87A3966A349A798F224", protocol: "uniswap", fee: 500 },
-    { name: "UniV3-0.3%", addr: "0x6c561B446416E1A00E8E93E221854d6eA4171372", protocol: "uniswap", fee: 3000 },
-    { name: "Aero-vol", addr: "0xcDAC0d6c6C59727a65F871236188350531885C43", protocol: "v2" }
+    { name: "UniV3-0.05%", addr: "REDACTED_ADDRESS", protocol: "uniswap", fee: 500 },
+    { name: "UniV3-0.3%", addr: "REDACTED_ADDRESS", protocol: "uniswap", fee: 3000 },
+    { name: "Aero-vol", addr: "REDACTED_ADDRESS", protocol: "v2" }
   ];
   
   // Price fetching functions

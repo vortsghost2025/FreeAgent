@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * WETH Approval Script
  * Run this to approve the executor contract to spend WETH from your wallet
@@ -9,8 +10,8 @@ require('dotenv').config();
 const { ethers } = require('ethers');
 
 // Configuration
-const WETH_ADDRESS = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
-const EXECUTOR_ADDRESS = '0x34769bE7087F1fE5B9ad5C50cC1526BC63217341';
+const WETH_ADDRESS = 'REDACTED_ADDRESS';
+const EXECUTOR_ADDRESS = 'REDACTED_ADDRESS';
 
 // ERC20 ABI for approve function
 const ERC20_ABI = [

@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * MEV Swarm - Chamber 6 Validation Test
  * Solver → Executor Pipeline
@@ -37,7 +38,7 @@ async function testChamber6() {
       tokenOut: 'ETH',
       fee: 30
     }],
-    path: ['0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', '0xC02aA39b223FE8D0A0e5C4F27eAD9083D75'], // Mock token addresses
+    path: ['REDACTED_ADDRESS', '0xC02aA39b223FE8D0A0e5C4F27eAD9083D75'], // Mock token addresses
     recipient: '0x0000000000000000000000000000000000000000001' // Zero address as recipient
   };
 
@@ -71,7 +72,7 @@ async function testChamber6() {
       tokenOut: 'ETH',
       fee: 3000
     }],
-    path: ['0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', '0xC02aA39b223FE8D0A0e5C4F27eAD9083D75'], // Mock token addresses
+    path: ['REDACTED_ADDRESS', '0xC02aA39b223FE8D0A0e5C4F27eAD9083D75'], // Mock token addresses
     recipient: '0x0000000000000000000000000000000000000000001' // Zero address as recipient
   };
 
@@ -108,7 +109,7 @@ async function testChamber6() {
         fee: 30
       }
     ],
-    path: ['0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', '0xC02aA39b223FE8D0A0e5C4F27eAD9083D75'], // Mock token addresses
+    path: ['REDACTED_ADDRESS', '0xC02aA39b223FE8D0A0e5C4F27eAD9083D75'], // Mock token addresses
     recipient: '0x0000000000000000000000000000000000000000001' // Zero address as recipient
   };
 
@@ -237,7 +238,7 @@ async function testChamber6() {
   console.log('Test 10: Transaction Validation\n');
 
   const validTx = {
-    to: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+    to: 'REDACTED_ADDRESS',
     data: '0x' + 'a'.repeat(100), // Valid calldata
     gasLimit: 100000,
     deadline: Math.floor(Date.now() / 1000) + 300,

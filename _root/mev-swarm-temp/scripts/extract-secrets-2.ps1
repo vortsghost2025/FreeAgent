@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 $out = 'C:\Users\seand\OneDrive\workspace\_root\mev-swarm-temp\.local_secrets.env'
 if (Test-Path $out) { Remove-Item $out -Force }
 $seen = @{}
@@ -17,7 +18,7 @@ foreach ($p in $paths) {
             if ($entry) {
               $txt = (New-Object System.IO.StreamReader($entry.Open())).ReadToEnd()
               $matches = Select-String -InputObject $txt -Pattern 'PRIVATE_KEY|private_key|0x[a-fA-F0-9]{64}|mnemonic|seed phrase|seed=' -AllMatches -ErrorAction SilentlyContinue
-              foreach ($m in $matches) { foreach ($mm in $m.Matches) { $v=$mm.Value.Trim(); if (-not $seen.ContainsKey($v)) { $seen[$v]=1; if ($v -match '^0x[a-fA-F0-9]{64}$') { Add-Content -Path $out -Value ("PRIVATE_KEY=$v") } else { Add-Content -Path $out -Value $v } } } }
+              foreach ($m in $matches) { foreach ($mm in $m.Matches) { $v=$mm.Value.Trim(); if (-not $seen.ContainsKey($v)) { $seen[$v]=1; if ($v -match '^0x[a-fA-F0-9]{64}$') { Add-Content -Path $out -Value ("PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
             }
             $zip.Dispose()
           } catch { }
@@ -27,7 +28,7 @@ foreach ($p in $paths) {
           $patterns = @("PRIVATE_KEY","private_key","mnemonic","seed phrase","seed=","0x[a-fA-F0-9]{64}","m/44")
           foreach ($pat in $patterns) {
             $matches = Select-String -InputObject $content -Pattern $pat -AllMatches -ErrorAction SilentlyContinue
-            foreach ($m in $matches) { foreach ($mm in $m.Matches) { $v=$mm.Value.Trim(); if (-not $seen.ContainsKey($v)) { $seen[$v]=1; if ($v -match '^0x[a-fA-F0-9]{64}$') { Add-Content -Path $out -Value ("PRIVATE_KEY=$v") } else { Add-Content -Path $out -Value $v } } } }
+            foreach ($m in $matches) { foreach ($mm in $m.Matches) { $v=$mm.Value.Trim(); if (-not $seen.ContainsKey($v)) { $seen[$v]=1; if ($v -match '^0x[a-fA-F0-9]{64}$') { Add-Content -Path $out -Value ("PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
           }
         }
       } catch { }

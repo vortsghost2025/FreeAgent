@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # 🚀 MEV Swarm Executor - Deployment Walkthrough
 
 ## 📋 What We're Deploying
@@ -44,10 +45,10 @@ cat > .env << 'EOF'
 MAINNET_RPC_URL=https://eth.llamarpc.com
 
 # Private Key (NEVER commit this!)
-PRIVATE_KEY=0xYOUR_PRIVATE_KEY_HERE
+PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 
 # Optional: Etherscan API for automatic verification
-ETHERSCAN_API_KEY=YOUR_ETHERSCAN_API_KEY_HERE
+ETHERSCAN_API_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 EOF
 ```
 

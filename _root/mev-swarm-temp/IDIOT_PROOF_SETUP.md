@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # 🔒 IDIOT-PROOF SETUP - ONE TIME ONLY
 
 **Follow this EXACTLY and you will NEVER have to deal with private keys again.**
@@ -8,7 +9,7 @@
 
 ```
 File: C:\workspace\medical\mev-swarm\.env.local
-Line: PRIVATE_KEY=PASTE_YOUR_NEW_PRIVATE_KEY_HERE
+Line: PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 ```
 
 **THAT'S IT. NOWHERE ELSE.**
@@ -33,7 +34,7 @@ Line: PRIVATE_KEY=PASTE_YOUR_NEW_PRIVATE_KEY_HERE
 
 ### Step 3: Paste into .env.local
 1. Open file: `C:\workspace\medical\mev-swarm\.env.local`
-2. Find line: `PRIVATE_KEY=PASTE_YOUR_NEW_PRIVATE_KEY_HERE`
+2. Find line: `PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 3. Replace the text with your actual key
 4. Save and close
 5. **Never open this file again unless you're moving to a new machine**

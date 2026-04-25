@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import { ethers } from 'ethers';
 import 'dotenv/config';
 import fs from 'fs';
@@ -55,8 +56,8 @@ if (process.platform === 'win32') {
 const DRY_RUN = !security.isLive;
 
 // Router Addresses
-const UNISWAP_V2_ROUTER = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
-const UNISWAP_V3_ROUTER = '0xe592427a0aece92de3edee1f18e0157c05861564';
+const UNISWAP_V2_ROUTER = 'REDACTED_ADDRESS';
+const UNISWAP_V3_ROUTER = 'REDACTED_ADDRESS';
 
 // ABI Definitions
 const V2_ROUTER_ABI = [
@@ -65,12 +66,12 @@ const V2_ROUTER_ABI = [
 
 // Known token addresses to symbols
 const KNOWN_TOKENS = {
-  '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2': 'WETH',
-  '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48': 'USDC',
-  '0x6B175474E89094C44Da98b954EedeAC495271d0F': 'DAI',
-  '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599': 'AAVE',
-  '0x1f9840a85d5af4bf268e6780FC7d5D3': 'UNI',
-  '0xdAC17F958D2ee515eab848b4a1B3d2080b60F2e5FcB': 'USDT'
+  'REDACTED_ADDRESS': 'WETH',
+  'REDACTED_ADDRESS': 'USDC',
+  'REDACTED_ADDRESS': 'DAI',
+  'REDACTED_ADDRESS': 'WBTC',
+  'REDACTED_ADDRESS': 'UNI',
+  'REDACTED_ADDRESS': 'USDT'
 };
 
 function getTokenSymbol(address) {
@@ -98,7 +99,7 @@ class ArbitrageExecutor {
     console.log('\n📊 Opportunity Details:');
     console.log('   Route:', route.map(addr => getTokenSymbol(addr)).join(' → '));
     console.log('   Type:', opportunity.routeType);
-    console.log('   Input:', ethers.formatEther(amountIn), tokenInSymbol);
+    console.log('   Input:', ethers.formatUnits(amountIn, tokenInDecimals), tokenInSymbol);
     console.log('   Expected Profit: $' + expectedProfitUsd.toFixed(2));
 
     // Return early if dry run mode
@@ -120,7 +121,7 @@ class ArbitrageExecutor {
 
     try {
       // Get fee data for gas estimation
-      const { feeData } = await this.provider.getFeeData();
+      const feeData = await this.provider.getFeeData();
 
       // Build transaction data
       const txData = V2_ROUTER_ABI[0];

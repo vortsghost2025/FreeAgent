@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * Swap Decoder - Normalizes DEX swap transactions
  * Takes raw transaction data + router info → structured swap object
@@ -7,7 +8,7 @@ import { ethers } from 'ethers';
 
 // Known router ABIs and configurations
 const ROUTER_CONFIG = {
-  '0x7a250d5630b4cf539739df2c5dacb4c659f2488d': {
+  'REDACTED_ADDRESS': {
     name: 'Uniswap V2',
     abi: [
       "function swapExactETHForTokens(uint256 amountOutMin, address[] path, address to, uint256 deadline)",
@@ -16,7 +17,7 @@ const ROUTER_CONFIG = {
     ],
     encoder: 'v2'
   },
-  '0xe592427a0aece92de3edee1f18e0157c05861564': {
+  'REDACTED_ADDRESS': {
     name: 'Uniswap V3',
     abi: [
       "function exactInputSingle((address tokenIn, address tokenOut, uint24 fee, address recipient, uint256 amountIn, uint256 amountOutMin, uint160 sqrtPriceLimitX96, bytes calldata data)",
@@ -24,7 +25,7 @@ const ROUTER_CONFIG = {
     ],
     encoder: 'v3'
   },
-  '0xd9e1ce17f2641f24ae83637ab66a2cca9c378b9f': {
+  'REDACTED_ADDRESS': {
     name: 'Sushiswap',
     abi: [
       "function swapExactETHForTokens(uint256 amountOutMin, address[] path, address to, uint256 deadline)",
@@ -33,7 +34,7 @@ const ROUTER_CONFIG = {
     ],
     encoder: 'v2'
   },
-  '0x1111111254eeb25477b68fb85ed929f73a960582': {
+  'REDACTED_ADDRESS': {
     name: '1inch',
     abi: [
       "function swap(address fromToken, address toToken, uint256 amount, uint256 minReturnAmount, uint256 priceImpactX96)",
@@ -45,9 +46,9 @@ const ROUTER_CONFIG = {
 
 // Common token addresses for symbol lookup
 const TOKENS = {
-  '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2': { symbol: 'WETH', decimals: 18 },
-  '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48': { symbol: 'USDC', decimals: 6 },
-  '0xdac17f958d2ee523a2206206994597c13d831ec7': { symbol: 'USDT', decimals: 6 },
+  'REDACTED_ADDRESS': { symbol: 'WETH', decimals: 18 },
+  'REDACTED_ADDRESS': { symbol: 'USDC', decimals: 6 },
+  'REDACTED_ADDRESS': { symbol: 'USDT', decimals: 6 },
   '0x6b175474e89094c44da98b954edeac495271d0f': { symbol: 'DAI', decimals: 18 },
 };
 
@@ -97,7 +98,7 @@ export function decodeSwap(txData, routerAddress, routerName) {
     if (parsed.name === 'swapExactETHForTokens') {
       // ETH → Tokens
       const path = parsed.args.path;
-      const tokenIn = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'; // WETH
+      const tokenIn = 'REDACTED_ADDRESS'; // WETH
       const tokenOut = path[path.length - 1]; // Last token
       swap = {
         method: 'swapExactETHForTokens',
@@ -115,7 +116,7 @@ export function decodeSwap(txData, routerAddress, routerName) {
       // Tokens → ETH
       const path = parsed.args.path;
       const tokenIn = path[0]; // First token
-      const tokenOut = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'; // WETH
+      const tokenOut = 'REDACTED_ADDRESS'; // WETH
       swap = {
         method: 'swapTokensForExactETH',
         direction: 'tokens_to_eth',

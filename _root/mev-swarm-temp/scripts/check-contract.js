@@ -1,10 +1,11 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import hre from 'hardhat';
 
 async function main() {
   const { ethers } = hre;
   
   // Try to check the contract at the existing address
-  const contractAddress = '0x2809566Ee1491a6f3A80Ec7ad3d04a5527A52138';
+  const contractAddress = 'REDACTED_ADDRESS';
   
   try {
     // Get contract code

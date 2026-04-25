@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * Balance Manager - The "Janitor" for your MEV bot
  * 
@@ -38,14 +39,14 @@ const BALANCE_CONFIG = {
   CHECK_INTERVAL_MS: 60000,     // 60 seconds between checks
   
   // Uniswap Router
-  UNISWAP_ROUTER: '0x7a250d5630B4cF539739dF2C5dAcb4F659F2488D'
+  UNISWAP_ROUTER: 'REDACTED_ADDRESS'
 };
 
 // Token addresses (mainnet)
 const TOKENS = {
-  ETH: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-  WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-  USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+  ETH: 'REDACTED_ADDRESS',
+  WETH: 'REDACTED_ADDRESS',
+  USDC: 'REDACTED_ADDRESS'
 };
 
 // ABIs

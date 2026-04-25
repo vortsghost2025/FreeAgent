@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import { spawn } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -54,7 +55,7 @@ async function runHardhatNode() {
     const blockNumber = await provider.getBlockNumber();
     console.log('✅ Hardhat fork test RPC reachable, block number:', blockNumber);
 
-    const balance = await provider.getBalance('0x0000000000000000000000000000000000000000');
+    const balance = await provider.getBalance('REDACTED_ADDRESS');
     console.log('✅ Sample balance at zero address (read-only):', balance.toString());
 
     console.log('✅ Fork test passed.');

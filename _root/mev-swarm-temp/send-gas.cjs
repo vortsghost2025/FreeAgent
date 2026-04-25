@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * Send ETH from your main wallet to bot wallet for gas
  * Run: node mev-swarm/send-gas.cjs
@@ -6,7 +7,7 @@
 require('dotenv').config();
 const { ethers } = require('ethers');
 
-const TO_ADDRESS = '0x34769bE7087F1fE5B9ad5C50cC1526BC63217341';
+const TO_ADDRESS = 'REDACTED_ADDRESS';
 const SEND_AMOUNT = '0.005'; // 0.005 ETH for gas
 const RPC_URL = process.env.ETHEREUM_RPC_URL || process.env.MAINNET_RPC_URL;
 

@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import { EventEmitter } from 'events';
 
 // Conditional debug logger - enable with DEBUG_MEMPOOL=true node your-script.js
@@ -74,7 +75,7 @@ export class MempoolContentionTracker extends EventEmitter {
       const dataWithSelector = data;
       while ((match = addrRegex.exec(dataWithSelector)) !== null) {
         const addr = match[0].toLowerCase();
-        if (addr !== contractAddr && addr !== '0x0000000000000000000000000000000000000000') {
+        if (addr !== contractAddr && addr !== 'REDACTED_ADDRESS') {
           addresses.push(addr);
         }
       }

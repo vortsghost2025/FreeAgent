@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * MEV Swarm - FIXED EXECUTOR
  * Critical fixes applied:
@@ -9,8 +10,8 @@
 import { ethers } from 'ethers';
 
 // Token addresses
-const WETH_ADDRESS = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
-const USDC_ADDRESS = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
+const WETH_ADDRESS = 'REDACTED_ADDRESS';
+const USDC_ADDRESS = 'REDACTED_ADDRESS';
 
 // ERC20 ABI
 const ERC20_ABI = [
@@ -44,7 +45,7 @@ class FixedExecutor {
     this.wethContract = new ethers.Contract(WETH_ADDRESS, ERC20_ABI, this.wallet);
 
     // Router contract
-    this.routerAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
+    this.routerAddress = 'REDACTED_ADDRESS';
     this.router = new ethers.Contract(this.routerAddress, ROUTER_ABI, this.wallet);
 
     // Config

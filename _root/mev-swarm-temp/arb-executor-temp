@@ -2,18 +2,40 @@
   // Step 2: Simulate Route
   // ============================================================
 
-  const { feeData } = await this.provider.getFeeData();
+    const { feeData } = await this.provider.getFeeData();
+    const tokenOut = route[route.length - 1];
 
-  // Build transaction for first hop
-  const tx1 = {
-      to: this.provider.estimateGas ? await this.provider.estimateGas(...) : 210000n,
-      data: V2_ROUTER_ABI.encodeFunctionData('swapExactTokensForTokens', [
-        amountIn,
-        0,
-        [...route.map(addr => addr), tokenOut],
-        this.executorAddress,
-        Math.floor(Date.now() / 1000) + 3600
-      ]),
+    // Prepare interface and calldata for router calls
+    const iface = new ethers.Interface(V2_ROUTER_ABI);
+
+    // Build calldata for first hop
+    const calldata1 = iface.encodeFunctionData('swapExactTokensForTokens', [
+      amountIn,
+      0,
+      [...route.map(addr => addr), tokenOut],
+      this.executorAddress,
+      Math.floor(Date.now() / 1000) + 3600
+    ]);
+
+    // Estimate gas (if provider supports it) and construct tx1
+    let gasEstimate1 = 210000n;
+    if (this.provider.estimateGas) {
+      try {
+        const est = await this.provider.estimateGas({
+          to: UNISWAP_V2_ROUTER,
+          data: calldata1,
+          from: this.executorAddress
+        });
+        gasEstimate1 = BigInt(est.toString());
+      } catch (e) {
+        // fallback to default
+      }
+    }
+
+    const tx1 = {
+      to: UNISWAP_V2_ROUTER,
+      data: calldata1,
+      gasLimit: gasEstimate1
     };
 
   // Return early if dry run mode
@@ -22,18 +44,36 @@
       return { shouldExecute: false, reason: 'Dry run mode active' };
     }
 
-  // Build transaction for second hop (reverse path)
+  // Build calldata for second hop (reverse path)
+  const calldata2 = iface.encodeFunctionData('swapExactTokensForTokens', [
+    tokenOut,
+    0,
+    [tokenOut, tokenIn],
+    [...route.map(addr => addr).reverse(), tokenIn],
+    this.executorAddress,
+    Math.floor(Date.now() / 1000) + 3600
+  ]);
+
+  // Estimate gas for second hop and construct tx
+  let gasEstimate2 = 210000n;
+  if (this.provider.estimateGas) {
+    try {
+      const est2 = await this.provider.estimateGas({
+        to: UNISWAP_V2_ROUTER,
+        data: calldata2,
+        from: this.executorAddress
+      });
+      gasEstimate2 = BigInt(est2.toString());
+    } catch (e) {
+      // fallback
+    }
+  }
+
   const tx2 = {
-      to: this.provider.estimateGas ? await this.provider.estimateGas(...) : 210000n,
-      data: V2_ROUTER_ABI.encodeFunctionData('swapExactTokensForTokens', [
-        tokenOut,
-        0,
-        [tokenOut, tokenIn],
-        [...route.map(addr => addr).reverse(), tokenIn],
-        this.executorAddress,
-        Math.floor(Date.now() / 1000) + 3600
-      ]),
-    };
+    to: UNISWAP_V2_ROUTER,
+    data: calldata2,
+    gasLimit: gasEstimate2
+  };
 
   // Simulate first transaction
   const simResult1 = await this.provider.call(tx1);
@@ -48,7 +88,7 @@
   const amountOut2 = ethers.getBigInt(simResult2);
   const finalAmount = amountOut2;
 
-  console.log('\n💰 Final Amount:', ethers.formatEther(finalAmount, 18), tokenInSymbol);
+  console.log('\n💰 Final Amount:', ethers.formatUnits(finalAmount, 18), tokenInSymbol);
 
   // Calculate profit
   const profit = finalAmount - amountIn;

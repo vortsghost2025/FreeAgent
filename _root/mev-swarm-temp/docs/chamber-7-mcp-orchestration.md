@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # Chamber 7: MCP Orchestration Layer
 
 ## Overview
@@ -180,7 +181,7 @@ Fetches current reserves for a specific pool.
 **Returns:**
 ```json
 {
-  "poolId": "0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640",
+  "poolId": "REDACTED_ADDRESS",
   "poolType": "uniswap_v3",
   "token0": "USDC",
   "token1": "ETH",
@@ -208,7 +209,7 @@ Simulates V3 swap with tick-walking precision.
 **Returns:**
 ```json
 {
-  "poolId": "0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640",
+  "poolId": "REDACTED_ADDRESS",
   "amountIn": "10000000000000000000",
   "amountOut": "19711085720",
   "ticksCrossed": 23,
@@ -262,7 +263,7 @@ Predicts how pending transactions will affect arbitrage opportunities.
   "pendingTxId": "0x123abc...",
   "affectedPools": [
     {
-      "poolId": "0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640",
+      "poolId": "REDACTED_ADDRESS",
       "currentReserves": {"reserve0": "12500000000000", "reserve1": "6335000000000000000000"},
       "predictedReserves": {"reserve0": "12450000000000", "reserve2": "6340000000000000000000"},
       "impact": {"priceImpact": 0.004, "liquidityChange": -0.004}

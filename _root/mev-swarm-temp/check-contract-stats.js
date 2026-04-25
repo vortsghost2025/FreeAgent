@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import 'dotenv/config';
 import { ethers } from 'ethers';
 
@@ -6,7 +7,7 @@ async function main() {
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
   const contract = new ethers.Contract(
-    '0x4FF5eF5d185195173b0B178eDe4A7679E7De272f',
+    'REDACTED_ADDRESS',
     ['function getStats() view returns (uint256 totalExecuted, uint256 totalProfit, uint256 totalFailed, bool paused)'],
     wallet
   );

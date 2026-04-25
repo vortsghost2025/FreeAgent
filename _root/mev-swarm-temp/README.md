@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # MEV Swarm - 50-Agent Parallel Arbitrage System
 
 🚀 **High-Performance MEV Arbitrage System with 50 Parallel Agents**
@@ -77,7 +78,7 @@ ETH_RPC_URL=https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID
 ARB_RPC_URL=https://arb-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY
 
 # Wallet Configuration
-PRIVATE_KEY=your_private_key_here
+PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 
 # Gas Configuration
 MAX_GAS_PRICE=100

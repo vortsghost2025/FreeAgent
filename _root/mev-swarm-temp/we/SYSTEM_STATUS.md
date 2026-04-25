@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # 🎯 MEV Predictive Trading System - COMPLETE STATUS
 
 ## What's Running
@@ -42,9 +43,9 @@
 ```
 Prices: ~$2135-2139 ETH/USDC
 Pools: 
-  - Uniswap V3 0.05%: 0xd0b53D9277642d899DF5C87A3966A349A798F224
-  - Uniswap V3 0.3%: 0x6c561B446416E1A00E8E93E221854d6eA4171372  
-  - Aerodrome: 0xcDAC0d6c6C59727a65F871236188350531885C43
+  - Uniswap V3 0.05%: REDACTED_ADDRESS
+  - Uniswap V3 0.3%: REDACTED_ADDRESS  
+  - Aerodrome: REDACTED_ADDRESS
 
 Spread: 0.04% - 0.19%
 Profit range: -$0.003 to +$0.001

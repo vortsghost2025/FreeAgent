@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * Base Arbitrage Launcher
  * 
@@ -9,7 +10,7 @@ const { ethers } = require("ethers");
 // ========== CONFIG ==========
 const CONFIG = {
   // Your Ethereum private key (without 0x prefix)
-  PRIVATE_KEY: "6d0c81a083464c4e554106c21a0146e4ef3af44b5aa1556e95c7246f92636535",
+  PRIVATE_KEY: "REDACTED_HEX_64",
   
   // Trading params for Base
   TRADE_ETH: "0.02",        // ~$50 per trade
@@ -20,13 +21,13 @@ const CONFIG = {
 
 // ========== POOL ADDRESSES (from discovery) ==========
 const POOLS = {
-  uniV3: { WETH_USDC: "0xd0b53D9277642d899DF5C87A3966A349A798F224", fee: 500 },
-  aero: { WETH_USDC: "0xcDAC0d6c6C59727a65F871236188350531885C43" },
+  uniV3: { WETH_USDC: "REDACTED_ADDRESS", fee: 500 },
+  aero: { WETH_USDC: "REDACTED_ADDRESS" },
 };
 
 // ========== TOKEN ADDRESSES ==========
-const WETH = "0x4200000000000000000000000000000000000006";
-const USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+const WETH = "REDACTED_ADDRESS";
+const USDC = "REDACTED_ADDRESS";
 
 // ========== ABIs ==========
 const poolV3Abi = ["function token0() view returns (address)", "function token1() view returns (address)", "function slot0() view returns (uint160 sqrtPriceX96, int24 tick, uint16 observationIndex, uint16 observationCardinality, uint16 observationCardinalityNext, uint8 feeProtocol, bool unlocked)"];

@@ -1,0 +1,38 @@
+name: Phase Regression
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  phase-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then npm ci; elif [ -f yarn.lock ]; then npm ci; else echo "No lockfile found"; fi
+
+      - name: Run regression script (if present)
+        run: |
+          if [ -x .github/scripts/phase_regression.sh ]; then ./.github/scripts/phase_regression.sh; elif [ -f package.json ] && jq -e '.scripts["phase-regression"]' >/dev/null 2>&1; then npm run phase-regression; else echo "No regression script configured"; fi
+
+      - name: Upload regression results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase-regression-results
+          path: |
+            .github/phase-regression-output/**
+            regression-results/**

@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * MEV Swarm - Constants
  * Pure configuration constants with no side effects (no RPC, no .env required)
@@ -12,37 +13,37 @@ export const TICK_SPACINGS = {
 
 // Token addresses
 export const TOKEN_ADDRESSES = {
-  'USDC': '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-  'USDT': '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-  'ETH': '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-  'WBTC': '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599'
+  'USDC': 'REDACTED_ADDRESS',
+  'USDT': 'REDACTED_ADDRESS',
+  'ETH': 'REDACTED_ADDRESS',
+  'WBTC': 'REDACTED_ADDRESS'
 };
 
 // Pool configurations for arbitrage graph
 export const POOL_CONFIGS = {
   'USDC/ETH': {
-    address: '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640',
+    address: 'REDACTED_ADDRESS',
     type: 'uniswap_v3',
     token0: 'USDC',
     token1: 'ETH',
     fee: 500
   },
   'USDT/ETH': {
-    address: '0x4e68Ccd3E89f51C3074ca5072bbAC773960dFa36',
+    address: 'REDACTED_ADDRESS',
     type: 'uniswap_v3',
     token0: 'ETH',
     token1: 'USDT',
     fee: 3000
   },
   'WBTC/ETH': {
-    address: '0xcbcdf9626bc03e24f779434178a73a0b4bad62ed',
+    address: 'REDACTED_ADDRESS',
     type: 'uniswap_v3',
     token0: 'WBTC',
     token1: 'ETH',
     fee: 3000
   },
   'SushiSwap USDC/ETH': {
-    address: '0x397FF1542f962076d0BFE58eA045FfA2d347ACa0',
+    address: 'REDACTED_ADDRESS',
     type: 'uniswap_v2',
     token0: 'USDC',
     token1: 'ETH'

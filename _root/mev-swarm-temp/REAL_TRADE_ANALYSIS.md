@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # MEV Bot - REAL Trade Analysis (Contract Stats + Wallet Reality)
 
 **Date**: March 3, 2026
@@ -229,7 +230,7 @@ Fix: `Expected Profit = Spread × Value - Gas - DEX Fees - Slippage`
 
 ## 📊 CONTRACT DETAILS
 
-**Contract**: 0x4FF5eF5d185195173b0B178eDe4A7679E7De272f
+**Contract**: REDACTED_ADDRESS
 **ABI**: `executeArbitrage(address tokenIn, address tokenOut, uint256 amountIn) external`
 **Event**: `ArbitrageExecuted(address indexed tokenA, address indexed tokenB, uint256 amountIn, uint256 profit, uint256 timestamp)`
 

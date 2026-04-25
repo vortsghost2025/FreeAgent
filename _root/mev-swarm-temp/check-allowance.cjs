@@ -1,9 +1,10 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 require('dotenv').config();
 const { ethers } = require('ethers');
 
-const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
-const EXECUTOR = '0x34769bE7087F1fE5B9ad5C50cC1526BC63217341';
-const WALLET = '0x29F7830AfD1F612935cFAfC65BF7b02272E79E0F';
+const WETH = 'REDACTED_ADDRESS';
+const EXECUTOR = 'REDACTED_ADDRESS';
+const WALLET = 'REDACTED_ADDRESS';
 
 async function check() {
   try {

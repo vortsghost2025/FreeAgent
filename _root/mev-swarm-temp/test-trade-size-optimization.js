@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * MEV Swarm - Trade Size Optimization Test Suite
  * Demonstrates dynamic trade sizing capabilities
@@ -19,7 +20,7 @@ const DIRECT_PROVIDER_URL = 'https://ethereum-mainnet.core.chainstack.com/4eaab7
 // Pool configurations
 const POOLS = {
   'USDC/ETH': {
-    address: '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640',
+    address: 'REDACTED_ADDRESS',
     token0: 'USDC',
     token1: 'ETH',
     decimals0: 6,
@@ -29,7 +30,7 @@ const POOLS = {
     fee: 3000
   },
   'SushiSwap USDC/ETH': {
-    address: '0x397FF1542f962076d0BFE58eA045FfA2d347ACa0',
+    address: 'REDACTED_ADDRESS',
     token0: 'USDC',
     token1: 'ETH',
     decimals0: 6,

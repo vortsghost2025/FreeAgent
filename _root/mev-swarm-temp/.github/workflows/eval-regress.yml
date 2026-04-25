@@ -1,0 +1,47 @@
+name: Evaluation Regress Report
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  eval-regress:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Run evaluator (replay + regress)
+        run: |
+          mkdir -p we/eval
+          node we/eval/run_evaluation.mjs --replay --regress 2>&1 | tee we/eval/regression_output.txt || true
+
+      - name: Post regression results to PR
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const pr = context.payload.pull_request;
+            const outPath = 'we/eval/regression_output.txt';
+            let body = '';
+            if (fs.existsSync(outPath)) {
+              const txt = fs.readFileSync(outPath, 'utf8');
+              body = 'Automated evaluation run (replay + regress):\n\n' + txt;
+            } else {
+              body = 'Automated evaluation run produced no output.';
+            }
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body,
+            });

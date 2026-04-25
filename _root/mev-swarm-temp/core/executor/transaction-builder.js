@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * MEV Swarm - Transaction Builder
  * Constructs arbitrage transactions from opportunities
@@ -13,18 +14,18 @@ import { ethers } from 'ethers';
 
 // Router addresses
 export const ROUTER_ADDRESSES = {
-  uniswap_v2: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
-  uniswap_v3: '0xE592427A0AEce92De3Edee1F18E0157C05861564',
-  sushiswap: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F',
-  aave_pool: '0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9',
-  balancer_vault: '0xBA12222222228d8Ba445958a75a0704d566BF2C8'
+  uniswap_v2: 'REDACTED_ADDRESS',
+  uniswap_v3: 'REDACTED_ADDRESS',
+  sushiswap: 'REDACTED_ADDRESS',
+  aave_pool: 'REDACTED_ADDRESS',
+  balancer_vault: 'REDACTED_ADDRESS'
 };
 
 // Flash loan providers
 export const FLASH_LOAN_PROVIDERS = {
-  aave: '0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9',
+  aave: 'REDACTED_ADDRESS',
   dydx: '0x1E0447b19BB6EcFdAe1eA432eaA572B69b',
-  uniswap_v3: '0xE592427A0AEce92De3Edee1F18E0157C05861564'
+  uniswap_v3: 'REDACTED_ADDRESS'
 };
 
 // Method signatures

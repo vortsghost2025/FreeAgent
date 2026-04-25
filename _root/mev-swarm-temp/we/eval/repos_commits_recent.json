@@ -1,0 +1,16 @@
+[
+  {
+    "path": "C:\\Users\\seand\\OneDrive\\workspace\\_root\\mev-swarm-temp\\freeagent-clean",
+    "commits": [
+      {
+        "date": "2026-03-20 13:50:00 -0400",
+        "hash": "3a3d8fda",
+        "subject": "ci: Add Azure VM bootstrap and profiling runbook (clean branch)"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\seand\\OneDrive\\workspace\\_root\\mev-swarm-temp\\we\\autonomous-elasticsearch-evolution-agent",
+    "commits": []
+  }
+]

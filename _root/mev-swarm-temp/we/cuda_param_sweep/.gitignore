@@ -1,0 +1,24 @@
+# Build artifacts
+build/
+cmake-build-*/
+*.o
+*.obj
+*.exe
+param_sweep
+
+# Generated results
+sweep_results.csv
+sweep_results.png
+sweep_results.pdf
+results/
+
+# Temporary files
+*.tmp
+*.swp
+*~
+.DS_Store
+
+# IDE / editor files
+.idea/
+.vscode/
+*.code-workspace

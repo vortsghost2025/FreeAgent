@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * MEV Swarm - Mempool Monitor
  * Watches pending transactions and identifies MEV-relevant activity
@@ -33,9 +34,9 @@ export const SWAP_SELECTORS = {
 // MEV-relevant addresses (routers, pools)
 export const MEV_RELEVANT_ADDRESSES = {
   routers: [
-    '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D', // Uniswap V2 Router
-    '0xE592427A0AEce92De3Edee1F18E0157C05861564', // Uniswap V3 Router
-    '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F'  // SushiSwap Router
+    'REDACTED_ADDRESS', // Uniswap V2 Router
+    'REDACTED_ADDRESS', // Uniswap V3 Router
+    'REDACTED_ADDRESS'  // SushiSwap Router
   ],
   // Can be extended with known pool addresses
   pools: []

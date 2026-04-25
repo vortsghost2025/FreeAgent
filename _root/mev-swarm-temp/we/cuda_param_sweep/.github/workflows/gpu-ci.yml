@@ -42,7 +42,8 @@ jobs:
             ./run_sweep_part1.sh & ./run_sweep_part2.sh & wait
           else
             echo "Single (or no) GPU detected; running full suite"
-            ./run_all.sh
+            chmod +x ./run_all_with_advice.sh || true
+            ./run_all_with_advice.sh
           fi
 
       - name: Upload results as artifact

@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * SECURITY GUARD - Idiot-Proof Private Key Protection
  * 
@@ -109,7 +110,7 @@ console.info = createSafeLogger(originalConsoleInfo);
 function validateEnvFile() {
   if (!fs.existsSync(ENV_LOCAL_PATH)) {
     console.error(`${RED}❌ FATAL: .env.local not found!${RESET}`);
-    console.error(`${YELLOW}   Create .env.local with your PRIVATE_KEY=${RESET}`);
+    console.error(`${YELLOW}   Create .env.local with your PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
     console.error(`${YELLOW}   NEVER use .env for keys - it gets committed to git!${RESET}`);
     return false;
   }
@@ -199,7 +200,7 @@ function initSecurity() {
   }
 
   const normalized = normalizePrivateKey(key);
-  process.env.PRIVATE_KEY = normalized;
+  process.env.PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
   
   // 4. Validate live trading mode
   const isLive = validateLiveTrading();

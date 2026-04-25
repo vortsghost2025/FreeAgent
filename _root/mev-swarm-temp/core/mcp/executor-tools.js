@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * MEV Swarm - Executor MCP Tools (Chamber 6)
  * Step-based MCP tools for executor layer
@@ -148,7 +149,7 @@ export async function buildV2SwapCalldata(args = {}) {
   }
 
   const txBuilder = new TransactionBuilder({
-    executorAddress: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+    executorAddress: 'REDACTED_ADDRESS',
     flashLoanProvider: 'aave'
   });
 
@@ -193,7 +194,7 @@ export async function buildV3SwapCalldata(args = {}) {
   }
 
   const txBuilder = new TransactionBuilder({
-    executorAddress: '0x68b3465833fb72A70ecDF485E0e4C7bD8665fc45', // Uniswap V3 Router
+    executorAddress: 'REDACTED_ADDRESS', // Uniswap V3 Router
     flashLoanProvider: 'aave'
   });
 

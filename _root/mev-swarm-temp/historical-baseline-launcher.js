@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import { ethers } from "ethers";
 import dotenv from "dotenv";
 import path from "path";
@@ -29,13 +30,13 @@ const orchestrator = new Orchestrator({
 });
 
 const tok = {
-  weth: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-  usdc: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  weth: "REDACTED_ADDRESS",
+  usdc: "REDACTED_ADDRESS",
 };
 
 const pair = {
-  uni: "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc",
-  sushi: "0x397ff1542f962076d0bfe58ea045ffa2d347aca0",
+  uni: "REDACTED_ADDRESS",
+  sushi: "REDACTED_ADDRESS",
 };
 
 const abi = [

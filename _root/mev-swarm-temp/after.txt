@@ -3,10 +3,10 @@
       const tokenOut = route[i + 1];
 
       console.log('\n📍 Route Hops:', numHops);
-      for (const hop of this.hops) {
-        console.log(`   ${i + 1}. ${hop.dex}: ${hop.tokenInSymbol} → ${hop.tokenOutSymbol}`);
-      }
+      console.log(`   ${i + 1}. ${tokenIn} → ${tokenOut}`);
     }
+
+    // ============================================================
 
     // ============================================================
     // Step 1: Simulate Route
@@ -59,7 +59,7 @@
     const amountOut2 = ethers.getBigInt(simResult2);
     const finalAmount = amountOut2;
 
-    console.log('\n💰 Final Amount:', ethers.formatEther(finalAmount, 18), tokenInSymbol);
+    console.log('\n💰 Final Amount:', ethers.formatUnits(finalAmount, 18), tokenInSymbol);
 
     // Calculate profit
     const profit = finalAmount - amountIn;
@@ -96,7 +96,7 @@ watcherEmitter.on('opportunity', async (op) => {
   console.log('\n🚀 Opportunity received!');
   console.log('   Route:', op.route.join(' → '));
   console.log('   Type:', op.routeType);
-  console.log('   Amount:', ethers.formatEther(op.amountIn, op.tokenInDecimals), op.tokenInSymbol);
+  console.log('   Amount:', ethers.formatUnits(op.amountIn, op.tokenInDecimals), op.tokenInSymbol);
 
   console.log('\n🔄 Simulating arbitrage route...');
 

@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # 🚀 MEV Swarm - Deployment Checklist
 
 ## Current Status: 🟢 **READY TO DEPLOY**
@@ -22,10 +23,10 @@
 nano .env
 
 # Find this line:
-PRIVATE_KEY=YOUR_PRIVATE_KEY_HERE
+PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 
 # Replace with your actual private key:
-PRIVATE_KEY=0xabcdef1234567890abcdef1234567890abcdef1234567890
+PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 
 # Save and exit (Ctrl+X, then Y)
 ```

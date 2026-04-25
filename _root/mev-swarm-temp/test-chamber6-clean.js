@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * MEV Swarm - Chamber 6 Clean Validation Test
  * Simple, focused validation without duplication
@@ -17,7 +18,7 @@ async function testChamber6Clean() {
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
   const txBuilder = new TransactionBuilder({
-    executorAddress: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+    executorAddress: 'REDACTED_ADDRESS',
     flashLoanProvider: 'aave'
   });
 
@@ -25,8 +26,8 @@ async function testChamber6Clean() {
   console.log('Test 1: Simple V2 Swap Transaction Building\n');
 
   // Use valid checksummed addresses
-  const wethAddress = ethers.getAddress('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2');
-  const usdcAddress = ethers.getAddress('0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48');
+  const wethAddress = ethers.getAddress('REDACTED_ADDRESS');
+  const usdcAddress = ethers.getAddress('REDACTED_ADDRESS');
 
   const simpleOpportunity = {
     pathId: 'USDC→ETH',
@@ -77,7 +78,7 @@ async function testChamber6Clean() {
   console.log('Test 4: Transaction Validation\n');
 
   const validTx = {
-    to: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+    to: 'REDACTED_ADDRESS',
     data: '0x' + 'a'.repeat(100), // Valid calldata
     gasLimit: 100000,
     deadline: Math.floor(Date.now() / 1000) + 300,

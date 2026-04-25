@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # 🚨 KEY MANAGEMENT DISASTER - FIXING NOW
 
 ## Current Situation (COMPLETE MESS)
@@ -17,7 +18,7 @@
 Choose ONE of these:
 
 **Option A: Use your MetaMask wallet (RECOMMENDED)**
-- Address: `0x34769be7087f1fe5b9ad5c50cc1526bc63217341`
+- Address: `REDACTED_ADDRESS`
 - You already have access to it
 - You control the private key
 - Safe and familiar

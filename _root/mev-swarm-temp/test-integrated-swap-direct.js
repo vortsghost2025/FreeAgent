@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * Test integrated swap simulation using pool-watcher.js directly
  * This test imports the core functions and calls them directly without RPC dependency
@@ -78,11 +79,11 @@ async function testSushiSwap() {
   console.log('=== Testing V2 Swap Simulation (Direction + Precision Fixed) ===\n');
 
   // SushiSwap reserves (from live chain)
-  const SUSHI_PAIR = '0x397FF1542f962076d0BFE58eA045FfA2d347ACa0';
+  const SUSHI_PAIR = 'REDACTED_ADDRESS';
 
   // Known addresses
-  const USDC = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
-  const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+  const USDC = 'REDACTED_ADDRESS';
+  const WETH = 'REDACTED_ADDRESS';
 
   // SushiSwap USDC/ETH pool config
   const poolConfig = {

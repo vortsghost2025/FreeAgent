@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * MEV Swarm - Uniswap V3 Pool Watcher
  * WATCHER v3.0 - FIXED WITH TYPE GUARDS AND RETURNS
@@ -30,17 +31,17 @@ const CURVE_STABLESWAP_ABI = [
 
 // Known token addresses for validation
 const TOKEN_ADDRESSES = {
-  'USDC': '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-  'USDT': '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-  'ETH': '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-  'WBTC': '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599'
+  'USDC': 'REDACTED_ADDRESS',
+  'USDT': 'REDACTED_ADDRESS',
+  'ETH': 'REDACTED_ADDRESS',
+  'WBTC': 'REDACTED_ADDRESS'
 };
 
 // Pool configuration - verified from Uniswap V3
 const POOLS = {
   'USDC/ETH': {
     type: 'uniswap_v3',
-    address: process.env.POOL_USDC_ETH || '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640',
+    address: process.env.POOL_USDC_ETH || 'REDACTED_ADDRESS',
     token0: 'USDC',
     token1: 'ETH',
     decimals0: 6,
@@ -50,7 +51,7 @@ const POOLS = {
   'USDT/ETH': {
     // Uniswap V3 USDT/ETH 0.3% pool - WETH is token0, USDT is token1
     type: 'uniswap_v3',
-    address: process.env.POOL_USDT_ETH || '0x4e68Ccd3E89f51C3074ca5072bbAC773960dFa36',
+    address: process.env.POOL_USDT_ETH || 'REDACTED_ADDRESS',
     token0: 'ETH',     // WETH is token0 in this pool!
     token1: 'USDT',    // USDT is token1
     decimals0: 18,     // ETH
@@ -60,7 +61,7 @@ const POOLS = {
   'WBTC/ETH': {
     // Uniswap V3 WBTC/ETH 0.3% pool - WBTC is token0, WETH is token1
     type: 'uniswap_v3',
-    address: process.env.POOL_WBTC_ETH || '0xcbcdf9626bc03e24f779434178a73a0b4bad62ed',
+    address: process.env.POOL_WBTC_ETH || 'REDACTED_ADDRESS',
     token0: 'WBTC',    // WBTC is token0
     token1: 'ETH',     // WETH is token1
     decimals0: 8,      // WBTC
@@ -69,7 +70,7 @@ const POOLS = {
   },
   'SushiSwap USDC/ETH': {
     // SushiSwap USDC/ETH pair - USDC is token0, WETH is token1
-    address: process.env.POOL_SUSHI_USDC_ETH || '0x397FF1542f962076d0BFE58eA045FfA2d347ACa0',
+    address: process.env.POOL_SUSHI_USDC_ETH || 'REDACTED_ADDRESS',
     type: 'uniswap_v2',  // SushiSwap uses Uniswap V2 formula
     token0: 'USDC',
     token1: 'ETH',
@@ -83,7 +84,7 @@ const POOLS = {
 
   'UniswapV2 USDC/ETH': {
     // Uniswap V2 USDC/ETH pair - USDC is token0, WETH is token1
-    address: '0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc',
+    address: 'REDACTED_ADDRESS',
     type: 'uniswap_v2',
     token0: 'USDC',
     token1: 'ETH',
@@ -93,32 +94,32 @@ const POOLS = {
   },
 
   // Note: UniswapV2 USDT/ETH excluded due to reserve ratio anomalies
-  // (0x0d4a11d5EEaaC28EC3F61d100daF4d40471f1852 shows incorrect pricing)
+  // (REDACTED_ADDRESS shows incorrect pricing)
 
   // === Phase 2B: Balancer V2 Pools ===
   'Balancer WETH/USDC': {
-    address: '0xA81598667AC561986b70ae11bBE2dd5348ed4327',
+    address: 'REDACTED_ADDRESS',
     type: 'balancer_v2',
-    vault: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
-    poolId: '0xa81598667ac561986b70ae11bbe2dd5348ed432700020000000000000000000e',
+    vault: 'REDACTED_ADDRESS',
+    poolId: 'REDACTED_PRIVATE_KEY',
     token0: 'ETH',
     token1: 'USDC',
-    token0Address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-    token1Address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    token0Address: 'REDACTED_ADDRESS',
+    token1Address: 'REDACTED_ADDRESS',
     decimals0: 18,
     decimals1: 6,
     invert: false
   },
 
   'Balancer WETH/USDT': {
-    address: '0x1E19CF2D73a72Ef1332C882F20534B6519Be0276',
+    address: 'REDACTED_ADDRESS',
     type: 'balancer_v2',
-    vault: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
-    poolId: '0x1e19cf2d73a72ef1332c882f20534b6519be027600020000000000000000000e',
+    vault: 'REDACTED_ADDRESS',
+    poolId: 'REDACTED_PRIVATE_KEY',
     token0: 'ETH',
     token1: 'USDT',
-    token0Address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-    token1Address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+    token0Address: 'REDACTED_ADDRESS',
+    token1Address: 'REDACTED_ADDRESS',
     decimals0: 18,
     decimals1: 6,
     invert: false
@@ -127,12 +128,12 @@ const POOLS = {
   // === Phase 2B: Curve StableSwap Pools ===
   // Curve 3pool (USDC/USDT/DAI) - mainnet address
   'Curve USDC/USDT': {
-    address: '0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7', // Curve 3pool
+    address: 'REDACTED_ADDRESS', // Curve 3pool
     type: 'curve_stableswap',
     token0: 'USDC',
     token1: 'USDT',
-    token0Address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-    token1Address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+    token0Address: 'REDACTED_ADDRESS',
+    token1Address: 'REDACTED_ADDRESS',
     decimals0: 6,
     decimals1: 6,
     index0: 1, // USDC is at index 1 in 3pool

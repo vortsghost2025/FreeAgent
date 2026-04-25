@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
@@ -17,8 +18,8 @@ contract RealArbitrageExecutor is ReentrancyGuard, Ownable {
     using SafeERC20 for IERC20;
 
     // ============ Constants ============
-    address public constant UNISWAP_V2_ROUTER = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
-    address public constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address public constant UNISWAP_V2_ROUTER = REDACTED_ADDRESS;
+    address public constant WETH = REDACTED_ADDRESS;
 
     // ============ State Variables ============
     uint256 public totalExecuted;

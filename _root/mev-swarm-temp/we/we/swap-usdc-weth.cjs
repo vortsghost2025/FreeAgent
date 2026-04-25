@@ -1,10 +1,11 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 require('dotenv').config();
 const { ethers } = require('ethers');
 
 // Configuration
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";  // Base USDC
-const WETH_ADDRESS = "0x4200000000000000000000000000000000000006";   // Base WETH
+const PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
+const USDC_ADDRESS = "REDACTED_ADDRESS";  // Base USDC
+const WETH_ADDRESS = "REDACTED_ADDRESS";   // Base WETH
 const UNISWAP_ROUTER = "0x3fCcC3e1dEeD3b0EFaEE2c5c5d5b12F8C93DD50"; // Base Uniswap V3 Router
 
 const USDC_ABI = [
@@ -20,7 +21,7 @@ const ROUTER_ABI = [
 async function main() {
   if (!PRIVATE_KEY) {
     console.log("Error: PRIVATE_KEY not found in .env");
-    console.log("Add: PRIVATE_KEY=0x...");
+    console.log("Add: PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
     return;
   }
 

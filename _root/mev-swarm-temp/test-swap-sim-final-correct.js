@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import { ethers } from 'ethers';
 
 // LOW-LEVEL: Pure math function operating only on raw values
@@ -79,7 +80,7 @@ function simulateSwapV2ForPool(poolConfig, reserves, tokenIn, amountInHuman) {
 
 async function testSushiSwap() {
   const provider = new ethers.JsonRpcProvider('https://ethereum-mainnet.core.chainstack.com/4eaab7e73e2a832024e11e41e6688733');
-  const SUSHI_PAIR = '0x397FF1542f962076d0BFE58eA045FfA2d347ACa0';
+  const SUSHI_PAIR = 'REDACTED_ADDRESS';
   const PAIR_ABI = [
     'function getReserves() view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)',
     'function token0() view returns (address)',

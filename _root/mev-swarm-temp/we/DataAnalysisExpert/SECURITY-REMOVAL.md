@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 Security Removal & Key Rotation Guide
 
 Goal: remove the exposed private key from the repository, rotate credentials, and verify repository is clean.
@@ -9,7 +10,7 @@ IMPORTANT: Do NOT perform force-pushes to shared remotes unless you have coordin
 - Revoke or rotate any other credentials that may be related (API keys, exchange API, third-party services).
 
 2) Make working-tree fixes (already done locally)
-- Replace sensitive values with placeholders in working files (done): update `.env` to `PRIVATE_KEY=your_private_key_here` and commit on a safety branch.
+- Replace sensitive values with placeholders in working files (done): update `.env` to `PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 
 Suggested commands to commit safe replacements on a new branch:
 ```bash
@@ -22,9 +23,9 @@ git push origin HEAD
 3) Verify where the secret appears in history
 - To search full history for the secret (replace the hex prefix if needed):
 ```bash
-git log --all -S '6d0c81a083464c4e554106c21a0146e4ef3af44b5aa1556e95c7246f92636535'
+git log --all -S 'REDACTED_HEX_64'
 # or search by file path occurrences
-git grep -n "PRIVATE_KEY=0x6d0c81a0" $(git rev-list --all)
+git grep -n "PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 ```
 
 4) Recommended history purge options (pick one)
@@ -40,7 +41,7 @@ git filter-repo --invert-paths --paths .env
 - OR remove by replacing the secret string (create a replacements file):
 Create `replacements.txt` with a single line:
 ```
-6d0c81a083464c4e554106c21a0146e4ef3af44b5aa1556e95c7246f92636535==>REDACTED_PRIVATE_KEY
+REDACTED_HEX_64==>REDACTED_PRIVATE_KEY
 ```
 Then:
 ```bash

@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 /**
  * MEV Swarm - Wallet Test Script
  * Test wallet configuration and basic functionality
@@ -59,7 +60,7 @@ async function testWallet() {
     } else {
       console.log('   ℹ No wallet configured - monitoring only mode');
       console.log('\n💡 Tip: Add BOT_WALLET_PRIVATE_KEY to .env to enable trading functionality');
-      console.log('   Example: BOT_WALLET_PRIVATE_KEY="0x..."');
+      console.log('   Example: BOT_WALLET_PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
     }
     
     // Test cross-chain connections

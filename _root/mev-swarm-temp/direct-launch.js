@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 const { ethers } = require('ethers');
 require('dotenv/config');
 
@@ -12,7 +13,7 @@ if (!process.env.PRIVATE_KEY) {
 }
 
 const CONFIG = {
-  EXECUTOR_ADDRESS: '0xaC9d24032F5375625661fADA31902D10D25c55e7',
+  EXECUTOR_ADDRESS: 'REDACTED_ADDRESS',
   RPC_URL: 'https://eth.llamarpc.com',
   WALLET_PRIVATE_KEY: process.env.PRIVATE_KEY,
   TEST_AMOUNT: ethers.parseEther('0.01') // 0.01 ETH per trade
@@ -106,8 +107,8 @@ function simulateOpportunityScan() {
 
   if (random > 0.8) {
     return {
-      tokenIn: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-      tokenOut: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+      tokenIn: 'REDACTED_ADDRESS',
+      tokenOut: 'REDACTED_ADDRESS',
       amountIn: CONFIG.TEST_AMOUNT,
       expectedProfit: ethers.parseEther('0.002'), // 0.002 ETH
       profitRatio: 20,

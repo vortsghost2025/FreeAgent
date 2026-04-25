@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import 'dotenv/config';
 import { ethers } from 'ethers';
 import { refreshAllPools, compareCrossDexPrices, findArbitrageOpportunities } from './pool-watcher.js';
@@ -11,8 +12,8 @@ const CONFIG = {
 };
 
 const TOKENS = {
-  ETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',  // WETH
-  USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+  ETH: 'REDACTED_ADDRESS',  // WETH
+  USDC: 'REDACTED_ADDRESS'
 };
 
 class SwarmExecutor {
@@ -33,7 +34,7 @@ class SwarmExecutor {
       'function deposit() payable',
       'function withdraw(uint256 amount)'
     ];
-    this.wethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'; // WETH
+    this.wethAddress = 'REDACTED_ADDRESS'; // WETH
     this.wethContract = new ethers.Contract(this.wethAddress, WETH_ABI, this.wallet);
   }
 

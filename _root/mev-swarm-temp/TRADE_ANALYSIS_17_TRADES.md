@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # MEV Bot Trade Analysis - 17 Confirmed Profitable Trades
 
 **Date**: March 2, 2026
@@ -289,7 +290,7 @@ The 40-minute run with 17 profitable trades proves:
    - Consider compounding profits
 
 4. **Track on Etherscan** 🔍
-   - Contract: 0x4FF5eF5d185195173b0B178eDe4A7679E7De272f
+   - Contract: REDACTED_ADDRESS
    - Monitor ArbitrageExecuted events
    - Verify all profits
    - Track cumulative performance

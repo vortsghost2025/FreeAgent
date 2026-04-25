@@ -1,8 +1,9 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 const { ethers } = require("ethers");
 
 const provider = new ethers.JsonRpcProvider("https://base-rpc.publicnode.com");
 
-const UNI_V3_POOL = "0xd0b53D9277642d899DF5C87A3966A349A798F224";
+const UNI_V3_POOL = "REDACTED_ADDRESS";
 
 async function main() {
   const uniPool = new ethers.Contract(UNI_V3_POOL, [

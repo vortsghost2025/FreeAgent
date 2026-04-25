@@ -1,7 +1,8 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 ## SUPER SIMPLE - 3 STEPS
 
 ### Step 1: Go here
-https://etherscan.io/address/0xaC9d24032F5375625661fADA31902D10D25c55e7
+https://etherscan.io/address/REDACTED_ADDRESS
 
 ### Step 2: Click "Write Contract" (near the top)
 Then click "Connect Web3" and choose MetaMask

@@ -1,7 +1,8 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 import { ethers } from 'ethers';
 import 'dotenv/config';
 
-const USDC_ETH_POOL = '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640';
+const USDC_ETH_POOL = 'REDACTED_ADDRESS';
 const POOL_ABI = ['function slot0() external view returns (uint160 sqrtPriceX96, int24 tick, uint16 observationIndex, uint16 observationCardinality, uint16 observationCardinalityNext, uint8 feeProtocol, bool unlocked)'];
 
 const provider = new ethers.JsonRpcProvider(process.env.MAINNET_RPC_URL);

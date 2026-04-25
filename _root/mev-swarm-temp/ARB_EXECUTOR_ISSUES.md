@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # arb-executor.js - Issues Fixed
 
 ## ✅ Issues Fixed
@@ -5,7 +6,7 @@
 ### 1. Line 28 - Wrong env var name
 ```javascript
 // FIXED
-const PRIVATE_KEY = process.env.BOT_WALLET_PRIVATE_KEY;
+const PRIVATE_KEY=REDACTED_SET_VIA_SECRET_MANAGER
 ```
 
 ### 2. Line 466 - Missing env var
@@ -23,7 +24,7 @@ Added `KNOWN_TOKENS` map and `getTokenSymbol()` function for proper token resolu
 ## Test Opportunity
 ```javascript
 {
-  route: ['0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'],
+  route: ['REDACTED_ADDRESS', 'REDACTED_ADDRESS', 'REDACTED_ADDRESS'],
   routeType: '2-hop',
   dexes: ['Uniswap V2', 'Uniswap V2'],
   amountIn: ethers.parseEther('0.1'),

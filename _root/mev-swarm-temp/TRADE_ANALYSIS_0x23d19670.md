@@ -1,7 +1,8 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # MEV Bot - Detailed Trade Analysis (Transaction 0x23d19670...)
 
 **Date**: March 3, 2026
-**Transaction**: 0x23d19670d2042df4b53205d52374babc3d595b77b000ed2bf83b68b149fd6e1d
+**Transaction**: REDACTED_PRIVATE_KEY
 **Status**: Success
 
 ---
@@ -322,5 +323,5 @@ const MIN_PROFIT_THRESHOLD_USD = 0.50; // Requires >$0.50 net profit
 ---
 
 *Analysis Date*: March 3, 2026
-*Transaction*: 0x23d19670d2042df4b53205d52374babc3d595b77b000ed2bf83b68b149fd6e1d
+*Transaction*: REDACTED_PRIVATE_KEY
 *Conclusion*: This trade lost money (-$0.0556 after all costs) - Bot is not profitable

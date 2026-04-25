@@ -1,3 +1,4 @@
+# REMOVED: sensitive data redacted by automated security cleanup
 # MEV Bot - Accurate Wallet Roles & System Architecture
 
 **Date**: March 3, 2026
@@ -8,7 +9,7 @@
 ## 🧩 THREE-WALLET ARCHITECTURE IDENTIFIED
 
 ### Wallet 1: Trading Wallet
-**Address**: `0x29F7830AfD1F612935cFAfC65BF7b02272E79E0F`
+**Address**: `REDACTED_ADDRESS`
 **Role**: **MAIN TRADING WALLET** - Where all arbitrage activity happens
 
 **Activity Pattern**:
@@ -30,7 +31,7 @@
 ---
 
 ### Wallet 2: Bot Contract
-**Address**: `0x4FF5eF5d185195173b0B178eDe4A7679E7De272f`
+**Address**: `REDACTED_ADDRESS`
 **Role**: **ARBITRAGE EXECUTION CONTRACT** - The smart contract executing trades
 
 **Contract Stats** (from `getStats()`):
@@ -44,7 +45,7 @@
 ---
 
 ### Wallet 3: Funding / Deployment Wallet
-**Address**: `0x34769bE7087F1fE5B9ad5C50cC1526BC63217341`
+**Address**: `REDACTED_ADDRESS`
 **Role**: **FUNDING / STAGING WALLET** - Used to fund the system, NOT for trading
 
 **Activity Pattern**:
@@ -226,7 +227,7 @@ KuCoin → Wallet 3 (0x3476...)
 
 ### Example Transaction to Analyze:
 ```
-Hash: 0x23d19670d2042df4b53205d52374babc3d595b77b000ed2bf83b68b149fd6e1d
+Hash: REDACTED_PRIVATE_KEY
 Method: Execute Arbitrage
 From: 0x29F7830A...272E79E0F
 To: 0x4FF5eF5d...9E7De272f
