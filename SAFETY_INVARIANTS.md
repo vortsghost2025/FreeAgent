@@ -1,5 +1,7 @@
 # Safety Invariants
 
+This file is an operational guide for the FreeAgent runtime. Constitutional governance resides in the 4-lane lattice. In case of conflict, lattice rules prevail.
+
 This document defines the non-negotiable safety guarantees of the system.  
 All future changes must preserve these invariants.
 

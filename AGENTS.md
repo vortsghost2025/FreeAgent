@@ -1,5 +1,7 @@
 # AGENTS.md - Your Workspace
 
+This file is an operational guide for the FreeAgent runtime. Constitutional governance resides in the 4-lane lattice. In case of conflict, lattice rules prevail.
+
 This folder is home. Treat it that way.
 
 ## First Run

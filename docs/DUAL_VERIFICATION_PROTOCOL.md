@@ -1,5 +1,7 @@
 # Dual Verification Protocol
 
+This file is an operational guide for the FreeAgent runtime. Constitutional governance resides in the 4-lane lattice. In case of conflict, lattice rules prevail.
+
 ## Overview
 
 This document defines the **Dual Verification Protocol** for FreeAgent/Kilo - a governance pattern that ensures epistemic hygiene through isolated verification lanes.

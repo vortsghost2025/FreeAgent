@@ -1,8 +1,11 @@
 # Governance Layer Spec
 
+This file is an operational guide for the FreeAgent runtime. Constitutional governance resides in the 4-lane lattice. In case of conflict, lattice rules prevail.
+
 > Domain-agnostic. Production-grade. Deterministic.
 
 ---
+
 
 ## 1. Core Governance Contract
 

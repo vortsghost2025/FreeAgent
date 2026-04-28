@@ -3,34 +3,34 @@
 **Created:** 2026-04-28T00:16:36-04:00  
 **Status:** Open — awaiting authorization
 
-## Context
-Phase 1 extraction (shared-infra, federation-creative, connection-bridge) is complete and remote-verified. No Phase 2 work is authorized.
+## H-01: Governance Source of Truth — DECIDED: Option D
 
-## Open Decisions
+**Decision:** Keep governance exclusively in the 4-lane lattice. Treat FreeAgent governance files (`AGENTS.md`, `SAFETY_INVARIANTS.md`, `DUAL_VERIFICATION_PROTOCOL.md`, `GOVERNANCE_LAYER_SPEC.md`) as operational guides for the FreeAgent runtime only. Constitutional authority remains with the lane lattice. In case of conflict, lattice rules prevail.
 
-### 1. Governance source of truth
-- **Keep governance in FreeAgent?**
-- **Extract governance-auth repo?**
-- **Vendor governance into extracted repos?**
+**Rationale:** Aligns with hard constraints (lane lattice is supra-repository authority; recency ≠ authority; file location ≠ authority). Avoids drift from copied governance and prevents conflation of runtime control with constitutional authority.
+
+**Fallback (if lattice integration becomes too heavy):** Option B — extract a separate `governance-auth` repo as the canonical constitutional source. Not required at this time.
+
+**What was done:**
+- Added one-line clarification header to FreeAgent governance files.
+- No governance files copied into extracted repos.
+- No governance-auth repo created.
+
+**Remaining open decisions:**
 
 ### 2. Nexus Graph ownership
-- **Define as core protocol (freeagent-core)?**
-- **Define as WE4Free mesh implementation (we4free-mesh)?**
-- **Split: spec in core, runtime in mesh?**
+- Define as core protocol, mesh implementation, or split spec/runtime.
 
 ### 3. WE4Free extraction readiness
-- **Authorize Phase 2 for `we4free-mesh`?** (pending coupling fixes)
-- **Authorize Phase 2 for `we4free-web`?** (pending coupling check)
-- **Hold until governance decisions resolved?**
+- Authorize Phase 2 for `we4free-mesh` and `we4free-web`? Pending coupling/deployment readiness review.
 
 ### 4. Medical extraction blocker
-- **Mandate PHI/synthetic-data audit before any move.**
-- **Authorize medical-demos extraction only after audit?**
+- Mandate PHI/synthetic-data audit before any move.
 
 ### 5. FreeAgent hardening
-- **Trust Layer V1 — prioritize?**
-- **Active-blocker operationalization — implement?**
-- **Path-standardization regression gate — add pre-commit?**
+- Trust Layer V1 — prioritize?
+- Active-blocker operationalization — implement?
+- Path-standardization regression gate — add pre-commit?
 
 ## Constraints (hard)
 
