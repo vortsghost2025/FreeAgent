@@ -19,7 +19,13 @@
 **Remaining open decisions:**
 
 ### 2. Nexus Graph ownership
-- Define as core protocol, mesh implementation, or split spec/runtime.
+- **DECIDED: Option C (split)**
+- Spec/governance-depth model: self-organizing-library (lattice-facing docs). FreeAgent may hold non-authoritative reference; Deliberate may publish public explanation.
+- Runtime visualization/UI: WE4Free mesh/public-site layer (`we4free_global/`, `we4free_website/`).
+- The Nexus Graph is descriptive only. It does not confer constitutional authority. The 4-lane lattice remains the sole authority.
+- Evidence linking: graph may link to evidence but is not evidence itself.
+- UI disclaimer: "Nexus Graph visualizes document relationships and verification states. It does not grant constitutional authority. Enforcement is defined by the 4-lane lattice."
+- Future: define `graph-data.json` (governance-depth fields) produced by mesh layer.
 
 ### 3. WE4Free extraction readiness
 - Authorize Phase 2 for `we4free-mesh` and `we4free-web`? Pending coupling/deployment readiness review.
