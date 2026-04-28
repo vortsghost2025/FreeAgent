@@ -27,7 +27,16 @@
 ### Key Commits in FreeAgent (documentation/stabilization)
 - `92bb5f13` — docs: record phase 1 extraction closeout  
 - `75ffe55e` — docs: clarify governance source of truth  
-- `9f112875` — docs: define nexus graph ownership model
+- `9f112875` — docs: define nexus graph ownership model  
+- `c4408322` — docs: index compact continuity evidence (`COMPACT_CONTINUITY_EVIDENCE_INDEX.md`)
+- `9c33fe55` — docs: define compact phenotype continuity gate policy (`COMPACT_PHENOTYPE_CONTINUITY_GATE_BRIEF.md`)
+
+### Compact continuity state
+- Evidence index committed: `COMPACT_CONTINUITY_EVIDENCE_INDEX.md` @ `c4408322`
+- Policy brief committed: `COMPACT_PHENOTYPE_CONTINUITY_GATE_BRIEF.md` @ `9c33fe55`
+- Runtime enforcement **not enabled**. Gate policy exists; implementation may proceed only after canonical evidence import and test validation. Feature flag must remain disabled by default.
+- Next continuity step: implementation planning only — no activation.
+
 
 --
 
@@ -48,6 +57,7 @@
 | Phase 2 extraction | ⏸ Not authorized | No work may begin. |
 | Medical extraction | 🚫 Blocked | Pending PHI/synthetic‑data audit. |
 | WE4Free extraction | 🚫 Blocked | Pending coupling/deployment review. |
+| Compact continuity gate policy | ✅ Policy committed (`c4408322`, `9c33fe55`) | Enforcement **not enabled**; runtime activation pending evidence and tests. |
 
 --
 
@@ -57,7 +67,7 @@
 - File location ≠ authority.
 - Graph display ≠ authority (Nexus Graph is descriptive only).
 - FreeAgent is **not** a lane.
-- Compact restore tested but **not yet** mandatory fail‑closed runtime gate.
+- Compact continuity policy exists; runtime enforcement **not enabled** and must remain disabled until canonical evidence imported and tests pass.
 - Medical movement requires safety/compliance review (PHI/synthetic-data).
 
 --
