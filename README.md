@@ -48,3 +48,18 @@ python api.py
 fastapi>=0.104.1
 uvicorn>=0.24.0
 pydantic>=2.5.0
+
+## Documentation & Governance
+
+- **CONTRIBUTING.md** — How to contribute.
+- **CODE_OF_CONDUCT.md** — Community expectations.
+- **SECURITY.md** — Responsible disclosure process.
+- **GOVERNANCE.md** — Relationship to constitutional governance (4‑lane lattice).
+- **FREEAGENT_ENFORCEMENT_REALITY_REGISTER.md** — What is enforced vs defined/planned.
+- **FREEAGENT_TOPOLOGY_REPORT_FOR_LIBRARY.md** — Self‑reported topology for Library/Nexus review.
+- **docs/** — Architecture, dependency graph, extraction reports, and design notes.
+
+## License
+
+See LICENSE file in repository root.
+
