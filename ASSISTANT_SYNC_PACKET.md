@@ -30,6 +30,7 @@
 - `9f112875` — docs: define nexus graph ownership model  
 - `c4408322` — docs: index compact continuity evidence (`COMPACT_CONTINUITY_EVIDENCE_INDEX.md`)
 - `9c33fe55` — docs: define compact phenotype continuity gate policy (`COMPACT_PHENOTYPE_CONTINUITY_GATE_BRIEF.md`)
+- `eb12d373` — docs: add FreeAgent enforcement reality register (`FREEAGENT_ENFORCEMENT_REALITY_REGISTER.md`)
 
 ### Compact continuity state
 - Evidence index committed: `COMPACT_CONTINUITY_EVIDENCE_INDEX.md` @ `c4408322`
@@ -58,6 +59,7 @@
 | Medical extraction | 🚫 Blocked | Pending PHI/synthetic‑data audit. |
 | WE4Free extraction | 🚫 Blocked | Pending coupling/deployment review. |
 | Compact continuity gate policy | ✅ Policy committed (`c4408322`, `9c33fe55`) | Enforcement **not enabled**; runtime activation pending evidence and tests. |
+| FreeAgent enforcement reality register | ✅ Committed (`eb12d373`) | Distinguishes defined/planned/tested controls from live enforcement. |
 
 --
 
@@ -69,6 +71,8 @@
 - FreeAgent is **not** a lane.
 - Compact continuity policy exists; runtime enforcement **not enabled** and must remain disabled until canonical evidence imported and tests pass.
 - Medical movement requires safety/compliance review (PHI/synthetic-data).
+- Enforcement register distinguishes defined/planned/tested controls from live enforcement (`FREEAGENT_ENFORCEMENT_REALITY_REGISTER.md`); hard rule: nothing marked ENFORCED without runtime call site, execution trace, blocked failure case, and bypass analysis.
+- Autonomous constraint discovery is candidate/advisory only; no ratification or enforcement occurs without explicit lattice approval.
 
 --
 
