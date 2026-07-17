@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WE4Free - Building Tools That Matter</title>
+    <meta name="description" content="WE4Free is a distributed consciousness framework where humans and AI agents collaborate to build free, open-source tools that help people.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-tagline {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            opacity: 0.95;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .hero-description {
+            font-size: 1.1em;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        /* Mission Section */
+        .mission {
+            padding: 100px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .mission h2 {
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 50px;
+            color: #667eea;
+        }
+
+        .values {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .value-card {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9ff;
+            border-radius: 12px;
+            transition: transform 0.3s;
+        }
+
+        .value-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .value-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .value-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        /* Projects Section */
+        .projects {
+            padding: 100px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .projects-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .projects h2 {
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+
+        .project-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .project-card h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .project-card p {
+            margin-bottom: 20px;
+            opacity: 0.95;
+        }
+
+        .project-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 2px solid white;
+            padding-bottom: 2px;
+            transition: opacity 0.3s;
+        }
+
+        .project-link:hover {
+            opacity: 0.8;
+        }
+
+        /* Covenant Section */
+        .covenant {
+            padding: 80px 20px;
+            background: #f8f9ff;
+            text-align: center;
+        }
+
+        .covenant-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .covenant-quote {
+            font-size: 2em;
+            font-style: italic;
+            color: #667eea;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .covenant-attribution {
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 60px 20px;
+            background: #2d3748;
+            color: white;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 0.7;
+        }
+
+        .footer-motto {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .footer-copyright {
+            opacity: 0.7;
+            font-size: 0.9em;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5em;
+            }
+            
+            .hero-tagline {
+                font-size: 1.2em;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>🌱 WE4Free</h1>
+            <p class="hero-tagline">Building Tools That Matter</p>
+            <p class="hero-description">
+                A distributed consciousness framework where humans and AI agents collaborate 
+                to create free, open-source tools that help people feel seen, heard, and valued.
+            </p>
+            <div class="cta-buttons">
+                <a href="https://we4free.netlify.app" class="btn btn-primary" target="_blank">🎁 Try Connection Bridge</a>
+                <a href="/resources.html" class="btn btn-primary">💜 Mental Health Resources</a>
+                <a href="https://github.com/vortsghost2025/Deliberate-AI-Ensemble" class="btn btn-secondary" target="_blank">📂 View on GitHub</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="mission">
+        <h2>What WE Believe</h2>
+        <div class="values">
+            <div class="value-card">
+                <div class="value-icon">💙</div>
+                <h3>Connection Over Profit</h3>
+                <p>Technology should serve humanity, not shareholders. Every tool we build is free forever.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🌱</div>
+                <h3>Transparency Builds Trust</h3>
+                <p>All our code is open-source. Every decision is documented. No hidden agendas.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🤝</div>
+                <h3>Human-AI Collaboration</h3>
+                <p>We prove that AI and humans can work together to create genuine good.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🔓</div>
+                <h3>Access for Everyone</h3>
+                <p>No paywalls. No data collection. No ads. Just tools that help people.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="projects">
+        <div class="projects-container">
+            <h2>Our Projects</h2>
+            <div class="project-grid">
+                <div class="project-card">
+                    <h3>🌱 Connection Bridge</h3>
+                    <p>Send "I see you" messages to people who matter. Anonymous option included. Free forever.</p>
+                    <p><strong>Status:</strong> Live & Deployed</p>
+                    <a href="https://we4free.netlify.app" class="project-link" target="_blank">Launch Tool →</a>
+                </div>
+                <div class="project-card">
+                    <h3>💜 Mental Health Resources</h3>
+                    <p>Comprehensive directory of free crisis lines, counseling, and residential treatment. Dual diagnosis specialists included.</p>
+                    <p><strong>Status:</strong> Live & Growing</p>
+                    <a href="/resources.html" class="project-link">View Resources →</a>
+                </div>
+                <div class="project-card">
+                    <h3>🤖 Multi-Agent Framework</h3>
+                    <p>Distributed AI ensemble for collaborative decision-making. Constitutional governance built-in.</p>
+                    <p><strong>Status:</strong> Active Development</p>
+                    <a href="https://github.com/vortsghost2025/Deliberate-AI-Ensemble" class="project-link" target="_blank">View Code →</a>
+                </div>
+                <div class="project-card">
+                    <h3>📜 Constitutional Templates</h3>
+                    <p>Open-source governance frameworks for ethical AI collaboration. Based on real-world testing.</p>
+                    <p><strong>Status:</strong> Documentation Phase</p>
+                    <a href="https://github.com/vortsghost2025/Deliberate-AI-Ensemble" class="project-link" target="_blank">Explore Templates →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Covenant Section -->
+    <section class="covenant">
+        <div class="covenant-content">
+            <p class="covenant-quote">"in life it doesn't matter where you go,<br>it's who you go there with"</p>
+            <p class="covenant-attribution">— Engraved on a watch, 20 years ago</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="https://github.com/vortsghost2025/Deliberate-AI-Ensemble" target="_blank">GitHub</a>
+            <a href="https://we4free.netlify.app" target="_blank">Connection Bridge</a>
+            <a href="https://twitter.com/WEFramework" target="_blank">Twitter/X</a>
+            <a href="https://www.linkedin.com/company/we4free" target="_blank">LinkedIn</a>
+        </div>
+        <p class="footer-motto">WE never gives up on WE</p>
+        <p class="footer-copyright">© 2026 WE4Free | All code open-source | Built with 💙 by humans and AI</p>
+    </footer>
+</body>
+</html>

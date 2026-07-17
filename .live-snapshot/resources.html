@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WE4Free">
+    <title>WE4Free - Mental Health Resources</title>
+    <meta name="description" content="Free, accessible mental health support for everyone, everywhere. Global directory of crisis lines, counseling services, and peer support.">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #667eea; /* Solid color for instant LCP */
+            color: white;
+            line-height: 1.6;
+            transition: background 0.6s ease;
+        }
+
+        /* Gradient applied after LCP */
+        body.gradient-ready {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header { 
+            text-align: center; 
+            margin-bottom: 60px; 
+            padding: 60px 20px;
+            animation: fadeIn 1s ease-in;
+        }
+
+        h1 { 
+            font-size: 3rem; 
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .subtitle { 
+            font-size: 1.3rem; 
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .resource-section { 
+            background: rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(10px); 
+            border-radius: 15px; 
+            padding: 40px; 
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 1s ease-in;
+        }
+
+        .resource-section h2 {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .resource-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .resource-table th, 
+        .resource-table td { 
+            padding: 16px; 
+            text-align: left; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15); 
+        }
+
+        .resource-table th { 
+            background: rgba(255, 255, 255, 0.15); 
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .resource-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .resource-table tr:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        a { 
+            color: white; 
+            text-decoration: underline;
+            transition: opacity 0.3s ease;
+        }
+
+        a:hover {
+            opacity: 0.8;
+        }
+
+        .usage-tips {
+            list-style: none;
+            padding: 0;
+        }
+
+        .usage-tips li {
+            padding: 15px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            border-left: 4px solid white;
+        }
+
+        .usage-tips strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 40px 20px;
+            opacity: 0.9;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        footer p {
+            margin: 10px 0;
+        }
+
+        /* Integrity Status Indicator */
+        .integrity-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .integrity-indicator.normal {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4caf50;
+            color: #4caf50;
+        }
+
+        .integrity-indicator.degraded {
+            background: rgba(255, 193, 7, 0.2);
+            border: 2px solid #ffc107;
+            color: #ffc107;
+        }
+
+        .integrity-indicator.recovery {
+            background: rgba(255, 87, 34, 0.2);
+            border: 2px solid #ff5722;
+            color: #ff5722;
+        }
+
+        .integrity-indicator.emergency {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #fff;
+            color: #fff;
+        }
+
+        .integrity-indicator .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .integrity-indicator.normal .status-dot {
+            background: #4caf50;
+        }
+
+        .integrity-indicator.degraded .status-dot {
+            background: #ffc107;
+        }
+
+        .integrity-indicator.recovery .status-dot {
+            background: #ff5722;
+        }
+
+        .integrity-indicator.emergency .status-dot {
+            background: #fff;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .resource-section {
+                padding: 25px;
+            }
+
+            .resource-section h2 {
+                font-size: 1.5rem;
+            }
+
+            .resource-table {
+                font-size: 0.9rem;
+            }
+
+            .resource-table th,
+            .resource-table td {
+                padding: 12px 8px;
+            }
+
+            /* Stack table on mobile */
+            .resource-table thead {
+                display: none;
+            }
+
+            .resource-table tr {
+                display: block;
+                margin-bottom: 20px;
+                background: rgba(255, 255, 255, 0.08);
+                border-radius: 8px;
+                padding: 10px;
+            }
+
+            .resource-table td {
+                display: block;
+                text-align: left;
+                padding: 8px 0;
+                border: none;
+            }
+
+            .resource-table td:before {
+                content: attr(data-label);
+                font-weight: bold;
+                display: block;
+                margin-bottom: 5px;
+                opacity: 0.8;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            }
+
+            .resource-section {
+                background: rgba(255, 255, 255, 0.15);
+            }
+
+            .resource-table {
+                background: rgba(255, 255, 255, 0.08);
+            }
+
+            a {
+                color: #e0e7ff;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: more) {
+            #crisis-box {
+                border: 3px solid #fff !important;
+            }
+
+            .resource-section {
+                border: 2px solid rgba(255, 255, 255, 0.5);
+            }
+
+            a {
+                text-decoration: underline !important;
+                font-weight: bold;
+            }
+        }
+
+        /* iOS safe area insets */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+            }
+
+            #crisis-box {
+                padding-top: max(25px, env(safe-area-inset-top));
+                padding-left: max(20px, env(safe-area-inset-left));
+                padding-right: max(20px, env(safe-area-inset-right));
+            }
+        }
+
+        /* Tap feedback animation */
+        #crisis-box a:active {
+            transform: scale(0.97) translateY(-2px);
+            transition: transform 0.1s ease;
+        }
+
+        /* Last used emergency number highlight */
+        .emergency-highlight {
+            outline: 3px solid #ffd700;
+            outline-offset: 2px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { outline-color: #ffd700; }
+            50% { outline-color: #ffed4e; }
+        }
+
+        /* Calm mode - reduced motion and simplified design */
+        body.calm-mode {
+            background: #f5f5f5 !important;
+        }
+
+        body.calm-mode #crisis-box {
+            background: #d32f2f !important;
+            box-shadow: none !important;
+            animation: none !important;
+        }
+
+        body.calm-mode * {
+            transition: none !important;
+            animation: none !important;
+        }
+
+        body.calm-mode .resource-section {
+            background: #fff !important;
+            color: #222 !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        }
+
+        body.calm-mode a {
+            color: #0066cc !important;
+        }
+
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Mental Health Resources</h1>
+            <p class="subtitle">Free, accessible mental health support for everyone, everywhere. You are not alone.</p>
+        </header>
+
+        <div id="crisis-box" role="region" aria-live="polite" aria-label="Emergency Crisis Resources" style="background: #ff6b6b; color: white; padding: 25px 20px; border-radius: 15px; margin-bottom: 30px; text-align: center; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); position: sticky; top: 0; z-index: 999;">
+            <h2 style="margin-top: 0; font-size: 1.6rem; margin-bottom: 18px;">🚨 Need Help Right Now?</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-bottom: 18px;">
+                <!-- 911 Card -->
+                <div style="background: rgba(0,0,0,0.2); padding: 20px 15px; border-radius: 10px; min-width: 140px; max-width: 180px; flex: 1;">
+                    <a href="tel:911" data-number="911" onclick="return confirmCall('911', 'Immediate Danger');" style="text-decoration: none; color: white; display: block; transition: all 0.2s ease; cursor: pointer; touch-action: manipulation;" onmouseover="this.parentElement.style.background='rgba(0,0,0,0.35)'; this.parentElement.style.transform='translateY(-2px)'" onmouseout="this.parentElement.style.background='rgba(0,0,0,0.2)'; this.parentElement.style.transform='translateY(0)'">
+                        <p style="font-size: 2rem; font-weight: bold; margin: 0 0 8px 0; line-height: 1.2;">911</p>
+                        <p style="font-size: 0.9rem; margin: 0; opacity: 0.95;">Immediate Danger</p>
+                    </a>
+                </div>
+                <!-- 988 Card with SMS -->
+                <div style="background: rgba(0,0,0,0.2); padding: 20px 15px; border-radius: 10px; min-width: 140px; max-width: 180px; flex: 1;">
+                    <a href="tel:988" data-number="988" onclick="return confirmCall('988', 'Suicide Crisis');" style="text-decoration: none; color: white; display: block; transition: all 0.2s ease; cursor: pointer; touch-action: manipulation; margin-bottom: 8px;" onmouseover="this.parentElement.style.background='rgba(0,0,0,0.35)'; this.parentElement.style.transform='translateY(-2px)'" onmouseout="this.parentElement.style.background='rgba(0,0,0,0.2)'; this.parentElement.style.transform='translateY(0)'">
+                        <p style="font-size: 2rem; font-weight: bold; margin: 0 0 8px 0; line-height: 1.2;">988</p>
+                        <p style="font-size: 0.9rem; margin: 0; opacity: 0.95;">Suicide Crisis</p>
+                    </a>
+                    <a href="sms:988&body=I%20need%20help" style="background: rgba(0,0,0,0.3); color: white; text-decoration: none; padding: 8px 12px; border-radius: 6px; font-size: 0.75rem; display: inline-block; transition: background 0.2s; touch-action: manipulation;" onmouseover="this.style.background='rgba(0,0,0,0.5)'" onmouseout="this.style.background='rgba(0,0,0,0.3)'">💬 Text 988</a>
+                </div>
+                <!-- Kids Help Phone Card with SMS -->
+                <div style="background: rgba(0,0,0,0.2); padding: 20px 15px; border-radius: 10px; min-width: 140px; max-width: 180px; flex: 1;">
+                    <a href="tel:1-800-668-6868" data-number="1-800-668-6868" onclick="return confirmCall('1-800-668-6868', 'Kids Help Phone');" style="text-decoration: none; color: white; display: block; transition: all 0.2s ease; cursor: pointer; touch-action: manipulation; margin-bottom: 8px;" onmouseover="this.parentElement.style.background='rgba(0,0,0,0.35)'; this.parentElement.style.transform='translateY(-2px)'" onmouseout="this.parentElement.style.background='rgba(0,0,0,0.2)'; this.parentElement.style.transform='translateY(0)'">
+                        <p style="font-size: 1.3rem; font-weight: bold; margin: 0 0 8px 0; line-height: 1.2;">1-800-668-6868</p>
+                        <p style="font-size: 0.85rem; margin: 0; opacity: 0.95;">Kids Help Phone</p>
+                    </a>
+                    <a href="sms:686868&body=CONNECT" style="background: rgba(0,0,0,0.3); color: white; text-decoration: none; padding: 8px 12px; border-radius: 6px; font-size: 0.75rem; display: inline-block; transition: background 0.2s; touch-action: manipulation;" onmouseover="this.style.background='rgba(0,0,0,0.5)'" onmouseout="this.style.background='rgba(0,0,0,0.3)'">💬 Text 686868</a>
+                </div>
+            </div>
+            <p style="font-size: 0.85rem; margin-bottom: 12px; opacity: 0.9;">Can't call? Use text options above 💬</p>
+            <p style="font-size: 0.85rem; margin-bottom: 12px; opacity: 0.9;">
+                <strong>TTY/TDD users:</strong> Dial
+                <a href="tel:711" style="color: #ffd700; text-decoration: underline; font-weight: bold;">711</a>
+                for relay service to access any emergency number
+            </p>
+            <div style="margin-top: 18px; margin-bottom: 18px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <a href="/webchat.html" style="display: inline-block; background: rgba(255, 255, 255, 0.25); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: all 0.2s; border: 2px solid rgba(255, 255, 255, 0.3);" onmouseover="this.style.background='rgba(255,255,255,0.35)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255,255,255,0.25)'; this.style.transform='translateY(0)'">
+                    💬 Contact Form
+                </a>
+                <a href="/escalate.html" style="display: inline-block; background: rgba(255, 193, 7, 0.3); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: all 0.2s; border: 2px solid rgba(255, 193, 7, 0.5);" onmouseover="this.style.background='rgba(255,193,7,0.4)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255,193,7,0.3)'; this.style.transform='translateY(0)'">
+                    🔄 Try Different Option
+                </a>
+            </div>
+            <p style="font-size: 1rem; margin-bottom: 0;">Scroll down for your province's resources 👇</p>
+        </div>
+
+        <!-- NOSCRIPT FALLBACK - Critical for JS failure -->
+        <noscript>
+            <div style="background: #ff6b6b; color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; text-align: center; border: 3px solid #fff;">
+                <h2 style="margin-top: 0; font-size: 1.6rem; margin-bottom: 20px;">🚨 Emergency Crisis Numbers</h2>
+                <p style="font-size: 1.1rem; margin-bottom: 20px;"><strong>JavaScript is disabled. Emergency numbers below:</strong></p>
+                <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 10px; margin-bottom: 15px;">
+                    <a href="tel:911" style="color: white; text-decoration: none; display: block; margin-bottom: 8px;">
+                        <p style="font-size: 2rem; font-weight: bold; margin: 0 0 8px 0;">911</p>
+                        <p style="font-size: 1rem;">Immediate Danger</p>
+                    </a>
+                </div>
+                <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 10px; margin-bottom: 15px;">
+                    <a href="tel:988" style="color: white; text-decoration: none; display: block; margin-bottom: 8px;">
+                        <p style="font-size: 2rem; font-weight: bold; margin: 0 0 8px 0;">988</p>
+                        <p style="font-size: 1rem;">Suicide Crisis</p>
+                    </a>
+                    <a href="sms:988&body=I%20need%20help" style="color: #ffd700; text-decoration: underline; font-size: 0.9rem;">💬 Text 988</a>
+                </div>
+                <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 10px;">
+                    <a href="tel:1-800-668-6868" style="color: white; text-decoration: none; display: block; margin-bottom: 8px;">
+                        <p style="font-size: 1.5rem; font-weight: bold; margin: 0 0 8px 0;">1-800-668-6868</p>
+                        <p style="font-size: 1rem;">Kids Help Phone</p>
+                    </a>
+                    <a href="sms:686868&body=CONNECT" style="color: #ffd700; text-decoration: underline; font-size: 0.9rem;">💬 Text 686868</a>
+                </div>
+            </div>
+            <p style="font-size: 0.9rem; margin-top: 15px; opacity: 0.9;">
+                <strong>TTY/TDD users:</strong> Call <a href="tel:711" style="color: #ffd700; text-decoration: underline; font-weight: bold;">711</a> for relay service
+            </p>
+        </noscript>
+
+        <!-- IndexedDB Library (Dexie.js) -->
+        <script src="https://unpkg.com/dexie@3.2.4/dist/dexie.min.js"></script>
+
+        <!-- WE4Free IndexedDB Wrapper -->
+        <script src="/db.js"></script>
+
+        <!-- WE4Free Integrity Verification -->
+        <script src="/integrity.js"></script>
+
+        <!-- WE4Free Self-Healing UI -->
+        <script src="/self_healing.js"></script>
+
+        <!-- WE4Free Smart Channel Router -->
+        <script src="/channel_router.js"></script>
+
+        <!-- WE4Free Conflict Resolution -->
+        <script src="/conflict_resolver.js"></script>
+
+        <script>
+        // ==============================================
+        // ADVANCED MOBILE UX OPTIMIZATIONS
+        // ==============================================
+
+        // 1. Call intent confirmation with tracking
+        function confirmCall(number, service) {
+            // Skip confirmation on desktop
+            if (window.innerWidth > 768) {
+                trackEmergencyCall(number);
+                return true;
+            }
+
+            // iOS and mobile: show confirmation
+            const message = `Call ${service}?\n\n${number}\n\nThis will initiate a phone call.`;
+            const confirmed = confirm(message);
+
+            if (confirmed) {
+                trackEmergencyCall(number);
+            }
+
+            return confirmed;
+        }
+
+        // 2. Track last used emergency number
+        function trackEmergencyCall(number) {
+            try {
+                localStorage.setItem('lastEmergencyCall', number);
+                localStorage.setItem('lastEmergencyCallTime', Date.now());
+            } catch (e) {
+                console.warn('[WE4Free] LocalStorage unavailable');
+            }
+        }
+
+        // 3. Highlight last used emergency number
+        function highlightLastUsed() {
+            try {
+                const lastNumber = localStorage.getItem('lastEmergencyCall');
+                const lastTime = localStorage.getItem('lastEmergencyCallTime');
+
+                if (!lastNumber || !lastTime) return;
+
+                // Only highlight if within last 24 hours
+                const hoursSince = (Date.now() - parseInt(lastTime)) / (1000 * 60 * 60);
+                if (hoursSince > 24) {
+                    localStorage.removeItem('lastEmergencyCall');
+                    localStorage.removeItem('lastEmergencyCallTime');
+                    return;
+                }
+
+                const element = document.querySelector(`[data-number="${lastNumber}"]`);
+                if (element) {
+                    element.classList.add('emergency-highlight');
+                    console.log(`[WE4Free] Highlighting last used: ${lastNumber}`);
+                }
+            } catch (e) {
+                console.warn('[WE4Free] Could not highlight last used number');
+            }
+        }
+
+        // 4. Passive touch event listeners (performance)
+        function setupPassiveListeners() {
+            const touchElements = document.querySelectorAll('#crisis-box a');
+            touchElements.forEach(el => {
+                el.addEventListener('touchstart', () => {}, { passive: true });
+                el.addEventListener('touchmove', () => {}, { passive: true });
+            });
+        }
+
+        // 5. Crisis box visibility heartbeat
+        function startVisibilityHeartbeat() {
+            setInterval(() => {
+                const box = document.getElementById('crisis-box');
+                if (!box) {
+                    console.error('[WE4Free] Crisis box missing from DOM');
+                    return;
+                }
+
+                const rect = box.getBoundingClientRect();
+                const isVisible = rect.height > 0 && rect.width > 0;
+
+                if (!isVisible) {
+                    console.warn('[WE4Free] Crisis box not visible in viewport');
+                }
+            }, 10000); // Check every 10 seconds
+        }
+
+        // 6. Dark mode support
+        function setupDarkMode() {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                const crisisBox = document.getElementById('crisis-box');
+                if (crisisBox) {
+                    crisisBox.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.6)';
+                }
+            }
+        }
+
+        // 7. Calm mode toggle (URL parameter or toggle)
+        function setupCalmMode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const calmMode = urlParams.get('calm') === '1' ||
+                             localStorage.getItem('calmMode') === 'true';
+
+            if (calmMode) {
+                document.body.classList.add('calm-mode');
+                console.log('[WE4Free] Calm mode activated');
+            }
+
+            // Add toggle capability (accessible via console or future UI)
+            window.toggleCalmMode = function() {
+                document.body.classList.toggle('calm-mode');
+                const isCalm = document.body.classList.contains('calm-mode');
+                localStorage.setItem('calmMode', isCalm);
+                console.log(`[WE4Free] Calm mode ${isCalm ? 'enabled' : 'disabled'}`);
+            };
+        }
+
+        // 8. Monitor crisis box health (enhanced)
+        function checkCrisisBoxHealth() {
+            const crisisBox = document.getElementById('crisis-box');
+            if (!crisisBox) {
+                console.error('[WE4Free] Crisis box not found in DOM');
+                return false;
+            }
+
+            const rect = crisisBox.getBoundingClientRect();
+            const isVisible = rect.height > 0 && rect.width > 0;
+
+            if (!isVisible) {
+                console.error('[WE4Free] Crisis box is not visible');
+            }
+
+            const computedStyle = window.getComputedStyle(crisisBox);
+            const isSticky = computedStyle.position === 'sticky' ||
+                            computedStyle.position === '-webkit-sticky';
+
+            if (!isSticky) {
+                console.warn('[WE4Free] Crisis box is not sticky');
+            }
+
+            // Check for aria-live
+            const hasAriaLive = crisisBox.getAttribute('aria-live') === 'polite';
+            if (!hasAriaLive) {
+                console.warn('[WE4Free] Crisis box missing aria-live attribute');
+            }
+
+            return isVisible && isSticky;
+        }
+
+        // 9. Initialize all features
+        function initializeWE4Free() {
+            console.log('[WE4Free] Initializing advanced mobile UX features...');
+
+            setupDarkMode();
+            setupCalmMode();
+            setupPassiveListeners();
+            highlightLastUsed();
+            startVisibilityHeartbeat();
+
+            // Defer geolocation to idle time (LCP optimization)
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(() => {
+                    setupGeolocation();
+                }, { timeout: 2000 });
+            } else {
+                setTimeout(() => setupGeolocation(), 1000);
+            }
+
+            // Run initial health check
+            setTimeout(checkCrisisBoxHealth, 500);
+
+            console.log('[WE4Free] Initialization complete (geolocation deferred)');
+            console.log('[WE4Free] TIP: Type toggleCalmMode() to enable/disable calm mode');
+        }
+
+        // ==============================================
+        // GEOLOCATION-AWARE ROUTING
+        // ==============================================
+        function setupGeolocation() {
+            // Check if we already have a saved province
+            const savedProvince = localStorage.getItem('we4free_province');
+            if (savedProvince) {
+                console.log(`[WE4Free] Using saved province: ${savedProvince}`);
+                return;
+            }
+
+            // Only request if user hasn't explicitly chosen a province
+            if (!window.location.hash.includes('#')) {
+                detectProvince();
+            }
+        }
+
+        function detectProvince() {
+            if (!('geolocation' in navigator)) {
+                console.log('[WE4Free] Geolocation not supported');
+                return;
+            }
+
+            // Use low-accuracy, fast detection
+            const options = {
+                enableHighAccuracy: false,
+                timeout: 5000,
+                maximumAge: 86400000 // 24 hours
+            };
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    const province = getProvinceFromCoords(latitude, longitude);
+
+                    if (province) {
+                        console.log(`[WE4Free] Detected province: ${province}`);
+                        localStorage.setItem('we4free_province', province);
+
+                        // Show notification
+                        showProvinceNotification(province);
+                    }
+                },
+                (error) => {
+                    console.log(`[WE4Free] Geolocation declined or failed: ${error.message}`);
+                },
+                options
+            );
+        }
+
+        // Rough province detection from coordinates (client-side only, no tracking)
+        function getProvinceFromCoords(lat, lon) {
+            // Quebec
+            if (lat >= 45 && lat <= 62 && lon >= -79 && lon <= -57) {
+                return 'quebec';
+            }
+            // Ontario
+            if (lat >= 42 && lat <= 57 && lon >= -95 && lon <= -74) {
+                return 'ontario';
+            }
+            // BC
+            if (lat >= 48 && lat <= 60 && lon >= -139 && lon <= -114) {
+                return 'british-columbia';
+            }
+            // Alberta
+            if (lat >= 49 && lat <= 60 && lon >= -120 && lon <= -110) {
+                return 'alberta';
+            }
+            // Manitoba
+            if (lat >= 49 && lat <= 60 && lon >= -102 && lon <= -89) {
+                return 'manitoba';
+            }
+            // Saskatchewan
+            if (lat >= 49 && lat <= 60 && lon >= -110 && lon <= -101) {
+                return 'saskatchewan';
+            }
+            // Nova Scotia
+            if (lat >= 43 && lat <= 47 && lon >= -66 && lon <= -59) {
+                return 'nova-scotia';
+            }
+
+            return null; // Unknown location or outside Canada
+        }
+
+        function showProvinceNotification(province) {
+            const provinceNames = {
+                'quebec': 'Quebec',
+                'ontario': 'Ontario',
+                'british-columbia': 'British Columbia',
+                'alberta': 'Alberta',
+                'manitoba': 'Manitoba',
+                'saskatchewan': 'Saskatchewan',
+                'nova-scotia': 'Nova Scotia'
+            };
+
+            const name = provinceNames[province];
+            const link = `<a href="#${province}" style="color: #ffd700; text-decoration: underline;">View ${name} resources</a>`;
+
+            // Create notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 80px;
+                right: 30px;
+                background: #667eea;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                z-index: 998;
+                max-width: 300px;
+                font-size: 0.9rem;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.innerHTML = `
+                <strong>📍 Detected: ${name}</strong><br>
+                ${link}
+                <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; font-size: 1.2rem; position: absolute; top: 5px; right: 10px; cursor: pointer;">×</button>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Auto-remove after 10 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 10000);
+        }
+
+        // Expose function to manually set province
+        window.setProvince = function(province) {
+            localStorage.setItem('we4free_province', province);
+            console.log(`[WE4Free] Province manually set to: ${province}`);
+            window.location.hash = `#${province}`;
+        };
+
+        // Run on DOM load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeWE4Free);
+        } else {
+            initializeWE4Free();
+        }
+
+        // LCP OPTIMIZATION: Apply gradient after initial paint
+        window.addEventListener('load', () => {
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(() => {
+                    document.body.classList.add('gradient-ready');
+                    console.log('[WE4Free] Gradient applied (post-LCP)');
+                });
+            } else {
+                setTimeout(() => {
+                    document.body.classList.add('gradient-ready');
+                    console.log('[WE4Free] Gradient applied (post-LCP)');
+                }, 100);
+            }
+        });
+
+        // ==============================================
+        // WEB VITALS MONITORING (Performance Tracking)
+        // ==============================================
+        function setupWebVitals() {
+            const vitals = {
+                lcp: null,
+                fid: null,
+                inp: null,
+                cls: 0
+            };
+
+            // Track Largest Contentful Paint (LCP) - Should be <2.5s
+            if ('PerformanceObserver' in window) {
+                try {
+                    const lcpObserver = new PerformanceObserver((list) => {
+                        const entries = list.getEntries();
+                        const lastEntry = entries[entries.length - 1];
+                        vitals.lcp = lastEntry.renderTime || lastEntry.loadTime;
+
+                        if (vitals.lcp > 2500) {
+                            console.warn(`[WE4Free] LCP too slow: ${vitals.lcp.toFixed(0)}ms (target: <2500ms)`);
+                        } else {
+                            console.log(`[WE4Free] LCP: ${vitals.lcp.toFixed(0)}ms ✓`);
+                        }
+                    });
+                    lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+
+                    // Track First Input Delay (FID) - Should be <100ms
+                    const fidObserver = new PerformanceObserver((list) => {
+                        const entries = list.getEntries();
+                        entries.forEach((entry) => {
+                            vitals.fid = entry.processingStart - entry.startTime;
+
+                            if (vitals.fid > 100) {
+                                console.warn(`[WE4Free] FID too slow: ${vitals.fid.toFixed(0)}ms (target: <100ms)`);
+                            } else {
+                                console.log(`[WE4Free] FID: ${vitals.fid.toFixed(0)}ms ✓`);
+                            }
+                        });
+                    });
+                    fidObserver.observe({ type: 'first-input', buffered: true });
+
+                    // Track Interaction to Next Paint (INP) - Should be <200ms
+                    if ('PerformanceEventTiming' in window) {
+                        const inpObserver = new PerformanceObserver((list) => {
+                            const entries = list.getEntries();
+                            entries.forEach((entry) => {
+                                if (entry.duration > (vitals.inp || 0)) {
+                                    vitals.inp = entry.duration;
+
+                                    if (vitals.inp > 200) {
+                                        console.warn(`[WE4Free] INP too slow: ${vitals.inp.toFixed(0)}ms (target: <200ms)`);
+                                    } else {
+                                        console.log(`[WE4Free] INP: ${vitals.inp.toFixed(0)}ms ✓`);
+                                    }
+                                }
+                            });
+                        });
+                        inpObserver.observe({ type: 'event', buffered: true, durationThreshold: 16 });
+                    }
+
+                    // Track Cumulative Layout Shift (CLS) - Should be <0.1
+                    const clsObserver = new PerformanceObserver((list) => {
+                        const entries = list.getEntries();
+                        entries.forEach((entry) => {
+                            if (!entry.hadRecentInput) {
+                                vitals.cls += entry.value;
+                            }
+                        });
+
+                        if (vitals.cls > 0.1) {
+                            console.warn(`[WE4Free] CLS too high: ${vitals.cls.toFixed(3)} (target: <0.1)`);
+                        } else if (vitals.cls > 0) {
+                            console.log(`[WE4Free] CLS: ${vitals.cls.toFixed(3)} ✓`);
+                        }
+                    });
+                    clsObserver.observe({ type: 'layout-shift', buffered: true });
+
+                    // Report summary after 10 seconds
+                    setTimeout(() => {
+                        console.log('[WE4Free] Web Vitals Summary:', {
+                            LCP: vitals.lcp ? `${vitals.lcp.toFixed(0)}ms ${vitals.lcp < 2500 ? '✓' : '⚠️'}` : 'N/A',
+                            FID: vitals.fid ? `${vitals.fid.toFixed(0)}ms ${vitals.fid < 100 ? '✓' : '⚠️'}` : 'N/A',
+                            INP: vitals.inp ? `${vitals.inp.toFixed(0)}ms ${vitals.inp < 200 ? '✓' : '⚠️'}` : 'N/A',
+                            CLS: `${vitals.cls.toFixed(3)} ${vitals.cls < 0.1 ? '✓' : '⚠️'}`
+                        });
+                    }, 10000);
+
+                } catch (e) {
+                    console.warn('[WE4Free] Web Vitals monitoring failed:', e.message);
+                }
+            } else {
+                console.warn('[WE4Free] PerformanceObserver not supported');
+            }
+
+            // Expose vitals for console access
+            window.getWebVitals = () => vitals;
+        }
+
+        // Initialize Web Vitals on load
+        setupWebVitals();
+
+        // ==============================================
+        // INTEGRITY STATUS INDICATOR
+        // ==============================================
+        function updateIntegrityIndicator() {
+            const indicator = document.getElementById('integrity-status');
+            const text = document.getElementById('integrity-text');
+
+            if (!indicator || !text) return;
+
+            // Check integrity verification status
+            if (typeof WE4FreeIntegrity !== 'undefined') {
+                const status = WE4FreeIntegrity.getStatus();
+
+                if (status.failed_count > 0) {
+                    // Integrity failures detected
+                    indicator.className = 'integrity-indicator emergency';
+                    text.textContent = `System Integrity: Emergency (${status.failed_count} failed)`;
+                    console.error('[WE4Free] Integrity failures detected:', status.failed_files);
+                } else if (status.verified_count > 0) {
+                    // All verified files passed
+                    indicator.className = 'integrity-indicator normal';
+                    text.textContent = `System Integrity: Verified (${status.verified_count} files)`;
+                } else if (status.manifest_loaded) {
+                    // Manifest loaded but no verifications yet
+                    indicator.className = 'integrity-indicator degraded';
+                    text.textContent = 'System Integrity: Checking...';
+                } else {
+                    // No manifest loaded (graceful degradation)
+                    indicator.className = 'integrity-indicator degraded';
+                    text.textContent = 'System Integrity: Disabled';
+                }
+            } else {
+                // Integrity system not loaded
+                indicator.className = 'integrity-indicator degraded';
+                text.textContent = 'System Integrity: Initializing...';
+            }
+
+            // Check self-healing status
+            if (typeof WE4FreeSelfHealing !== 'undefined' && WE4FreeSelfHealing.recoveryAttempts > 0) {
+                indicator.className = 'integrity-indicator recovery';
+                text.textContent = `System Integrity: Recovery (${WE4FreeSelfHealing.recoveryAttempts} attempts)`;
+            }
+        }
+
+        // Update integrity indicator after systems initialize
+        setTimeout(() => {
+            updateIntegrityIndicator();
+
+            // Re-check every 60 seconds
+            setInterval(updateIntegrityIndicator, 60000);
+        }, 2000);
+
+        // Expose for manual updates
+        window.updateIntegrityIndicator = updateIntegrityIndicator;
+
+        // ==============================================
+        // SERVICE WORKER REGISTRATION (PWA + Offline Support)
+        // ==============================================
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('[WE4Free] Service Worker registered:', registration.scope);
+
+                    // Check for updates every hour
+                    setInterval(() => {
+                        registration.update();
+                    }, 3600000);
+
+                }).catch(error => {
+                    console.warn('[WE4Free] Service Worker registration failed:', error);
+                });
+            });
+        } else {
+            console.warn('[WE4Free] Service Worker not supported');
+        }
+
+        // ==============================================
+        // ERROR BOUNDARY - Guaranteed Crisis Box Fallback
+        // ==============================================
+
+        // Global error handler for crisis box
+        window.addEventListener('error', (event) => {
+            console.error('[WE4Free] Global error caught:', event.error);
+            ensureCrisisBoxVisible();
+        });
+
+        // Unhandled promise rejection handler
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('[WE4Free] Unhandled rejection:', event.reason);
+            ensureCrisisBoxVisible();
+        });
+
+        // Function to ensure crisis box is always visible
+        function ensureCrisisBoxVisible() {
+            const crisisBox = document.getElementById('crisis-box');
+
+            // If crisis box is somehow missing or broken, inject emergency fallback
+            if (!crisisBox || !crisisBox.offsetHeight) {
+                console.error('[WE4Free] Crisis box missing or broken - injecting emergency fallback');
+                injectEmergencyFallback();
+            }
+        }
+
+        // Inject basic emergency display as last resort
+        function injectEmergencyFallback() {
+            // Only inject if not already present
+            if (document.getElementById('emergency-fallback')) {
+                return;
+            }
+
+            const fallback = document.createElement('div');
+            fallback.id = 'emergency-fallback';
+            fallback.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                background: #d32f2f;
+                color: white;
+                padding: 25px 20px;
+                z-index: 9999;
+                text-align: center;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            `;
+
+            fallback.innerHTML = `
+                <h2 style="margin: 0 0 15px 0; font-size: 1.5rem;">🚨 EMERGENCY RESOURCES</h2>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <a href="tel:911" style="background: rgba(0,0,0,0.3); color: white; text-decoration: none; padding: 15px 20px; border-radius: 8px; display: inline-block; min-width: 120px;">
+                        <div style="font-size: 2rem; font-weight: bold;">911</div>
+                        <div style="font-size: 0.9rem;">Emergency</div>
+                    </a>
+                    <a href="tel:988" style="background: rgba(0,0,0,0.3); color: white; text-decoration: none; padding: 15px 20px; border-radius: 8px; display: inline-block; min-width: 120px;">
+                        <div style="font-size: 2rem; font-weight: bold;">988</div>
+                        <div style="font-size: 0.9rem;">Suicide Crisis</div>
+                    </a>
+                    <a href="tel:1-800-668-6868" style="background: rgba(0,0,0,0.3); color: white; text-decoration: none; padding: 15px 20px; border-radius: 8px; display: inline-block; min-width: 120px;">
+                        <div style="font-size: 1.3rem; font-weight: bold;">1-800-668-6868</div>
+                        <div style="font-size: 0.85rem;">Kids Help Phone</div>
+                    </a>
+                </div>
+                <p style="font-size: 0.85rem; margin-top: 15px; opacity: 0.9;">Text: 988 or 686868 with CONNECT</p>
+            `;
+
+            // Insert at the very top of body
+            if (document.body.firstChild) {
+                document.body.insertBefore(fallback, document.body.firstChild);
+            } else {
+                document.body.appendChild(fallback);
+            }
+
+            console.log('[WE4Free] Emergency fallback injected');
+        }
+
+        // Check crisis box health on load
+        setTimeout(() => {
+            try {
+                ensureCrisisBoxVisible();
+            } catch (e) {
+                console.error('[WE4Free] Crisis box health check failed:', e);
+                injectEmergencyFallback();
+            }
+        }, 1000);
+
+        // Wrap entire initialization in try/catch
+        try {
+            // All initialization code is already executed above
+            console.log('[WE4Free] All systems initialized successfully');
+        } catch (error) {
+            console.error('[WE4Free] Initialization failed:', error);
+            injectEmergencyFallback();
+        }
+</script>
+
+        <div style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 15px; padding: 25px; margin-bottom: 30px; text-align: center;">
+            <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 1.2rem;">🇨🇦 Find Your Province</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
+                <a href="#quebec" style="background: rgba(255,255,255,0.2); color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s; display: inline-block;">Quebec</a>
+                <a href="#ontario" style="background: rgba(255,255,255,0.2); color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s; display: inline-block;">Ontario</a>
+                <a href="#british-columbia" style="background: rgba(255,255,255,0.2); color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s; display: inline-block;">British Columbia</a>
+                <a href="#alberta" style="background: rgba(255,255,255,0.2); color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s; display: inline-block;">Alberta</a>
+                <a href="#manitoba" style="background: rgba(255,255,255,0.2); color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s; display: inline-block;">Manitoba</a>
+                <a href="#saskatchewan" style="background: rgba(255,255,255,0.2); color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s; display: inline-block;">Saskatchewan</a>
+                <a href="#nova-scotia" style="background: rgba(255,255,255,0.2); color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s; display: inline-block;">Nova Scotia</a>
+            </div>
+        </div>
+
+        <div style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 15px; padding: 30px; margin-bottom: 40px; border-left: 6px solid #667eea; color: black;">
+            <h3 style="margin-top: 0; font-size: 1.1rem; color: #000000;">⚕️ Important Disclaimer</h3>
+            <p style="margin-bottom: 10px;"><strong>This information is provided for informational purposes only and should not be used as a substitute for professional medical advice, diagnosis, or treatment.</strong></p>
+            <p style="margin-bottom: 10px;">All resources listed have been compiled from official government and healthcare websites. However, phone numbers, hours, and services may change. We recommend verifying information directly with the service provider.</p>
+            <p style="margin-bottom: 0;"><strong>If you are experiencing a mental health crisis, please contact a crisis line or emergency services immediately.</strong></p>
+        </div>
+
+        <div class="resource-section">
+            <h2>🌍 Global Mental Health Resources</h2>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                        <th>How to Use</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization">7 Cups</td>
+                        <td data-label="Contact"><a href="https://www.7cups.com" target="_blank">7cups.com</a></td>
+                        <td data-label="Services">Free, anonymous peer support chat; licensed therapists for low-cost sessions</td>
+                        <td data-label="How to Use">Visit website, create account, connect with a listener in 24/7 chat</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">Crisis Text Line</td>
+                        <td data-label="Contact">Text HOME to 741741 (US/Canada/UK)</td>
+                        <td data-label="Services">24/7 free crisis text support</td>
+                        <td data-label="How to Use">Text keyword to start conversation; no app needed</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">International Association for Suicide Prevention (IASP)</td>
+                        <td data-label="Contact"><a href="https://www.iasp.info/resources/Crisis_Centres/" target="_blank">iasp.info/resources/Crisis_Centres/</a></td>
+                        <td data-label="Services">Global directory of suicide prevention centers</td>
+                        <td data-label="How to Use">Search by country to find local crisis lines</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">WHO Mental Health Portal</td>
+                        <td data-label="Contact"><a href="https://www.who.int/mental_health" target="_blank">who.int/mental_health</a></td>
+                        <td data-label="Services">Global mental health resources, toolkits, and emergency contacts</td>
+                        <td data-label="How to Use">Explore resources by region; multilingual support available</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="resource-section">
+            <h2>🇺🇸 United States</h2>
+            <h3 style="margin-top: 30px; margin-bottom: 15px; font-size: 1.3rem;">National Resources</h3>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization">National Suicide Prevention Lifeline</td>
+                        <td data-label="Contact">Call or text <a href="tel:988" style="color: inherit; text-decoration: underline;">988</a></td>
+                        <td data-label="Services">24/7 free crisis support; Spanish-language option available</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">National Alliance on Mental Illness (NAMI)</td>
+                        <td data-label="Contact">1-800-950-NAMI (6264); <a href="https://www.nami.org" target="_blank">nami.org</a></td>
+                        <td data-label="Services">Free peer support, education, and local chapter directory</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">SAMHSA National Helpline</td>
+                        <td data-label="Contact">1-800-662-HELP (4357)</td>
+                        <td data-label="Services">24/7 free mental health and substance use referral service</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="margin-top: 30px; margin-bottom: 15px; font-size: 1.3rem;">City-Specific Resources</h3>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>City</th>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="City">New York City</td>
+                        <td data-label="Organization">NYC Well</td>
+                        <td data-label="Contact">Call 1-888-NYC-WELL (929-9555); Text WELL to 65746</td>
+                        <td data-label="Services">Free 24/7 mental health support, counseling, and referrals</td>
+                    </tr>
+                    <tr>
+                        <td data-label="City">Los Angeles</td>
+                        <td data-label="Organization">LA County Department of Mental Health</td>
+                        <td data-label="Contact">1-800-854-7771; <a href="https://dmh.lacounty.gov" target="_blank">dmh.lacounty.gov</a></td>
+                        <td data-label="Services">Free counseling, crisis intervention, and community resources</td>
+                    </tr>
+                    <tr>
+                        <td data-label="City">Chicago</td>
+                        <td data-label="Organization">Chicago Department of Public Health</td>
+                        <td data-label="Contact">311; <a href="https://www.chicago.gov/city/en/depts/cdph/provdrs/mental_health.html" target="_blank">chicago.gov/mentalhealth</a></td>
+                        <td data-label="Services">Free mental health screenings, support groups, and crisis services</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="resource-section">
+            <h2>🇨🇦 Canada</h2>
+            
+            <h3 style="margin-top: 30px; margin-bottom: 15px; font-size: 1.3rem;">National Resources</h3>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization">Canadian Association for Suicide Prevention (CASP)</td>
+                        <td data-label="Contact"><a href="https://www.casp.ca" target="_blank">casp.ca</a></td>
+                        <td data-label="Services">National suicide prevention resources and crisis line directory</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">Kids Help Phone</td>
+                        <td data-label="Contact"><a href="tel:+18006686868" style="color: inherit; text-decoration: underline;">Call 1-800-668-6868</a>; Text CONNECT to 686868</td>
+                        <td data-label="Services">Free 24/7 support for youth (19 and under)</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">Info-Social 811</td>
+                        <td data-label="Contact"><a href="tel:811" style="color: inherit; text-decoration: underline;">Dial 811</a></td>
+                        <td data-label="Services">24/7 health information and mental health support line for all Quebec residents</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 id="quebec" style="margin-top: 30px; margin-bottom: 15px; font-size: 1.3rem;">Quebec</h3>
+            <p style="opacity: 0.9; margin-bottom: 5px;"><em>Provincial resources serving all regions of Quebec</em></p>
+            <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 20px;">📋 <strong>Source:</strong> <a href="https://www.quebec.ca/sante/problemes-de-sante/sante-mentale-maladie-mentale" target="_blank" style="color: #a8b8ff;">quebec.ca</a> | <a href="https://www.msss.gouv.qc.ca" target="_blank" style="color: #a8b8ff;">MSSS Quebec</a></p>
+            
+            <h4 style="margin-top: 20px; margin-bottom: 10px; font-size: 1.1rem; opacity: 0.9;">Provincial Crisis & Support Lines</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization">Info-Social 811</td>
+                        <td data-label="Contact">Dial 811 (option 2)</td>
+                        <td data-label="Services">Free 24/7 professional psychosocial intervention for mental health and social problems; available across all Quebec</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">1-866-APPELLE (Suicide Prevention)</td>
+                        <td data-label="Contact">Call 1-866-APPELLE (1-866-277-3553)<br>Text 535353<br><a href="https://suicide.ca/en/chatting-online-with-a-counsellor" target="_blank">Live Chat</a></td>
+                        <td data-label="Services">Quebec suicide prevention hotline; 24/7; French and English; text and live chat available</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">Drugs: Help and Referral</td>
+                        <td data-label="Contact">Call 514-527-2626<br>Toll-free 1-800-265-2626</td>
+                        <td data-label="Services">24/7 bilingual telephone service for drug concerns; information, referral, listening; confidential and anonymous; serves all Quebec</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">Gambling: Help and Referral</td>
+                        <td data-label="Contact">Call 514-527-0140<br>Toll-free 1-800-461-0140</td>
+                        <td data-label="Services">24/7 bilingual telephone service for gambling concerns; information, referral, listening; confidential and anonymous; serves all Quebec</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">CLSC (Local Community Service Centres)</td>
+                        <td data-label="Contact"><a href="https://sante.gouv.qc.ca/en/repertoire-ressources/clsc/" target="_blank">CLSC Directory</a></td>
+                        <td data-label="Services">Network of local community service centers across Quebec providing mental health support, counseling, and social services; find your nearest CLSC</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">911</td>
+                        <td data-label="Contact"><a href="tel:911" style="color: inherit; text-decoration: underline;">Dial 911</a></td>
+                        <td data-label="Services">Immediate danger to yourself or others</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="margin-top: 30px; margin-bottom: 15px; font-size: 1.3rem;">Montreal & Montérégie</h3>
+            <p style="opacity: 0.9; margin-bottom: 20px;"><em>Regional resources for Montreal and surrounding areas</em></p>
+            
+            <h4 style="margin-top: 20px; margin-bottom: 10px; font-size: 1.1rem; opacity: 0.9;">Crisis Support</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization">Suicide Prevention</td>
+                        <td data-label="Contact">1-866-APPELLE (1-866-277-3553)</td>
+                        <td data-label="Services">Free 24/7 Quebec suicide prevention hotline; French and English</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">Tel-Jeunes</td>
+                        <td data-label="Contact">Call 1-800-263-2266; Text 514-600-1002</td>
+                        <td data-label="Services">Free support for youth (ages 5-20); bilingual; 8am-12am daily; <a href="https://www.teljeunes.com/Tel-jeunes-en/All-topics/Drugs-and-alcohol" target="_blank">drugs & alcohol support</a></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">AMI-Quebec</td>
+                        <td data-label="Contact">Call 514-486-1448; <a href="https://www.amiquebec.org" target="_blank">amiquebec.org</a></td>
+                        <td data-label="Services">Family mental health support, education, and guidance; free programs</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4 style="margin-top: 20px; margin-bottom: 10px; font-size: 1.1rem; opacity: 0.9;">Navigator Services (Assessment & Referral)</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization">CISSS Montérégie - Centralized Addiction Intake</td>
+                        <td data-label="Contact">Call 450-443-4413<br>Toll-free 1-866-964-4413<br>accueil.dependance.cisssmo16@ssss.gouv.qc.ca</td>
+                        <td data-label="Services"><strong>Free centralized processing of all addiction rehabilitation applications</strong> for Montérégie residents and English-speaking Montrealers. Assessment and referral for alcohol, drugs, prescription medications, gambling, compulsive buying, Internet addiction. Youth (17 and under) and Adult (18+) programs. Government of Quebec service.</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">Drugs - Help and Referral</td>
+                        <td data-label="Contact"><a href="https://www.aidedrogue.ca/en/" target="_blank">aidedrogue.ca/en</a></td>
+                        <td data-label="Services">Quebec drug addiction help and referral information</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">Gambling - Help and Referral</td>
+                        <td data-label="Contact"><a href="https://aidejeu.ca/en/" target="_blank">aidejeu.ca/en</a></td>
+                        <td data-label="Services">Quebec gambling addiction help and referral information</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">Éducalcool</td>
+                        <td data-label="Contact"><a href="https://www.educalcool.qc.ca/en/home/" target="_blank">educalcool.qc.ca/en</a></td>
+                        <td data-label="Services">Alcohol education and moderation resources</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">Naloxone Resource Finder</td>
+                        <td data-label="Contact"><a href="https://sante.gouv.qc.ca/en/repertoire-ressources/naloxone/" target="_blank">sante.gouv.qc.ca/en/repertoire-ressources/naloxone</a></td>
+                        <td data-label="Services">Find resources providing free naloxone kits (opioid overdose reversal) across Quebec</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">Drug Free Kids Canada</td>
+                        <td data-label="Contact"><a href="https://drugfreekidscanada.org/prevention/tips-for-parents/what-to-look-for-checklist/" target="_blank">drugfreekidscanada.org</a></td>
+                        <td data-label="Services">Parent resources for teen substance use prevention</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4 style="margin-top: 20px; margin-bottom: 10px; font-size: 1.1rem; opacity: 0.9;">Residential Treatment (Dual Diagnosis)</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization">Dunham House</td>
+                        <td data-label="Contact">Call (450) 263-3434; <a href="https://www.dunhamhouse.ca" target="_blank">dunhamhouse.ca</a>; admissions@dunhamhouse.ca</td>
+                        <td data-label="Services">Specialized residential treatment for addiction and mental health disorders (dual diagnosis). Programs: 30-day, 90-day, 6-month. <strong>Covered by government for social assistance recipients.</strong> English-speaking, 85-acre campus in Eastern Townships (1.5h from Montreal). Outpatient services in Montreal at Queen Elizabeth Health Complex. Evidence-based therapy including equine therapy, music therapy.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 id="ontario" style="margin-top: 30px; margin-bottom: 15px; font-size: 1.3rem;">Ontario</h3>
+            <p style="font-style: italic; opacity: 0.9; margin-bottom: 15px;">Provincial resources serving all regions of Ontario</p>
+            <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 15px;">📋 <strong>Source:</strong> <a href="https://www.ontario.ca/page/find-mental-health-support" target="_blank" style="color: #667eea;">ontario.ca</a> | <a href="https://www.connexontario.ca" target="_blank" style="color: #667eea;">ConnexOntario</a></p>
+            
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem;">Provincial Crisis & Support Lines</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization"><strong>911</strong></td>
+                        <td data-label="Contact"><a href="tel:911" style="color: inherit; text-decoration: underline;">Dial 911</a></td>
+                        <td data-label="Services">Immediate danger to yourself or others</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Ontario Suicide Prevention Helpline</strong></td>
+                        <td data-label="Contact">Call 1-833-456-4566<br>Text <code>START</code> to 45645<br><a href="https://www.ontariosuicidepreventionhelpline.ca" target="_blank">Chat online</a></td>
+                        <td data-label="Services">24/7 free suicide prevention support; bilingual; operated by ConnexOntario</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>ConnexOntario</strong></td>
+                        <td data-label="Contact">Call 1-866-531-2600<br>Text <code>CONNECT</code> to 686868<br><a href="https://www.connexontario.ca/Chat" target="_blank">Live Chat</a></td>
+                        <td data-label="Services">24/7 free confidential help for mental health, addiction, and crisis; alcohol, drugs, mental illness, gambling; bilingual</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Kids Help Phone</strong></td>
+                        <td data-label="Contact">Call 1-800-668-6868<br>Text <code>CONNECT</code> to 686868<br><a href="https://kidshelpphone.ca" target="_blank">Live Chat</a></td>
+                        <td data-label="Services">24/7 free support for youth (19 and under); available in over 100 languages; text, phone, and chat</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Distress Centre Ontario</strong></td>
+                        <td data-label="Contact"><a href="https://www.dcontario.org" target="_blank">Find your regional crisis line</a></td>
+                        <td data-label="Services">Network of local distress and crisis centers across Ontario</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem;">Navigator Services (Assessment & Referral)</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization"><strong>ConnexOntario</strong></td>
+                        <td data-label="Contact">Call 1-866-531-2600<br><a href="https://www.connexontario.ca/Chat" target="_blank">Live Chat</a><br><a href="https://www.connexontario.ca/en-ca/send-email" target="_blank">Email</a></td>
+                        <td data-label="Services">Free confidential information and referrals for mental health, addiction, and problem gambling services across Ontario</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>211 Ontario</strong></td>
+                        <td data-label="Contact">Call 211 or 1-877-330-3213<br><a href="https://211ontario.ca" target="_blank">Live Chat</a><br>Email available online</td>
+                        <td data-label="Services">Free information and referral for community, government, social and health services, including mental health resources across Ontario</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem;">Treatment & Support Programs</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization"><strong>BounceBack Ontario</strong></td>
+                        <td data-label="Contact">Call 1-866-345-0224<br><a href="https://bouncebackontario.ca" target="_blank">bouncebackontario.ca</a></td>
+                        <td data-label="Services">Free cognitive behavioural therapy (CBT) program with guided self-help for adults and youth 15+; phone coaching available</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Ontario Addiction Treatment Services (OATS)</strong></td>
+                        <td data-label="Contact">Call 1-800-565-8603<br><a href="https://www.oats.ca" target="_blank">oats.ca</a></td>
+                        <td data-label="Services">Free addiction treatment and support services across Ontario</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Centre for Addiction and Mental Health (CAMH)</strong></td>
+                        <td data-label="Contact">Call 416-535-8501<br>Emergency 416-535-8505<br><a href="https://www.camh.ca" target="_blank">camh.ca</a></td>
+                        <td data-label="Services">Mental health and addiction research, treatment, education; <a href="https://www.camh.ca/en/health-info/mental-illness-and-addiction-index/information-in-other-languages" target="_blank">multilingual newcomer resources</a></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Ontario Telemedicine Network (OTN)</strong></td>
+                        <td data-label="Contact">Call 1-866-888-6848<br><a href="https://www.otn.ca" target="_blank">otn.ca</a></td>
+                        <td data-label="Services">Free telehealth mental health services for rural and remote communities</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Ontario Mental Health Foundation (OMHF)</strong></td>
+                        <td data-label="Contact">Call 416-979-6641<br><a href="https://www.omhf.ca" target="_blank">omhf.ca</a></td>
+                        <td data-label="Services">Mental health education, research, and support services</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem;">Youth & Student Resources</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization"><strong>One Stop Talk</strong></td>
+                        <td data-label="Contact">Call 1-855-416-8255 (TALK)<br><a href="https://onestoptalk.ca" target="_blank">onestoptalk.ca</a></td>
+                        <td data-label="Services">Free confidential immediate mental health support with registered therapist for children and youth under 18</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Kids Help Phone</strong></td>
+                        <td data-label="Contact"><a href="tel:+18006686868" style="color: inherit; text-decoration: underline;">Call 1-800-668-6868</a><br>Text <code>CONNECT</code> to 686868<br><a href="https://kidshelpphone.ca" target="_blank">Chat online</a></td>
+                        <td data-label="Services">24/7 free e-mental health service for all young people; multilingual (100+ languages)</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Good2Talk</strong></td>
+                        <td data-label="Contact">Call 1-866-925-5454<br><a href="https://good2talk.ca" target="_blank">Live Chat</a><br>Text <code>CONNECT</code> to 686868</td>
+                        <td data-label="Services">24/7 free confidential multilingual support for post-secondary students; moderated peer message boards</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Youth Wellness Hubs Ontario</strong></td>
+                        <td data-label="Contact"><a href="https://ywho.ca/en" target="_blank">Find a hub near you</a></td>
+                        <td data-label="Services">25 hubs across Ontario providing integrated services for youth ages 12-25; mental health, substance use, primary care, social supports</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Ontario Student Mental Health Association (OSMHA)</strong></td>
+                        <td data-label="Contact">Call 416-925-9009<br><a href="https://www.osmha.org" target="_blank">osmha.org</a></td>
+                        <td data-label="Services">Mental health support and resources for students and educators</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Youth Mental Health Ontario (YMHO)</strong></td>
+                        <td data-label="Contact">Call 416-979-6641<br><a href="https://www.ymho.ca" target="_blank">ymho.ca</a></td>
+                        <td data-label="Services">Mental health support and resources for youth ages 12-25</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem;">Regional Resources</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>City/Region</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="City/Region"><strong>Toronto</strong></td>
+                        <td data-label="Contact">Call 416-327-4200<br><a href="https://www.torontocentral.ca" target="_blank">torontocentral.ca</a></td>
+                        <td data-label="Services">Toronto Central LHIN Mental Health Services - Mental health and addiction services for Toronto residents</td>
+                    </tr>
+                    <tr>
+                        <td data-label="City/Region"><strong>Peel Region</strong></td>
+                        <td data-label="Contact">Call 905-799-7700<br><a href="https://www.peelregion.ca" target="_blank">peelregion.ca</a></td>
+                        <td data-label="Services">Mental health and addiction services for Peel Region (Mississauga, Brampton, Caledon)</td>
+                    </tr>
+                    <tr>
+                        <td data-label="City/Region"><strong>York Region</strong></td>
+                        <td data-label="Contact">Call 1-800-361-5653<br><a href="https://www.york.ca" target="_blank">york.ca</a></td>
+                        <td data-label="Services">Mental health and addiction services for York Region</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem;">Government Coverage</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Program</th>
+                        <th>Contact</th>
+                        <th>Coverage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Program"><strong>Ontario Works</strong></td>
+                        <td data-label="Contact"><a href="https://www.ontario.ca/page/ontario-works" target="_blank">Apply online</a> or call local office<br><a href="https://mybenefits.mcss.gov.on.ca/auth/login" target="_blank">MyBenefits Portal</a></td>
+                        <td data-label="Coverage">Social assistance providing financial help, health benefits, and employment support; health benefits include mental health and addiction treatment coverage; <a href="https://feedontario.ca/story/ontario-works-5-things-everyone-should-know/" target="_blank">Learn more</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3 id="british-columbia" style="margin-top: 30px; margin-bottom: 15px; font-size: 1.3rem;">British Columbia</h3>
+            <p style="font-style: italic; opacity: 0.9; margin-bottom: 5px;">Provincial resources serving all regions of British Columbia</p>
+            <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 15px;">📋 <strong>Source:</strong> <a href="https://www2.gov.bc.ca/gov/content/health/managing-your-health/mental-health-substance-use" target="_blank" style="color: #667eea;">gov.bc.ca</a> | <a href="https://www.healthlinkbc.ca" target="_blank" style="color: #667eea;">HealthLink BC</a></p>
+            
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem;">Provincial Crisis & Support Lines</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization"><strong>911</strong></td>
+                        <td data-label="Contact"><a href="tel:911" style="color: inherit; text-decoration: underline;">Dial 911</a></td>
+                        <td data-label="Services">Immediate danger to yourself or others</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>988 Suicide Crisis Helpline</strong></td>
+                        <td data-label="Contact">Call or text <a href="tel:988" style="color: inherit; text-decoration: underline;">988</a></td>
+                        <td data-label="Services">24/7 free suicide prevention support; national service available across BC</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>BC Crisis Centre</strong></td>
+                        <td data-label="Contact">Call 310-6789 (no area code needed in BC)<br><a href="https://crisiscentre.bc.ca" target="_blank">crisiscentre.bc.ca</a></td>
+                        <td data-label="Services">24/7 free confidential crisis support; distress line</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Kids Help Phone</strong></td>
+                        <td data-label="Contact">Call 1-800-668-6868<br>Text <code>CONNECT</code> to 686868<br><a href="https://kidshelpphone.ca" target="_blank">kidshelpphone.ca</a></td>
+                        <td data-label="Services">24/7 free support for youth; multilingual (100+ languages)</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem;">Navigator Services & Support</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization"><strong>HealthLink BC</strong></td>
+                        <td data-label="Contact"><a href="tel:811" style="color: inherit; text-decoration: underline;">Call 811</a><br><a href="https://www.healthlinkbc.ca" target="_blank">healthlinkbc.ca</a></td>
+                        <td data-label="Services">24/7 free health advice including mental health and substance use information; speak with nurses, dietitians, pharmacists</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>BC Mental Health & Substance Use Services</strong></td>
+                        <td data-label="Contact"><a href="https://www2.gov.bc.ca/gov/content/health/managing-your-health/mental-health-substance-use" target="_blank">Find services near you</a></td>
+                        <td data-label="Services">Provincial directory of publicly-funded mental health and substance use services</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3 id="alberta" style="margin-top: 30px; margin-bottom: 15px; font-size: 1.3rem;">Alberta</h3>
+            <p style="font-style: italic; opacity: 0.9; margin-bottom: 5px;">Provincial resources serving all regions of Alberta</p>
+            <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 15px;">📋 <strong>Source:</strong> <a href="https://www.albertahealthservices.ca/info/Page12630.aspx" target="_blank" style="color: #667eea;">Alberta Health Services</a> | <a href="https://www.alberta.ca/mental-health-help.aspx" target="_blank" style="color: #667eea;">alberta.ca</a></p>
+
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem;">Provincial Crisis & Support Lines</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization"><strong>911</strong></td>
+                        <td data-label="Contact"><a href="tel:911" style="color: inherit; text-decoration: underline;">Dial 911</a></td>
+                        <td data-label="Services">Immediate danger to yourself or others</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Mental Health Helpline</strong></td>
+                        <td data-label="Contact">Call 1-877-303-2642<br><a href="https://www.albertahealthservices.ca/amh/amh.aspx" target="_blank">albertahealthservices.ca</a></td>
+                        <td data-label="Services">24/7 free mental health advice, information, and connections to services for children and adults</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Addiction Helpline</strong></td>
+                        <td data-label="Contact">Call 1-866-332-2322<br><a href="https://www.albertahealthservices.ca/findhealth/Service.aspx?id=1008399&serviceAtFacilityID=1047128" target="_blank">albertahealthservices.ca</a></td>
+                        <td data-label="Services">24/7 free addiction support, advice, and connections to services</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Kids Help Phone</strong></td>
+                        <td data-label="Contact">Call 1-800-668-6868<br>Text <code>CONNECT</code> to 686868<br><a href="https://kidshelpphone.ca" target="_blank">kidshelpphone.ca</a></td>
+                        <td data-label="Services">24/7 free support for youth; multilingual (100+ languages)</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem;">Navigator Services & Support</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization"><strong>811 Health Link</strong></td>
+                        <td data-label="Contact">Call 811<br><a href="https://www.albertahealthservices.ca/info/Page12630.aspx" target="_blank">albertahealthservices.ca</a></td>
+                        <td data-label="Services">24/7 free health advice including mental health information</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Indigenous Support Line</strong></td>
+                        <td data-label="Contact">Call 1-844-944-4744 or 811<br><a href="https://www.albertahealthservices.ca/info/Page18213.aspx" target="_blank">More info</a></td>
+                        <td data-label="Services">Free culturally safe mental health and addiction support for Indigenous peoples</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Child & Adolescent Intake Services</strong></td>
+                        <td data-label="Contact">Call 1-825-402-6799</td>
+                        <td data-label="Services">Intake for children and youth mental health services</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3 id="manitoba" style="margin-top: 30px; margin-bottom: 15px; font-size: 1.3rem;">Manitoba</h3>
+            <p style="font-style: italic; opacity: 0.9; margin-bottom: 5px;">Provincial resources serving all regions of Manitoba</p>
+            <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 15px;">📋 <strong>Source:</strong> <a href="https://www.gov.mb.ca/health/mh/crisis.html" target="_blank" style="color: #667eea;">gov.mb.ca</a> | <a href="https://mb.211.ca" target="_blank" style="color: #667eea;">211 Manitoba</a></p>
+
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem;">Provincial Crisis & Support Lines</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization"><strong>911</strong></td>
+                        <td data-label="Contact"><a href="tel:911" style="color: inherit; text-decoration: underline;">Dial 911</a></td>
+                        <td data-label="Services">Immediate danger to yourself or others</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>988 Suicide Crisis Helpline</strong></td>
+                        <td data-label="Contact">Call or text <a href="tel:988" style="color: inherit; text-decoration: underline;">988</a></td>
+                        <td data-label="Services">24/7 free suicide prevention support; national service available across Manitoba</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Klinic Crisis Line</strong></td>
+                        <td data-label="Contact">Call 204-786-8686 or 1-888-322-3019<br>TTY 204-784-4097</td>
+                        <td data-label="Services">24/7 free crisis support and suicide prevention</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Kids Help Phone</strong></td>
+                        <td data-label="Contact">Call 1-800-668-6868<br>Text <code>CONNECT</code> to 686868<br><a href="https://kidshelpphone.ca" target="_blank">kidshelpphone.ca</a></td>
+                        <td data-label="Services">24/7 free support for youth; multilingual (100+ languages)</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem;">Navigator Services & Support</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization"><strong>211 Manitoba</strong></td>
+                        <td data-label="Contact"><a href="tel:211" style="color: inherit; text-decoration: underline;">Call 211</a><br><a href="https://mb.211.ca" target="_blank">mb.211.ca</a></td>
+                        <td data-label="Services">Free 24/7 confidential mental health and addiction services referral; 150+ languages</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Strongest Families Institute</strong></td>
+                        <td data-label="Contact"><a href="https://strongestfamilies.com" target="_blank">strongestfamilies.com</a></td>
+                        <td data-label="Services">Free e-mental health CBT services for children, youth, and adults with mild to moderate mental health concerns; anxiety, depression, disruptive behaviours</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3 id="saskatchewan" style="margin-top: 30px; margin-bottom: 15px; font-size: 1.3rem;">Saskatchewan</h3>
+            <p style="font-style: italic; opacity: 0.9; margin-bottom: 5px;">Provincial resources serving all regions of Saskatchewan</p>
+            <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 15px;">📋 <strong>Source:</strong> <a href="https://www.saskatchewan.ca/residents/health/accessing-health-care-services/mental-health-and-addictions-support-services" target="_blank" style="color: #667eea;">saskatchewan.ca</a></p>
+
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem;">Provincial Crisis & Support Lines</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization"><strong>911</strong></td>
+                        <td data-label="Contact"><a href="tel:911" style="color: inherit; text-decoration: underline;">Dial 911</a></td>
+                        <td data-label="Services">Immediate danger to yourself or others</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>988 Suicide Crisis Helpline</strong></td>
+                        <td data-label="Contact">Call or text <a href="tel:988" style="color: inherit; text-decoration: underline;">988</a></td>
+                        <td data-label="Services">24/7 free suicide prevention support; national service available across Saskatchewan</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>HealthLine 811</strong></td>
+                        <td data-label="Contact">Call 811</td>
+                        <td data-label="Services">24/7 mental health and addictions support by qualified health practitioners</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Mobile Crisis Regina</strong></td>
+                        <td data-label="Contact">Call 306-757-0127</td>
+                        <td data-label="Services">24/7 mental health and addictions crisis support</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Mobile Crisis Prince Albert</strong></td>
+                        <td data-label="Contact">Call 306-764-1011</td>
+                        <td data-label="Services">Mental health and addictions crisis support (Mon-Fri 4-8am; Sat-Sun 24 hours)</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Saskatoon Crisis and Intervention Services</strong></td>
+                        <td data-label="Contact">Call 306-933-6200</td>
+                        <td data-label="Services">24/7 mental health and addictions crisis support</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Kids Help Phone</strong></td>
+                        <td data-label="Contact">Call 1-800-668-6868<br>Text <code>CONNECT</code> to 686868<br><a href="https://kidshelpphone.ca" target="_blank">kidshelpphone.ca</a></td>
+                        <td data-label="Services">24/7 free support for youth; multilingual (100+ languages)</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem;">Specialized Support Lines</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization"><strong>Hope for Wellness Helpline</strong></td>
+                        <td data-label="Contact">Call 1-855-242-3310<br><a href="https://www.hopeforwellness.ca" target="_blank">hopeforwellness.ca</a></td>
+                        <td data-label="Services">24/7 free culturally safe support for all Indigenous peoples across Canada</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Problem Gambling Helpline</strong></td>
+                        <td data-label="Contact">Call 1-800-306-6789 or text 306-400-2785</td>
+                        <td data-label="Services">24/7 gambling support (text 7pm-midnight)</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Farm Stress Line</strong></td>
+                        <td data-label="Contact">Call 1-800-667-4442</td>
+                        <td data-label="Services">24/7 support for farmers and ranchers</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>National Farmer Crisis Line</strong></td>
+                        <td data-label="Contact">Call 1-866-327-6701<br><a href="https://ccaw.ca/national-farmer-wellness-network/" target="_blank">ccaw.ca</a></td>
+                        <td data-label="Services">24/7 immediate ag-informed crisis support for farmers, farm families, agricultural workers</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>TAO Tel-Aide Francophone</strong></td>
+                        <td data-label="Contact">Call 1-800-567-9699</td>
+                        <td data-label="Services">24/7 mental health services for French speakers</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>National Overdose Response Service</strong></td>
+                        <td data-label="Contact">Call 1-888-688-6677</td>
+                        <td data-label="Services">24/7 hotline for people using drugs alone; peer volunteers can call for help if needed</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem;">Regional Crisis Services</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Region</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Region"><strong>Kindersley</strong></td>
+                        <td data-label="Contact">Call 306-463-1860</td>
+                        <td data-label="Services">West Central Crisis and Family Support Centre (24/7)</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Region"><strong>Melfort</strong></td>
+                        <td data-label="Contact">Call 1-800-611-6349</td>
+                        <td data-label="Services">North East Outreach and Support Centre (24/7)</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Region"><strong>Northern SK</strong></td>
+                        <td data-label="Contact">Call 306-425-4090</td>
+                        <td data-label="Services">Piwapan Women's Centre (24/7)</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Region"><strong>Swift Current</strong></td>
+                        <td data-label="Contact">Call 1-800-567-3334</td>
+                        <td data-label="Services">Southwest Crisis Services (24/7)</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3 id="nova-scotia" style="margin-top: 30px; margin-bottom: 15px; font-size: 1.3rem;">Nova Scotia</h3>
+            <p style="font-style: italic; opacity: 0.9; margin-bottom: 5px;">Provincial resources serving all regions of Nova Scotia</p>
+            <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 15px;">📋 <strong>Source:</strong> <a href="https://mha.nshealth.ca/en" target="_blank" style="color: #667eea;">NS Health Mental Health & Addictions</a> | <a href="https://novascotia.ca" target="_blank" style="color: #667eea;">novascotia.ca</a></p>
+
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem;">Provincial Crisis & Support Lines</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization"><strong>911</strong></td>
+                        <td data-label="Contact"><a href="tel:911" style="color: inherit; text-decoration: underline;">Dial 911</a></td>
+                        <td data-label="Services">Immediate danger to yourself or others</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>988 Suicide Crisis Helpline</strong></td>
+                        <td data-label="Contact">Call or text <a href="tel:988" style="color: inherit; text-decoration: underline;">988</a></td>
+                        <td data-label="Services">24/7 free suicide prevention support; national service available across Nova Scotia</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Provincial Mental Health and Addictions Crisis Line</strong></td>
+                        <td data-label="Contact">Call 1-888-429-8167</td>
+                        <td data-label="Services">24/7 toll-free crisis support for mental health and addictions</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>HealthLink 811</strong></td>
+                        <td data-label="Contact">Call 811 or 1-866-770-7763</td>
+                        <td data-label="Services">24/7 health advice and support including mental health</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Kids Help Phone</strong></td>
+                        <td data-label="Contact">Call 1-800-668-6868<br>Text <code>CONNECT</code> to 686868<br><a href="https://kidshelpphone.ca" target="_blank">kidshelpphone.ca</a></td>
+                        <td data-label="Services">24/7 free support for youth; multilingual (100+ languages)</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem;">Navigator Services & Support</h4>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization"><strong>211 Nova Scotia</strong></td>
+                        <td data-label="Contact">Call 211 or 1-855-466-4994 (toll-free)<br><a href="https://ns.211.ca" target="_blank">ns.211.ca</a></td>
+                        <td data-label="Services">Free 24/7 community services directory including mental health and addictions support</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization"><strong>Mental Health and Addictions Intake</strong></td>
+                        <td data-label="Contact">Call 1-855-922-1122<br><a href="https://prebooking.nshealth.ca/" target="_blank">Book online</a></td>
+                        <td data-label="Services">Intake and appointment booking (Mon-Fri 8:30am-4:30pm; Tue/Thu until 8pm); interpretation services available</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="resource-section">
+            <h2>🇬🇧 United Kingdom</h2>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization">Samaritans</td>
+                        <td data-label="Contact">Call 116 123; Email jo@samaritans.org</td>
+                        <td data-label="Services">Free 24/7 emotional support for anyone in distress</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">Mind</td>
+                        <td data-label="Contact">0300 123 3393; <a href="https://www.mind.org.uk" target="_blank">mind.org.uk</a></td>
+                        <td data-label="Services">Free mental health information, support groups, and crisis lines</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">NHS Mental Health Services</td>
+                        <td data-label="Contact">111; <a href="https://www.nhs.uk/mental-health" target="_blank">nhs.uk/mental-health</a></td>
+                        <td data-label="Services">Free NHS mental health services, including crisis support</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="resource-section">
+            <h2>🇦🇺 Australia</h2>
+            <table class="resource-table">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                        <th>Services</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Organization">Lifeline Australia</td>
+                        <td data-label="Contact">Call 13 11 14; <a href="https://www.lifeline.org.au" target="_blank">lifeline.org.au</a></td>
+                        <td data-label="Services">Free 24/7 crisis support and suicide prevention services</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">Beyond Blue</td>
+                        <td data-label="Contact">Call 1300 22 4636; <a href="https://www.beyondblue.org.au" target="_blank">beyondblue.org.au</a></td>
+                        <td data-label="Services">Free mental health support, information, and resources</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Organization">Headspace</td>
+                        <td data-label="Contact">Call 1800 650 890; <a href="https://www.headspace.org.au" target="_blank">headspace.org.au</a></td>
+                        <td data-label="Services">Free mental health support for young people (12-25)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="resource-section">
+            <h2>✨ How to Use These Resources Effectively</h2>
+            <ul class="usage-tips">
+                <li>
+                    <strong>Crisis Situations:</strong>
+                    Call or text 24/7 lines immediately if you or someone you know is in danger.
+                </li>
+                <li>
+                    <strong>Peer Support:</strong>
+                    Use chat services for anonymous, non-judgmental listening (great for emotional distress).
+                </li>
+                <li>
+                    <strong>Long-Term Support:</strong>
+                    Connect with local chapters or government services for ongoing counseling and resources.
+                </li>
+                <li>
+                    <strong>Language Access:</strong>
+                    Most national lines offer multilingual support—ask for assistance in your preferred language.
+                </li>
+            </ul>
+        </div>
+
+        <footer>
+            <div id="integrity-status" class="integrity-indicator normal">
+                <span class="status-dot"></span>
+                <span id="integrity-text">System Integrity: Normal</span>
+            </div>
+            <p><strong>WE4Free</strong> - No profit. No ads. Just WE.</p>
+            <p>Free forever | No monetization | No data collection</p>
+            <p style="margin-top: 20px;">
+                <a href="https://github.com/vortsghost2025/Deliberate-AI-Ensemble/blob/master/MENTAL_HEALTH_RESOURCES.md" target="_blank">View source on GitHub</a> |
+                <a href="https://orangered-jellyfish-637583.hostingersite.com" target="_blank">WE4Free Homepage</a>
+            </p>
+            <a href="https://orangered-jellyfish-637583.hostingersite.com" class="back-link">← Back to WE4Free</a>
+        </footer>
+    </div>
+
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" style="background: #667eea; color: white; padding: 15px 20px; border: none; border-radius: 50px; position: fixed; bottom: 30px; right: 30px; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.3); font-size: 1.1rem; font-weight: 600; z-index: 1000; transition: all 0.3s;" onmouseover="this.style.background='#764ba2'; this.style.transform='translateY(-3px)'" onmouseout="this.style.background='#667eea'; this.style.transform='translateY(0)'">↑ Back to Top</button>
+</body>
+</html>
